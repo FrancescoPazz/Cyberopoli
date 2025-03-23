@@ -1,46 +1,66 @@
 package com.example.cyberopoli.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.cyberopoli.ui.composables.AppBar
+import com.example.cyberopoli.ui.composables.auth.Text3D
 
 @Composable
 fun AuthScreen() {
-    val items = (1..20).map { "Item n°$it" }
-
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.tertiary,
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(Icons.Outlined.Add, "Add Travel")
-            }
-        },
-        topBar = { AppBar(title = "Cyberopoli") }
+        topBar = { AppBar(title = "CYBEROPOLI", false) }
     ) { contentPadding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
-            modifier =  Modifier.padding(contentPadding)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(items) { item -> Text(item) }
+            Text3D(
+                text = "CYBEROPOLI",
+                fontSize = 50,
+                fontWeight = FontWeight.ExtraBold,
+                textColor = Color.White,
+                shadowColor = Color(0xFF0D47A1),
+                offsetX = 4,
+                offsetY = 4
+            )
+            Card(
+                modifier = Modifier.padding(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Button(onClick = { /* TODO*/ }) {
+                        Text("ACCEDI")
+                    }
+                    Button(onClick = { /* TODO */ }) {
+                        Text("REGISTRATI")
+                    }
+                    Button(onClick = { /* TODO */ }) {
+                        Text("OSPITE")
+                    }
+                }
+            }
         }
     }
 }
