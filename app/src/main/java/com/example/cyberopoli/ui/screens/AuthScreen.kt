@@ -2,13 +2,13 @@ package com.example.cyberopoli.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,12 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.cyberopoli.ui.composables.AppBar
+import com.example.cyberopoli.ui.composables.auth.AuthButton
 import com.example.cyberopoli.ui.composables.auth.Text3D
 
 @Composable
 fun AuthScreen() {
     Scaffold(
-        topBar = { AppBar(title = "CYBEROPOLI", false) }
+        topBar = { AppBar(canComeBack = false) }
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -39,10 +40,13 @@ fun AuthScreen() {
                 offsetX = 4,
                 offsetY = 4
             )
+
+            Spacer(modifier = Modifier.height(36.dp))
+
             Card(
                 modifier = Modifier.padding(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = Color(0xFFEEEEEE)
                 )
             ) {
                 Column(
@@ -50,15 +54,9 @@ fun AuthScreen() {
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(onClick = { /* TODO*/ }) {
-                        Text("ACCEDI")
-                    }
-                    Button(onClick = { /* TODO */ }) {
-                        Text("REGISTRATI")
-                    }
-                    Button(onClick = { /* TODO */ }) {
-                        Text("OSPITE")
-                    }
+                    AuthButton("ACCEDI")
+                    AuthButton("REGISTRATI")
+                    AuthButton("OSPITE")
                 }
             }
         }

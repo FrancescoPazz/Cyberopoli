@@ -62,13 +62,12 @@ class MainActivity : ComponentActivity() {
     private fun getMostUsedApps(context: Context): List<UsageStats> {
         val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         val endTime = System.currentTimeMillis()
-        val startTime = endTime - 24 * 60 * 60 * 1000 // Ultime 24 ore
+        val startTime = endTime - 24 * 60 * 60 * 1000
         val stats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
         return stats.sortedByDescending { it.totalTimeInForeground }
     }
 
     private fun getTodayUsageTime(context: Context): Long {
-        // Crea un'istanza di Calendar per impostare l'inizio della giornata
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)

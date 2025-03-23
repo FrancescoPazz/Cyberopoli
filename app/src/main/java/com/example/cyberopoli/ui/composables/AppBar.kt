@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar(title: String, canComeBack: Boolean = true) {
+fun AppBar(title: String = "", canComeBack: Boolean = true) {
     CenterAlignedTopAppBar(
         title = {
             Text(
