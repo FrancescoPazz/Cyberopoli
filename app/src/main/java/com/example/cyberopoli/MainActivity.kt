@@ -12,10 +12,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.cyberopoli.ui.CyberopoliNavGraph
 import com.example.cyberopoli.ui.screens.AuthScreen
 import com.example.cyberopoli.ui.theme.CyberopoliTheme
 import java.util.Calendar
@@ -39,8 +37,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CyberopoliTheme {
-                AuthScreen()
-                // altre schermate...
+                val navController = rememberNavController()
+                CyberopoliNavGraph(navController)
             }
         }
     }
@@ -81,21 +79,5 @@ class MainActivity : ComponentActivity() {
         val stats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
         val totalUsageTimeMillis = stats.sumOf { it.totalTimeInForeground }
         return totalUsageTimeMillis
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CyberopoliTheme {
-        Greeting("Android")
     }
 }

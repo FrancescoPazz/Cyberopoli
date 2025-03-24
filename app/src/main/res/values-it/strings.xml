@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cyberopoli</string>
+    <string name="login">Accedi</string>
+    <string name="signup">Registrati</string>
+    <string name="guest">Ospite</string>
+    <string name="back">Indietro</string>
+</resources>

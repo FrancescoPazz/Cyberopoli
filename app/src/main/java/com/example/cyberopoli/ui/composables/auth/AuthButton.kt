@@ -8,12 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -26,11 +23,7 @@ fun AuthButton(
         onClick = onClick,
         modifier = Modifier
             .width(235.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = MaterialTheme.shapes.large,
-                clip = false
-            ),
+            .shadow(8.dp, MaterialTheme.shapes.large),
         colors = ButtonDefaults.buttonColors(
             contentColor = Color(0xFF8CFF00),
             containerColor = Color(0xFF0D1E37)
@@ -40,13 +33,7 @@ fun AuthButton(
             text = text,
             style = TextStyle(
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                shadow = Shadow(
-                    color = Color(0xFF8CFF00).copy(alpha = 0.8f),
-                    offset = Offset(2f, 2f),
-                    blurRadius = 8f
-                )
+                fontWeight = FontWeight.Bold
             )
         )
     }

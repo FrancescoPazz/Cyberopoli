@@ -1,5 +1,6 @@
 package com.example.cyberopoli.ui.screens
 
+import android.icu.lang.UCharacter.toUpperCase
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,14 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.AppBar
 import com.example.cyberopoli.ui.composables.auth.AuthButton
 import com.example.cyberopoli.ui.composables.auth.Text3D
 
 @Composable
-fun AuthScreen() {
+fun AuthScreen(navController: NavController) {
     Scaffold(
         topBar = { AppBar(canComeBack = false) }
     ) { contentPadding ->
@@ -32,7 +36,7 @@ fun AuthScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text3D(
-                text = "CYBEROPOLI",
+                text = toUpperCase(stringResource(R.string.app_name)),
                 fontSize = 50,
                 fontWeight = FontWeight.ExtraBold,
                 textColor = Color.White,
@@ -45,18 +49,16 @@ fun AuthScreen() {
 
             Card(
                 modifier = Modifier.padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFEEEEEE)
-                )
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFEEEEEE))
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AuthButton("ACCEDI")
-                    AuthButton("REGISTRATI")
-                    AuthButton("OSPITE")
+                    AuthButton(toUpperCase(stringResource(R.string.login)))
+                    AuthButton(toUpperCase(stringResource(R.string.signup)))
+                    AuthButton(toUpperCase(stringResource(R.string.guest)))
                 }
             }
         }
