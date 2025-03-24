@@ -4,4 +4,12 @@
     <string name="signup">Sign Up</string>
     <string name="guest">Guest</string>
     <string name="back">Back</string>
+    <string name="enter">Enter</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="password_confirm">Password Confirm</string>
 </resources>

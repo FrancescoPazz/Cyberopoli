@@ -14,7 +14,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.example.cyberopoli.ui.CyberopoliNavGraph
-import com.example.cyberopoli.ui.screens.AuthScreen
 import com.example.cyberopoli.ui.theme.CyberopoliTheme
 import java.util.Calendar
 

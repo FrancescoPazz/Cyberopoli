@@ -5,4 +5,12 @@
     <string name="signup">Registrati</string>
     <string name="guest">Ospite</string>
     <string name="back">Indietro</string>
+    <string name="enter">Entra</string>
+    <string name="username">Username</string>
+    <string name="birth_date">Data di nascita</string>
+    <string name="email">Email</string>
+    <string name="name">Nome</string>
+    <string name="last_name">Cognome</string>
+    <string name="password">Password</string>
+    <string name="password_confirm">Conferma password</string>
 </resources>

@@ -1,8 +1,9 @@
-package com.example.cyberopoli.ui.screens
+package com.example.cyberopoli.ui.composables.auth
 
 import android.icu.lang.UCharacter.toUpperCase
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -20,13 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.AppBar
-import com.example.cyberopoli.ui.composables.auth.AuthButton
-import com.example.cyberopoli.ui.composables.auth.Text3D
 
 @Composable
-fun AuthScreen(navController: NavController) {
+fun AuthTemplate(
+    navController: NavController,
+    cardContent: @Composable ColumnScope.() -> Unit
+) {
     Scaffold(
-        topBar = { AppBar(canComeBack = false) }
+        topBar = { AppBar(navController) }
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -54,12 +56,9 @@ fun AuthScreen(navController: NavController) {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AuthButton(toUpperCase(stringResource(R.string.login)))
-                    AuthButton(toUpperCase(stringResource(R.string.signup)))
-                    AuthButton(toUpperCase(stringResource(R.string.guest)))
-                }
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = cardContent
+                )
             }
         }
     }

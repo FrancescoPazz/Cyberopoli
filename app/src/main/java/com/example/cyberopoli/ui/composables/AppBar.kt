@@ -10,11 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 import com.example.cyberopoli.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar(title: String = "", canComeBack: Boolean = true) {
+fun AppBar(navController: NavController, title: String = "") {
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -22,9 +23,9 @@ fun AppBar(title: String = "", canComeBack: Boolean = true) {
                 fontWeight = FontWeight.Medium
             )
         },
-        actions = {
-            if (canComeBack) {
-                IconButton(onClick = { /* TODO */ }) {
+        navigationIcon = {
+            if (navController.previousBackStackEntry != null) {
+                IconButton(onClick = { navController.navigateUp() }) {
                     Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
                 }
             }
