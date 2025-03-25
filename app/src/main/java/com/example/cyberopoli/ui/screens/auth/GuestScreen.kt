@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.cyberopoli.R
+import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.auth.AuthButton
 import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 import com.example.cyberopoli.ui.composables.auth.AuthTemplate
@@ -24,7 +25,7 @@ fun GuestScreen(navController: NavController) {
         AuthButton(
             text = stringResource(R.string.enter).uppercase(),
             onClick = {
-                // TODO
+                if (username.value.isNotEmpty()) navController.navigate(CyberopoliRoute.Scan)
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )

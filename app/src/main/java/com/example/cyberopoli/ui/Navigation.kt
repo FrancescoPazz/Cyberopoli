@@ -8,6 +8,7 @@ import com.example.cyberopoli.ui.screens.auth.AuthScreen
 import com.example.cyberopoli.ui.screens.auth.GuestScreen
 import com.example.cyberopoli.ui.screens.auth.LoginScreen
 import com.example.cyberopoli.ui.screens.auth.SignUpScreen
+import com.example.cyberopoli.ui.screens.scan.ScanScreen
 import kotlinx.serialization.Serializable
 
 sealed interface CyberopoliRoute {
@@ -15,6 +16,7 @@ sealed interface CyberopoliRoute {
     @Serializable data object Login : CyberopoliRoute
     @Serializable data object SignUp : CyberopoliRoute
     @Serializable data object Guest : CyberopoliRoute
+    @Serializable data object Scan : CyberopoliRoute
 }
 
 @Composable
@@ -34,6 +36,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
         }
         composable<CyberopoliRoute.Guest> {
             GuestScreen(navController)
+        }
+        composable<CyberopoliRoute.Scan> {
+            ScanScreen(navController)
         }
     }
 }
