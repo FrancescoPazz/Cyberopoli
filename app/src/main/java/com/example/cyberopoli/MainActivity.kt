@@ -1,10 +1,12 @@
 package com.example.cyberopoli
 
+import android.Manifest
 import android.app.AppOpsManager
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -12,6 +14,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.cyberopoli.ui.CyberopoliNavGraph
 import com.example.cyberopoli.ui.theme.CyberopoliTheme
@@ -20,6 +24,7 @@ import java.util.Calendar
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestCameraPermission()
 
         if (!hasUsageStatsPermission(this)) {
             requestUsageStatsPermission()
@@ -39,6 +44,13 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 CyberopoliNavGraph(navController)
             }
+        }
+    }
+
+    private fun requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 101)
         }
     }
 
