@@ -13,4 +13,6 @@
     <string name="password">Password</string>
     <string name="password_confirm">Password Confirm</string>
     <string name="scan">Scan</string>
+    <string name="invalid_code">Invalid Code</string>
+    <string name="qrcode_hint">Scan the QR Code to access the lobby.</string>
 </resources>

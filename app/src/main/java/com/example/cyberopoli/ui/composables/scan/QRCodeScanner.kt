@@ -24,7 +24,7 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     AndroidView(
-        modifier = Modifier.size(250.dp, 250.dp).padding(16.dp),
+        modifier = Modifier.size(250.dp).padding(16.dp),
         factory = { ctx ->
             val previewView = PreviewView(ctx)
             val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)

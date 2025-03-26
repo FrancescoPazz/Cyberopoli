@@ -14,4 +14,6 @@
     <string name="password">Password</string>
     <string name="password_confirm">Conferma password</string>
     <string name="scan">Scansione</string>
+    <string name="invalid_code">Codice non valido</string>
+    <string name="qrcode_hint">Inquadra il QR Code per accedere alla lobby</string>
 </resources>
