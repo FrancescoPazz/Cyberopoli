@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,7 +16,7 @@ import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.auth.AuthButton
 import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
-import com.example.cyberopoli.ui.composables.auth.AuthTemplate
+import com.example.cyberopoli.ui.composables.auth.AuthCard
 
 @Composable
 fun SignUpScreen(navController: NavController) {
@@ -30,12 +28,11 @@ fun SignUpScreen(navController: NavController) {
     val password = remember { mutableStateOf("") }
     val passwordConfirm = remember { mutableStateOf("") }
 
-    AuthTemplate(navController = navController) {
+    AuthCard(navController = navController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AuthOutlinedTextField(

@@ -9,14 +9,14 @@ import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.auth.AuthButton
 import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
-import com.example.cyberopoli.ui.composables.auth.AuthTemplate
+import com.example.cyberopoli.ui.composables.auth.AuthCard
 
 @Composable
 fun LoginScreen(navController: NavController) {
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
-    AuthTemplate(navController = navController) {
+    AuthCard(navController = navController) {
         AuthOutlinedTextField(
             value = username,
             placeholder = stringResource(R.string.username),

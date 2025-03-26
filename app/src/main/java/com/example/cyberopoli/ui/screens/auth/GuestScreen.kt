@@ -11,13 +11,13 @@ import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.auth.AuthButton
 import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
-import com.example.cyberopoli.ui.composables.auth.AuthTemplate
+import com.example.cyberopoli.ui.composables.auth.AuthCard
 
 @Composable
 fun GuestScreen(navController: NavController) {
     val username = remember { mutableStateOf("") }
 
-    AuthTemplate(navController) {
+    AuthCard(navController) {
         AuthOutlinedTextField(
             value = username,
             placeholder = stringResource(R.string.username),
