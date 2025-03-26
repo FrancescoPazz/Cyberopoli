@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.AppBar
+import com.example.cyberopoli.ui.theme.CyberopoliTheme
 
 @Composable
 fun AuthTemplate(
@@ -28,7 +30,8 @@ fun AuthTemplate(
     cardContent: @Composable ColumnScope.() -> Unit
 ) {
     Scaffold(
-        topBar = { AppBar(navController) }
+        topBar = { AppBar(navController) },
+        containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -41,8 +44,8 @@ fun AuthTemplate(
                 text = toUpperCase(stringResource(R.string.app_name)),
                 fontSize = 50,
                 fontWeight = FontWeight.ExtraBold,
-                textColor = Color.White,
-                shadowColor = Color(0xFF0D47A1),
+                textColor = MaterialTheme.colorScheme.surface,
+                shadowColor = MaterialTheme.colorScheme.secondary,
                 offsetX = 4,
                 offsetY = 4
             )
@@ -51,7 +54,7 @@ fun AuthTemplate(
 
             Card(
                 modifier = Modifier.padding(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFEEEEEE))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),

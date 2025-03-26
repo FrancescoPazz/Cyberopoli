@@ -4,11 +4,8 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
     primary = DarkPrimary,
@@ -16,6 +13,10 @@ private val DarkColorScheme = darkColorScheme(
     secondary = DarkSecondary,
     onSecondary = DarkOnSecondary,
     tertiary = DarkTertiary,
+    onTertiary = DarkOnTertiary,
+    surface = DarkSurface,
+
+    background = DarkBackGround
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -24,6 +25,10 @@ private val LightColorScheme = lightColorScheme(
     secondary = LightSecondary,
     onSecondary = LightOnSecondary,
     tertiary = LightTertiary,
+    onTertiary = LightOnTertiary,
+    surface = LightSurface,
+
+    background = LightBackGround
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -45,8 +50,7 @@ fun CyberopoliTheme(
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (darkTheme) DarkColorScheme else LightColorScheme
         }
 
         darkTheme -> DarkColorScheme

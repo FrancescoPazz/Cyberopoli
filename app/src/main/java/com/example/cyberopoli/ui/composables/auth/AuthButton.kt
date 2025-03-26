@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,8 +27,8 @@ fun AuthButton(
             .padding(8.dp)
             .shadow(5.dp, MaterialTheme.shapes.medium),
         colors = ButtonDefaults.buttonColors(
-            contentColor = Color(0xFF8CFF00),
-            containerColor = Color(0xFF0D1E37)
+            contentColor = MaterialTheme.colorScheme.tertiary,
+            containerColor = MaterialTheme.colorScheme.onTertiary
         )
     ) {
         Text(

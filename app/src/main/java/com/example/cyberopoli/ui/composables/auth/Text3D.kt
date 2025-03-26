@@ -2,6 +2,7 @@ package com.example.cyberopoli.ui.composables.auth
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,8 +17,8 @@ fun Text3D(
     modifier: Modifier = Modifier,
     fontSize: Int = 48,
     fontWeight: FontWeight = FontWeight.Bold,
-    textColor: Color = Color.White,
-    shadowColor: Color = Color.Gray,
+    textColor: Color = MaterialTheme.colorScheme.surface,
+    shadowColor: Color = MaterialTheme.colorScheme.background,
     offsetX: Int = 3,
     offsetY: Int = 3
 ) {
