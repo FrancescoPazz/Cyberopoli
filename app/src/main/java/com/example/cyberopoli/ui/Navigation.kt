@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.cyberopoli.ui.screens.ar.ARScreen
 import com.example.cyberopoli.ui.screens.auth.AuthScreen
 import com.example.cyberopoli.ui.screens.auth.GuestScreen
 import com.example.cyberopoli.ui.screens.auth.LoginScreen
@@ -17,6 +18,7 @@ sealed interface CyberopoliRoute {
     @Serializable data object SignUp : CyberopoliRoute
     @Serializable data object Guest : CyberopoliRoute
     @Serializable data object Scan : CyberopoliRoute
+    @Serializable data object ARScreen : CyberopoliRoute
 }
 
 @Composable
@@ -39,6 +41,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
         }
         composable<CyberopoliRoute.Scan> {
             ScanScreen(navController)
+        }
+        composable<CyberopoliRoute.ARScreen> {
+            ARScreen(navController)
         }
     }
 }

@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.ktor.serialization.kotlinx.json)
@@ -60,6 +61,9 @@ dependencies {
     implementation(libs.androidx.camera.mlkit.vision)
     implementation(libs.androidx.camera.extensions)
     implementation(libs.barcode.scanning)
+    implementation(libs.arsceneview)
+    implementation(libs.core)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -51,7 +51,7 @@ fun ScanScreen(navController: NavHostController) {
                     QRCodeScanner { value ->
                         scannedValue = value
                         if (scannedValue.contains(appName)) {
-                            navController.navigate(CyberopoliRoute.Auth)
+                            navController.navigate(CyberopoliRoute.ARScreen)
                         } else {
                             Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
                         }
