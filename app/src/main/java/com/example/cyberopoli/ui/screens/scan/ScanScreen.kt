@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
-import com.example.cyberopoli.ui.composables.AppBar
+import com.example.cyberopoli.ui.composables.BottomBar
+import com.example.cyberopoli.ui.composables.TopBar
 import com.example.cyberopoli.ui.composables.auth.Text3D
 
 @Composable
@@ -33,7 +34,10 @@ fun ScanScreen(navController: NavHostController) {
     var scannedValue by remember { mutableStateOf("") }
 
     Scaffold (
-        topBar = { AppBar(navController) },
+        topBar = { TopBar(navController) },
+        bottomBar = {
+            if (/* utente loggato */ true)
+                BottomBar(navController) },
         content = { paddingValues ->
             Box(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),

@@ -25,7 +25,11 @@ fun GuestScreen(navController: NavController) {
         AuthButton(
             text = stringResource(R.string.enter).uppercase(),
             onClick = {
-                if (username.value.isNotEmpty()) navController.navigate(CyberopoliRoute.Scan)
+                if (username.value.isNotEmpty())
+                    navController.navigate(CyberopoliRoute.Home) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )

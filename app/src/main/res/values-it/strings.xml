@@ -16,4 +16,11 @@
     <string name="scan">Scansione</string>
     <string name="invalid_code">Codice non valido</string>
     <string name="qrcode_hint">Inquadra il QR Code per accedere alla lobby</string>
+    <string name="settings">Impostazioni</string>
+    <string name="old_password">Vecchia Password</string>
+    <string name="change_password">Cambia Password</string>
+    <string name="notifications">Notifiche</string>
+    <string name="enable_notifications">Abilita le notifiche</string>
+    <string name="dark">Scuro</string>
+    <string name="light">Chiaro</string>
 </resources>

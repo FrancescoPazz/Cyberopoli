@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.cyberopoli.R
-import com.example.cyberopoli.ui.composables.AppBar
+import com.example.cyberopoli.ui.composables.TopBar
 
 @Composable
 fun AuthCard(
@@ -31,7 +31,7 @@ fun AuthCard(
     cardContent: @Composable ColumnScope.() -> Unit
 ) {
     Scaffold(
-        topBar = { AppBar(navController) },
+        topBar = { TopBar(navController) },
         containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
         Column(
