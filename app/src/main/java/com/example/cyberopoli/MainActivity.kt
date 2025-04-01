@@ -14,10 +14,15 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.cyberopoli.ui.CyberopoliNavGraph
+import com.example.cyberopoli.ui.screens.settings.Theme
 import com.example.cyberopoli.ui.theme.CyberopoliTheme
 import java.util.Calendar
 
@@ -40,9 +45,17 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            CyberopoliTheme {
-                val navController = rememberNavController()
-                CyberopoliNavGraph(navController)
+            val currentTheme = remember { mutableStateOf(Theme.System)}
+            val navController = rememberNavController()
+            CyberopoliTheme(darkTheme = when(currentTheme.value) {
+                Theme.Light -> false
+                Theme.Dark -> true
+                Theme.System -> isSystemInDarkTheme()
+            }) {
+                CyberopoliNavGraph(navController,
+                    onThemeChange = { newTheme ->
+                        currentTheme.value = newTheme
+                    })
             }
         }
     }

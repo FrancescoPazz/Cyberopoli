@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -17,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,10 +35,14 @@ import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
 
+enum class Theme { Light, Dark, System }
+
 @Composable
 fun SettingScreen(
-    navController: NavController
+    navController: NavController,
+    onThemeChange: (Theme) -> Unit
 ) {
+    var selectedTheme by remember { mutableStateOf(Theme.System) }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -54,15 +61,35 @@ fun SettingScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(text = "Theme", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(onClick = { /* TODO */ }) {
-                        Text(stringResource(R.string.light))
-                    }
-                    Button(onClick = { /* TODO */ }) {
-                        Text(stringResource(R.string.dark))
+                Theme.entries.forEach { theme ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                            .height(56.dp)
+                            .selectable(
+                                selected = theme == selectedTheme,
+                                onClick = {
+                                    selectedTheme = theme
+                                    onThemeChange(theme)
+                                  },
+                                role = Role.RadioButton
+                            )
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        RadioButton(
+                            selected = theme == selectedTheme,
+                            onClick = null
+                        )
+                        Text(
+                            text = when (theme) {
+                                Theme.Light -> stringResource(R.string.light)
+                                Theme.Dark -> stringResource(R.string.dark)
+                                Theme.System -> stringResource(R.string.system)
+                            },
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
                     }
                 }
 

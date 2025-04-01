@@ -22,4 +22,5 @@
     <string name="enable_notifications">Enable Notifications</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
+    <string name="system">System</string>
 </resources>
