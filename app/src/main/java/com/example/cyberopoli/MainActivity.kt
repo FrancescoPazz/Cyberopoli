@@ -18,6 +18,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val currentTheme = remember { mutableStateOf(Theme.System)}
+            val currentTheme = rememberSaveable { mutableStateOf(Theme.System)}
             val navController = rememberNavController()
             CyberopoliTheme(darkTheme = when(currentTheme.value) {
                 Theme.Light -> false

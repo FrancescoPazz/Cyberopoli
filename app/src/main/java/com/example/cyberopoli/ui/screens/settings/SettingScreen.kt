@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +43,7 @@ fun SettingScreen(
     navController: NavController,
     onThemeChange: (Theme) -> Unit
 ) {
-    var selectedTheme by remember { mutableStateOf(Theme.System) }
+    var selectedTheme by rememberSaveable { mutableStateOf(Theme.System) }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
