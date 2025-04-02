@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.cyberopoli.util.Utils
+import com.example.cyberopoli.util.ARHelper
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
 import com.google.ar.core.TrackingFailureReason
@@ -81,7 +81,7 @@ fun ARScreen(navController: NavController) {
                         hitTestResult?.firstOrNull {
                             it.isValid(depthPoint = false, point = false)
                         }?.createAnchorOrNull()?.let { hitAnchor ->
-                            val nodeModel = Utils.createAnchorNode(
+                            val nodeModel = ARHelper.createAnchorNode(
                                 engine = engine,
                                 modelLoader = modelLoader,
                                 materialLoader = materialLoader,
@@ -117,7 +117,7 @@ fun ARScreen(navController: NavController) {
                     ?.firstOrNull {
                         it.isValid(depthPoint = false, point = false)
                     }?.createAnchorOrNull()?.let { centerAnchor ->
-                        val nuggetNode = Utils.createAnchorNode(
+                        val nuggetNode = ARHelper.createAnchorNode(
                             engine = engine,
                             modelLoader = modelLoader,
                             materialLoader = materialLoader,

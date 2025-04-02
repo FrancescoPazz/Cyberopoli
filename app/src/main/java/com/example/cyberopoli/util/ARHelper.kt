@@ -10,7 +10,7 @@ import io.github.sceneview.model.ModelInstance
 import io.github.sceneview.node.CubeNode
 import io.github.sceneview.node.ModelNode
 
-object Utils {
+object ARHelper {
     fun createAnchorNode(
         engine: Engine,
         modelLoader: ModelLoader,
