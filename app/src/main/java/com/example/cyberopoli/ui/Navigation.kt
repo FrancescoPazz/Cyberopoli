@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.cyberopoli.data.models.Theme
 import com.example.cyberopoli.ui.screens.ar.ARScreen
 import com.example.cyberopoli.ui.screens.auth.AuthScreen
 import com.example.cyberopoli.ui.screens.auth.GuestScreen
@@ -12,7 +13,6 @@ import com.example.cyberopoli.ui.screens.auth.SignUpScreen
 import com.example.cyberopoli.ui.screens.home.HomeScreen
 import com.example.cyberopoli.ui.screens.scan.ScanScreen
 import com.example.cyberopoli.ui.screens.settings.SettingScreen
-import com.example.cyberopoli.ui.screens.settings.Theme
 import com.example.cyberopoli.ui.screens.settings.ThemeState
 import kotlinx.serialization.Serializable
 

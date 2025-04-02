@@ -2,6 +2,8 @@
 agp = "8.7.3"
 barcodeScanning = "17.3.0"
 cameraCamera2 = "1.5.0-alpha06"
+datastorePreferences = "1.1.4"
+koinAndroidxCompose = "4.0.2"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -45,6 +47,8 @@ arsceneview = { module = "io.github.sceneview:arsceneview", version.ref = "arsce
 core = { group = "com.google.ar", name = "core", version.ref = "core" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

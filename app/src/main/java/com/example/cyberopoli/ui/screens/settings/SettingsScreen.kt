@@ -32,10 +32,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.cyberopoli.R
+import com.example.cyberopoli.data.models.Theme
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
-
-enum class Theme { Light, Dark, System }
 
 @Composable
 fun SettingScreen(
