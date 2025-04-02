@@ -14,17 +14,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.example.cyberopoli.data.models.Theme
 import com.example.cyberopoli.ui.CyberopoliNavGraph
-import com.example.cyberopoli.ui.screens.settings.SettingsViewModel
-import com.example.cyberopoli.ui.theme.CyberopoliTheme
-import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
@@ -46,21 +39,10 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val settingsViewModel = koinViewModel<SettingsViewModel>()
-            val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
-
             val navController = rememberNavController()
-            CyberopoliTheme(darkTheme = when(themeState.theme) {
-                Theme.Light -> false
-                Theme.Dark -> true
-                Theme.System -> isSystemInDarkTheme()
-            }) {
-                CyberopoliNavGraph(
-                    navController,
-                    themeState,
-                    settingsViewModel::changeTheme
-                )
-            }
+            CyberopoliNavGraph(
+                navController
+            )
         }
     }
 
