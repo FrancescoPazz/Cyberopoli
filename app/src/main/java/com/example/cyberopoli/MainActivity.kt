@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.navigation.compose.rememberNavController
 import com.example.cyberopoli.ui.CyberopoliNavGraph
+import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 import com.example.cyberopoli.util.PermissionHandler
 import com.example.cyberopoli.util.UsageStatsHelper
 
@@ -29,9 +31,11 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+
+        val authViewModel : AuthViewModel by viewModels()
         setContent {
             val navController = rememberNavController()
-            CyberopoliNavGraph(navController = navController)
+            CyberopoliNavGraph(navController = navController, authViewModel = authViewModel)
         }
     }
 }

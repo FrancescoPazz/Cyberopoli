@@ -35,12 +35,14 @@ import com.example.cyberopoli.R
 import com.example.cyberopoli.data.models.Theme
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
+import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 
 @Composable
 fun SettingScreen(
     navController: NavController,
     themeState: ThemeState,
-    onThemeChange: (Theme) -> Unit
+    onThemeChange: (Theme) -> Unit,
+    authViewModel: AuthViewModel
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
@@ -136,6 +138,13 @@ fun SettingScreen(
                     modifier = Modifier.align(Alignment.End)
                 ) {
                     Text(stringResource(R.string.change_password))
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { authViewModel.logout() },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(stringResource(R.string.logout))
                 }
             }
         }

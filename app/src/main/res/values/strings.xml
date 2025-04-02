@@ -23,4 +23,7 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="system">System</string>
+    <string name="login_failed">Login Failed</string>
+    <string name="empty_fields">Email or password can\'t be empty</string>
+    <string name="logout">Logout</string>
 </resources>

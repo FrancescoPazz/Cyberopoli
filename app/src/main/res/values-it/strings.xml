@@ -24,4 +24,7 @@
     <string name="dark">Scuro</string>
     <string name="light">Chiaro</string>
     <string name="system">Sistema</string>
+    <string name="login_failed">Accesso fallito</string>
+    <string name="empty_fields">L\'email o la password non possono essere vuoti</string>
+    <string name="logout">Disconnettiti</string>
 </resources>

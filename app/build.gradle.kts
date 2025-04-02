@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -67,6 +68,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.runtime.livedata)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -3,6 +3,7 @@ package com.example.cyberopoli.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,6 +11,8 @@ import androidx.navigation.compose.composable
 import com.example.cyberopoli.data.models.Theme
 import com.example.cyberopoli.ui.screens.ar.ARScreen
 import com.example.cyberopoli.ui.screens.auth.AuthScreen
+import com.example.cyberopoli.ui.screens.auth.AuthState
+import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 import com.example.cyberopoli.ui.screens.auth.GuestScreen
 import com.example.cyberopoli.ui.screens.auth.LoginScreen
 import com.example.cyberopoli.ui.screens.auth.SignUpScreen
@@ -33,9 +36,11 @@ sealed interface CyberopoliRoute {
 }
 
 @Composable
-fun CyberopoliNavGraph(navController: NavHostController) {
+fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
+    val authState = authViewModel.authState.observeAsState()
+
 
     CyberopoliTheme(darkTheme = when(themeState.theme) {
         Theme.Light -> false
@@ -44,16 +49,16 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     }) {
         NavHost (
             navController = navController,
-            startDestination = CyberopoliRoute.Auth
+            startDestination = if (authState.value == AuthState.Authenticated) CyberopoliRoute.Home else CyberopoliRoute.Auth,
         ) {
             composable<CyberopoliRoute.Auth> {
                 AuthScreen(navController)
             }
             composable<CyberopoliRoute.Login> {
-                LoginScreen(navController)
+                LoginScreen(navController, authViewModel)
             }
             composable<CyberopoliRoute.SignUp> {
-                SignUpScreen(navController)
+                SignUpScreen(navController, authViewModel)
             }
             composable<CyberopoliRoute.Guest> {
                 GuestScreen(navController)
@@ -65,7 +70,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 ARScreen(navController)
             }
             composable<CyberopoliRoute.Settings> {
-                SettingScreen(navController, themeState, settingsViewModel::changeTheme)
+                SettingScreen(navController, themeState, settingsViewModel::changeTheme, authViewModel)
             }
             composable<CyberopoliRoute.Home> {
                 HomeScreen(navController)
