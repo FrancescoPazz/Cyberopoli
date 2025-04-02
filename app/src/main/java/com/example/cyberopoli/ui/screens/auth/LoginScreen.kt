@@ -26,7 +26,14 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
 
     LaunchedEffect(authState.value) {
         when(authState.value){
-            is AuthState.Authenticated -> navController.navigate(CyberopoliRoute.Home)
+            is AuthState.Authenticated -> {
+                navController.navigate(CyberopoliRoute.Home) {
+                    popUpTo(CyberopoliRoute.Login) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            }
             is AuthState.Error -> Toast.makeText(context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
             else -> Unit
