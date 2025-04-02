@@ -16,13 +16,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.cyberopoli.ui.CyberopoliNavGraph
+import com.example.cyberopoli.ui.screens.settings.SettingsViewModel
 import com.example.cyberopoli.ui.screens.settings.Theme
 import com.example.cyberopoli.ui.theme.CyberopoliTheme
 import java.util.Calendar
@@ -46,17 +46,20 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val currentTheme = rememberSaveable { mutableStateOf(Theme.System)}
+            val settingsViewModel = viewModel<SettingsViewModel>()
+            val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
+
             val navController = rememberNavController()
-            CyberopoliTheme(darkTheme = when(currentTheme.value) {
+            CyberopoliTheme(darkTheme = when(themeState.theme) {
                 Theme.Light -> false
                 Theme.Dark -> true
                 Theme.System -> isSystemInDarkTheme()
             }) {
-                CyberopoliNavGraph(navController,
-                    onThemeChange = { newTheme ->
-                        currentTheme.value = newTheme
-                    })
+                CyberopoliNavGraph(
+                    navController,
+                    themeState,
+                    settingsViewModel::changeTheme
+                )
             }
         }
     }

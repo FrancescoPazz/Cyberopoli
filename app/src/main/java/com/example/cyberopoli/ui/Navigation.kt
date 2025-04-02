@@ -13,6 +13,7 @@ import com.example.cyberopoli.ui.screens.home.HomeScreen
 import com.example.cyberopoli.ui.screens.scan.ScanScreen
 import com.example.cyberopoli.ui.screens.settings.SettingScreen
 import com.example.cyberopoli.ui.screens.settings.Theme
+import com.example.cyberopoli.ui.screens.settings.ThemeState
 import kotlinx.serialization.Serializable
 
 sealed interface CyberopoliRoute {
@@ -28,6 +29,7 @@ sealed interface CyberopoliRoute {
 
 @Composable
 fun CyberopoliNavGraph(navController: NavHostController,
+                       themeState: ThemeState,
                        onThemeChange: (Theme) -> Unit = {}) {
     NavHost (
         navController = navController,
@@ -52,7 +54,7 @@ fun CyberopoliNavGraph(navController: NavHostController,
             ARScreen(navController)
         }
         composable<CyberopoliRoute.Settings> {
-            SettingScreen(navController, onThemeChange)
+            SettingScreen(navController, themeState, onThemeChange)
         }
         composable<CyberopoliRoute.Home> {
             HomeScreen(navController)

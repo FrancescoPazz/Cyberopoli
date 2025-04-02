@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.barcode.scanning)
     implementation(libs.arsceneview)
     implementation(libs.core)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

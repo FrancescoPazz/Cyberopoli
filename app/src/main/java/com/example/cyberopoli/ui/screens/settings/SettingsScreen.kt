@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,9 +40,9 @@ enum class Theme { Light, Dark, System }
 @Composable
 fun SettingScreen(
     navController: NavController,
+    themeState: ThemeState,
     onThemeChange: (Theme) -> Unit
 ) {
-    var selectedTheme by rememberSaveable { mutableStateOf(Theme.System) }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -69,9 +68,8 @@ fun SettingScreen(
                         modifier = Modifier.fillMaxWidth()
                             .height(56.dp)
                             .selectable(
-                                selected = theme == selectedTheme,
+                                selected = theme == themeState.theme,
                                 onClick = {
-                                    selectedTheme = theme
                                     onThemeChange(theme)
                                   },
                                 role = Role.RadioButton
@@ -79,7 +77,7 @@ fun SettingScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         RadioButton(
-                            selected = theme == selectedTheme,
+                            selected = theme == themeState.theme,
                             onClick = null
                         )
                         Text(
