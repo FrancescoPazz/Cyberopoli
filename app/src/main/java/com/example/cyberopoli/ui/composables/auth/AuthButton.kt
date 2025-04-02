@@ -26,8 +26,7 @@ fun AuthButton(
             .width(235.dp)
             .padding(8.dp),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 4.dp
+            defaultElevation = 8.dp, pressedElevation = 4.dp
         ),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
@@ -36,10 +35,8 @@ fun AuthButton(
         enabled = enabled,
     ) {
         Text(
-            text = text,
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+            text = text, style = TextStyle(
+                fontSize = 18.sp, fontWeight = FontWeight.Bold
             )
         )
     }

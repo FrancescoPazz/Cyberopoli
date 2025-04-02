@@ -28,8 +28,7 @@ import com.example.cyberopoli.ui.composables.home.StatCard
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    Scaffold(
-        topBar = { TopBar(navController, title = stringResource(R.string.home)) },
+    Scaffold(topBar = { TopBar(navController, title = stringResource(R.string.home)) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(
@@ -41,8 +40,7 @@ fun HomeScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = "Score Chart",
-                    style = MaterialTheme.typography.titleMedium
+                    text = "Score Chart", style = MaterialTheme.typography.titleMedium
                 )
                 Box(
                     modifier = Modifier
@@ -55,8 +53,7 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 Text(
-                    text = "Account Statistics",
-                    style = MaterialTheme.typography.titleMedium
+                    text = "Account Statistics", style = MaterialTheme.typography.titleMedium
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -89,7 +86,6 @@ fun HomeScreen(navController: NavController) {
                     )
                 }
             }
-        }
-    )
+        })
 }
 

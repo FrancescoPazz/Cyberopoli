@@ -17,8 +17,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StatCard(scoreTitle: String, scoreValue: String, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(4.dp)
+        modifier = modifier, elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -27,13 +26,11 @@ fun StatCard(scoreTitle: String, scoreValue: String, modifier: Modifier = Modifi
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = scoreTitle,
-                style = MaterialTheme.typography.bodyMedium
+                text = scoreTitle, style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = scoreValue,
-                style = MaterialTheme.typography.headlineMedium
+                text = scoreValue, style = MaterialTheme.typography.headlineMedium
             )
         }
     }

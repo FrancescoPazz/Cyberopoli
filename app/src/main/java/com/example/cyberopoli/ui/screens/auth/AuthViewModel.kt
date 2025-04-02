@@ -8,7 +8,7 @@ import com.example.cyberopoli.R
 import com.google.firebase.auth.FirebaseAuth
 
 class AuthViewModel : ViewModel() {
-    private val auth : FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
@@ -32,12 +32,13 @@ class AuthViewModel : ViewModel() {
         }
 
         _authState.value = AuthState.Loading
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _authState.value = AuthState.Authenticated
                 } else {
-                    _authState.value = AuthState.Error(task.exception?.message ?: context.getString(R.string.login_failed))
+                    _authState.value = AuthState.Error(
+                        task.exception?.message ?: context.getString(R.string.login_failed)
+                    )
                 }
             }
     }
@@ -49,12 +50,13 @@ class AuthViewModel : ViewModel() {
         }
 
         _authState.value = AuthState.Loading
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _authState.value = AuthState.Authenticated
                 } else {
-                    _authState.value = AuthState.Error(task.exception?.message ?: context.getString(R.string.login_failed))
+                    _authState.value = AuthState.Error(
+                        task.exception?.message ?: context.getString(R.string.login_failed)
+                    )
                 }
             }
     }
@@ -65,7 +67,7 @@ class AuthViewModel : ViewModel() {
     }
 }
 
-sealed class AuthState{
+sealed class AuthState {
     object Authenticated : AuthState()
     object Unauthenticated : AuthState()
     object Loading : AuthState()

@@ -25,14 +25,22 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 sealed interface CyberopoliRoute {
-    @Serializable data object Auth : CyberopoliRoute
-    @Serializable data object Login : CyberopoliRoute
-    @Serializable data object SignUp : CyberopoliRoute
-    @Serializable data object Guest : CyberopoliRoute
-    @Serializable data object Scan : CyberopoliRoute
-    @Serializable data object ARScreen : CyberopoliRoute
-    @Serializable data object Settings : CyberopoliRoute
-    @Serializable data object Home : CyberopoliRoute
+    @Serializable
+    data object Auth : CyberopoliRoute
+    @Serializable
+    data object Login : CyberopoliRoute
+    @Serializable
+    data object SignUp : CyberopoliRoute
+    @Serializable
+    data object Guest : CyberopoliRoute
+    @Serializable
+    data object Scan : CyberopoliRoute
+    @Serializable
+    data object ARScreen : CyberopoliRoute
+    @Serializable
+    data object Settings : CyberopoliRoute
+    @Serializable
+    data object Home : CyberopoliRoute
 }
 
 @Composable
@@ -42,12 +50,14 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
     val authState = authViewModel.authState.observeAsState()
 
 
-    CyberopoliTheme(darkTheme = when(themeState.theme) {
-        Theme.Light -> false
-        Theme.Dark -> true
-        Theme.System -> isSystemInDarkTheme()
-    }) {
-        NavHost (
+    CyberopoliTheme(
+        darkTheme = when (themeState.theme) {
+            Theme.Light -> false
+            Theme.Dark -> true
+            Theme.System -> isSystemInDarkTheme()
+        }
+    ) {
+        NavHost(
             navController = navController,
             startDestination = if (authState.value == AuthState.Authenticated) CyberopoliRoute.Home else CyberopoliRoute.Auth,
         ) {
@@ -70,7 +80,12 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 ARScreen(navController)
             }
             composable<CyberopoliRoute.Settings> {
-                SettingScreen(navController, themeState, settingsViewModel::changeTheme, authViewModel)
+                SettingScreen(
+                    navController,
+                    themeState,
+                    settingsViewModel::changeTheme,
+                    authViewModel
+                )
             }
             composable<CyberopoliRoute.Home> {
                 HomeScreen(navController)

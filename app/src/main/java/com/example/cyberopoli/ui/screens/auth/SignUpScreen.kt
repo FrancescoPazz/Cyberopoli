@@ -20,8 +20,8 @@ import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.auth.AuthButton
-import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 import com.example.cyberopoli.ui.composables.auth.AuthCard
+import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 
 @Composable
 fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -46,9 +46,9 @@ fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel) {
                     launchSingleTop = true
                 }
             }
+
             is AuthState.Error -> Toast.makeText(
-                context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+                context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
             ).show()
 
             else -> Unit
@@ -102,7 +102,8 @@ fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel) {
                 text = stringResource(R.string.enter).uppercase(),
                 onClick = {
                     authViewModel.signUp(context, email.value, password.value)
-                }, enabled = authState.value != AuthState.Loading,
+                },
+                enabled = authState.value != AuthState.Loading,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }

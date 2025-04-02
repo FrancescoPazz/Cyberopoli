@@ -10,8 +10,8 @@ import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.auth.AuthButton
-import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 import com.example.cyberopoli.ui.composables.auth.AuthCard
+import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 
 @Composable
 fun GuestScreen(navController: NavController) {
@@ -23,15 +23,12 @@ fun GuestScreen(navController: NavController) {
             placeholder = stringResource(R.string.username),
         )
         AuthButton(
-            text = stringResource(R.string.enter).uppercase(),
-            onClick = {
-                if (username.value.isNotEmpty())
-                    navController.navigate(CyberopoliRoute.Scan) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            text = stringResource(R.string.enter).uppercase(), onClick = {
+                if (username.value.isNotEmpty()) navController.navigate(CyberopoliRoute.Scan) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }, modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
 }

@@ -34,61 +34,49 @@ import com.example.cyberopoli.ui.CyberopoliRoute
 @Composable
 fun TopBar(navController: NavController, title: String = "") {
     val currentRoute = navController.currentBackStackEntry?.destination?.route
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                title,
-                fontWeight = FontWeight.Medium
-            )
-        },
-        navigationIcon = {
-            if (navController.previousBackStackEntry != null) {
-                IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
-                }
-            }
-        },
-        actions = {
-            if (currentRoute != CyberopoliRoute.Settings.toString()) {
-                IconButton(onClick = {
-                    navController.navigate(CyberopoliRoute.Settings)
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = stringResource(R.string.settings)
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
+    CenterAlignedTopAppBar(title = {
+        Text(
+            title, fontWeight = FontWeight.Medium
         )
+    }, navigationIcon = {
+        if (navController.previousBackStackEntry != null) {
+            IconButton(onClick = { navController.navigateUp() }) {
+                Icon(
+                    Icons.AutoMirrored.Outlined.ArrowBack,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
+        }
+    }, actions = {
+        if (currentRoute != CyberopoliRoute.Settings.toString()) {
+            IconButton(onClick = {
+                navController.navigate(CyberopoliRoute.Settings)
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = stringResource(R.string.settings)
+                )
+            }
+        }
+    }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        containerColor = MaterialTheme.colorScheme.background
+    )
     )
 }
 
 data class BottomNavItem(
-    val name: String,
-    val route: CyberopoliRoute,
-    val icon: ImageVector
+    val name: String, val route: CyberopoliRoute, val icon: ImageVector
 )
 
 @Composable
 fun BottomBar(navController: NavController) {
     val bottomNavItems = listOf(
         BottomNavItem(
-            name = "Home",
-            route = CyberopoliRoute.Home,
-            icon = Icons.Filled.Home
-        ),
-        BottomNavItem(
-            name = "Scan",
-            route = CyberopoliRoute.Scan,
-            icon = Icons.Filled.Image
-        ),
-        BottomNavItem(
-            name = "Settings",
-            route = CyberopoliRoute.Settings,
-            icon = Icons.Filled.Settings
+            name = "Home", route = CyberopoliRoute.Home, icon = Icons.Filled.Home
+        ), BottomNavItem(
+            name = "Scan", route = CyberopoliRoute.Scan, icon = Icons.Filled.Image
+        ), BottomNavItem(
+            name = "Settings", route = CyberopoliRoute.Settings, icon = Icons.Filled.Settings
         )
     )
 
@@ -107,8 +95,12 @@ fun BottomBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             bottomNavItems.forEach { item ->
-                NavigationBarItem(
-                    icon = { Icon(imageVector = item.icon, contentDescription = item.name) },
+                NavigationBarItem(icon = {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.name
+                    )
+                },
                     label = { Text(text = item.name) },
                     selected = currentRoute == item.route.toString(),
                     onClick = {
@@ -118,8 +110,7 @@ fun BottomBar(navController: NavController) {
                                 launchSingleTop = true
                             }
                         }
-                    }
-                )
+                    })
             }
         }
     }

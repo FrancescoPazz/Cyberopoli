@@ -23,44 +23,48 @@ import com.google.mlkit.vision.common.InputImage
 fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    AndroidView(
-        modifier = Modifier.size(250.dp).padding(16.dp),
-        factory = { ctx ->
-            val previewView = PreviewView(ctx)
-            val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+    AndroidView(modifier = Modifier
+        .size(250.dp)
+        .padding(16.dp), factory = { ctx ->
+        val previewView = PreviewView(ctx)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
 
-            cameraProviderFuture.addListener({
-                val cameraProvider = cameraProviderFuture.get()
-                val preview = Preview.Builder().build().apply {
-                    surfaceProvider = previewView.surfaceProvider
-                }
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+            val preview = Preview.Builder().build().apply {
+                surfaceProvider = previewView.surfaceProvider
+            }
 
-                val imageAnalysis = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
 
-                imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ctx)) { imageProxy ->
-                    imageProxy.image?.let { mediaImage ->
-                        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                        BarcodeScanning.getClient().process(image)
-                            .addOnSuccessListener { barcodes ->
-                                barcodes.firstOrNull()?.rawValue?.let { value ->
-                                    onQRCodeScanned(value)
-                                }
+            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ctx)) { imageProxy ->
+                imageProxy.image?.let { mediaImage ->
+                    val image = InputImage.fromMediaImage(
+                        mediaImage,
+                        imageProxy.imageInfo.rotationDegrees
+                    )
+                    BarcodeScanning.getClient().process(image).addOnSuccessListener { barcodes ->
+                            barcodes.firstOrNull()?.rawValue?.let { value ->
+                                onQRCodeScanned(value)
                             }
-                            .addOnCompleteListener { imageProxy.close() }
-                    } ?: imageProxy.close()
-                }
+                        }.addOnCompleteListener { imageProxy.close() }
+                } ?: imageProxy.close()
+            }
 
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                try {
-                    cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalysis)
-                } catch (exc: Exception) {
-                    throw exc
-                }
-            }, ContextCompat.getMainExecutor(ctx))
-            previewView
-        }
-    )
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageAnalysis
+                )
+            } catch (exc: Exception) {
+                throw exc
+            }
+        }, ContextCompat.getMainExecutor(ctx))
+        previewView
+    })
 }

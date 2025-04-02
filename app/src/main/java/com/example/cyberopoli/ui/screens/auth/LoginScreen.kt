@@ -13,8 +13,8 @@ import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.auth.AuthButton
-import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 import com.example.cyberopoli.ui.composables.auth.AuthCard
+import com.example.cyberopoli.ui.composables.auth.AuthOutlinedTextField
 
 @Composable
 fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -25,7 +25,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(authState.value) {
-        when(authState.value){
+        when (authState.value) {
             is AuthState.Authenticated -> {
                 navController.navigate(CyberopoliRoute.Home) {
                     popUpTo(CyberopoliRoute.Login) {
@@ -34,8 +34,11 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                     launchSingleTop = true
                 }
             }
-            is AuthState.Error -> Toast.makeText(context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+
+            is AuthState.Error -> Toast.makeText(
+                context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+            ).show()
+
             else -> Unit
         }
     }
@@ -53,11 +56,9 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
         )
 
         AuthButton(
-            text = stringResource(R.string.enter).uppercase(),
-            onClick = {
+            text = stringResource(R.string.enter).uppercase(), onClick = {
                 authViewModel.login(context, email.value, password.value)
-            },
-            enabled = authState.value != AuthState.Loading
+            }, enabled = authState.value != AuthState.Loading
         )
     }
 }

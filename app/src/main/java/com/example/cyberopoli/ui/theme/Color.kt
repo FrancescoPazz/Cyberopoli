@@ -1,4 +1,5 @@
 package com.example.cyberopoli.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val DarkPrimary = Color(0xFF222831)

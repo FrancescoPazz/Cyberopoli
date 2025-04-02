@@ -27,12 +27,10 @@ import com.example.cyberopoli.ui.composables.TopBar
 
 @Composable
 fun AuthCard(
-    navController: NavController,
-    cardContent: @Composable ColumnScope.() -> Unit
+    navController: NavController, cardContent: @Composable ColumnScope.() -> Unit
 ) {
     Scaffold(
-        topBar = { TopBar(navController) },
-        containerColor = MaterialTheme.colorScheme.background
+        topBar = { TopBar(navController) }, containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -55,7 +53,8 @@ fun AuthCard(
             Spacer(modifier = Modifier.height(36.dp))
 
             Card(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
                     .graphicsLayer(clip = false),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {

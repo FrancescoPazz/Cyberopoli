@@ -11,17 +11,12 @@ import com.example.cyberopoli.ui.composables.auth.AuthCard
 
 @Composable
 fun AuthScreen(navController: NavController) {
-    AuthCard (navController = navController) {
-        AuthButton(
-            text = toUpperCase(stringResource(R.string.login)),
-            onClick = { navController.navigate(CyberopoliRoute.Login) }
-        )
-        AuthButton(
-            text = toUpperCase(stringResource(R.string.signup)),
-            onClick = { navController.navigate(CyberopoliRoute.SignUp) }
-        )
+    AuthCard(navController = navController) {
+        AuthButton(text = toUpperCase(stringResource(R.string.login)),
+            onClick = { navController.navigate(CyberopoliRoute.Login) })
+        AuthButton(text = toUpperCase(stringResource(R.string.signup)),
+            onClick = { navController.navigate(CyberopoliRoute.SignUp) })
         AuthButton(text = toUpperCase(stringResource(R.string.guest)),
-            onClick = { navController.navigate(CyberopoliRoute.Guest) }
-        )
+            onClick = { navController.navigate(CyberopoliRoute.Guest) })
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import com.example.cyberopoli.ui.composables.scan.QRCodeScanner
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +26,7 @@ import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
 import com.example.cyberopoli.ui.composables.auth.Text3D
+import com.example.cyberopoli.ui.composables.scan.QRCodeScanner
 import com.example.cyberopoli.ui.screens.auth.AuthState
 import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 
@@ -38,44 +38,45 @@ fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel) {
 
     val authState by authViewModel.authState.observeAsState()
 
-    Scaffold (
-        topBar = { TopBar(navController) },
-        bottomBar = {
-            if (authState == AuthState.Authenticated)
-                BottomBar(navController) },
-        content = { paddingValues ->
-            Box(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
-                contentAlignment = Alignment.Center
+    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
+        if (authState == AuthState.Authenticated) BottomBar(navController)
+    }, content = { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text3D(stringResource(R.string.scan),
-                        textColor = MaterialTheme.colorScheme.tertiary,
-                        shadowColor = MaterialTheme.colorScheme.secondary)
+                Text3D(
+                    stringResource(R.string.scan),
+                    textColor = MaterialTheme.colorScheme.tertiary,
+                    shadowColor = MaterialTheme.colorScheme.secondary
+                )
 
-                    Spacer(modifier = Modifier.height(46.dp))
+                Spacer(modifier = Modifier.height(46.dp))
 
-                    QRCodeScanner { value ->
-                        scannedValue = value
-                        if (scannedValue.contains(appName)) {
-                            navController.navigate(CyberopoliRoute.ARScreen)
-                        } else {
-                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
-                        }
+                QRCodeScanner { value ->
+                    scannedValue = value
+                    if (scannedValue.contains(appName)) {
+                        navController.navigate(CyberopoliRoute.ARScreen)
+                    } else {
+                        Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)
+                            .show()
                     }
-
-                    Spacer(modifier = Modifier.height(46.dp))
-
-                    Text(
-                        text = stringResource(R.string.qrcode_hint),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
                 }
+
+                Spacer(modifier = Modifier.height(46.dp))
+
+                Text(
+                    text = stringResource(R.string.qrcode_hint),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
             }
         }
-    )
+    })
 
 }
