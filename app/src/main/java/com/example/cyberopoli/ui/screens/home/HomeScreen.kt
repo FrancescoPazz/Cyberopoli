@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
 import com.example.cyberopoli.ui.composables.home.StatCard
@@ -27,7 +29,7 @@ import com.example.cyberopoli.ui.composables.home.StatCard
 @Composable
 fun HomeScreen(navController: NavController) {
     Scaffold(
-        topBar = { TopBar(navController, title = "Home") },
+        topBar = { TopBar(navController, title = stringResource(R.string.home)) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(

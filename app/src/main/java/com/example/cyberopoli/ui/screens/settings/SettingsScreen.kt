@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,7 @@ import com.example.cyberopoli.R
 import com.example.cyberopoli.data.models.Theme
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
+import com.example.cyberopoli.ui.screens.auth.AuthState
 import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 
 @Composable
@@ -48,6 +50,8 @@ fun SettingScreen(
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
+    val authState by authViewModel.authState.observeAsState()
 
     Scaffold(
         topBar = { TopBar(navController, stringResource(R.string.settings)) },
@@ -140,11 +144,13 @@ fun SettingScreen(
                     Text(stringResource(R.string.change_password))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { authViewModel.logout() },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text(stringResource(R.string.logout))
+                if (authState == AuthState.Authenticated) {
+                    Button(
+                        onClick = { authViewModel.logout() },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(stringResource(R.string.logout))
+                    }
                 }
             }
         }

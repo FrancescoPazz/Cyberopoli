@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,17 +27,21 @@ import com.example.cyberopoli.ui.CyberopoliRoute
 import com.example.cyberopoli.ui.composables.BottomBar
 import com.example.cyberopoli.ui.composables.TopBar
 import com.example.cyberopoli.ui.composables.auth.Text3D
+import com.example.cyberopoli.ui.screens.auth.AuthState
+import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 
 @Composable
-fun ScanScreen(navController: NavHostController) {
+fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel) {
     val appName = stringResource(R.string.app_name).lowercase()
     val invalidCode = stringResource(R.string.invalid_code)
     var scannedValue by remember { mutableStateOf("") }
 
+    val authState by authViewModel.authState.observeAsState()
+
     Scaffold (
         topBar = { TopBar(navController) },
         bottomBar = {
-            if (/* utente loggato */ true)
+            if (authState == AuthState.Authenticated)
                 BottomBar(navController) },
         content = { paddingValues ->
             Box(

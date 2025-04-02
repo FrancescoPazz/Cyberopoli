@@ -64,7 +64,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 GuestScreen(navController)
             }
             composable<CyberopoliRoute.Scan> {
-                ScanScreen(navController)
+                ScanScreen(navController, authViewModel)
             }
             composable<CyberopoliRoute.ARScreen> {
                 ARScreen(navController)

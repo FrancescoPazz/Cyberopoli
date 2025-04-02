@@ -26,7 +26,7 @@ fun GuestScreen(navController: NavController) {
             text = stringResource(R.string.enter).uppercase(),
             onClick = {
                 if (username.value.isNotEmpty())
-                    navController.navigate(CyberopoliRoute.Home) {
+                    navController.navigate(CyberopoliRoute.Scan) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
