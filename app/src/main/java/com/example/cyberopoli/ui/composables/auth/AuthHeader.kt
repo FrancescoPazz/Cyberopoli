@@ -1,5 +1,7 @@
 package com.example.cyberopoli.ui.composables.auth
 
+import android.icu.lang.UCharacter.toUpperCase
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.cyberopoli.R
 
@@ -26,15 +32,26 @@ fun AuthHeader() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.size(80.dp), contentAlignment = Alignment.Center
+            modifier = Modifier.size(160.dp), contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Filled.Lock,
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier.size(160.dp),
+                contentScale = ContentScale.Fit
             )
         }
+
+        Text3D(
+            text = toUpperCase(stringResource(R.string.app_name)),
+            fontSize = 50,
+            fontWeight = FontWeight.ExtraBold,
+            textColor = MaterialTheme.colorScheme.surface,
+            shadowColor = MaterialTheme.colorScheme.secondary,
+            offsetX = 4,
+            offsetY = 4
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
