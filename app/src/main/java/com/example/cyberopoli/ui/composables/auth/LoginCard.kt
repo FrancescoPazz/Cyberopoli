@@ -1,6 +1,5 @@
 package com.example.cyberopoli.ui.composables.auth
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +9,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -35,8 +35,8 @@ import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 fun LoginCard(
     authViewModel: AuthViewModel,
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
@@ -47,50 +47,34 @@ fun LoginCard(
             .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
+        AuthOutlinedTextField(
             value = email,
-            onValueChange = { email = it },
-            label = { Text(stringResource(R.string.email)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.email),
+            imageVector = Icons.Default.Email,
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        AuthOutlinedTextField(
             value = password,
-            onValueChange = { password = it },
-            label = { Text(stringResource(R.string.password)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.password),
+            imageVector = Icons.Default.Lock,
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextButton(onClick = { }) {
+        TextButton(
+            onClick = { },
+            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
+        ) {
             Text("Forgot password?")
         }
 
-        Button(
-            onClick = {
-                authViewModel.login(context, email, password)
-            }, enabled = authState.value != AuthState.Loading,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.login))
-        }
+        AuthButton(
+            text = stringResource(R.string.login).uppercase(), onClick = {
+                authViewModel.login(context, email.value, password.value)
+            }, enabled = authState.value != AuthState.Loading
+        )
     }
 }

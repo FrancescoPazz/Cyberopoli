@@ -26,16 +26,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.cyberopoli.R
+import com.example.cyberopoli.ui.screens.auth.AuthState
 import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 
 @Composable
 fun SignUpCard(
     authViewModel: AuthViewModel,
 ) {
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var name = remember { mutableStateOf("") }
+    var surname = remember { mutableStateOf("") }
+    var email = remember { mutableStateOf("") }
+    var password = remember { mutableStateOf("") }
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
@@ -46,78 +47,49 @@ fun SignUpCard(
             .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
+
+        AuthOutlinedTextField(
             value = name,
-            onValueChange = { name = it },
-            label = { Text(stringResource(R.string.name)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.PermIdentity,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.name),
+            imageVector = Icons.Default.PermIdentity,
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        AuthOutlinedTextField(
             value = surname,
-            onValueChange = { surname = it },
-            label = { Text(stringResource(R.string.last_name)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.PermIdentity,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.last_name),
+            imageVector = Icons.Default.PermIdentity,
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        AuthOutlinedTextField(
             value = email,
-            onValueChange = { email = it },
-            label = { Text(stringResource(R.string.email)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.email),
+            imageVector = Icons.Default.Email,
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        AuthOutlinedTextField(
             value = password,
-            onValueChange = { password = it },
-            label = { Text(stringResource(R.string.password)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.password),
+            imageVector = Icons.Default.Lock,
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
+        AuthButton(
+            text = stringResource(R.string.signup).uppercase(),
             onClick = {
-                authViewModel.signUp(context, email, password)
+                authViewModel.signUp(context, email.value, password.value)
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.signup))
-        }
+            enabled = authState.value != AuthState.Loading,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     }
 }

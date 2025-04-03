@@ -3,6 +3,9 @@ package com.example.cyberopoli.ui.composables.auth
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -11,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
@@ -18,16 +22,24 @@ import androidx.compose.ui.unit.dp
 fun AuthOutlinedTextField(
     value: MutableState<String>,
     placeholder: String,
+    singleLine : Boolean = false,
+    imageVector: ImageVector? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     OutlinedTextField(
         value = value.value,
         onValueChange = { value.value = it },
         placeholder = { Text(placeholder) },
+        leadingIcon = {
+            imageVector?.let {
+                Icon(imageVector = it, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary)
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20.dp))
             .clip(RoundedCornerShape(20.dp)),
+        singleLine = singleLine,
         visualTransformation = visualTransformation,
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = MaterialTheme.colorScheme.secondary,

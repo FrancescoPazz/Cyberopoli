@@ -4,6 +4,9 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -17,9 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
+import com.example.cyberopoli.ui.composables.BottomBar
+import com.example.cyberopoli.ui.composables.TopBar
 import com.example.cyberopoli.ui.composables.auth.AuthHeader
 import com.example.cyberopoli.ui.composables.auth.GuestCard
 import com.example.cyberopoli.ui.composables.auth.LoginCard
@@ -28,7 +35,11 @@ import com.example.cyberopoli.ui.composables.auth.SignUpCard
 @Composable
 fun AuthScreen(navController: NavController, authViewModel: AuthViewModel) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Login", "Sign Up", "Guest")
+    val tabs = listOf(
+        stringResource(R.string.login),
+        stringResource(R.string.signup),
+        stringResource(R.string.guest)
+    )
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
@@ -52,28 +63,32 @@ fun AuthScreen(navController: NavController, authViewModel: AuthViewModel) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AuthHeader()
+    Scaffold(topBar = { TopBar(navController) },
+        bottomBar = { BottomBar(navController) },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AuthHeader()
 
-        TabRow(selectedTabIndex = selectedTabIndex) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
-                )
+                TabRow(selectedTabIndex = selectedTabIndex) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = { Text(title) })
+                    }
+                }
+
+                when (selectedTabIndex) {
+                    0 -> LoginCard(authViewModel)
+                    1 -> SignUpCard(authViewModel)
+                    2 -> GuestCard(navController)
+                }
             }
-        }
-
-        when (selectedTabIndex) {
-            0 -> LoginCard(authViewModel)
-            1 -> SignUpCard(authViewModel)
-            2 -> GuestCard(navController)
-        }
-    }
+        })
 }

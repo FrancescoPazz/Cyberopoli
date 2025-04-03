@@ -23,12 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.cyberopoli.R
 import com.example.cyberopoli.ui.CyberopoliRoute
+import com.example.cyberopoli.ui.screens.auth.AuthState
 
 @Composable
 fun GuestCard(
     navController: NavController,
 ) {
-    var guestName by remember { mutableStateOf("") }
+    var guestName = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -36,32 +37,20 @@ fun GuestCard(
             .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
+        AuthOutlinedTextField(
             value = guestName,
-            onValueChange = { guestName = it },
-            label = { Text(stringResource(R.string.name)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.PermIdentity,
-                    contentDescription = null
-                )
-            },
+            placeholder = stringResource(R.string.name),
+            imageVector = Icons.Default.PermIdentity,
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                if (guestName.isNotEmpty()) navController.navigate(CyberopoliRoute.Scan) {
+        AuthButton(
+            text = stringResource(R.string.enter).uppercase(), onClick = {
+                if (guestName.value.isNotEmpty()) navController.navigate(CyberopoliRoute.Scan) {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.enter))
-        }
+            }, modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     }
 }
