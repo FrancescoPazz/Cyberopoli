@@ -20,7 +20,7 @@ import com.example.cyberopoli.ui.CyberopoliRoute
 fun GuestCard(
     navController: NavController,
 ) {
-    var guestName = remember { mutableStateOf("") }
+    val guestName = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier

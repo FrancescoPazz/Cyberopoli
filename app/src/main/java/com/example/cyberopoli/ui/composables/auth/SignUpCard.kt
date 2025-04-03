@@ -27,10 +27,10 @@ import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 fun SignUpCard(
     authViewModel: AuthViewModel,
 ) {
-    var name = remember { mutableStateOf("") }
-    var surname = remember { mutableStateOf("") }
-    var email = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
+    val name = remember { mutableStateOf("") }
+    val surname = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current

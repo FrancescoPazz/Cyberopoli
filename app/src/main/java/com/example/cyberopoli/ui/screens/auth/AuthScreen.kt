@@ -48,7 +48,7 @@ fun AuthScreen(navController: NavController, authViewModel: AuthViewModel) {
         when (authState.value) {
             is AuthState.Authenticated -> {
                 navController.navigate(CyberopoliRoute.Home) {
-                    popUpTo(CyberopoliRoute.Login) {
+                    popUpTo(CyberopoliRoute.Auth) {
                         inclusive = true
                     }
                     launchSingleTop = true

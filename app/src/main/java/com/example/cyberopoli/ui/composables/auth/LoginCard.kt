@@ -35,7 +35,7 @@ import com.example.cyberopoli.ui.screens.auth.AuthViewModel
 fun LoginCard(
     authViewModel: AuthViewModel,
 ) {
-    var email = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
     val authState = authViewModel.authState.observeAsState()

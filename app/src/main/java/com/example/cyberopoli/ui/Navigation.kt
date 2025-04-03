@@ -25,12 +25,6 @@ sealed interface CyberopoliRoute {
     @Serializable
     data object Auth : CyberopoliRoute
     @Serializable
-    data object Login : CyberopoliRoute
-    @Serializable
-    data object SignUp : CyberopoliRoute
-    @Serializable
-    data object Guest : CyberopoliRoute
-    @Serializable
     data object Scan : CyberopoliRoute
     @Serializable
     data object ARScreen : CyberopoliRoute
