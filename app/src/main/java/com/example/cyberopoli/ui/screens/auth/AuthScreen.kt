@@ -64,7 +64,9 @@ fun AuthScreen(navController: NavController, authViewModel: AuthViewModel) {
     }
 
     Scaffold(topBar = { TopBar(navController) },
-        bottomBar = { BottomBar(navController) },
+        bottomBar = {
+            if (authState.value == AuthState.Authenticated) BottomBar(navController)
+        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier
