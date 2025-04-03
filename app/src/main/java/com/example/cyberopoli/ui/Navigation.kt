@@ -13,9 +13,6 @@ import com.example.cyberopoli.ui.screens.ar.ARScreen
 import com.example.cyberopoli.ui.screens.auth.AuthScreen
 import com.example.cyberopoli.ui.screens.auth.AuthState
 import com.example.cyberopoli.ui.screens.auth.AuthViewModel
-import com.example.cyberopoli.ui.screens.auth.GuestScreen
-import com.example.cyberopoli.ui.screens.auth.LoginScreen
-import com.example.cyberopoli.ui.screens.auth.SignUpScreen
 import com.example.cyberopoli.ui.screens.home.HomeScreen
 import com.example.cyberopoli.ui.screens.scan.ScanScreen
 import com.example.cyberopoli.ui.screens.settings.SettingScreen

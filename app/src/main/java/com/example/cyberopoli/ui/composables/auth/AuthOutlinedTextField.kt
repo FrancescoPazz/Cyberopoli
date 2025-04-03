@@ -3,8 +3,6 @@ package com.example.cyberopoli.ui.composables.auth
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -22,17 +20,20 @@ import androidx.compose.ui.unit.dp
 fun AuthOutlinedTextField(
     value: MutableState<String>,
     placeholder: String,
-    singleLine : Boolean = false,
+    singleLine: Boolean = false,
     imageVector: ImageVector? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    OutlinedTextField(
-        value = value.value,
+    OutlinedTextField(value = value.value,
         onValueChange = { value.value = it },
         placeholder = { Text(placeholder) },
         leadingIcon = {
             imageVector?.let {
-                Icon(imageVector = it, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary)
+                Icon(
+                    imageVector = it,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
             }
         },
         modifier = Modifier
