@@ -62,16 +62,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
             startDestination = if (authState.value == AuthState.Authenticated) CyberopoliRoute.Home else CyberopoliRoute.Auth,
         ) {
             composable<CyberopoliRoute.Auth> {
-                AuthScreen(navController)
-            }
-            composable<CyberopoliRoute.Login> {
-                LoginScreen(navController, authViewModel)
-            }
-            composable<CyberopoliRoute.SignUp> {
-                SignUpScreen(navController, authViewModel)
-            }
-            composable<CyberopoliRoute.Guest> {
-                GuestScreen(navController)
+                AuthScreen(navController, authViewModel)
             }
             composable<CyberopoliRoute.Scan> {
                 ScanScreen(navController, authViewModel)
