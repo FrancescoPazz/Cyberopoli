@@ -112,36 +112,36 @@ fun SettingScreen(
 
                 HorizontalDivider()
 
-                Text(
-                    text = stringResource(R.string.change_password),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                OutlinedTextField(value = currentPassword,
-                    onValueChange = { currentPassword = it },
-                    label = { Text(stringResource(R.string.old_password)) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(value = newPassword,
-                    onValueChange = { newPassword = it },
-                    label = { Text(stringResource(R.string.password)) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text(stringResource(R.string.password_confirm)) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { /* TODO */ }, modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text(stringResource(R.string.change_password))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
                 if (authState == AuthState.Authenticated) {
+                    Text(
+                        text = stringResource(R.string.change_password),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    OutlinedTextField(value = currentPassword,
+                        onValueChange = { currentPassword = it },
+                        label = { Text(stringResource(R.string.old_password)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(value = newPassword,
+                        onValueChange = { newPassword = it },
+                        label = { Text(stringResource(R.string.password)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = { Text(stringResource(R.string.password_confirm)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { /* TODO */ }, modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(stringResource(R.string.change_password))
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = { authViewModel.logout() },
                         modifier = Modifier.align(Alignment.End)
