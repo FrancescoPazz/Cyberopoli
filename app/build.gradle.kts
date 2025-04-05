@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.cyberopoli"
+    namespace = "com.unibo.cyberopoli"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.cyberopoli"
+        applicationId = "com.unibo.cyberopoli"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
