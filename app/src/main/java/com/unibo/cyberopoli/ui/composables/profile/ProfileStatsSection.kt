@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.unibo.cyberopoli.R
 
 @Composable
 fun ProfileStatsSection(
@@ -36,9 +38,9 @@ fun ProfileStatsSection(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StatItem(label = "Partite", value = totalGames.toString())
-            StatItem(label = "Vittorie", value = totalWins.toString())
-            StatItem(label = "Medaglie", value = totalMedals.toString())
+            StatItem(label = stringResource(R.string.matches), value = totalGames.toString())
+            StatItem(label = stringResource(R.string.matches), value = totalWins.toString())
+            StatItem(label = stringResource(R.string.badges), value = totalMedals.toString())
         }
     }
 }

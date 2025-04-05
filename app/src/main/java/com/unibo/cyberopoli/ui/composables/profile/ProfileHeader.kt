@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
@@ -40,7 +39,7 @@ fun ProfileHeader(
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo), //rememberAsyncImagePainter(userData.avatarUrl),
-            contentDescription = "Avatar",
+            contentDescription = stringResource(R.string.avatar),
             modifier = Modifier
                 .size(80.dp)
                 .clip(CircleShape),
@@ -61,26 +60,22 @@ fun ProfileHeader(
 
         Row {
             ProfileButton(
-                text = "Modifica",
-                icon = {
+                text = stringResource(R.string.edit), icon = {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
+                        contentDescription = stringResource(R.string.edit),
                         tint = MaterialTheme.colorScheme.tertiary
                     )
-                },
-                onClick = onEditProfileClick
+                }, onClick = onEditProfileClick
             )
             ProfileButton(
-                text = "Condividi",
-                icon = {
+                text = stringResource(R.string.share), icon = {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
+                        contentDescription = stringResource(R.string.share),
                         tint = MaterialTheme.colorScheme.tertiary
                     )
-                },
-                onClick = onShareClick
+                }, onClick = onShareClick
             )
 
         }

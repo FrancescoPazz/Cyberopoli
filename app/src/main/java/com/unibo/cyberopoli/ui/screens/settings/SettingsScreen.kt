@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -53,7 +54,7 @@ fun SettingScreen(
 
     val authState by authViewModel.authState.observeAsState()
 
-    Scaffold(topBar = { TopBar(navController, stringResource(R.string.settings)) },
+    Scaffold(topBar = { TopBar(navController) },
         bottomBar = {
             if (authState == AuthState.Authenticated) BottomBar(navController)
         },
@@ -137,16 +138,22 @@ fun SettingScreen(
                         visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
-                        onClick = { /* TODO */ }, modifier = Modifier.align(Alignment.End)
+                        onClick = { /* TODO */ }, modifier = Modifier.align(Alignment.CenterHorizontally),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = MaterialTheme.colorScheme.tertiary,
+                            containerColor = MaterialTheme.colorScheme.onTertiary
+                        ),
                     ) {
                         Text(stringResource(R.string.change_password))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = { authViewModel.logout() },
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = MaterialTheme.colorScheme.primary,
+                            containerColor = MaterialTheme.colorScheme.onError
+                        ),
                     ) {
                         Text(stringResource(R.string.logout))
                     }

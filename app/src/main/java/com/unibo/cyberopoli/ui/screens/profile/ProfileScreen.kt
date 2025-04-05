@@ -48,7 +48,7 @@ fun ProfileScreen(navController: NavHostController) {
         )
     )
 
-    Scaffold(topBar = { TopBar(navController, title = stringResource(R.string.home)) },
+    Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(

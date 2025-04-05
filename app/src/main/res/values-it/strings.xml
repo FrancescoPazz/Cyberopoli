@@ -30,4 +30,18 @@
     <string name="home">Home</string>
     <string name="ranking">Classifica</string>
     <string name="profile">Profilo</string>
+    <string name="latest_matches">Ultime partite</string>
+    <string name="result">Risultato</string>
+    <string name="recent_stats">Statistiche Recenti</string>
+    <string name="avatar">Avatar</string>
+    <string name="edit">Modifica</string>
+    <string name="share">Condividi</string>
+    <string name="matches">Partite</string>
+    <string name="wins">Vittorie</string>
+    <string name="badges">Medaglie</string>
+    <string name="my_rank">Il mio posizionamento</string>
+    <string name="daily">Giornaliero</string>
+    <string name="weekly">Settimanale</string>
+    <string name="monthly">Mensile</string>
+    <string name="filters">Filtri</string>
 </resources>

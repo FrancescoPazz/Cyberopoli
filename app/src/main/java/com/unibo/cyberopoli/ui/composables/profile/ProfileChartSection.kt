@@ -17,8 +17,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.unibo.cyberopoli.R
 
 @Composable
 fun ProfileChartSection(recentStats: List<Int>) {
@@ -35,7 +37,7 @@ fun ProfileChartSection(recentStats: List<Int>) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Statistiche Recenti", fontWeight = FontWeight.Bold
+                text = stringResource(R.string.recent_stats), fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(8.dp))

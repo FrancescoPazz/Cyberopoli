@@ -34,14 +34,16 @@ import com.unibo.cyberopoli.ui.CyberopoliRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, title: String = "") {
+fun TopBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
     CenterAlignedTopAppBar(title = {
-        Text(
-            title, fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        if (currentRoute != null) {
+            Text(
+                currentRoute, fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
     }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = if (currentRoute == CyberopoliRoute.Auth.toString())
             MaterialTheme.colorScheme.background

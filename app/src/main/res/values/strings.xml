@@ -29,4 +29,18 @@
     <string name="home">Home</string>
     <string name="ranking">Ranking</string>
     <string name="profile">Profile</string>
+    <string name="latest_matches">Latest matches</string>
+    <string name="result">Result</string>
+    <string name="recent_stats">Recent Stats</string>
+    <string name="avatar">Avatar</string>
+    <string name="edit">Edit</string>
+    <string name="share">Share</string>
+    <string name="matches">Matches</string>
+    <string name="wins">Wins</string>
+    <string name="badges">Badges</string>
+    <string name="my_rank">My rank</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="filters">Filters</string>
 </resources>
