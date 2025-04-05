@@ -14,6 +14,8 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
+import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
+import com.unibo.cyberopoli.ui.screens.ranking.RankingScreen
 import com.unibo.cyberopoli.ui.screens.scan.ScanScreen
 import com.unibo.cyberopoli.ui.screens.settings.SettingScreen
 import com.unibo.cyberopoli.ui.screens.settings.SettingsViewModel
@@ -32,6 +34,10 @@ sealed interface CyberopoliRoute {
     data object Settings : CyberopoliRoute
     @Serializable
     data object Home : CyberopoliRoute
+    @Serializable
+    data object Profile : CyberopoliRoute
+    @Serializable
+    data object Ranking : CyberopoliRoute
 }
 
 @Composable
@@ -71,6 +77,12 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
             }
             composable<CyberopoliRoute.Home> {
                 HomeScreen(navController)
+            }
+            composable<CyberopoliRoute.Profile> {
+                ProfileScreen(navController)
+            }
+            composable<CyberopoliRoute.Ranking> {
+                RankingScreen(navController)
             }
         }
     }

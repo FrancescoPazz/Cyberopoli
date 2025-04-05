@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PermIdentity
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +46,7 @@ fun SignUpCard(
         AuthOutlinedTextField(
             value = name,
             placeholder = stringResource(R.string.name),
-            imageVector = Icons.Filled.PermIdentity,
+            imageVector = Icons.Default.Person,
             singleLine = true,
         )
 
@@ -54,7 +55,7 @@ fun SignUpCard(
         AuthOutlinedTextField(
             value = surname,
             placeholder = stringResource(R.string.last_name),
-            imageVector = Icons.Filled.PermIdentity,
+            imageVector = Icons.Default.Person,
             singleLine = true,
         )
 

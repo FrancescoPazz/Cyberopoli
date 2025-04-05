@@ -1,12 +1,15 @@
 package com.unibo.cyberopoli.ui.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,16 +75,24 @@ data class BottomNavItem(
 fun BottomBar(navController: NavController) {
     val bottomNavItems = listOf(
         BottomNavItem(
-            name = "Home", route = CyberopoliRoute.Home, icon = Icons.Filled.Home
-        ), BottomNavItem(
-            name = "Scan", route = CyberopoliRoute.Scan, icon = Icons.Filled.Image
-        ), BottomNavItem(
-            name = "Settings", route = CyberopoliRoute.Settings, icon = Icons.Filled.Settings
+            name = stringResource(R.string.home), route = CyberopoliRoute.Home, icon = Icons.Filled.Home
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.ranking), route = CyberopoliRoute.Ranking, icon = Icons.Filled.AutoGraph
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.scan), route = CyberopoliRoute.Scan, icon = Icons.Filled.Image
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.profile), route = CyberopoliRoute.Profile, icon = Icons.Default.Person
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.settings), route = CyberopoliRoute.Settings, icon = Icons.Filled.Settings
         )
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: CyberopoliRoute.Home.toString()
+    val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
 
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
@@ -95,22 +106,24 @@ fun BottomBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             bottomNavItems.forEach { item ->
+                val isSelected = currentRoute == item.route.toString()
+
                 NavigationBarItem(icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.name
+                        contentDescription = item.name,
+                        tint = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                     )
                 },
-                    label = { Text(text = item.name) },
-                    selected = currentRoute == item.route.toString(),
-                    onClick = {
-                        if (currentRoute != item.route.toString()) {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                            }
+                label = { Text(text = item.name, color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground) }, selected = currentRoute == item.route.toString(),
+                onClick = {
+                    if (currentRoute != item.route.toString()) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
                         }
-                    })
+                    }
+                })
             }
         }
     }

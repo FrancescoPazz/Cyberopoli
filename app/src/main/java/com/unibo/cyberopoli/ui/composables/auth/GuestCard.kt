@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PermIdentity
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +32,7 @@ fun GuestCard(
         AuthOutlinedTextField(
             value = guestName,
             placeholder = stringResource(R.string.name),
-            imageVector = Icons.Filled.PermIdentity,
+            imageVector = Icons.Default.Person,
             singleLine = true,
         )
 
