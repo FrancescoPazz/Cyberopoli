@@ -54,7 +54,9 @@ fun SettingScreen(
     val authState by authViewModel.authState.observeAsState()
 
     Scaffold(topBar = { TopBar(navController, stringResource(R.string.settings)) },
-        bottomBar = { BottomBar(navController) },
+        bottomBar = {
+            if (authState == AuthState.Authenticated) BottomBar(navController)
+        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier

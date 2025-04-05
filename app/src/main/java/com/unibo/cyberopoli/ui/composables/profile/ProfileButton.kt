@@ -1,7 +1,9 @@
-package com.unibo.cyberopoli.ui.composables.auth
+package com.unibo.cyberopoli.ui.composables.profile
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -14,8 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun AuthButton(
+fun ProfileButton(
     text: String,
+    icon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -23,10 +26,10 @@ fun AuthButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth()
             .padding(8.dp),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp, pressedElevation = 4.dp
+            defaultElevation = 8.dp,
+            pressedElevation = 4.dp
         ),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
@@ -34,9 +37,15 @@ fun AuthButton(
         ),
         enabled = enabled,
     ) {
+        if (icon != null) {
+            icon()
+            Spacer(modifier = Modifier.width(4.dp))
+        }
         Text(
-            text = text, style = TextStyle(
-                fontSize = 18.sp, fontWeight = FontWeight.Bold
+            text = text,
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
             )
         )
     }

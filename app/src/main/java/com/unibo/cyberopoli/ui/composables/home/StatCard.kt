@@ -17,7 +17,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StatCard(scoreTitle: String, scoreValue: String, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier, elevation = CardDefaults.cardElevation(4.dp)
+        modifier = modifier, elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSurface,
+            contentColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Column(
             modifier = Modifier

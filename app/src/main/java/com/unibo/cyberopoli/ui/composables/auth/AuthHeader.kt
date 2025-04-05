@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +44,7 @@ fun AuthHeader() {
                 fontSize = 50,
                 fontWeight = FontWeight.ExtraBold,
                 textColor = MaterialTheme.colorScheme.primary,
-                shadowColor = MaterialTheme.colorScheme.onTertiary,
+                shadowColor = MaterialTheme.colorScheme.onBackground,
                 offsetX = 4,
                 offsetY = 4,
                 modifier = Modifier.align(Alignment.Center).padding(top = imageSize/2)

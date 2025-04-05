@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,17 +35,25 @@ import com.unibo.cyberopoli.ui.CyberopoliRoute
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navController: NavController, title: String = "") {
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
     CenterAlignedTopAppBar(title = {
         Text(
-            title, fontWeight = FontWeight.Medium
+            title, fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground,
         )
-    }, navigationIcon = {
+    }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        containerColor = if (currentRoute == CyberopoliRoute.Auth.toString())
+            MaterialTheme.colorScheme.background
+        else
+            MaterialTheme.colorScheme.onSurface
+    ), navigationIcon = {
         if (navController.previousBackStackEntry != null) {
             IconButton(onClick = { navController.navigateUp() }) {
                 Icon(
                     Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
+                    contentDescription = stringResource(R.string.back),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -57,14 +64,12 @@ fun TopBar(navController: NavController, title: String = "") {
             }) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
-                    contentDescription = stringResource(R.string.settings)
+                    contentDescription = stringResource(R.string.settings),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
-    }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = MaterialTheme.colorScheme.background
-    )
-    )
+    })
 }
 
 data class BottomNavItem(
@@ -75,19 +80,25 @@ data class BottomNavItem(
 fun BottomBar(navController: NavController) {
     val bottomNavItems = listOf(
         BottomNavItem(
-            name = stringResource(R.string.home), route = CyberopoliRoute.Home, icon = Icons.Filled.Home
-        ),
-        BottomNavItem(
-            name = stringResource(R.string.ranking), route = CyberopoliRoute.Ranking, icon = Icons.Filled.AutoGraph
-        ),
-        BottomNavItem(
-            name = stringResource(R.string.scan), route = CyberopoliRoute.Scan, icon = Icons.Filled.Image
-        ),
-        BottomNavItem(
-            name = stringResource(R.string.profile), route = CyberopoliRoute.Profile, icon = Icons.Default.Person
-        ),
-        BottomNavItem(
-            name = stringResource(R.string.settings), route = CyberopoliRoute.Settings, icon = Icons.Filled.Settings
+            name = stringResource(R.string.home),
+            route = CyberopoliRoute.Home,
+            icon = Icons.Filled.Home
+        ), BottomNavItem(
+            name = stringResource(R.string.ranking),
+            route = CyberopoliRoute.Ranking,
+            icon = Icons.Filled.AutoGraph
+        ), BottomNavItem(
+            name = stringResource(R.string.scan),
+            route = CyberopoliRoute.Scan,
+            icon = Icons.Filled.Image
+        ), BottomNavItem(
+            name = stringResource(R.string.profile),
+            route = CyberopoliRoute.Profile,
+            icon = Icons.Default.Person
+        ), BottomNavItem(
+            name = stringResource(R.string.settings),
+            route = CyberopoliRoute.Settings,
+            icon = Icons.Filled.Settings
         )
     )
 
@@ -96,7 +107,7 @@ fun BottomBar(navController: NavController) {
 
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.onSurface,
         tonalElevation = 0.dp,
         contentColor = MaterialTheme.colorScheme.onBackground
     ) {
@@ -114,9 +125,12 @@ fun BottomBar(navController: NavController) {
                         contentDescription = item.name,
                         tint = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                     )
-                },
-                label = { Text(text = item.name, color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground) }, selected = currentRoute == item.route.toString(),
-                onClick = {
+                }, label = {
+                    Text(
+                        text = item.name,
+                        color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
+                    )
+                }, selected = currentRoute == item.route.toString(), onClick = {
                     if (currentRoute != item.route.toString()) {
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId)
