@@ -13,13 +13,17 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,6 +44,7 @@ import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
     navController: NavController,
@@ -83,7 +88,10 @@ fun SettingScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         RadioButton(
-                            selected = theme == themeState.theme, onClick = null
+                            selected = theme == themeState.theme, onClick = null,
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.tertiary,
+                            )
                         )
                         Text(
                             text = when (theme) {
@@ -110,7 +118,13 @@ fun SettingScreen(
                 ) {
                     Text(text = stringResource(R.string.enable_notifications))
                     Switch(checked = notificationsEnabled,
-                        onCheckedChange = { notificationsEnabled = it })
+                        onCheckedChange = { notificationsEnabled = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.tertiary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onTertiary,
+                            checkedTrackColor = MaterialTheme.colorScheme.onBackground,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.onBackground
+                        ))
                 }
 
                 HorizontalDivider()
@@ -124,19 +138,31 @@ fun SettingScreen(
                         onValueChange = { currentPassword = it },
                         label = { Text(stringResource(R.string.old_password)) },
                         visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                        )
                     )
                     OutlinedTextField(value = newPassword,
                         onValueChange = { newPassword = it },
                         label = { Text(stringResource(R.string.password)) },
                         visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                        )
                     )
                     OutlinedTextField(value = confirmPassword,
                         onValueChange = { confirmPassword = it },
                         label = { Text(stringResource(R.string.password_confirm)) },
                         visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                        )
                     )
                     Button(
                         onClick = { /* TODO */ }, modifier = Modifier.align(Alignment.CenterHorizontally),
