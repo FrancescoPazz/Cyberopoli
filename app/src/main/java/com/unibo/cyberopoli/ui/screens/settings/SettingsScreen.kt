@@ -50,7 +50,8 @@ fun SettingScreen(
     navController: NavController,
     themeState: ThemeState,
     onThemeChange: (Theme) -> Unit,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
@@ -165,7 +166,18 @@ fun SettingScreen(
                         )
                     )
                     Button(
-                        onClick = { /* TODO */ }, modifier = Modifier.align(Alignment.CenterHorizontally),
+                        onClick = {
+                            if (newPassword == confirmPassword) {
+                                settingsViewModel.updatePasswordWithOldPassword(
+                                    oldPassword = currentPassword,
+                                    newPassword = newPassword,
+                                    onSuccess = { /* Gestisci il successo, ad esempio mostra un messaggio */ },
+                                    onError = { /* Gestisci l'errore, ad esempio mostra un messaggio */ }
+                                )
+                            } else {
+
+                            }
+                        }, modifier = Modifier.align(Alignment.CenterHorizontally),
                         colors = ButtonDefaults.buttonColors(
                             contentColor = MaterialTheme.colorScheme.tertiary,
                             containerColor = MaterialTheme.colorScheme.onTertiary

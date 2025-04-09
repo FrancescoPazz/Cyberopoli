@@ -43,4 +43,7 @@
     <string name="weekly">Weekly</string>
     <string name="monthly">Monthly</string>
     <string name="filters">Filters</string>
+    <string name="signup_failed">Signup Failed</string>
+    <string name="level">Level</string>
+    <string name="loading">Loading</string>
 </resources>

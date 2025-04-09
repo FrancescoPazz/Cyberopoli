@@ -80,7 +80,7 @@ fun SignUpCard(
         AuthButton(
             text = stringResource(R.string.signup).uppercase(),
             onClick = {
-                authViewModel.signUp(context, email.value, password.value)
+                authViewModel.signUp(context, email.value, password.value, name.value, surname.value)
             },
             enabled = authState.value != AuthState.Loading,
             modifier = Modifier.align(Alignment.CenterHorizontally)

@@ -48,12 +48,16 @@ fun ProfileHeader(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = userData.name,
-        )
+        userData.name?.let { name ->
+            userData.surname?.let { surname ->
+                Text(
+                    text = "$name $surname",
+                )
+            }
+        }
 
         Text(
-            text = userData.role, textAlign = TextAlign.Center
+            text = "${stringResource(R.string.level)}: ${userData.level.toString()}", textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(8.dp))
