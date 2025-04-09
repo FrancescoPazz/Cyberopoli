@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.UserData
 
@@ -38,7 +39,7 @@ fun ProfileHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo), //rememberAsyncImagePainter(userData.avatarUrl),
+            painter = userData.profileImageUrl?.let { rememberAsyncImagePainter(it) } ?: painterResource(id = R.drawable.logo),
             contentDescription = stringResource(R.string.avatar),
             modifier = Modifier
                 .size(80.dp)
@@ -66,7 +67,7 @@ fun ProfileHeader(
             ProfileButton(
                 text = stringResource(R.string.edit), icon = {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        imageVector = Icons.Default.CameraAlt,
                         contentDescription = stringResource(R.string.edit),
                         tint = MaterialTheme.colorScheme.tertiary
                     )

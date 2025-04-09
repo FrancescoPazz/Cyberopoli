@@ -49,9 +49,8 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 fun SettingScreen(
     navController: NavController,
     themeState: ThemeState,
-    onThemeChange: (Theme) -> Unit,
-    authViewModel: AuthViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    authViewModel: AuthViewModel
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
@@ -83,7 +82,7 @@ fun SettingScreen(
                             .height(56.dp)
                             .selectable(
                                 selected = theme == themeState.theme, onClick = {
-                                    onThemeChange(theme)
+                                    settingsViewModel.changeTheme(theme)
                                 }, role = Role.RadioButton
                             )
                             .padding(horizontal = 16.dp)

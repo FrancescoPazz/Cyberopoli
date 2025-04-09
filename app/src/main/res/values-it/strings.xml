@@ -47,4 +47,5 @@
     <string name="signup_failed">Registrazione fallita</string>
     <string name="level">Livello</string>
     <string name="loading">Caricamento</string>
+    <string name="user_unauthenticated">Utente non autenticato</string>
 </resources>

@@ -73,7 +73,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 SettingScreen(
                     navController,
                     themeState,
-                    settingsViewModel::changeTheme,
+                    settingsViewModel,
                     authViewModel
                 )
             }
