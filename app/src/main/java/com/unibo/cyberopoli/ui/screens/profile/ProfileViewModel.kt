@@ -41,19 +41,6 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    /*fun updateProfileImage(
-        uri: Uri
-    ) {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val newImageUrl = uri.toString()
-            db.collection("users").document(currentUser.uid)
-                .update("profileImageUrl", newImageUrl).addOnSuccessListener {
-                    _user.value = _user.value?.copy(profileImageUrl = newImageUrl)
-                }
-        }
-    }*/
-
     fun changeAvatar() {
         val currentUser = auth.currentUser ?: return
         val currentAvatar = _user.value?.profileImageUrl ?: avatarList.first()
