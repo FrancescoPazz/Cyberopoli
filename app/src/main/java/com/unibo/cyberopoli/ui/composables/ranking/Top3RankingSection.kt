@@ -44,7 +44,7 @@ fun Top3RankingSection(users: List<RankingUser>) {
                 modifier = Modifier.padding(8.dp)
             ) {
                 Image(
-                    painter = painterResource(avatarRes), //rememberAsyncImagePainter(user.avatarUrl),
+                    painter = painterResource(avatarRes),
                     contentDescription = stringResource(R.string.avatar),
                     modifier = Modifier
                         .size(60.dp)

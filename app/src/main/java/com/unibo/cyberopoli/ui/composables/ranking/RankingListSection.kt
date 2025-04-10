@@ -53,7 +53,7 @@ fun RankingListItem(user: RankingUser) {
         Spacer(modifier = Modifier.width(8.dp))
 
         Image(
-            painter = painterResource(id = R.drawable.logo), //rememberAsyncImagePainter(user.avatarUrl),
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = stringResource(R.string.avatar),
             modifier = Modifier
                 .size(40.dp)

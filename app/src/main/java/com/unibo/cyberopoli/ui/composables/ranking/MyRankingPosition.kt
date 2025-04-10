@@ -40,7 +40,7 @@ fun MyRankingPosition(user: RankingUser) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(avatarRes),//rememberAsyncImagePainter(user.avatarUrl),
+            painter = painterResource(avatarRes),
             contentDescription = stringResource(R.string.avatar),
             modifier = Modifier
                 .size(50.dp)

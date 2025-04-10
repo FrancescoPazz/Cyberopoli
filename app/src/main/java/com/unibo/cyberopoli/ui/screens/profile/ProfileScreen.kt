@@ -1,8 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.profile
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,14 +48,6 @@ fun ProfileScreen(
         )
     )
 
-    /*val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            profileViewModel.updateProfileImage(it)
-        }
-    }*/
-
     Scaffold(
         topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
@@ -78,7 +67,7 @@ fun ProfileScreen(
                 } else {
                     ProfileHeader(
                         userData = userData!!,
-                        onEditProfileClick = { profileViewModel.changeAvatar() /*launcher.launch("image/")*/ },
+                        onEditProfileClick = { profileViewModel.changeAvatar() },
                         onShareClick = { /* TODO: implementa share profilo */ }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
