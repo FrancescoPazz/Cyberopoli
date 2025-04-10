@@ -31,12 +31,20 @@ fun Top3RankingSection(users: List<RankingUser>) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         users.forEach { user ->
+            val avatarRes = when (user.avatarUrl) {
+                "avatar_male_1" -> R.drawable.avatar_male_1
+                "avatar_male_2" -> R.drawable.avatar_male_2
+                "avatar_female_1" -> R.drawable.avatar_female_1
+                "avatar_female_2" -> R.drawable.avatar_female_2
+                else -> R.drawable.avatar_male_1
+            }
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(8.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo), //rememberAsyncImagePainter(user.avatarUrl),
+                    painter = painterResource(avatarRes), //rememberAsyncImagePainter(user.avatarUrl),
                     contentDescription = stringResource(R.string.avatar),
                     modifier = Modifier
                         .size(60.dp)
@@ -51,12 +59,12 @@ fun Top3RankingSection(users: List<RankingUser>) {
                 }
 
                 Text(
-                    text = user.name,
+                    text = user.name + " " + user.surname,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                 )
 
                 Text(
-                    text = "${user.points} pt", style = MaterialTheme.typography.bodySmall
+                    text = "${user.score} pt", style = MaterialTheme.typography.bodySmall
                 )
             }
         }

@@ -17,6 +17,7 @@ import com.unibo.cyberopoli.ui.screens.home.HomeScreen
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 import com.unibo.cyberopoli.ui.screens.ranking.RankingScreen
+import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
 import com.unibo.cyberopoli.ui.screens.scan.ScanScreen
 import com.unibo.cyberopoli.ui.screens.settings.SettingScreen
 import com.unibo.cyberopoli.ui.screens.settings.SettingsViewModel
@@ -44,6 +45,7 @@ sealed interface CyberopoliRoute {
 @Composable
 fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
     val profileViewModel = koinViewModel<ProfileViewModel>()
+    val rankingViewModel = koinViewModel<RankingViewModel>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
     val authState = authViewModel.authState.observeAsState()
@@ -87,7 +89,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 )
             }
             composable<CyberopoliRoute.Ranking> {
-                RankingScreen(navController)
+                RankingScreen(navController, rankingViewModel)
             }
         }
     }

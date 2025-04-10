@@ -51,13 +51,13 @@ fun ProfileScreen(
         )
     )
 
-    val launcher = rememberLauncherForActivityResult(
+    /*val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             profileViewModel.updateProfileImage(it)
         }
-    }
+    }*/
 
     Scaffold(
         topBar = { TopBar(navController) },
@@ -78,7 +78,7 @@ fun ProfileScreen(
                 } else {
                     ProfileHeader(
                         userData = userData!!,
-                        onEditProfileClick = { launcher.launch("image/*") },
+                        onEditProfileClick = { profileViewModel.changeAvatar() /*launcher.launch("image/")*/ },
                         onShareClick = { /* TODO: implementa share profilo */ }
                     )
                     Spacer(modifier = Modifier.height(16.dp))

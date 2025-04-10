@@ -69,7 +69,7 @@ fun RankingListItem(user: RankingUser) {
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
             )
             Text(
-                text = "${user.points} pt", style = MaterialTheme.typography.bodySmall
+                text = "${user.score} pt", style = MaterialTheme.typography.bodySmall
             )
         }
     }

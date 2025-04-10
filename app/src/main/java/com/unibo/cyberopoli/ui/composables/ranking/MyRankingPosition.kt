@@ -25,6 +25,14 @@ import com.unibo.cyberopoli.data.models.RankingUser
 
 @Composable
 fun MyRankingPosition(user: RankingUser) {
+    val avatarRes = when (user.avatarUrl) {
+        "avatar_male_1" -> R.drawable.avatar_male_1
+        "avatar_male_2" -> R.drawable.avatar_male_2
+        "avatar_female_1" -> R.drawable.avatar_female_1
+        "avatar_female_2" -> R.drawable.avatar_female_2
+        else -> R.drawable.avatar_male_1
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +40,7 @@ fun MyRankingPosition(user: RankingUser) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo),//rememberAsyncImagePainter(user.avatarUrl),
+            painter = painterResource(avatarRes),//rememberAsyncImagePainter(user.avatarUrl),
             contentDescription = stringResource(R.string.avatar),
             modifier = Modifier
                 .size(50.dp)
@@ -47,16 +55,9 @@ fun MyRankingPosition(user: RankingUser) {
                 text = stringResource(R.string.my_rank), style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "#${user.rank}  ${user.name}  ${user.points} pt",
+                text = "#${user.rank}  ${user.name}  ${user.score} pt",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = if (user.pointsDiff > 0) "+${user.pointsDiff}" else "${user.pointsDiff}",
-            color = if (user.pointsDiff >= 0) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-        )
     }
 }

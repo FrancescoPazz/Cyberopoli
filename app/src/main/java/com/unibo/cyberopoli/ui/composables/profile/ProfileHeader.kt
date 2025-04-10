@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.UserData
 
@@ -32,14 +31,23 @@ import com.unibo.cyberopoli.data.models.UserData
 fun ProfileHeader(
     userData: UserData, onEditProfileClick: () -> Unit, onShareClick: () -> Unit
 ) {
+    val avatarRes = when (userData.profileImageUrl) {
+        "avatar_male_1" -> R.drawable.avatar_male_1
+        "avatar_male_2" -> R.drawable.avatar_male_2
+        "avatar_female_1" -> R.drawable.avatar_female_1
+        "avatar_female_2" -> R.drawable.avatar_female_2
+        else -> R.drawable.avatar_male_1
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Image(
-            painter = userData.profileImageUrl?.let { rememberAsyncImagePainter(it) } ?: painterResource(id = R.drawable.logo),
+            painter = painterResource(avatarRes),
             contentDescription = stringResource(R.string.avatar),
             modifier = Modifier
                 .size(80.dp)
