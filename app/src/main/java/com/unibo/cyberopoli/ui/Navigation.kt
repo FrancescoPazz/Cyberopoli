@@ -14,6 +14,8 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
+import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
+import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 import com.unibo.cyberopoli.ui.screens.ranking.RankingScreen
@@ -40,16 +42,18 @@ sealed interface CyberopoliRoute {
     data object Profile : CyberopoliRoute
     @Serializable
     data object Ranking : CyberopoliRoute
+    @Serializable
+    data object Lobby : CyberopoliRoute
 }
 
 @Composable
 fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
+    val lobbyViewModel = koinViewModel<LobbyViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val rankingViewModel = koinViewModel<RankingViewModel>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
     val authState = authViewModel.authState.observeAsState()
-
 
     CyberopoliTheme(
         darkTheme = when (themeState.theme) {
@@ -90,6 +94,9 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
             }
             composable<CyberopoliRoute.Ranking> {
                 RankingScreen(navController, rankingViewModel)
+            }
+            composable<CyberopoliRoute.Lobby> {
+                LobbyScreen(navController, "lobbyId1", lobbyViewModel, profileViewModel)
             }
         }
     }

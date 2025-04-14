@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.profile
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,7 +20,8 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    private val avatarList = listOf("avatar_male_1", "avatar_male_2", "avatar_female_1", "avatar_female_2")
+    private val avatarList =
+        listOf("avatar_male_1", "avatar_male_2", "avatar_female_1", "avatar_female_2")
 
     fun loadUserProfile() {
         val currentUser = auth.currentUser
@@ -45,10 +45,10 @@ class ProfileViewModel : ViewModel() {
         val currentUser = auth.currentUser ?: return
         val currentAvatar = _user.value?.profileImageUrl ?: avatarList.first()
         val currentIndex = avatarList.indexOf(currentAvatar)
-        val nextIndex = if (currentIndex == -1 || currentIndex == avatarList.size - 1) 0 else currentIndex + 1
+        val nextIndex =
+            if (currentIndex == -1 || currentIndex == avatarList.size - 1) 0 else currentIndex + 1
         val newAvatar = avatarList[nextIndex]
-        db.collection("users").document(currentUser.uid)
-            .update("profileImageUrl", newAvatar)
+        db.collection("users").document(currentUser.uid).update("profileImageUrl", newAvatar)
             .addOnSuccessListener {
                 _user.value = _user.value?.copy(profileImageUrl = newAvatar)
             }

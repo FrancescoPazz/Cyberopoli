@@ -75,6 +75,8 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.coil.compose)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.database)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

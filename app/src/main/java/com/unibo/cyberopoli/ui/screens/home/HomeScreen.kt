@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.home.StatCard
@@ -38,7 +40,7 @@ fun HomeScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = "Score Chart", style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.score_chart), style = MaterialTheme.typography.titleMedium
                 )
                 Box(
                     modifier = Modifier
@@ -51,19 +53,19 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 Text(
-                    text = "Account Statistics", style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.account_statistics), style = MaterialTheme.typography.titleMedium
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatCard(
-                        scoreTitle = "Total Score",
+                        scoreTitle = stringResource(R.string.total_score),
                         scoreValue = "1200",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        scoreTitle = "Games Played",
+                        scoreTitle = stringResource(R.string.games_played),
                         scoreValue = "23",
                         modifier = Modifier.weight(1f)
                     )
@@ -73,12 +75,12 @@ fun HomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatCard(
-                        scoreTitle = "Best Score",
+                        scoreTitle = stringResource(R.string.best_score),
                         scoreValue = "300",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        scoreTitle = "Average Score",
+                        scoreTitle = stringResource(R.string.average_score),
                         scoreValue = "52",
                         modifier = Modifier.weight(1f)
                     )

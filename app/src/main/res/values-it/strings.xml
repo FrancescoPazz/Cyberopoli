@@ -48,4 +48,14 @@
     <string name="level">Livello</string>
     <string name="loading">Caricamento</string>
     <string name="user_unauthenticated">Utente non autenticato</string>
+    <string name="score_chart">Grafico dei punteggi</string>
+    <string name="account_statistics">Statistiche del profilo</string>
+    <string name="total_score">Punteggio totale</string>
+    <string name="games_played">Partite giocate</string>
+    <string name="best_score">Miglior punteggio</string>
+    <string name="average_score">Punteggio medio</string>
+    <string name="ready">Pronto</string>
+    <string name="exit">Esci</string>
+    <string name="lobby_loading">Caricamento lobby in corso...</string>
+    <string name="waiting">In attesa</string>
 </resources>

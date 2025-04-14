@@ -47,4 +47,14 @@
     <string name="level">Level</string>
     <string name="loading">Loading</string>
     <string name="user_unauthenticated">User Unauthenticated</string>
+    <string name="score_chart">Score Chart</string>
+    <string name="account_statistics">Account Statistics</string>
+    <string name="total_score">Total Score</string>
+    <string name="games_played">Games Played</string>
+    <string name="best_score">Best Score</string>
+    <string name="average_score">Average Score</string>
+    <string name="ready">Ready</string>
+    <string name="exit">Exit</string>
+    <string name="lobby_loading">Lobby loading in progress...</string>
+    <string name="waiting">Waiting</string>
 </resources>

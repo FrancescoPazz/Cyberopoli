@@ -3,6 +3,7 @@ package com.unibo.cyberopoli
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.unibo.cyberopoli.data.repositories.SettingsRepository
+import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
 import com.unibo.cyberopoli.ui.screens.settings.SettingsViewModel
@@ -15,6 +16,7 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel() }
     viewModel { RankingViewModel() }
+    viewModel { LobbyViewModel() }
 
     single { SettingsRepository(get()) }
 
