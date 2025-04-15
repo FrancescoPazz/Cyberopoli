@@ -2,7 +2,9 @@ package com.unibo.cyberopoli
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import com.unibo.cyberopoli.data.repositories.RankingRepository
 import com.unibo.cyberopoli.data.repositories.SettingsRepository
+import com.unibo.cyberopoli.data.repositories.UserRepository
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
@@ -19,6 +21,7 @@ val appModule = module {
     viewModel { LobbyViewModel() }
 
     single { SettingsRepository(get()) }
-
+    single { UserRepository() }
+    single { RankingRepository() }
     single { get<Context>().dataStore }
 }

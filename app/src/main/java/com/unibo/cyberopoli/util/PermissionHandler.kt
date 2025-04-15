@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -27,6 +28,7 @@ class PermissionHandler(private val activity: ComponentActivity) {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun hasUsageStatsPermission(): Boolean {
         val appOps = activity.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
         val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -36,7 +38,7 @@ class PermissionHandler(private val activity: ComponentActivity) {
                 activity.packageName
             )
         } else {
-            appOps.checkOpNoThrow(
+            appOps.unsafeCheckOpRawNoThrow(
                 AppOpsManager.OPSTR_GET_USAGE_STATS,
                 android.os.Process.myUid(),
                 activity.packageName

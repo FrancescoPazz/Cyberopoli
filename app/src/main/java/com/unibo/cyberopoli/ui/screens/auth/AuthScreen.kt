@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -36,9 +35,10 @@ import com.unibo.cyberopoli.ui.composables.auth.AuthHeader
 import com.unibo.cyberopoli.ui.composables.auth.GuestCard
 import com.unibo.cyberopoli.ui.composables.auth.LoginCard
 import com.unibo.cyberopoli.ui.composables.auth.SignUpCard
+import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 
 @Composable
-fun AuthScreen(navController: NavController, authViewModel: AuthViewModel) {
+fun AuthScreen(navController: NavController, authViewModel: AuthViewModel, profileViewModel: ProfileViewModel) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf(
         stringResource(R.string.login),

@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -31,6 +32,10 @@ fun ProfileScreen(
     navController: NavHostController, profileViewModel: ProfileViewModel
 ) {
     val userData by profileViewModel.user.observeAsState()
+
+    LaunchedEffect(Unit) {
+        profileViewModel.loadUserData()
+    }
 
     val matchHistory = listOf(
         MatchHistory(

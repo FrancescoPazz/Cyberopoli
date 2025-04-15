@@ -10,6 +10,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -27,6 +28,10 @@ fun RankingScreen(
     navController: NavController, rankingViewModel: RankingViewModel
 ) {
     val rankingData by rankingViewModel.ranking.observeAsState()
+
+    LaunchedEffect(Unit) {
+        rankingViewModel.loadUserData()
+    }
 
     Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
@@ -48,7 +53,7 @@ fun RankingScreen(
                     val top3 = rankingData!!.take(3)
                     val others = rankingData!!.drop(3)
 
-                    val myPosition = rankingData!!.first()
+                    val myPosition = rankingViewModel.getMyRanking()
 
                     MyRankingPosition(user = myPosition)
                     Spacer(modifier = Modifier.height(16.dp))

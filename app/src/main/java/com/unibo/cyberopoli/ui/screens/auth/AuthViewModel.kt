@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,13 +9,19 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.UserData
+import com.unibo.cyberopoli.data.repositories.UserRepository
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(
+    private val userRepository: UserRepository = UserRepository()
+) : ViewModel() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
+
+    val user: LiveData<UserData?> = userRepository.userLiveData
 
     init {
         checkAuthStatus()
@@ -23,12 +30,14 @@ class AuthViewModel : ViewModel() {
     fun checkAuthStatus() {
         if (auth.currentUser != null) {
             _authState.value = AuthState.Authenticated
+            userRepository.loadUserData()
         } else {
             _authState.value = AuthState.Unauthenticated
         }
     }
 
     fun login(context: Context, email: String, password: String) {
+        Log.d("TestMATTO AuthViewModel", "Login called with email: $email and password: $password")
         if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthState.Error(context.getString(R.string.empty_fields))
             return
@@ -38,6 +47,7 @@ class AuthViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 _authState.value = AuthState.Authenticated
+                userRepository.loadUserData()
             } else {
                 _authState.value = AuthState.Error(
                     task.exception?.message ?: context.getString(R.string.login_failed)
@@ -91,12 +101,13 @@ class AuthViewModel : ViewModel() {
     fun logout() {
         auth.signOut()
         _authState.value = AuthState.Unauthenticated
+        userRepository.clearUserData()
     }
 }
 
 sealed class AuthState {
-    object Authenticated : AuthState()
-    object Unauthenticated : AuthState()
-    object Loading : AuthState()
+    data object Authenticated : AuthState()
+    data object Unauthenticated : AuthState()
+    data object Loading : AuthState()
     data class Error(val message: String) : AuthState()
 }

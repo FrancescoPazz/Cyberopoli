@@ -24,8 +24,8 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.RankingUser
 
 @Composable
-fun MyRankingPosition(user: RankingUser) {
-    val avatarRes = when (user.avatarUrl) {
+fun MyRankingPosition(user: RankingUser?) {
+    val avatarRes = when (user?.avatarUrl) {
         "avatar_male_1" -> R.drawable.avatar_male_1
         "avatar_male_2" -> R.drawable.avatar_male_2
         "avatar_female_1" -> R.drawable.avatar_female_1
@@ -55,7 +55,7 @@ fun MyRankingPosition(user: RankingUser) {
                 text = stringResource(R.string.my_rank), style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "#${user.rank}  ${user.name}  ${user.score} pt",
+                text = "#${user?.rank} ${user?.name} ${user?.surname} ${user?.score} pt",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
