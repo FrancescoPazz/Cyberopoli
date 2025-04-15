@@ -40,7 +40,8 @@ fun HomeScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.score_chart), style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.score_chart),
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Box(
                     modifier = Modifier
@@ -53,7 +54,8 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 Text(
-                    text = stringResource(R.string.account_statistics), style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.account_statistics),
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),

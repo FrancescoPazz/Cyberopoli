@@ -3,7 +3,6 @@ package com.unibo.cyberopoli.ui.screens.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -59,142 +59,142 @@ fun SettingScreen(
 
     val authState by authViewModel.authState.observeAsState()
 
-    Scaffold(topBar = { TopBar(navController) },
-        bottomBar = {
-            if (authState == AuthState.Authenticated) BottomBar(navController)
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Text(text = "Theme", style = MaterialTheme.typography.titleMedium)
-                Theme.entries.forEach { theme ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .selectable(
-                                selected = theme == themeState.theme, onClick = {
-                                    settingsViewModel.changeTheme(theme)
-                                }, role = Role.RadioButton
-                            )
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        RadioButton(
-                            selected = theme == themeState.theme, onClick = null,
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = MaterialTheme.colorScheme.tertiary,
-                            )
-                        )
-                        Text(
-                            text = when (theme) {
-                                Theme.Light -> stringResource(R.string.light)
-                                Theme.Dark -> stringResource(R.string.dark)
-                                Theme.System -> stringResource(R.string.system)
-                            },
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
-
-                HorizontalDivider()
-
-                Text(
-                    text = stringResource(R.string.notifications),
-                    style = MaterialTheme.typography.titleMedium
-                )
+    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
+        if (authState == AuthState.Authenticated) BottomBar(navController)
+    }, content = { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            Text(text = "Theme", style = MaterialTheme.typography.titleMedium)
+            Theme.entries.forEach { theme ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .selectable(
+                            selected = theme == themeState.theme, onClick = {
+                                settingsViewModel.changeTheme(theme)
+                            }, role = Role.RadioButton
+                        )
+                        .padding(horizontal = 16.dp)
                 ) {
-                    Text(text = stringResource(R.string.enable_notifications))
-                    Switch(checked = notificationsEnabled,
-                        onCheckedChange = { notificationsEnabled = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = MaterialTheme.colorScheme.tertiary,
-                            uncheckedThumbColor = MaterialTheme.colorScheme.onTertiary,
-                            checkedTrackColor = MaterialTheme.colorScheme.onBackground,
-                            uncheckedTrackColor = MaterialTheme.colorScheme.onBackground
-                        ))
-                }
-
-                HorizontalDivider()
-
-                if (authState == AuthState.Authenticated) {
+                    RadioButton(
+                        selected = theme == themeState.theme,
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.tertiary,
+                        )
+                    )
                     Text(
-                        text = stringResource(R.string.change_password),
-                        style = MaterialTheme.typography.titleMedium
+                        text = when (theme) {
+                            Theme.Light -> stringResource(R.string.light)
+                            Theme.Dark -> stringResource(R.string.dark)
+                            Theme.System -> stringResource(R.string.system)
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
                     )
-                    OutlinedTextField(value = currentPassword,
-                        onValueChange = { currentPassword = it },
-                        label = { Text(stringResource(R.string.old_password)) },
-                        visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.primary,
-                        )
-                    )
-                    OutlinedTextField(value = newPassword,
-                        onValueChange = { newPassword = it },
-                        label = { Text(stringResource(R.string.password)) },
-                        visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.primary,
-                        )
-                    )
-                    OutlinedTextField(value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
-                        label = { Text(stringResource(R.string.password_confirm)) },
-                        visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.primary,
-                        )
-                    )
-                    Button(
-                        onClick = {
-                            if (newPassword == confirmPassword) {
-                                settingsViewModel.updatePasswordWithOldPassword(
-                                    oldPassword = currentPassword,
-                                    newPassword = newPassword,
-                                    onSuccess = { /* Gestisci il successo, ad esempio mostra un messaggio */ },
-                                    onError = { /* Gestisci l'errore, ad esempio mostra un messaggio */ }
-                                )
-                            } else {
-
-                            }
-                        }, modifier = Modifier.align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = MaterialTheme.colorScheme.tertiary,
-                            containerColor = MaterialTheme.colorScheme.onTertiary
-                        ),
-                    ) {
-                        Text(stringResource(R.string.change_password))
-                    }
-                    Button(
-                        onClick = { authViewModel.logout() },
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = MaterialTheme.colorScheme.primary,
-                            containerColor = MaterialTheme.colorScheme.onError
-                        ),
-                    ) {
-                        Text(stringResource(R.string.logout))
-                    }
                 }
             }
-        })
+
+            HorizontalDivider()
+
+            Text(
+                text = stringResource(R.string.notifications),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = stringResource(R.string.enable_notifications))
+                Switch(
+                    checked = notificationsEnabled,
+                    onCheckedChange = { notificationsEnabled = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.tertiary,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onTertiary,
+                        checkedTrackColor = MaterialTheme.colorScheme.onBackground,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+            }
+
+            HorizontalDivider()
+
+            if (authState == AuthState.Authenticated) {
+                Text(
+                    text = stringResource(R.string.change_password),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                OutlinedTextField(value = currentPassword,
+                    onValueChange = { currentPassword = it },
+                    label = { Text(stringResource(R.string.old_password)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    )
+                )
+                OutlinedTextField(value = newPassword,
+                    onValueChange = { newPassword = it },
+                    label = { Text(stringResource(R.string.password)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    )
+                )
+                OutlinedTextField(value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text(stringResource(R.string.password_confirm)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    )
+                )
+                Button(
+                    onClick = {
+                        if (newPassword == confirmPassword) {
+                            settingsViewModel.updatePasswordWithOldPassword(oldPassword = currentPassword,
+                                newPassword = newPassword,
+                                onSuccess = { /* Gestisci il successo, ad esempio mostra un messaggio */ },
+                                onError = { /* Gestisci l'errore, ad esempio mostra un messaggio */ })
+                        } else {
+
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = MaterialTheme.colorScheme.onTertiary
+                    ),
+                ) {
+                    Text(stringResource(R.string.change_password))
+                }
+                Button(
+                    onClick = { authViewModel.logout() },
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.onError
+                    ),
+                ) {
+                    Text(stringResource(R.string.logout))
+                }
+            }
+        }
+    })
 }

@@ -26,8 +26,11 @@ import com.unibo.cyberopoli.R
 fun RankingTabs(
     selectedTabIndex: Int, onTabSelected: (Int) -> Unit, onFilterClick: () -> Unit
 ) {
-    val tabs = listOf(stringResource(R.string.daily), stringResource(R.string.weekly), stringResource(
-        R.string.monthly))
+    val tabs = listOf(
+        stringResource(R.string.daily), stringResource(R.string.weekly), stringResource(
+            R.string.monthly
+        )
+    )
 
     Row(
         modifier = Modifier
@@ -38,8 +41,7 @@ fun RankingTabs(
     ) {
         Text(
             text = "${stringResource(R.string.filters)}:",
-            modifier = Modifier
-                .clickable { onFilterClick() },
+            modifier = Modifier.clickable { onFilterClick() },
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -58,13 +60,15 @@ fun RankingTabs(
             tabs.forEachIndexed { index, title ->
                 Tab(selected = selectedTabIndex == index,
                     onClick = { onTabSelected(index) },
-                    text = { Text(
-                        title,
-                        fontSize = 12.sp,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis
-                    ) })
+                    text = {
+                        Text(
+                            title,
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    })
             }
         }
     }

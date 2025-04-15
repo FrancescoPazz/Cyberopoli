@@ -22,10 +22,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.unibo.cyberopoli.util.ARHelper
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
 import com.google.ar.core.TrackingFailureReason
+import com.unibo.cyberopoli.util.ARHelper
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
 import io.github.sceneview.ar.arcore.isValid
@@ -90,24 +90,26 @@ fun ARScreen(navController: NavController) {
                         childNodes += nodeModel
                     }
                 }
-            }))
+            })
+        )
 
         Reticle(modifier = Modifier.align(Alignment.Center))
 
         val configuration = LocalConfiguration.current
         val density = LocalDensity.current
-        FloatingActionButton(modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .padding(bottom = 100.dp), onClick = {
-            childNodes.clear()
-            modelInstance.clear()
-            val centerCoordinates = with(density) {
-                Offset(
-                    x = (configuration.screenWidthDp.dp.toPx() / 2f),
-                    y = (configuration.screenHeightDp.dp.toPx() / 2f)
-                )
-            }
-            frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 100.dp), onClick = {
+                childNodes.clear()
+                modelInstance.clear()
+                val centerCoordinates = with(density) {
+                    Offset(
+                        x = (configuration.screenWidthDp.dp.toPx() / 2f),
+                        y = (configuration.screenHeightDp.dp.toPx() / 2f)
+                    )
+                }
+                frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
                     it.isValid(depthPoint = false, point = false)
                 }?.createAnchorOrNull()?.let { centerAnchor ->
                     val nuggetNode = ARHelper.createAnchorNode(
@@ -120,7 +122,7 @@ fun ARScreen(navController: NavController) {
                     )
                     childNodes += nuggetNode
                 }
-        }) {
+            }) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add Nugget")
         }
     }

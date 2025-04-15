@@ -66,7 +66,8 @@ fun ProfileHeader(
         }
 
         Text(
-            text = "${stringResource(R.string.level)}: ${userData.level.toString()}", textAlign = TextAlign.Center
+            text = "${stringResource(R.string.level)}: ${userData.level.toString()}",
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(8.dp))

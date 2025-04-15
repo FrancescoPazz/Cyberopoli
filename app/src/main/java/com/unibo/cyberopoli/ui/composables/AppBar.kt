@@ -45,10 +45,8 @@ fun TopBar(navController: NavController) {
             )
         }
     }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = if (currentRoute == CyberopoliRoute.Auth.toString())
-            MaterialTheme.colorScheme.background
-        else
-            MaterialTheme.colorScheme.onSurface
+        containerColor = if (currentRoute == CyberopoliRoute.Auth.toString()) MaterialTheme.colorScheme.background
+        else MaterialTheme.colorScheme.onSurface
     ), navigationIcon = {
         if (navController.previousBackStackEntry != null) {
             IconButton(onClick = { navController.navigateUp() }) {

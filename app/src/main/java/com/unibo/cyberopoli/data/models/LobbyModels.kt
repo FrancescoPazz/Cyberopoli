@@ -9,7 +9,5 @@ data class Lobby(
 )
 
 data class PlayerInfo(
-    val name: String = "",
-    val ready: Boolean = false,
-    val score: Int = 50
+    val name: String = "", val ready: Boolean = false, val score: Int = 50
 )

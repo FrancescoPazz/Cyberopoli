@@ -27,10 +27,7 @@ class SettingsViewModel(
     }
 
     fun updatePasswordWithOldPassword(
-        oldPassword: String,
-        newPassword: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
     ) = viewModelScope.launch {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
@@ -46,19 +43,22 @@ class SettingsViewModel(
 
         val credential = EmailAuthProvider.getCredential(email, oldPassword)
 
-        currentUser.reauthenticate(credential)
-            .addOnCompleteListener { reauthTask ->
+        currentUser.reauthenticate(credential).addOnCompleteListener { reauthTask ->
                 if (reauthTask.isSuccessful) {
-                    currentUser.updatePassword(newPassword)
-                        .addOnCompleteListener { updateTask ->
+                    currentUser.updatePassword(newPassword).addOnCompleteListener { updateTask ->
                             if (updateTask.isSuccessful) {
                                 onSuccess()
                             } else {
-                                onError(updateTask.exception?.message ?: "Errore nel cambio password.")
+                                onError(
+                                    updateTask.exception?.message ?: "Errore nel cambio password."
+                                )
                             }
                         }
                 } else {
-                    onError(reauthTask.exception?.message ?: "Errore nella verifica della vecchia password.")
+                    onError(
+                        reauthTask.exception?.message
+                            ?: "Errore nella verifica della vecchia password."
+                    )
                 }
             }
     }

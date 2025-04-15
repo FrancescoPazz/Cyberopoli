@@ -41,14 +41,13 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
             imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ctx)) { imageProxy ->
                 imageProxy.image?.let { mediaImage ->
                     val image = InputImage.fromMediaImage(
-                        mediaImage,
-                        imageProxy.imageInfo.rotationDegrees
+                        mediaImage, imageProxy.imageInfo.rotationDegrees
                     )
                     BarcodeScanning.getClient().process(image).addOnSuccessListener { barcodes ->
-                            barcodes.firstOrNull()?.rawValue?.let { value ->
-                                onQRCodeScanned(value)
-                            }
-                        }.addOnCompleteListener { imageProxy.close() }
+                        barcodes.firstOrNull()?.rawValue?.let { value ->
+                            onQRCodeScanned(value)
+                        }
+                    }.addOnCompleteListener { imageProxy.close() }
                 } ?: imageProxy.close()
             }
 
@@ -56,10 +55,7 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
-                    lifecycleOwner,
-                    cameraSelector,
-                    preview,
-                    imageAnalysis
+                    lifecycleOwner, cameraSelector, preview, imageAnalysis
                 )
             } catch (exc: Exception) {
                 throw exc

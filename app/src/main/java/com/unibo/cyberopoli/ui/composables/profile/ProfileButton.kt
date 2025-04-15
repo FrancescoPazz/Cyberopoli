@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.composables.profile
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -25,11 +24,9 @@ fun ProfileButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
-            .padding(8.dp),
+        modifier = modifier.padding(8.dp),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 4.dp
+            defaultElevation = 8.dp, pressedElevation = 4.dp
         ),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
@@ -42,10 +39,8 @@ fun ProfileButton(
             Spacer(modifier = Modifier.width(4.dp))
         }
         Text(
-            text = text,
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+            text = text, style = TextStyle(
+                fontSize = 18.sp, fontWeight = FontWeight.Bold
             )
         )
     }

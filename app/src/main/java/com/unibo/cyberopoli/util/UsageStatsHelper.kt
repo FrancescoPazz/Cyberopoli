@@ -11,7 +11,10 @@ class UsageStatsHelper(private val context: Context) {
     fun logUsageStats() {
         val usageStatsList = getMostUsedApps()
         usageStatsList.take(5).forEach {
-            Log.d("APP_USAGE", "App: ${it.packageName} - Tempo in primo piano: ${it.totalTimeInForeground / 1000} sec")
+            Log.d(
+                "APP_USAGE",
+                "App: ${it.packageName} - Tempo in primo piano: ${it.totalTimeInForeground / 1000} sec"
+            )
         }
 
         val usageTimeMillis = getTodayUsageTime()
@@ -19,10 +22,12 @@ class UsageStatsHelper(private val context: Context) {
     }
 
     private fun getMostUsedApps(): List<UsageStats> {
-        val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val usageStatsManager =
+            context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         val endTime = System.currentTimeMillis()
         val startTime = endTime - 24 * 60 * 60 * 1000
-        val stats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
+        val stats =
+            usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
         return stats.sortedByDescending { it.totalTimeInForeground }
     }
 
@@ -36,8 +41,10 @@ class UsageStatsHelper(private val context: Context) {
         val startTime = calendar.timeInMillis
         val endTime = System.currentTimeMillis()
 
-        val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val stats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
+        val usageStatsManager =
+            context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val stats =
+            usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
         val totalUsageTimeMillis = stats.sumOf { it.totalTimeInForeground }
         return totalUsageTimeMillis
     }

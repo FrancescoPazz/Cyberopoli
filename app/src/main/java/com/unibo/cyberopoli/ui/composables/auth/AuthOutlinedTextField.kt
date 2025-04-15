@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -27,7 +28,8 @@ fun AuthOutlinedTextField(
     imageVector: ImageVector? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    OutlinedTextField(value = value.value,
+    OutlinedTextField(
+        value = value.value,
         onValueChange = { value.value = it },
         placeholder = { Text(placeholder) },
         leadingIcon = {
@@ -46,9 +48,9 @@ fun AuthOutlinedTextField(
             .background(MaterialTheme.colorScheme.secondary),
         singleLine = singleLine,
         visualTransformation = visualTransformation,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+        colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = MaterialTheme.colorScheme.primary,
+            unfocusedTextColor = MaterialTheme.colorScheme.primary,
         )
     )
 }

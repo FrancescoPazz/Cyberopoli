@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        val authViewModel : AuthViewModel by viewModels()
+        val authViewModel: AuthViewModel by viewModels()
         setContent {
             val navController = rememberNavController()
             CyberopoliNavGraph(navController = navController, authViewModel = authViewModel)

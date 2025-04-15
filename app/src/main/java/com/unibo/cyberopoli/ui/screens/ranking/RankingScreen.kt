@@ -24,13 +24,11 @@ import com.unibo.cyberopoli.ui.composables.ranking.Top3RankingSection
 
 @Composable
 fun RankingScreen(
-    navController: NavController,
-    rankingViewModel: RankingViewModel
+    navController: NavController, rankingViewModel: RankingViewModel
 ) {
     val rankingData by rankingViewModel.ranking.observeAsState()
 
-    Scaffold(
-        topBar = { TopBar(navController) },
+    Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(
@@ -38,11 +36,9 @@ fun RankingScreen(
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
             ) {
-                RankingTabs(
-                    selectedTabIndex = 0,
+                RankingTabs(selectedTabIndex = 0,
                     onTabSelected = { /* TODO: implementa selezione */ },
-                    onFilterClick = { /* TODO: Implementa filtro */ }
-                )
+                    onFilterClick = { /* TODO: Implementa filtro */ })
 
                 Spacer(modifier = Modifier.height(8.dp))
                 if (rankingData == null) {
@@ -61,6 +57,5 @@ fun RankingScreen(
                     RankingListSection(users = others)
                 }
             }
-        }
-    )
+        })
 }

@@ -74,12 +74,12 @@ class AuthViewModel : ViewModel() {
                 )
 
                 db.collection("users").document(userId).set(userData).addOnSuccessListener {
-                        _authState.value = AuthState.Authenticated
-                    }.addOnFailureListener { e ->
-                        _authState.value = AuthState.Error(
-                            e.message ?: context.getString(R.string.signup_failed)
-                        )
-                    }
+                    _authState.value = AuthState.Authenticated
+                }.addOnFailureListener { e ->
+                    _authState.value = AuthState.Error(
+                        e.message ?: context.getString(R.string.signup_failed)
+                    )
+                }
             } else {
                 _authState.value = AuthState.Error(
                     task.exception?.message ?: context.getString(R.string.login_failed)

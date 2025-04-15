@@ -25,17 +25,17 @@ fun AuthHeader() {
     val imageSize = 250.dp
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
+            contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
-                modifier = Modifier.size(imageSize).align(Alignment.Center),
+                modifier = Modifier
+                    .size(imageSize)
+                    .align(Alignment.Center),
                 contentScale = ContentScale.Fit
             )
 
@@ -47,7 +47,9 @@ fun AuthHeader() {
                 shadowColor = MaterialTheme.colorScheme.onBackground,
                 offsetX = 4,
                 offsetY = 4,
-                modifier = Modifier.align(Alignment.Center).padding(top = imageSize/2)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(top = imageSize / 2)
             )
         }
 

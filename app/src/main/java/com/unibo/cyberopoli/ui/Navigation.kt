@@ -30,18 +30,25 @@ import org.koin.androidx.compose.koinViewModel
 sealed interface CyberopoliRoute {
     @Serializable
     data object Auth : CyberopoliRoute
+
     @Serializable
     data object Scan : CyberopoliRoute
+
     @Serializable
     data object ARScreen : CyberopoliRoute
+
     @Serializable
     data object Settings : CyberopoliRoute
+
     @Serializable
     data object Home : CyberopoliRoute
+
     @Serializable
     data object Profile : CyberopoliRoute
+
     @Serializable
     data object Ranking : CyberopoliRoute
+
     @Serializable
     data object Lobby : CyberopoliRoute
 }
@@ -77,10 +84,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
             }
             composable<CyberopoliRoute.Settings> {
                 SettingScreen(
-                    navController,
-                    themeState,
-                    settingsViewModel,
-                    authViewModel
+                    navController, themeState, settingsViewModel, authViewModel
                 )
             }
             composable<CyberopoliRoute.Home> {
@@ -88,8 +92,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
             }
             composable<CyberopoliRoute.Profile> {
                 ProfileScreen(
-                    navController,
-                    profileViewModel
+                    navController, profileViewModel
                 )
             }
             composable<CyberopoliRoute.Ranking> {

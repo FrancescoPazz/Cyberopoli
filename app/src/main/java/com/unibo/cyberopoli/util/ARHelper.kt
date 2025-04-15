@@ -20,17 +20,15 @@ object ARHelper {
         model: String
     ): AnchorNode {
         val anchorNode = AnchorNode(engine = engine, anchor = anchor)
-        val modelNode = ModelNode(
-            modelInstance = modelInstance.apply {
-                if (isEmpty()) {
-                    this += modelLoader.createInstancedModel(model, 10)
-                }
-            }.removeAt(modelInstance.apply {
-                if (isEmpty()) {
-                    this += modelLoader.createInstancedModel(model, 10)
-                }
-            }.lastIndex),
-            scaleToUnits = 0.2f
+        val modelNode = ModelNode(modelInstance = modelInstance.apply {
+            if (isEmpty()) {
+                this += modelLoader.createInstancedModel(model, 10)
+            }
+        }.removeAt(modelInstance.apply {
+            if (isEmpty()) {
+                this += modelLoader.createInstancedModel(model, 10)
+            }
+        }.lastIndex), scaleToUnits = 0.2f
         ).apply {
             isEditable = true
         }

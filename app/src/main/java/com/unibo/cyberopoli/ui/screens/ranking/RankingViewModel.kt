@@ -19,9 +19,7 @@ class RankingViewModel : ViewModel() {
     }
 
     fun loadRanking() {
-        db.collection("users")
-            .orderBy("score", Query.Direction.DESCENDING)
-            .get()
+        db.collection("users").orderBy("score", Query.Direction.DESCENDING).get()
             .addOnSuccessListener { result ->
                 val userDataList = result.toObjects(UserData::class.java)
                 val rankingList = userDataList.mapIndexed { index, userData ->
@@ -34,8 +32,7 @@ class RankingViewModel : ViewModel() {
                     )
                 }
                 _ranking.value = rankingList
-            }
-            .addOnFailureListener { exception ->
+            }.addOnFailureListener { exception ->
                 _ranking.value = emptyList()
             }
     }

@@ -39,7 +39,8 @@ fun MatchHistorySection(matchHistory: List<MatchHistory>) {
 @Composable
 fun MatchHistoryItem(match: MatchHistory) {
     Card(
-        elevation = CardDefaults.cardElevation(2.dp), modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(2.dp),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onSurface,
             contentColor = MaterialTheme.colorScheme.surface

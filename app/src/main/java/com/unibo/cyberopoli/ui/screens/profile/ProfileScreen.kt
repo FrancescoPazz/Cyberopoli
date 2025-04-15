@@ -28,8 +28,7 @@ import com.unibo.cyberopoli.ui.composables.profile.ProfileStatsSection
 
 @Composable
 fun ProfileScreen(
-    navController: NavHostController,
-    profileViewModel: ProfileViewModel
+    navController: NavHostController, profileViewModel: ProfileViewModel
 ) {
     val userData by profileViewModel.user.observeAsState()
 
@@ -39,8 +38,7 @@ fun ProfileScreen(
             title = "Torneo Settimanale",
             result = "Vittoria",
             points = "+25 punti"
-        ),
-        MatchHistory(
+        ), MatchHistory(
             date = "14 Feb 2024",
             title = "Partita Amichevole",
             result = "Sconfitta",
@@ -48,8 +46,7 @@ fun ProfileScreen(
         )
     )
 
-    Scaffold(
-        topBar = { TopBar(navController) },
+    Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(
@@ -61,23 +58,18 @@ fun ProfileScreen(
                 if (userData == null) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     Text(
-                        text = stringResource(R.string.loading),
-                        modifier = Modifier.padding(16.dp)
+                        text = stringResource(R.string.loading), modifier = Modifier.padding(16.dp)
                     )
                 } else {
-                    ProfileHeader(
-                        userData = userData!!,
+                    ProfileHeader(userData = userData!!,
                         onEditProfileClick = { profileViewModel.changeAvatar() },
-                        onShareClick = { /* TODO: implementa share profilo */ }
-                    )
+                        onShareClick = { /* TODO: implementa share profilo */ })
                     Spacer(modifier = Modifier.height(16.dp))
                     userData!!.totalGames?.let {
                         userData!!.totalWins?.let { it1 ->
                             userData!!.totalMedals?.let { it2 ->
                                 ProfileStatsSection(
-                                    totalGames = it,
-                                    totalWins = it1,
-                                    totalMedals = it2
+                                    totalGames = it, totalWins = it1, totalMedals = it2
                                 )
                             }
                         }
@@ -90,6 +82,5 @@ fun ProfileScreen(
                     MatchHistorySection(matchHistory = matchHistory)
                 }
             }
-        }
-    )
+        })
 }

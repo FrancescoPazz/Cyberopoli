@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,44 +68,40 @@ fun AuthScreen(navController: NavController, authViewModel: AuthViewModel) {
         }
     }
 
-    Scaffold(topBar = { TopBar(navController) },
-        bottomBar = {
-            if (authState.value == AuthState.Authenticated) BottomBar(navController)
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AuthHeader()
+    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
+        if (authState.value == AuthState.Authenticated) BottomBar(navController)
+    }, content = { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AuthHeader()
 
-                TabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.tertiary,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            color = MaterialTheme.colorScheme.tertiary
-                        )
-                    }
-                ) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            text = { Text(title) })
-                    }
-                }
-
-                when (selectedTabIndex) {
-                    0 -> LoginCard(authViewModel)
-                    1 -> SignUpCard(authViewModel)
-                    2 -> GuestCard(navController)
+            TabRow(selectedTabIndex = selectedTabIndex,
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                indicator = { tabPositions ->
+                    SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                }) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = { Text(title) })
                 }
             }
-        })
+
+            when (selectedTabIndex) {
+                0 -> LoginCard(authViewModel)
+                1 -> SignUpCard(authViewModel)
+                2 -> GuestCard(navController)
+            }
+        }
+    })
 }
