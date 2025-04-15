@@ -1,6 +1,10 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
+import android.os.Build
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -31,21 +36,38 @@ import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.auth.AuthButton
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
+import com.unibo.cyberopoli.util.PermissionHandler
+import com.unibo.cyberopoli.util.UsageStatsHelper
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
     navController: NavHostController,
     lobbyId: String,
     lobbyViewModel: LobbyViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
 ) {
+    val context = LocalContext.current
+    val activity = LocalActivity.current as ComponentActivity
+
     val currentLobby by lobbyViewModel.lobby.observeAsState()
-
     val userData by profileViewModel.user.observeAsState()
-
     val playerName = "${userData?.name} ${userData?.surname}"
 
     LaunchedEffect(Unit) {
+        lobbyViewModel.joinLobby(lobbyId, playerName)
+        lobbyViewModel.observeLobby(lobbyId)
+
+        // Well being Permission logic
+        val permissionHandler = PermissionHandler(activity)
+        val usageStatsHelper = UsageStatsHelper(context)
+
+        if (permissionHandler.hasUsageStatsPermission()) {
+            usageStatsHelper.logUsageStats()
+        } else {
+            permissionHandler.requestUsageStatsPermission()
+        }
+
         lobbyViewModel.joinLobby(lobbyId, playerName)
         lobbyViewModel.observeLobby(lobbyId)
     }

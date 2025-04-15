@@ -16,6 +16,7 @@ class RankingViewModel(
     val ranking: LiveData<List<RankingUser>> = rankingRepository.rankingLiveData
 
     init {
+        loadUserData()
         rankingRepository.loadRanking()
     }
 

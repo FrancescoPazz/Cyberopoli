@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.scan
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -29,14 +31,23 @@ import com.unibo.cyberopoli.ui.composables.auth.Text3D
 import com.unibo.cyberopoli.ui.composables.scan.QRCodeScanner
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
+import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
-fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel, activity: ComponentActivity) {
+    val permissionHandler = remember { PermissionHandler(activity) }
+
     val appName = stringResource(R.string.app_name).lowercase()
     val invalidCode = stringResource(R.string.invalid_code)
     var scannedValue by remember { mutableStateOf("") }
 
     val authState by authViewModel.authState.observeAsState()
+
+    LaunchedEffect(Unit) {
+        if (!permissionHandler.hasCameraPermission()) {
+            permissionHandler.requestCameraPermission()
+        }
+    }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
         if (authState == AuthState.Authenticated) BottomBar(navController)

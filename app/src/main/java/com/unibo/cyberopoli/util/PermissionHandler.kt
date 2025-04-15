@@ -14,6 +14,13 @@ import androidx.core.content.ContextCompat
 
 class PermissionHandler(private val activity: ComponentActivity) {
 
+    fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            activity,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     fun requestCameraPermission() {
         if (ContextCompat.checkSelfPermission(
                 activity,

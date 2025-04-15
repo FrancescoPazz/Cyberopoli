@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,7 +55,7 @@ sealed interface CyberopoliRoute {
 }
 
 @Composable
-fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
+fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel, activity: ComponentActivity) {
     val lobbyViewModel = koinViewModel<LobbyViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val rankingViewModel = koinViewModel<RankingViewModel>()
@@ -77,7 +78,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 AuthScreen(navController, authViewModel, profileViewModel)
             }
             composable<CyberopoliRoute.Scan> {
-                ScanScreen(navController, authViewModel)
+                ScanScreen(navController, authViewModel, activity)
             }
             composable<CyberopoliRoute.ARScreen> {
                 ARScreen(navController)

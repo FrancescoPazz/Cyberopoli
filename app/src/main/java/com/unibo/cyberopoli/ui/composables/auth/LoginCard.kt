@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.composables.auth
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
