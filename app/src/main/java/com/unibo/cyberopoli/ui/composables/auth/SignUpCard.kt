@@ -81,11 +81,7 @@ fun SignUpCard(
             text = stringResource(R.string.signup).uppercase(),
             onClick = {
                 authViewModel.signUp(
-                    context,
-                    email.value,
-                    password.value,
-                    name.value,
-                    surname.value
+                    context, email.value, password.value, name.value, surname.value
                 )
             },
             enabled = authState.value != AuthState.Loading,

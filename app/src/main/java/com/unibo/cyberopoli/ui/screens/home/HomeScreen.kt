@@ -30,8 +30,9 @@ import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.home.StatCard
 
 @Composable
-fun HomeScreen(navController: NavController,
-               homeViewModel: HomeViewModel) {
+fun HomeScreen(
+    navController: NavController, homeViewModel: HomeViewModel
+) {
     val userData by homeViewModel.user.observeAsState()
 
     LaunchedEffect(Unit) {

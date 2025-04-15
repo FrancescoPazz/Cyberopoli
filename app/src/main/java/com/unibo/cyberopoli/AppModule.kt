@@ -5,6 +5,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.unibo.cyberopoli.data.repositories.RankingRepository
 import com.unibo.cyberopoli.data.repositories.SettingsRepository
 import com.unibo.cyberopoli.data.repositories.UserRepository
+import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
@@ -16,6 +17,7 @@ import org.koin.dsl.module
 val Context.dataStore by preferencesDataStore("settings")
 
 val appModule = module {
+    viewModel { AuthViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }

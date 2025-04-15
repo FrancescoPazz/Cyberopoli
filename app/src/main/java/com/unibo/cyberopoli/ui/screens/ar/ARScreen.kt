@@ -55,7 +55,8 @@ fun ARScreen(navController: NavController) {
     val frameState = remember { mutableStateOf<Frame?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        ARScene(modifier = Modifier.fillMaxSize(),
+        ARScene(
+            modifier = Modifier.fillMaxSize(),
             childNodes = childNodes,
             engine = engine,
             view = view,
@@ -97,32 +98,31 @@ fun ARScreen(navController: NavController) {
 
         val configuration = LocalConfiguration.current
         val density = LocalDensity.current
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp), onClick = {
-                childNodes.clear()
-                modelInstance.clear()
-                val centerCoordinates = with(density) {
-                    Offset(
-                        x = (configuration.screenWidthDp.dp.toPx() / 2f),
-                        y = (configuration.screenHeightDp.dp.toPx() / 2f)
-                    )
-                }
-                frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
-                    it.isValid(depthPoint = false, point = false)
-                }?.createAnchorOrNull()?.let { centerAnchor ->
-                    val nuggetNode = ARHelper.createAnchorNode(
-                        engine = engine,
-                        modelLoader = modelLoader,
-                        materialLoader = materialLoader,
-                        modelInstance = modelInstance,
-                        anchor = centerAnchor,
-                        model = "models/chicken_nugget.glb"
-                    )
-                    childNodes += nuggetNode
-                }
-            }) {
+        FloatingActionButton(modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 100.dp), onClick = {
+            childNodes.clear()
+            modelInstance.clear()
+            val centerCoordinates = with(density) {
+                Offset(
+                    x = (configuration.screenWidthDp.dp.toPx() / 2f),
+                    y = (configuration.screenHeightDp.dp.toPx() / 2f)
+                )
+            }
+            frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
+                it.isValid(depthPoint = false, point = false)
+            }?.createAnchorOrNull()?.let { centerAnchor ->
+                val nuggetNode = ARHelper.createAnchorNode(
+                    engine = engine,
+                    modelLoader = modelLoader,
+                    materialLoader = materialLoader,
+                    modelInstance = modelInstance,
+                    anchor = centerAnchor,
+                    model = "models/chicken_nugget.glb"
+                )
+                childNodes += nuggetNode
+            }
+        }) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add Nugget")
         }
     }

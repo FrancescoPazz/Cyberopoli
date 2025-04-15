@@ -59,7 +59,8 @@ sealed interface CyberopoliRoute {
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
+fun CyberopoliNavGraph(navController: NavHostController) {
+    val authViewModel = koinViewModel<AuthViewModel>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val homeViewModel = koinViewModel<HomeViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
@@ -109,5 +110,4 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
             }
         }
     }
-
 }
