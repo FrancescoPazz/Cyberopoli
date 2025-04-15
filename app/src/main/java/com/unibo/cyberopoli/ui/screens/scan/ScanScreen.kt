@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.ui.screens.scan
 
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +35,8 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
-fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel, activity: ComponentActivity) {
+fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+    val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
 
     val appName = stringResource(R.string.app_name).lowercase()

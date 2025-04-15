@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         val authViewModel: AuthViewModel by viewModels()
         setContent {
             val navController = rememberNavController()
-            CyberopoliNavGraph(navController = navController, authViewModel = authViewModel, activity = this)
+            CyberopoliNavGraph(navController = navController, authViewModel = authViewModel)
         }
     }
 }

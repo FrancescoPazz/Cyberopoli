@@ -1,6 +1,8 @@
 package com.unibo.cyberopoli.ui
 
+import android.os.Build
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +17,7 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
+import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
@@ -54,12 +57,14 @@ sealed interface CyberopoliRoute {
     data object Lobby : CyberopoliRoute
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel, activity: ComponentActivity) {
-    val lobbyViewModel = koinViewModel<LobbyViewModel>()
+fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
+    val settingsViewModel = koinViewModel<SettingsViewModel>()
+    val homeViewModel = koinViewModel<HomeViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val rankingViewModel = koinViewModel<RankingViewModel>()
-    val settingsViewModel = koinViewModel<SettingsViewModel>()
+    val lobbyViewModel = koinViewModel<LobbyViewModel>()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
     val authState = authViewModel.authState.observeAsState()
 
@@ -78,7 +83,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 AuthScreen(navController, authViewModel, profileViewModel)
             }
             composable<CyberopoliRoute.Scan> {
-                ScanScreen(navController, authViewModel, activity)
+                ScanScreen(navController, authViewModel)
             }
             composable<CyberopoliRoute.ARScreen> {
                 ARScreen(navController)
@@ -89,7 +94,7 @@ fun CyberopoliNavGraph(navController: NavHostController, authViewModel: AuthView
                 )
             }
             composable<CyberopoliRoute.Home> {
-                HomeScreen(navController)
+                HomeScreen(navController, homeViewModel)
             }
             composable<CyberopoliRoute.Profile> {
                 ProfileScreen(

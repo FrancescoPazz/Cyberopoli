@@ -15,6 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,7 +30,14 @@ import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.home.StatCard
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController,
+               homeViewModel: HomeViewModel) {
+    val userData by homeViewModel.user.observeAsState()
+
+    LaunchedEffect(Unit) {
+        homeViewModel.loadUserData()
+    }
+
     Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
@@ -63,12 +73,12 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     StatCard(
                         scoreTitle = stringResource(R.string.total_score),
-                        scoreValue = "1200",
+                        scoreValue = userData?.score?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
                         scoreTitle = stringResource(R.string.games_played),
-                        scoreValue = "23",
+                        scoreValue = userData?.totalGames?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                 }
