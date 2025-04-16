@@ -93,16 +93,14 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             }
             composable<CyberopoliRoute.Settings> {
                 SettingScreen(
-                    navController, themeState, settingsViewModel, authViewModel
+                    navController, settingsViewModel, authViewModel
                 )
             }
             composable<CyberopoliRoute.Home> {
                 HomeScreen(navController, homeViewModel)
             }
             composable<CyberopoliRoute.Profile> {
-                ProfileScreen(
-                    navController, profileViewModel
-                )
+                ProfileScreen(navController, profileViewModel)
             }
             composable<CyberopoliRoute.Ranking> {
                 RankingScreen(navController, rankingViewModel)

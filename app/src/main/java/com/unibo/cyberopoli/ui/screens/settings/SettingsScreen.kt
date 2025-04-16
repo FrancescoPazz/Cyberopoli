@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.Theme
@@ -43,20 +44,19 @@ import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
     navController: NavController,
-    themeState: ThemeState,
     settingsViewModel: SettingsViewModel,
     authViewModel: AuthViewModel
 ) {
+    val authState by authViewModel.authState.observeAsState()
+    val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
+
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-
-    val authState by authViewModel.authState.observeAsState()
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
         if (authState == AuthState.Authenticated) BottomBar(navController)
