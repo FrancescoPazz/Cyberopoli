@@ -98,22 +98,11 @@ fun LobbyScreen(
                 val playersMap = currentLobby!!.players
                 val playersList = playersMap.entries.map { it.key to it.value }
 
-                // Se vuoi implementare un countdown fittizio
-                var secondsLeft by remember { mutableIntStateOf(150) } // 2:30
-                // Potresti avere un timer che decrementa e, se vuoi, sincronizzare col DB
-                // Ma qui lo facciamo localmente in composable
-                LaunchedEffect(currentLobby) {
-                    // Avvia un timer if needed
-                }
-
                 Column {
-                    Text(text = "Inizio partita in $secondsLeft secondi")
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     Text(text = "Giocatori (${playersList.size}/8) In attesa di altri giocatori...")
 
                     LazyColumn(modifier = Modifier.weight(1f)) {
-                        items(playersList) { (uid, playerInfo) ->
+                        items(playersList) { (_, playerInfo) ->
                             PlayerRow(
                                 playerName = playerInfo.name, isReady = playerInfo.ready
                             )

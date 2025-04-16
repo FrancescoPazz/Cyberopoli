@@ -1,7 +1,6 @@
 package com.unibo.cyberopoli.ui
 
 import android.os.Build
-import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable

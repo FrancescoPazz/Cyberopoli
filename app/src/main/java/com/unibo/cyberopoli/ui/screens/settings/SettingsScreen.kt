@@ -12,7 +12,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -172,7 +171,7 @@ fun SettingScreen(
                                 onSuccess = { /* Gestisci il successo, ad esempio mostra un messaggio */ },
                                 onError = { /* Gestisci l'errore, ad esempio mostra un messaggio */ })
                         } else {
-
+                            // TODO
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally),
