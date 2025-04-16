@@ -35,7 +35,11 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
-fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+fun ScanScreen(
+    navController: NavHostController,
+    scanViewModel: ScanViewModel,
+    authViewModel: AuthViewModel
+) {
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
 
@@ -74,6 +78,7 @@ fun ScanScreen(navController: NavHostController, authViewModel: AuthViewModel) {
                 QRCodeScanner { value ->
                     scannedValue = value
                     if (scannedValue.contains(appName)) {
+                        scanViewModel.setScannedValue(scannedValue)
                         navController.navigate(CyberopoliRoute.Lobby)
                     } else {
                         Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)

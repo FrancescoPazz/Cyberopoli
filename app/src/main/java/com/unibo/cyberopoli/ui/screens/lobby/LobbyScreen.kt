@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -36,6 +37,7 @@ import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.auth.AuthButton
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
+import com.unibo.cyberopoli.ui.screens.scan.ScanViewModel
 import com.unibo.cyberopoli.util.PermissionHandler
 import com.unibo.cyberopoli.util.UsageStatsHelper
 
@@ -43,18 +45,20 @@ import com.unibo.cyberopoli.util.UsageStatsHelper
 @Composable
 fun LobbyScreen(
     navController: NavHostController,
-    lobbyId: String,
     lobbyViewModel: LobbyViewModel,
     profileViewModel: ProfileViewModel,
+    scanViewModel: ScanViewModel
 ) {
     val context = LocalContext.current
     val activity = LocalActivity.current as ComponentActivity
 
     val currentLobby by lobbyViewModel.lobby.observeAsState()
     val userData by profileViewModel.user.observeAsState()
+    val lobbyId = scanViewModel.scannedValue.value ?: ""
     val playerName = "${userData?.name} ${userData?.surname}"
 
     LaunchedEffect(Unit) {
+        Log.d("LobbyScreen", "Scanned value: $lobbyId")
         lobbyViewModel.joinLobby(lobbyId, playerName)
         lobbyViewModel.observeLobby(lobbyId)
 

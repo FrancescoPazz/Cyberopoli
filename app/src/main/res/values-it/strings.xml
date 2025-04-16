@@ -56,7 +56,7 @@
     <string name="average_score">Punteggio medio</string>
     <string name="ready">Pronto</string>
     <string name="exit">Esci</string>
-    <string name="lobby_loading">Caricamento lobby in corso...</string>
+    <string name="lobby_loading">Caricamento lobby in corso…</string>
     <string name="waiting">In attesa</string>
     <string name="password_not_match">Le password non corrispondono</string>
 </resources>
