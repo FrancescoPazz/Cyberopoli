@@ -1,5 +1,7 @@
 package com.unibo.cyberopoli.ui.composables.auth
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
+import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun LoginCard(
     authViewModel: AuthViewModel,
@@ -35,6 +40,7 @@ fun LoginCard(
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -71,5 +77,11 @@ fun LoginCard(
         ) {
             Text("Forgot password?")
         }
+
+        GoogleButton(
+            text = stringResource(R.string.login_with_google),
+            onClick = { coroutineScope.launch { authViewModel.signInWithGoogle(context) } },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

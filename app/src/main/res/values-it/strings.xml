@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Cyberopoli</string>
+    <string name="web_client_id">965652282511-m0d4q9ej6v8ajo1qg46me4tsmaie8bbc.apps.googleusercontent.com</string>
     <string name="login">Accedi</string>
     <string name="signup">Registrati</string>
     <string name="guest">Ospite</string>
@@ -59,4 +60,5 @@
     <string name="lobby_loading">Caricamento lobby in corso…</string>
     <string name="waiting">In attesa</string>
     <string name="password_not_match">Le password non corrispondono</string>
+    <string name="login_with_google">Accedi con Google</string>
 </resources>
