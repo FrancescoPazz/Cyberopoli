@@ -89,12 +89,12 @@ fun HomeScreen(
                 ) {
                     StatCard(
                         scoreTitle = stringResource(R.string.best_score),
-                        scoreValue = "300",
+                        scoreValue = userData?.bestScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
                         scoreTitle = stringResource(R.string.average_score),
-                        scoreValue = "52",
+                        scoreValue = userData?.averageScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                 }

@@ -57,4 +57,5 @@
     <string name="exit">Exit</string>
     <string name="lobby_loading">Lobby loading in progress...</string>
     <string name="waiting">Waiting</string>
+    <string name="password_not_match">Passwords do not match</string>
 </resources>

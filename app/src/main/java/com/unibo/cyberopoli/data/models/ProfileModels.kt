@@ -14,6 +14,8 @@ data class UserData(
     val totalGames: Int? = 0,
     val totalWins: Int? = 0,
     val totalMedals: Int? = 0,
+    val bestScore: Int? = 0,
+    val averageScore: Int? = 0
 )
 
 data class MatchHistory(

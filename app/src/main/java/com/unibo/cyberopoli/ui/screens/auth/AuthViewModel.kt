@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.ui.screens.auth
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,16 +72,18 @@ class AuthViewModel(
 
                 val userData = hashMapOf(
                     "userId" to userId,
-                    "email" to email,
-                    "name" to name,
-                    "surname" to surname,
+                    "email" to email.trim(),
+                    "name" to name.trim(),
+                    "surname" to surname.trim(),
                     "level" to 1,
                     "score" to 0,
                     "creationDate" to Timestamp.now(),
                     "profileImageUrl" to null,
                     "totalGames" to 0,
                     "totalWins" to 0,
-                    "totalMedals" to 0
+                    "totalMedals" to 0,
+                    "bestScore" to 0,
+                    "averageScore" to 0,
                 )
 
                 db.collection("users").document(userId).set(userData).addOnSuccessListener {

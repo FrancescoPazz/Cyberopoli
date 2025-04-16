@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.composables.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,9 +32,12 @@ fun SignUpCard(
     val surname = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    val confirmPassword = remember { mutableStateOf("") }
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
+
+    val warning = stringResource(R.string.password_not_match)
 
     Column(
         modifier = Modifier
@@ -77,12 +81,30 @@ fun SignUpCard(
             visualTransformation = PasswordVisualTransformation(),
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        AuthOutlinedTextField(
+            value = confirmPassword,
+            placeholder = stringResource(R.string.password_confirm),
+            imageVector = Icons.Default.Lock,
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+        )
+
         AuthButton(
             text = stringResource(R.string.signup).uppercase(),
             onClick = {
-                authViewModel.signUp(
-                    context, email.value, password.value, name.value, surname.value
-                )
+                if (password.value != confirmPassword.value) {
+                    Toast.makeText(
+                        context,
+                        warning,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    authViewModel.signUp(
+                        context, email.value, password.value, name.value, surname.value
+                    )
+                }
             },
             enabled = authState.value != AuthState.Loading,
             modifier = Modifier.align(Alignment.CenterHorizontally)
