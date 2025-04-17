@@ -30,15 +30,14 @@ import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.auth.Text3D
 import com.unibo.cyberopoli.ui.composables.scan.QRCodeScanner
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
-import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
+import com.unibo.cyberopoli.ui.contracts.AuthState
+import com.unibo.cyberopoli.ui.contracts.ScanParams
 import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
 fun ScanScreen(
     navController: NavHostController,
-    scanViewModel: ScanViewModel,
-    authViewModel: AuthViewModel
+    scanParams: ScanParams
 ) {
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
@@ -47,8 +46,6 @@ fun ScanScreen(
     val invalidCode = stringResource(R.string.invalid_code)
     var scannedValue by remember { mutableStateOf("") }
 
-    val authState by authViewModel.authState.observeAsState()
-
     LaunchedEffect(Unit) {
         if (!permissionHandler.hasCameraPermission()) {
             permissionHandler.requestCameraPermission()
@@ -56,7 +53,7 @@ fun ScanScreen(
     }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (authState == AuthState.Authenticated) BottomBar(navController)
+        if (scanParams.authState == AuthState.Authenticated) BottomBar(navController)
     }, content = { paddingValues ->
         Box(
             modifier = Modifier
@@ -78,7 +75,7 @@ fun ScanScreen(
                 QRCodeScanner { value ->
                     scannedValue = value
                     if (scannedValue.contains(appName)) {
-                        scanViewModel.setScannedValue(scannedValue)
+                        scanParams.setScannedValue(scannedValue)
                         navController.navigate(CyberopoliRoute.Lobby)
                     } else {
                         Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)

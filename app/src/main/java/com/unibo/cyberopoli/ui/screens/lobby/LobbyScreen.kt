@@ -6,13 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,11 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,8 +28,8 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.auth.AuthButton
-import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
-import com.unibo.cyberopoli.ui.screens.scan.ScanViewModel
+import com.unibo.cyberopoli.ui.composables.lobby.PlayerRow
+import com.unibo.cyberopoli.ui.contracts.LobbyParams
 import com.unibo.cyberopoli.util.PermissionHandler
 import com.unibo.cyberopoli.util.UsageStatsHelper
 
@@ -45,22 +37,15 @@ import com.unibo.cyberopoli.util.UsageStatsHelper
 @Composable
 fun LobbyScreen(
     navController: NavHostController,
-    lobbyViewModel: LobbyViewModel,
-    profileViewModel: ProfileViewModel,
-    scanViewModel: ScanViewModel
+    lobbyParams: LobbyParams
 ) {
     val context = LocalContext.current
     val activity = LocalActivity.current as ComponentActivity
 
-    val currentLobby by lobbyViewModel.lobby.observeAsState()
-    val userData by profileViewModel.user.observeAsState()
-    val lobbyId = scanViewModel.scannedValue.value ?: ""
-    val playerName = "${userData?.name} ${userData?.surname}"
-
     LaunchedEffect(Unit) {
-        Log.d("LobbyScreen", "Scanned value: $lobbyId")
-        lobbyViewModel.joinLobby(lobbyId, playerName)
-        lobbyViewModel.observeLobby(lobbyId)
+        Log.d("LobbyScreen", "Scanned value: ${lobbyParams.lobby.value?.matchId}")
+        lobbyParams.joinLobby(lobbyParams.scannedLobbyId, lobbyParams.playerName)
+        lobbyParams.observeLobby(lobbyParams.scannedLobbyId)
 
         // Well being Permission logic
         val permissionHandler = PermissionHandler(activity)
@@ -72,12 +57,12 @@ fun LobbyScreen(
             permissionHandler.requestUsageStatsPermission()
         }
 
-        lobbyViewModel.joinLobby(lobbyId, playerName)
-        lobbyViewModel.observeLobby(lobbyId)
+        lobbyParams.joinLobby(lobbyParams.scannedLobbyId, lobbyParams.playerName)
+        lobbyParams.observeLobby(lobbyParams.scannedLobbyId)
     }
 
     BackHandler {
-        lobbyViewModel.leaveLobby(lobbyId)
+        lobbyParams.leaveLobby(lobbyParams.scannedLobbyId)
         navController.navigateUp()
     }
 
@@ -89,13 +74,13 @@ fun LobbyScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            if (currentLobby == null) {
+            if (lobbyParams.lobby.value == null) {
                 Text(
                     text = stringResource(R.string.lobby_loading),
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                val playersMap = currentLobby!!.players
+                val playersMap = lobbyParams.lobby.value!!.players
                 val playersList = playersMap.entries.map { it.key to it.value }
 
                 Column {
@@ -111,29 +96,15 @@ fun LobbyScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
                     AuthButton(stringResource(R.string.ready), onClick = {
-                        lobbyViewModel.toggleReady(lobbyId)
+                        lobbyParams.toggleReady(lobbyParams.scannedLobbyId)
                     })
 
                     AuthButton(stringResource(R.string.exit), onClick = {
-                        lobbyViewModel.leaveLobby(lobbyId)
+                        lobbyParams.leaveLobby(lobbyParams.scannedLobbyId)
                         navController.navigateUp()
                     })
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun PlayerRow(playerName: String, isReady: Boolean) {
-    Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = playerName)
-        if (isReady) {
-            Text(text = stringResource(R.string.ready))
-        } else {
-            Text(text = stringResource(R.string.waiting))
         }
     }
 }

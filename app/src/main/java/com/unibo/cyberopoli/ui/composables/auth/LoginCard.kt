@@ -13,28 +13,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
-import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
+import com.unibo.cyberopoli.ui.contracts.AuthState
 
 @Composable
 fun LoginCard(
-    authViewModel: AuthViewModel,
+    authState: State<AuthState?>,
+    login: (email: String, password: String) -> Unit,
 ) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
-    val authState = authViewModel.authState.observeAsState()
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -61,7 +59,7 @@ fun LoginCard(
 
         AuthButton(
             text = stringResource(R.string.login).uppercase(), onClick = {
-                authViewModel.login(context, email.value, password.value)
+                login(email.value, password.value)
             }, enabled = authState.value != AuthState.Loading
         )
 

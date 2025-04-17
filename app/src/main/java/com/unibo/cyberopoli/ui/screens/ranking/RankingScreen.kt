@@ -22,15 +22,14 @@ import com.unibo.cyberopoli.ui.composables.ranking.MyRankingPosition
 import com.unibo.cyberopoli.ui.composables.ranking.RankingListSection
 import com.unibo.cyberopoli.ui.composables.ranking.RankingTabs
 import com.unibo.cyberopoli.ui.composables.ranking.Top3RankingSection
+import com.unibo.cyberopoli.ui.contracts.RankingParams
 
 @Composable
 fun RankingScreen(
-    navController: NavController, rankingViewModel: RankingViewModel
+    navController: NavController, rankingParams: RankingParams
 ) {
-    val rankingData by rankingViewModel.ranking.observeAsState()
-
     LaunchedEffect(Unit) {
-        rankingViewModel.loadUserData()
+        rankingParams.loadUserData()
     }
 
     Scaffold(topBar = { TopBar(navController) },
@@ -46,14 +45,14 @@ fun RankingScreen(
                     onFilterClick = { /* TODO: Implementa filtro */ })
 
                 Spacer(modifier = Modifier.height(8.dp))
-                if (rankingData == null) {
+                if (rankingParams.rankingData.value == null) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     Text(text = "Loading...", modifier = Modifier.padding(16.dp))
                 } else {
-                    val top3 = rankingData!!.take(3)
-                    val others = rankingData!!.drop(3)
+                    val top3 = rankingParams.rankingData.value!!.take(3)
+                    val others = rankingParams.rankingData.value!!.drop(3)
 
-                    val myPosition = rankingViewModel.getMyRanking()
+                    val myPosition = rankingParams.getMyRanking()
 
                     MyRankingPosition(user = myPosition)
                     Spacer(modifier = Modifier.height(16.dp))

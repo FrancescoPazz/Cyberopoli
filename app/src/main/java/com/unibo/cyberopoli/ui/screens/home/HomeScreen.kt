@@ -28,15 +28,15 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.home.StatCard
+import com.unibo.cyberopoli.ui.contracts.HomeParams
 
 @Composable
 fun HomeScreen(
-    navController: NavController, homeViewModel: HomeViewModel
+    navController: NavController, homeParams: HomeParams
 ) {
-    val userData by homeViewModel.user.observeAsState()
 
     LaunchedEffect(Unit) {
-        homeViewModel.loadUserData()
+        homeParams.loadUserData()
     }
 
     Scaffold(topBar = { TopBar(navController) },
@@ -74,12 +74,12 @@ fun HomeScreen(
                 ) {
                     StatCard(
                         scoreTitle = stringResource(R.string.total_score),
-                        scoreValue = userData?.score?.toString() ?: "0",
+                        scoreValue = homeParams.user.value?.score?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
                         scoreTitle = stringResource(R.string.games_played),
-                        scoreValue = userData?.totalGames?.toString() ?: "0",
+                        scoreValue = homeParams.user.value?.totalGames?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -89,12 +89,12 @@ fun HomeScreen(
                 ) {
                     StatCard(
                         scoreTitle = stringResource(R.string.best_score),
-                        scoreValue = userData?.bestScore?.toString() ?: "0",
+                        scoreValue = homeParams.user.value?.bestScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
                         scoreTitle = stringResource(R.string.average_score),
-                        scoreValue = userData?.averageScore?.toString() ?: "0",
+                        scoreValue = homeParams.user.value?.averageScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                 }

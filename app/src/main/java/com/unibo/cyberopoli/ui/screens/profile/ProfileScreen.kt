@@ -12,8 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,15 +24,15 @@ import com.unibo.cyberopoli.ui.composables.profile.MatchHistorySection
 import com.unibo.cyberopoli.ui.composables.profile.ProfileChartSection
 import com.unibo.cyberopoli.ui.composables.profile.ProfileHeader
 import com.unibo.cyberopoli.ui.composables.profile.ProfileStatsSection
+import com.unibo.cyberopoli.ui.contracts.ProfileParams
 
 @Composable
 fun ProfileScreen(
-    navController: NavHostController, profileViewModel: ProfileViewModel
+    navController: NavHostController, profileParams: ProfileParams
 ) {
-    val userData by profileViewModel.user.observeAsState()
 
     LaunchedEffect(Unit) {
-        profileViewModel.loadUserData()
+        profileParams.loadUserData()
     }
 
     val matchHistory = listOf(
@@ -60,19 +58,19 @@ fun ProfileScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                if (userData == null) {
+                if (profileParams.user.value == null) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     Text(
                         text = stringResource(R.string.loading), modifier = Modifier.padding(16.dp)
                     )
                 } else {
-                    ProfileHeader(userData = userData!!,
-                        onEditProfileClick = { profileViewModel.changeAvatar() },
-                        onShareClick = { /* TODO: implementa share profilo */ })
+                    ProfileHeader(userData = profileParams.user.value!!,
+                        onEditProfileClick = { profileParams.changeAvatar() },
+                        onShareClick = { /* TODO */ })
                     Spacer(modifier = Modifier.height(16.dp))
-                    userData!!.totalGames?.let {
-                        userData!!.totalWins?.let { it1 ->
-                            userData!!.totalMedals?.let { it2 ->
+                    profileParams.user.value!!.totalGames?.let {
+                        profileParams.user.value!!.totalWins?.let { it1 ->
+                            profileParams.user.value!!.totalMedals?.let { it2 ->
                                 ProfileStatsSection(
                                     totalGames = it, totalWins = it1, totalMedals = it2
                                 )

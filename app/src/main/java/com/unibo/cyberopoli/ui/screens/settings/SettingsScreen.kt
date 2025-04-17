@@ -40,25 +40,22 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.Theme
 import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
+import com.unibo.cyberopoli.ui.contracts.AuthState
+import com.unibo.cyberopoli.ui.contracts.SettingsParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 
 @Composable
 fun SettingScreen(
     navController: NavController,
-    settingsViewModel: SettingsViewModel,
-    authViewModel: AuthViewModel
+    settingsParams: SettingsParams,
 ) {
-    val authState by authViewModel.authState.observeAsState()
-    val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
-
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (authState == AuthState.Authenticated) BottomBar(navController)
+        if (settingsParams.authState == AuthState.Authenticated) BottomBar(navController)
     }, content = { paddingValues ->
         Column(
             modifier = Modifier
@@ -77,14 +74,14 @@ fun SettingScreen(
                         .fillMaxWidth()
                         .height(56.dp)
                         .selectable(
-                            selected = theme == themeState.theme, onClick = {
-                                settingsViewModel.changeTheme(theme)
+                            selected = theme == settingsParams.themeState.theme, onClick = {
+                                settingsParams.changeTheme(theme)
                             }, role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp)
                 ) {
                     RadioButton(
-                        selected = theme == themeState.theme,
+                        selected = theme == settingsParams.themeState.theme,
                         onClick = null,
                         colors = RadioButtonDefaults.colors(
                             selectedColor = MaterialTheme.colorScheme.tertiary,
@@ -128,7 +125,7 @@ fun SettingScreen(
 
             HorizontalDivider()
 
-            if (authState == AuthState.Authenticated) {
+            if (settingsParams.authState == AuthState.Authenticated) {
                 Text(
                     text = stringResource(R.string.change_password),
                     style = MaterialTheme.typography.titleMedium
@@ -166,10 +163,11 @@ fun SettingScreen(
                 Button(
                     onClick = {
                         if (newPassword == confirmPassword) {
-                            settingsViewModel.updatePasswordWithOldPassword(oldPassword = currentPassword,
-                                newPassword = newPassword,
-                                onSuccess = { /* Gestisci il successo, ad esempio mostra un messaggio */ },
-                                onError = { /* Gestisci l'errore, ad esempio mostra un messaggio */ })
+                            settingsParams.updatePasswordWithOldPassword(currentPassword,
+                                newPassword,
+                                { /* TODO */ },
+                                { /* TODO */ }
+                            )
                         } else {
                             // TODO
                         }
@@ -183,7 +181,7 @@ fun SettingScreen(
                     Text(stringResource(R.string.change_password))
                 }
                 Button(
-                    onClick = { authViewModel.logout() },
+                    onClick = { settingsParams.logout() },
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.colorScheme.primary,

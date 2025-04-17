@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,18 +35,19 @@ import com.unibo.cyberopoli.ui.composables.auth.AuthHeader
 import com.unibo.cyberopoli.ui.composables.auth.GuestCard
 import com.unibo.cyberopoli.ui.composables.auth.LoginCard
 import com.unibo.cyberopoli.ui.composables.auth.SignUpCard
-import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
+import com.unibo.cyberopoli.ui.contracts.AuthParams
+import com.unibo.cyberopoli.ui.contracts.AuthState
 
 @Composable
-fun AuthScreen(navController: NavController, authViewModel: AuthViewModel, profileViewModel: ProfileViewModel) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+fun AuthScreen(navController: NavController, authParams: AuthParams) {
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
         stringResource(R.string.login),
         stringResource(R.string.signup),
         stringResource(R.string.guest)
     )
 
-    val authState = authViewModel.authState.observeAsState()
+    val authState = authParams.authState.observeAsState()
     val context = LocalContext.current
 
     LaunchedEffect(authState.value) {
@@ -98,8 +99,8 @@ fun AuthScreen(navController: NavController, authViewModel: AuthViewModel, profi
             }
 
             when (selectedTabIndex) {
-                0 -> LoginCard(authViewModel)
-                1 -> SignUpCard(authViewModel)
+                0 -> LoginCard(authParams.authState.observeAsState(), authParams.login)
+                1 -> SignUpCard(authParams.authState.observeAsState(), authParams.signUp)
                 2 -> GuestCard(navController)
             }
         }

@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.UserData
 import com.unibo.cyberopoli.data.repositories.UserRepository
+import com.unibo.cyberopoli.ui.contracts.AuthState
 
 class AuthViewModel(
     private val userRepository: UserRepository = UserRepository()
@@ -27,7 +28,7 @@ class AuthViewModel(
         checkAuthStatus()
     }
 
-    fun checkAuthStatus() {
+    private fun checkAuthStatus() {
         if (auth.currentUser != null) {
             _authState.value = AuthState.Authenticated
             userRepository.loadUserData()
@@ -105,11 +106,4 @@ class AuthViewModel(
         _authState.value = AuthState.Unauthenticated
         userRepository.clearUserData()
     }
-}
-
-sealed class AuthState {
-    data object Authenticated : AuthState()
-    data object Unauthenticated : AuthState()
-    data object Loading : AuthState()
-    data class Error(val message: String) : AuthState()
 }

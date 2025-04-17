@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,21 +21,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
-import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
+import com.unibo.cyberopoli.ui.contracts.AuthState
 
 @Composable
 fun SignUpCard(
-    authViewModel: AuthViewModel,
+    authState: State<AuthState?>,
+    signUp: (email: String, password: String, name: String, surname: String) -> Unit,
 ) {
+    val context = LocalContext.current
+
     val name = remember { mutableStateOf("") }
     val surname = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
-
-    val authState = authViewModel.authState.observeAsState()
-    val context = LocalContext.current
 
     val warning = stringResource(R.string.password_not_match)
 
@@ -101,8 +100,8 @@ fun SignUpCard(
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    authViewModel.signUp(
-                        context, email.value, password.value, name.value, surname.value
+                    signUp(
+                        email.value, password.value, name.value, surname.value
                     )
                 }
             },
