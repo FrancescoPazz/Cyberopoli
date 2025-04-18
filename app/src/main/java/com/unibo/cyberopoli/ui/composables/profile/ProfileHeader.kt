@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.composables.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
@@ -39,59 +44,76 @@ fun ProfileHeader(
         else -> R.drawable.avatar_male_1
     }
 
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
             .padding(top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        elevation = CardDefaults.cardElevation(4.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSurface,
+            contentColor = MaterialTheme.colorScheme.surface
+        ),
     ) {
-
-        Image(
-            painter = painterResource(avatarRes),
-            contentDescription = stringResource(R.string.avatar),
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        userData.name?.let { name ->
-            userData.surname?.let { surname ->
-                Text(
-                    text = "$name $surname",
+        Box(
+            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(avatarRes),
+                    contentDescription = stringResource(R.string.avatar),
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                userData.name?.let { name ->
+                    userData.surname?.let { surname ->
+                        Text(
+                            color = MaterialTheme.colorScheme.primary,
+                            text = "$name $surname",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        )
+                    }
+                }
+
+                Text(
+                    color = MaterialTheme.colorScheme.primary,
+                    text = "${stringResource(R.string.level)}: ${userData.level.toString()}",
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row {
+                    ProfileButton(
+                        text = stringResource(R.string.edit), icon = {
+                            Icon(
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = stringResource(R.string.edit),
+                                tint = MaterialTheme.colorScheme.tertiary
+                            )
+                        }, onClick = onEditProfileClick
+                    )
+                    ProfileButton(
+                        text = stringResource(R.string.share), icon = {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = stringResource(R.string.share),
+                                tint = MaterialTheme.colorScheme.tertiary
+                            )
+                        }, onClick = onShareClick
+                    )
+
+                }
             }
-        }
-
-        Text(
-            text = "${stringResource(R.string.level)}: ${userData.level.toString()}",
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row {
-            ProfileButton(
-                text = stringResource(R.string.edit), icon = {
-                    Icon(
-                        imageVector = Icons.Default.CameraAlt,
-                        contentDescription = stringResource(R.string.edit),
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                }, onClick = onEditProfileClick
-            )
-            ProfileButton(
-                text = stringResource(R.string.share), icon = {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(R.string.share),
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                }, onClick = onShareClick
-            )
-
         }
     }
 }

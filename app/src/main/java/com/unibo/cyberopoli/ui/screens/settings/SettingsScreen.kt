@@ -52,7 +52,7 @@ fun SettingScreen(
     var confirmPassword by remember { mutableStateOf("") }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (settingsParams.authState == AuthState.Authenticated) BottomBar(navController)
+        if (settingsParams.authState.value == AuthState.Authenticated) BottomBar(navController)
     }, content = { paddingValues ->
         Column(
             modifier = Modifier
@@ -122,7 +122,7 @@ fun SettingScreen(
 
             HorizontalDivider()
 
-            if (settingsParams.authState == AuthState.Authenticated) {
+            if (settingsParams.authState.value == AuthState.Authenticated) {
                 Text(
                     text = stringResource(R.string.change_password),
                     style = MaterialTheme.typography.titleMedium
@@ -163,8 +163,7 @@ fun SettingScreen(
                             settingsParams.updatePasswordWithOldPassword(currentPassword,
                                 newPassword,
                                 { /* TODO */ },
-                                { /* TODO */ }
-                            )
+                                { /* TODO */ })
                         } else {
                             // TODO
                         }

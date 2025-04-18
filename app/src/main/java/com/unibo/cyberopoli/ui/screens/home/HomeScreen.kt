@@ -16,8 +16,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +49,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = stringResource(R.string.score_chart),
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -65,6 +64,7 @@ fun HomeScreen(
                 }
 
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = stringResource(R.string.account_statistics),
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -84,7 +84,9 @@ fun HomeScreen(
                     )
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatCard(

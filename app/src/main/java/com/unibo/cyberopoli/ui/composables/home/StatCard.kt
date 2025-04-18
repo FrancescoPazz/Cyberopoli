@@ -20,8 +20,8 @@ fun StatCard(scoreTitle: String, scoreValue: String, modifier: Modifier = Modifi
         modifier = modifier,
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSurface,
-            contentColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
         Column(
@@ -31,11 +31,15 @@ fun StatCard(scoreTitle: String, scoreValue: String, modifier: Modifier = Modifi
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = scoreTitle, style = MaterialTheme.typography.bodyMedium
+                color = MaterialTheme.colorScheme.primary,
+                text = scoreTitle,
+                style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = scoreValue, style = MaterialTheme.typography.headlineMedium
+                color = MaterialTheme.colorScheme.primary,
+                text = scoreValue,
+                style = MaterialTheme.typography.headlineMedium
             )
         }
     }

@@ -51,9 +51,10 @@ fun StatItem(label: String, value: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            color = MaterialTheme.colorScheme.primary,
             text = value,
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
-        Text(text = label)
+        Text(color = MaterialTheme.colorScheme.primary, text = label)
     }
 }

@@ -39,8 +39,8 @@ fun RankingScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 RankingTabs(selectedTabIndex = 0,
-                    onTabSelected = { /* TODO: implementa selezione */ },
-                    onFilterClick = { /* TODO: Implementa filtro */ })
+                    onTabSelected = { /* TODO */ },
+                    onFilterClick = { /* TODO */ })
 
                 Spacer(modifier = Modifier.height(8.dp))
                 if (rankingParams.rankingData.value == null) {

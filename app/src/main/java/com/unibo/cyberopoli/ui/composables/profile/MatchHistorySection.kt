@@ -25,7 +25,9 @@ import com.unibo.cyberopoli.data.models.MatchHistory
 fun MatchHistorySection(matchHistory: List<MatchHistory>) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
-            text = stringResource(R.string.latest_matches), fontWeight = FontWeight.Bold
+            color = MaterialTheme.colorScheme.primary,
+            text = stringResource(R.string.latest_matches),
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -40,23 +42,32 @@ fun MatchHistorySection(matchHistory: List<MatchHistory>) {
 fun MatchHistoryItem(match: MatchHistory) {
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onSurface,
             contentColor = MaterialTheme.colorScheme.surface
-        )
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.Center
         ) {
-            Text(text = match.title, fontWeight = FontWeight.Bold)
+            Text(
+                color = MaterialTheme.colorScheme.primary,
+                text = match.title,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = match.date)
+            Text(color = MaterialTheme.colorScheme.primary, text = match.date)
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "${stringResource(R.string.result)}: ${match.result}")
+                Text(
+                    color = MaterialTheme.colorScheme.primary,
+                    text = "${stringResource(R.string.result)}: ${match.result}"
+                )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = match.points)
+                Text(color = MaterialTheme.colorScheme.primary, text = match.points)
             }
         }
     }
