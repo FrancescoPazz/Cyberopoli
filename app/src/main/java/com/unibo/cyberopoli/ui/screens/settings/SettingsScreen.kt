@@ -24,7 +24,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.Theme
@@ -42,7 +40,6 @@ import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.contracts.AuthState
 import com.unibo.cyberopoli.ui.contracts.SettingsParams
-import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 
 @Composable
 fun SettingScreen(

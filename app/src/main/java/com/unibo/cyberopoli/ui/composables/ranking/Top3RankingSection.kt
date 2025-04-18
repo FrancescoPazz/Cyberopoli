@@ -1,10 +1,10 @@
 package com.unibo.cyberopoli.ui.composables.ranking
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -28,26 +28,35 @@ fun Top3RankingSection(users: List<RankingUser>) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        users.forEach { user ->
-            val avatarRes = when (user.avatarUrl) {
-                "avatar_male_1" -> R.drawable.avatar_male_1
-                "avatar_male_2" -> R.drawable.avatar_male_2
-                "avatar_female_1" -> R.drawable.avatar_female_1
-                "avatar_female_2" -> R.drawable.avatar_female_2
-                else -> R.drawable.avatar_male_1
+        users.sortedBy { it.rank }.forEach { user ->
+            val (avatarSize, offsetY) = when (user.rank) {
+                1 -> 80.dp to (-16).dp
+                2 -> 70.dp to (-8).dp
+                3 -> 60.dp to 0.dp
+                else -> 60.dp to 0.dp
             }
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .offset(y = offsetY),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(avatarRes),
+                    painter = painterResource(
+                        when (user.avatarUrl) {
+                            "avatar_male_1" -> R.drawable.avatar_male_1
+                            "avatar_male_2" -> R.drawable.avatar_male_2
+                            "avatar_female_1" -> R.drawable.avatar_female_1
+                            "avatar_female_2" -> R.drawable.avatar_female_2
+                            else -> R.drawable.avatar_male_1
+                        }
+                    ),
                     contentDescription = stringResource(R.string.avatar),
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(avatarSize)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
@@ -59,8 +68,9 @@ fun Top3RankingSection(users: List<RankingUser>) {
                 }
 
                 Text(
-                    text = user.name + " " + user.surname,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    text = "${user.name} ${user.surname}",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 4.dp)
                 )
 
                 Text(

@@ -101,7 +101,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             composable<CyberopoliRoute.Scan> {
                 val scanParams = ScanParams(
                     setScannedValue = { value -> scanViewModel.setScannedValue(value) },
-                    authState = authState.value!!,
+                    authState = authViewModel.authState,
                 )
                 ScanScreen(navController, scanParams)
             }
@@ -120,7 +120,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             onError
                         )
                     },
-                    authState = authState.value!!,
+                    authState = authViewModel.authState,
                     logout = { authViewModel.logout() },
                 )
                 SettingScreen(
