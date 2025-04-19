@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -46,6 +48,8 @@ fun SettingScreen(
     navController: NavController,
     settingsParams: SettingsParams,
 ) {
+    val context = LocalContext.current
+
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -162,10 +166,14 @@ fun SettingScreen(
                         if (newPassword == confirmPassword) {
                             settingsParams.updatePasswordWithOldPassword(currentPassword,
                                 newPassword,
-                                { /* TODO */ },
-                                { /* TODO */ })
+                                {
+                                    Toast.makeText(context, context.getString(R.string.password_change_success), Toast.LENGTH_SHORT).show()
+                                },
+                                {
+                                    Toast.makeText(context, context.getString(R.string.password_change_fail), Toast.LENGTH_SHORT).show()
+                                })
                         } else {
-                            // TODO
+                            Toast.makeText(context, context.getString(R.string.password_not_match), Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally),

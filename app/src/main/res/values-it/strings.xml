@@ -64,4 +64,6 @@
     <string name="back_to_login">Torna all\'accesso</string>
     <string name="empty_email_warning">L\'email non può essere vuota</string>
     <string name="reset_password_failed">Consegna email reset password fallita</string>
+    <string name="password_change_success">Password cambiata con successo</string>
+    <string name="password_change_fail">Il cambio password non è avvenuto correttamente</string>
 </resources>
