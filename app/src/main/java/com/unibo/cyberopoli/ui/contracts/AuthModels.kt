@@ -6,6 +6,7 @@ data class AuthParams(
     val authState: LiveData<AuthState>,
     val login: (email: String, password: String) -> Unit,
     val signUp: (email: String, password: String, name: String, surname: String) -> Unit,
+    val resetPassword: (email: String) -> Unit,
 )
 
 sealed class AuthState {

@@ -106,4 +106,22 @@ class AuthViewModel(
         _authState.value = AuthState.Unauthenticated
         userRepository.clearUserData()
     }
+
+    fun sendPasswordResetEmail(context: Context, email: String) {
+        if (email.isEmpty()) {
+            _authState.value = AuthState.Error(context.getString(R.string.empty_email_warning))
+            return
+        }
+
+        _authState.value = AuthState.Loading
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                _authState.value = AuthState.Unauthenticated
+            } else {
+                _authState.value = AuthState.Error(
+                    task.exception?.message ?: context.getString(R.string.reset_password_failed)
+                )
+            }
+        }
+    }
 }

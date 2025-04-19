@@ -59,4 +59,9 @@
     <string name="lobby_loading">Caricamento lobby in corso…</string>
     <string name="waiting">In attesa</string>
     <string name="password_not_match">Le password non corrispondono</string>
+    <string name="reset_password_title">Reimposta Password</string>
+    <string name="send_reset_email">Invia email</string>
+    <string name="back_to_login">Torna all\'accesso</string>
+    <string name="empty_email_warning">L\'email non può essere vuota</string>
+    <string name="reset_password_failed">Consegna email reset password fallita</string>
 </resources>

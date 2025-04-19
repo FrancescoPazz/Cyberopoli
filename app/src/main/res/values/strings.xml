@@ -58,4 +58,9 @@
     <string name="lobby_loading">Lobby loading in progress…</string>
     <string name="waiting">Waiting</string>
     <string name="password_not_match">Passwords do not match</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="send_reset_email">Send email</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="empty_email_warning">Email cannot be empty</string>
+    <string name="reset_password_failed">Failed to send password reset email</string>
 </resources>

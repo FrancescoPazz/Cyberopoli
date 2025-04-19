@@ -99,7 +99,7 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
             }
 
             when (selectedTabIndex) {
-                0 -> LoginCard(authParams.authState.observeAsState(), authParams.login)
+                0 -> LoginCard(authParams.authState.observeAsState(), authParams.login, authParams.resetPassword)
                 1 -> SignUpCard(authParams.authState.observeAsState(), authParams.signUp)
                 2 -> GuestCard(navController)
             }

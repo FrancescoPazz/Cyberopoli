@@ -103,6 +103,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             surname
                         )
                     },
+                    resetPassword = { email ->
+                        authViewModel.sendPasswordResetEmail(context, email)
+                    },
                 )
                 AuthScreen(navController, authParams)
             }

@@ -14,9 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,10 +30,11 @@ import com.unibo.cyberopoli.ui.contracts.AuthState
 fun LoginCard(
     authState: State<AuthState?>,
     login: (email: String, password: String) -> Unit,
+    resetPassword: (email: String) -> Unit
 ) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-
+    var isResetMode by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -40,34 +42,65 @@ fun LoginCard(
             .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AuthOutlinedTextField(
-            value = email,
-            placeholder = stringResource(R.string.email),
-            imageVector = Icons.Default.Email,
-            singleLine = true,
-        )
+        if (!isResetMode) {
+            AuthOutlinedTextField(
+                value = email,
+                placeholder = stringResource(R.string.email),
+                imageVector = Icons.Default.Email,
+                singleLine = true,
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        AuthOutlinedTextField(
-            value = password,
-            placeholder = stringResource(R.string.password),
-            imageVector = Icons.Default.Lock,
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-        )
+            AuthOutlinedTextField(
+                value = password,
+                placeholder = stringResource(R.string.password),
+                imageVector = Icons.Default.Lock,
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+            )
 
-        AuthButton(
-            text = stringResource(R.string.login).uppercase(), onClick = {
-                login(email.value, password.value)
-            }, enabled = authState.value != AuthState.Loading
-        )
+            AuthButton(
+                text = stringResource(R.string.login).uppercase(), onClick = {
+                    login(email.value, password.value)
+                }, enabled = authState.value != AuthState.Loading
+            )
 
-        TextButton(
-            onClick = { /* TODO */ },
-            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
-        ) {
-            Text("Forgot password?")
+            TextButton(
+                onClick = { isResetMode = true},
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
+            ) {
+                Text("Forgot password?")
+            }
+        } else {
+            Text(
+                text = stringResource(R.string.reset_password_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.height(16.dp))
+            AuthOutlinedTextField(
+                value = email,
+                placeholder = stringResource(R.string.email),
+                imageVector = Icons.Default.Email,
+                singleLine = true
+            )
+            Spacer(Modifier.height(16.dp))
+            AuthButton(
+                text = stringResource(R.string.send_reset_email),
+                onClick = {
+                    resetPassword(email.value.trim())
+                },
+                enabled = email.value.isNotBlank() && authState.value != AuthState.Loading
+            )
+            Spacer(Modifier.height(8.dp))
+            TextButton(
+                onClick = { isResetMode = false },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(stringResource(R.string.back_to_login))
+            }
         }
     }
 }
