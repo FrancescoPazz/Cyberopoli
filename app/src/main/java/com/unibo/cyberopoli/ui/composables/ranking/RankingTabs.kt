@@ -24,7 +24,7 @@ import com.unibo.cyberopoli.R
 
 @Composable
 fun RankingTabs(
-    selectedTabIndex: Int, onTabSelected: (Int) -> Unit, onFilterClick: () -> Unit
+    selectedTabIndex: Int, onTabSelected: (Int) -> Unit
 ) {
     val tabs = listOf(
         stringResource(R.string.daily), stringResource(R.string.weekly), stringResource(
@@ -41,7 +41,6 @@ fun RankingTabs(
     ) {
         Text(
             text = "${stringResource(R.string.filters)}:",
-            modifier = Modifier.clickable { onFilterClick() },
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.width(12.dp))
