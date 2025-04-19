@@ -43,10 +43,10 @@ fun AuthHeader() {
                 text = toUpperCase(stringResource(R.string.app_name)),
                 fontSize = 50,
                 fontWeight = FontWeight.ExtraBold,
-                textColor = MaterialTheme.colorScheme.primary,
-                shadowColor = MaterialTheme.colorScheme.onBackground,
-                offsetX = 4,
-                offsetY = 4,
+                textColor = MaterialTheme.colorScheme.onSecondary,
+                shadowColor = MaterialTheme.colorScheme.primary,
+                offsetX = 3,
+                offsetY = 3,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(top = imageSize / 2)

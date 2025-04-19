@@ -3,7 +3,7 @@ package com.unibo.cyberopoli.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val DarkPrimary = Color(0xFFFFFFFF)
-val DarkOnPrimary = Color.White
+val DarkOnPrimary = Color(0xFF000000)
 val DarkSecondary = Color(0xFF1F2937)
 val DarkOnSecondary = Color(0xFF374151)
 val DarkTertiary = Color(0xFF8CFF00)
@@ -11,14 +11,14 @@ val DarkOnTertiary = Color(0xFF000000)
 val DarkSurface = Color(0xFF1F2937)
 val DarkOnSurface = Color(0xFF1F2937)
 val DarkBackGround = Color(0xFF111827)
-val DarkOnBackGround = Color(0xFFA7A7A7)
+val DarkOnBackGround = Color(0xFFFFFFFF)
 
 val LightPrimary = Color(0xFF000000)
-val LightOnPrimary = Color.Black
+val LightOnPrimary = Color(0xFFFFFFFF)
 val LightSecondary = Color(0xFFFFFFFF)
-val LightOnSecondary = Color(0xFFE5E7EB)
+val LightOnSecondary = Color(0xFF343434)
 val LightTertiary = Color(0xFF0000FF)
-val LightOnTertiary = Color(0xFF000000)
+val LightOnTertiary = Color(0xFF343434)
 val LightSurface = Color(0xFFC9C9C9)
 val LightOnSurface = Color(0xFFA7A7A7)
 val LightBackGround = Color(0xFFEEEEEE)

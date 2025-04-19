@@ -37,6 +37,7 @@ fun ProfileChartSection(recentStats: List<Int>) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
+                color = MaterialTheme.colorScheme.primary,
                 text = stringResource(R.string.recent_stats), fontWeight = FontWeight.Bold
             )
 

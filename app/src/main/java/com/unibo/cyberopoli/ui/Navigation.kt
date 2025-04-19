@@ -12,8 +12,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unibo.cyberopoli.data.models.Theme
-import com.unibo.cyberopoli.ui.contracts.AuthState
 import com.unibo.cyberopoli.ui.contracts.AuthParams
+import com.unibo.cyberopoli.ui.contracts.AuthState
 import com.unibo.cyberopoli.ui.contracts.HomeParams
 import com.unibo.cyberopoli.ui.contracts.LobbyParams
 import com.unibo.cyberopoli.ui.contracts.ProfileParams
@@ -94,7 +94,15 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 val authParams = AuthParams(
                     authState = authViewModel.authState,
                     login = { email, password -> authViewModel.login(context, email, password) },
-                    signUp = { email, password, name, surname -> authViewModel.signUp(context, email, password, name, surname) },
+                    signUp = { email, password, name, surname ->
+                        authViewModel.signUp(
+                            context,
+                            email,
+                            password,
+                            name,
+                            surname
+                        )
+                    },
                 )
                 AuthScreen(navController, authParams)
             }
@@ -109,60 +117,64 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 ARScreen(navController)
             }
             composable<CyberopoliRoute.Settings> {
-                val settingsParams = SettingsParams(
-                    changeTheme = { theme -> settingsViewModel.changeTheme(theme) },
-                    themeState = themeState,
-                    updatePasswordWithOldPassword = { oldPassword, newPassword, onSuccess, onError ->
-                        settingsViewModel.updatePasswordWithOldPassword(
-                            oldPassword,
-                            newPassword,
-                            onSuccess,
-                            onError
-                        )
-                    },
-                    authState = authViewModel.authState,
-                    logout = { authViewModel.logout() },
-                )
-                SettingScreen(
-                    navController, settingsParams
+                SettingScreen(navController, SettingsParams(
+                        changeTheme = { theme -> settingsViewModel.changeTheme(theme) },
+                        themeState = themeState,
+                        updatePasswordWithOldPassword = { oldPassword, newPassword, onSuccess, onError ->
+                            settingsViewModel.updatePasswordWithOldPassword(
+                                oldPassword, newPassword, onSuccess, onError
+                            )
+                        },
+                        authState = authViewModel.authState,
+                        logout = { authViewModel.logout() },
+                    )
                 )
             }
             composable<CyberopoliRoute.Home> {
-                val homeParams = HomeParams(
-                    user = homeViewModel.user.observeAsState(),
-                    loadUserData = { homeViewModel.loadUserData() },
+                HomeScreen(
+                    navController, HomeParams(
+                        user = homeViewModel.user.observeAsState(),
+                        loadUserData = { homeViewModel.loadUserData() },
+                    )
                 )
-                HomeScreen(navController, homeParams)
             }
             composable<CyberopoliRoute.Profile> {
-                val profileParams = ProfileParams(
-                    user = profileViewModel.user.observeAsState(),
-                    loadUserData = { profileViewModel.loadUserData() },
-                    changeAvatar = { profileViewModel.changeAvatar() },
+                ProfileScreen(
+                    navController, ProfileParams(
+                        user = profileViewModel.user.observeAsState(),
+                        loadUserData = { profileViewModel.loadUserData() },
+                        changeAvatar = { profileViewModel.changeAvatar() },
+                    )
                 )
-                ProfileScreen(navController, profileParams)
             }
             composable<CyberopoliRoute.Ranking> {
                 val rankingViewModel = koinViewModel<RankingViewModel>()
-                val rankingParams = RankingParams(
-                    rankingData = rankingViewModel.ranking.observeAsState(),
-                    loadUserData = { rankingViewModel.loadUserData() },
-                    getMyRanking = { rankingViewModel.getMyRanking() },
+                RankingScreen(
+                    navController, RankingParams(
+                        rankingData = rankingViewModel.ranking.observeAsState(),
+                        loadUserData = { rankingViewModel.loadUserData() },
+                        getMyRanking = { rankingViewModel.getMyRanking() },
+                    )
                 )
-                RankingScreen(navController, rankingParams)
             }
             composable<CyberopoliRoute.Lobby> {
                 val lobbyViewModel = koinViewModel<LobbyViewModel>()
-                val lobbyParams = LobbyParams(
-                    lobby = lobbyViewModel.lobby.observeAsState(),
-                    joinLobby = { lobbyId, playerName -> lobbyViewModel.joinLobby(lobbyId, playerName) },
-                    observeLobby = { lobbyId -> lobbyViewModel.observeLobby(lobbyId) },
-                    leaveLobby = { lobbyId -> lobbyViewModel.leaveLobby(lobbyId) },
-                    toggleReady = { lobbyId -> lobbyViewModel.toggleReady(lobbyId) },
-                    scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                    playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
+                LobbyScreen(
+                    navController, LobbyParams(
+                        lobby = lobbyViewModel.lobby.observeAsState(),
+                        joinLobby = { lobbyId, playerName ->
+                            lobbyViewModel.joinLobby(
+                                lobbyId,
+                                playerName
+                            )
+                        },
+                        observeLobby = { lobbyId -> lobbyViewModel.observeLobby(lobbyId) },
+                        leaveLobby = { lobbyId -> lobbyViewModel.leaveLobby(lobbyId) },
+                        toggleReady = { lobbyId -> lobbyViewModel.toggleReady(lobbyId) },
+                        scannedLobbyId = scanViewModel.scannedValue.value ?: "",
+                        playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
+                    )
                 )
-                LobbyScreen(navController, lobbyParams)
             }
         }
     }

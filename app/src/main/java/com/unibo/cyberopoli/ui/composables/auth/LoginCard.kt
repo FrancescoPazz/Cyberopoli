@@ -64,7 +64,7 @@ fun LoginCard(
         )
 
         TextButton(
-            onClick = { },
+            onClick = { /* TODO */ },
             colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text("Forgot password?")
