@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,27 +43,29 @@ fun LobbyScreen(
     val context = LocalContext.current
     val activity = LocalActivity.current as ComponentActivity
 
-    LaunchedEffect(Unit) {
-        Log.d("LobbyScreen", "Scanned value: ${lobbyParams.lobby.value?.matchId}")
-        lobbyParams.joinLobby(lobbyParams.scannedLobbyId, lobbyParams.playerName)
-        lobbyParams.observeLobby(lobbyParams.scannedLobbyId)
+    val lobbyId    = lobbyParams.scannedLobbyId
+    val playerName = lobbyParams.playerName
 
-        // Well being Permission logic
-        val permissionHandler = PermissionHandler(activity)
-        val usageStatsHelper = UsageStatsHelper(context)
+    if (lobbyId.isNotBlank()) {
+        DisposableEffect(lobbyId) {
+            lobbyParams.joinLobby(lobbyId, playerName)
+            lobbyParams.observeLobby(lobbyId)
 
-        if (permissionHandler.hasUsageStatsPermission()) {
-            usageStatsHelper.logUsageStats()
-        } else {
-            permissionHandler.requestUsageStatsPermission()
+            val permHandler     = PermissionHandler(activity)
+            val usageStatsHelper = UsageStatsHelper(context)
+            if (permHandler.hasUsageStatsPermission()) {
+                usageStatsHelper.logUsageStats()
+            } else {
+                permHandler.requestUsageStatsPermission()
+            }
+
+            onDispose {
+                lobbyParams.leaveLobby(lobbyId)
+            }
         }
-
-        lobbyParams.joinLobby(lobbyParams.scannedLobbyId, lobbyParams.playerName)
-        lobbyParams.observeLobby(lobbyParams.scannedLobbyId)
     }
 
     BackHandler {
-        lobbyParams.leaveLobby(lobbyParams.scannedLobbyId)
         navController.navigateUp()
     }
 
@@ -84,7 +87,7 @@ fun LobbyScreen(
                 val playersList = playersMap.entries.map { it.key to it.value }
 
                 Column {
-                    Text(text = "Giocatori (${playersList.size}/8) In attesa di altri giocatori...")
+                    Text(text = "Players (${playersList.size}/8) in lobby...")
 
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(playersList) { (_, playerInfo) ->
@@ -100,7 +103,6 @@ fun LobbyScreen(
                     })
 
                     AuthButton(stringResource(R.string.exit), onClick = {
-                        lobbyParams.leaveLobby(lobbyParams.scannedLobbyId)
                         navController.navigateUp()
                     })
                 }
