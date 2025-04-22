@@ -39,8 +39,7 @@ import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
 fun ScanScreen(
-    navController: NavHostController,
-    scanParams: ScanParams
+    navController: NavHostController, scanParams: ScanParams
 ) {
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
@@ -56,7 +55,7 @@ fun ScanScreen(
     }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (scanParams.authState.value == AuthState.Authenticated) BottomBar(navController)
+        if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
     }, content = { paddingValues ->
 
         if (!permissionHandler.hasCameraPermission()) {
@@ -65,9 +64,7 @@ fun ScanScreen(
                     permissionHandler.requestCameraPermission()
                 } else {
                     Toast.makeText(
-                        activity,
-                        "Camera permission denied",
-                        Toast.LENGTH_SHORT
+                        activity, "Camera permission denied", Toast.LENGTH_SHORT
                     ).show()
                 }
             }

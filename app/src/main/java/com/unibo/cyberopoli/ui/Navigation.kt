@@ -91,8 +91,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             startDestination = if (authState.value == AuthState.Authenticated) CyberopoliRoute.Home else CyberopoliRoute.Auth,
         ) {
             composable<CyberopoliRoute.Auth> {
-                val authParams = AuthParams(
-                    authState = authViewModel.authState,
+                val authParams = AuthParams(authState = authViewModel.authState,
                     login = { email, password -> authViewModel.login(context, email, password) },
                     signUp = { email, password, name, surname ->
                         authViewModel.signUp(
@@ -102,7 +101,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     resetPassword = { email ->
                         authViewModel.sendPasswordResetEmail(context, email)
                     },
-                )
+                    signInAnonymously = { name, onSuccess ->
+                        authViewModel.signInAnonymously(name, onSuccess)
+                    })
                 AuthScreen(navController, authParams)
             }
             composable<CyberopoliRoute.Scan> {
@@ -159,8 +160,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             }
             composable<CyberopoliRoute.Lobby> {
                 val lobbyViewModel = koinViewModel<LobbyViewModel>()
-                LobbyScreen(navController,
-                    LobbyParams(lobby = lobbyViewModel.lobby.observeAsState(),
+                LobbyScreen(
+                    navController, LobbyParams(
+                        lobby = lobbyViewModel.lobby.observeAsState(),
                         joinLobby = { lobbyId, playerName ->
                             lobbyViewModel.joinLobby(
                                 lobbyId, playerName
@@ -171,7 +173,13 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         toggleReady = { lobbyId -> lobbyViewModel.toggleReady(lobbyId) },
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",
                         playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
-                        startGame = { lobbyId -> lobbyViewModel.startGame(lobbyId) }))
+                        startGame = { lobbyId -> lobbyViewModel.startGame(lobbyId) },
+                        deleteAnonymousUserAndSignOut = {
+                            authViewModel.deleteAnonymousUserAndSignOut()
+                        },
+                        isGuest = authState.value == AuthState.Anonymous
+                    )
+                )
             }
         }
     }

@@ -73,7 +73,8 @@ fun RankingListItem(user: RankingUser) {
             )
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = "${user.score} pt", style = MaterialTheme.typography.bodySmall
+                text = "${user.score} pt",
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }

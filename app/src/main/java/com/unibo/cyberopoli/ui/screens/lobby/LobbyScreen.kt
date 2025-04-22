@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -42,6 +43,7 @@ fun LobbyScreen(
 
     val lobbyId = lobbyParams.scannedLobbyId
     val playerName = lobbyParams.playerName
+    Log.d("LobbyScreen", "LobbyId: $lobbyId, PlayerName: $playerName")
 
     if (lobbyId.isNotBlank()) {
         DisposableEffect(lobbyId) {
@@ -58,6 +60,7 @@ fun LobbyScreen(
 
             onDispose {
                 lobbyParams.leaveLobby(lobbyId)
+                lobbyParams.deleteAnonymousUserAndSignOut()
             }
         }
     }
@@ -67,7 +70,7 @@ fun LobbyScreen(
     }
 
     Scaffold(topBar = { TopBar(navController) },
-        bottomBar = { BottomBar(navController) }) { paddingValues ->
+        bottomBar = { if (!lobbyParams.isGuest) BottomBar(navController) }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -100,6 +103,7 @@ fun LobbyScreen(
                     })
 
                     AuthButton(stringResource(R.string.exit), onClick = {
+                        lobbyParams.deleteAnonymousUserAndSignOut()
                         navController.navigateUp()
                     })
                 }

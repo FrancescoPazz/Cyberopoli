@@ -95,9 +95,7 @@ fun SignUpCard(
             onClick = {
                 if (password.value != confirmPassword.value) {
                     Toast.makeText(
-                        context,
-                        warning,
-                        Toast.LENGTH_SHORT
+                        context, warning, Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     signUp(

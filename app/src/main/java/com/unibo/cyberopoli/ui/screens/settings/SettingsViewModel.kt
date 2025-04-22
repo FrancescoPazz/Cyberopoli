@@ -44,23 +44,22 @@ class SettingsViewModel(
         val credential = EmailAuthProvider.getCredential(email, oldPassword)
 
         currentUser.reauthenticate(credential).addOnCompleteListener { reauthTask ->
-                if (reauthTask.isSuccessful) {
-                    currentUser.updatePassword(newPassword).addOnCompleteListener { updateTask ->
-                            if (updateTask.isSuccessful) {
-                                onSuccess()
-                            } else {
-                                onError(
-                                    updateTask.exception?.message ?: "Errore nel cambio password."
-                                )
-                            }
-                        }
-                } else {
-                    onError(
-                        reauthTask.exception?.message
-                            ?: "Errore nella verifica della vecchia password."
-                    )
+            if (reauthTask.isSuccessful) {
+                currentUser.updatePassword(newPassword).addOnCompleteListener { updateTask ->
+                    if (updateTask.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        onError(
+                            updateTask.exception?.message ?: "Errore nel cambio password."
+                        )
+                    }
                 }
+            } else {
+                onError(
+                    reauthTask.exception?.message ?: "Errore nella verifica della vecchia password."
+                )
             }
+        }
     }
 
 }

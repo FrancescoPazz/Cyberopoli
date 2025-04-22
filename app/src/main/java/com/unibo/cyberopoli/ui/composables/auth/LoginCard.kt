@@ -67,7 +67,7 @@ fun LoginCard(
             )
 
             TextButton(
-                onClick = { isResetMode = true},
+                onClick = { isResetMode = true },
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
             ) {
                 Text("Forgot password?")
@@ -86,16 +86,13 @@ fun LoginCard(
             )
             Spacer(Modifier.height(16.dp))
             AuthButton(
-                text = stringResource(R.string.send_reset_email),
-                onClick = {
+                text = stringResource(R.string.send_reset_email), onClick = {
                     resetPassword(email.value.trim())
-                },
-                enabled = email.value.isNotBlank() && authState.value != AuthState.Loading
+                }, enabled = email.value.isNotBlank() && authState.value != AuthState.Loading
             )
             Spacer(Modifier.height(8.dp))
             TextButton(
-                onClick = { isResetMode = false },
-                colors = ButtonDefaults.textButtonColors(
+                onClick = { isResetMode = false }, colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {

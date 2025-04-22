@@ -101,6 +101,37 @@ class AuthViewModel(
         }
     }
 
+    fun signInAnonymously(name: String, onComplete: (Boolean, String?) -> Unit) {
+        _authState.value = AuthState.Loading
+        auth.signInAnonymously().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val uid = auth.currentUser!!.uid
+                val guestData = hashMapOf(
+                    "uid" to uid, "name" to name.trim(), "creationDate" to Timestamp.now()
+                )
+                FirebaseFirestore.getInstance().collection("guestUsers").document(uid)
+                    .set(guestData).addOnSuccessListener {
+                        _authState.value = AuthState.Anonymous
+                        onComplete(true, uid)
+                    }.addOnFailureListener { e ->
+                        _authState.value = AuthState.Error(e.message ?: "Guest error")
+                        onComplete(false, null)
+                    }
+            } else {
+                _authState.value = AuthState.Error(task.exception?.message ?: "Guest error")
+                onComplete(false, null)
+            }
+        }
+    }
+
+    fun deleteAnonymousUserAndSignOut() {
+        val user = auth.currentUser
+        if (user != null && user.isAnonymous) {
+            user.delete()
+        }
+        auth.signOut()
+    }
+
     fun logout() {
         auth.signOut()
         _authState.value = AuthState.Unauthenticated

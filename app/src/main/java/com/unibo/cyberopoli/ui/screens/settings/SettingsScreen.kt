@@ -167,13 +167,25 @@ fun SettingScreen(
                             settingsParams.updatePasswordWithOldPassword(currentPassword,
                                 newPassword,
                                 {
-                                    Toast.makeText(context, context.getString(R.string.password_change_success), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.password_change_success),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 },
                                 {
-                                    Toast.makeText(context, context.getString(R.string.password_change_fail), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.password_change_fail),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 })
                         } else {
-                            Toast.makeText(context, context.getString(R.string.password_not_match), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.password_not_match),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally),

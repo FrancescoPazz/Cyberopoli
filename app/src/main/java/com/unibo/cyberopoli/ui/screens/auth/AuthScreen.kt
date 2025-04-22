@@ -61,6 +61,15 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 }
             }
 
+            is AuthState.Anonymous -> {
+                navController.navigate(CyberopoliRoute.Scan) {
+                    popUpTo(CyberopoliRoute.Auth) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            }
+
             is AuthState.Error -> Toast.makeText(
                 context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
             ).show()
@@ -99,9 +108,14 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
             }
 
             when (selectedTabIndex) {
-                0 -> LoginCard(authParams.authState.observeAsState(), authParams.login, authParams.resetPassword)
+                0 -> LoginCard(
+                    authParams.authState.observeAsState(),
+                    authParams.login,
+                    authParams.resetPassword
+                )
+
                 1 -> SignUpCard(authParams.authState.observeAsState(), authParams.signUp)
-                2 -> GuestCard(navController)
+                2 -> GuestCard(navController, authParams.signInAnonymously)
             }
         }
     })

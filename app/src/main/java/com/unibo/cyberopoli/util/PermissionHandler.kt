@@ -16,21 +16,17 @@ class PermissionHandler(private val activity: ComponentActivity) {
 
     fun hasCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-            activity,
-            Manifest.permission.CAMERA
+            activity, Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun requestCameraPermission() {
         if (ContextCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.CAMERA
+                activity, Manifest.permission.CAMERA
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_REQUEST_CODE
+                activity, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE
             )
         }
     }

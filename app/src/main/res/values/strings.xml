@@ -65,4 +65,5 @@
     <string name="reset_password_failed">Failed to send password reset email</string>
     <string name="password_change_success">Successful password change</string>
     <string name="password_change_fail">Password change failed</string>
+    <string name="enter_guest_error">Unable to enter as a guest</string>
 </resources>

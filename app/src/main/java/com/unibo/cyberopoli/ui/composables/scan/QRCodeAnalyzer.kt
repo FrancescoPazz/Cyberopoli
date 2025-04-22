@@ -21,14 +21,11 @@ class QRCodeAnalyzer(
             return
         }
         val input = InputImage.fromMediaImage(
-            mediaImage,
-            imageProxy.imageInfo.rotationDegrees
+            mediaImage, imageProxy.imageInfo.rotationDegrees
         )
-        scanner.process(input)
-            .addOnSuccessListener { barcodes ->
+        scanner.process(input).addOnSuccessListener { barcodes ->
                 barcodes.firstOrNull()?.rawValue?.let(onCodeScanned)
-            }
-            .addOnFailureListener { Log.e("QRCodeAnalyzer", "Error processing image: $it") }
+            }.addOnFailureListener { Log.e("QRCodeAnalyzer", "Error processing image: $it") }
             .addOnCompleteListener { imageProxy.close() }
     }
 }
