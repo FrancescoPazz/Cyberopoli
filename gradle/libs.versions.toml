@@ -3,17 +3,17 @@ agp = "8.7.3"
 barcodeScanning = "17.3.0"
 cameraCamera2 = "1.5.0-alpha06"
 datastorePreferences = "1.1.4"
-koinAndroidxCompose = "4.0.2"
-kotlin = "2.0.0"
-coreKtx = "1.15.0"
+koinAndroidxCompose = "4.0.4"
+kotlin = "2.0.21"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-composeBom = "2024.04.01"
+composeBom = "2025.04.00"
 navigationCompose = "2.8.9"
-ktor = "2.3.8"
+ktor = "3.1.2"
 arsceneview = "2.2.1"
 core = "1.48.0"
 googleGmsGoogleServices = "4.4.2"
@@ -47,10 +47,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraCamera2" }
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2" }
-androidx-camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "cameraCamera2" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraCamera2" }
-androidx-camera-mlkit-vision = { module = "androidx.camera:camera-mlkit-vision", version.ref = "cameraCamera2" }
-androidx-camera-video = { module = "androidx.camera:camera-video", version.ref = "cameraCamera2" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCamera2" }
 barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
 arsceneview = { module = "io.github.sceneview:arsceneview", version.ref = "arsceneview" }

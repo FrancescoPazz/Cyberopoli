@@ -11,4 +11,5 @@ data class LobbyParams(
     val toggleReady: (String) -> Unit,
     val scannedLobbyId: String,
     val playerName: String,
+    val startGame: (String) -> Unit,
 )

@@ -96,11 +96,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     login = { email, password -> authViewModel.login(context, email, password) },
                     signUp = { email, password, name, surname ->
                         authViewModel.signUp(
-                            context,
-                            email,
-                            password,
-                            name,
-                            surname
+                            context, email, password, name, surname
                         )
                     },
                     resetPassword = { email ->
@@ -120,7 +116,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 ARScreen(navController)
             }
             composable<CyberopoliRoute.Settings> {
-                SettingScreen(navController, SettingsParams(
+                SettingScreen(
+                    navController, SettingsParams(
                         changeTheme = { theme -> settingsViewModel.changeTheme(theme) },
                         themeState = themeState,
                         updatePasswordWithOldPassword = { oldPassword, newPassword, onSuccess, onError ->
@@ -162,13 +159,11 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             }
             composable<CyberopoliRoute.Lobby> {
                 val lobbyViewModel = koinViewModel<LobbyViewModel>()
-                LobbyScreen(
-                    navController, LobbyParams(
-                        lobby = lobbyViewModel.lobby.observeAsState(),
+                LobbyScreen(navController,
+                    LobbyParams(lobby = lobbyViewModel.lobby.observeAsState(),
                         joinLobby = { lobbyId, playerName ->
                             lobbyViewModel.joinLobby(
-                                lobbyId,
-                                playerName
+                                lobbyId, playerName
                             )
                         },
                         observeLobby = { lobbyId -> lobbyViewModel.observeLobby(lobbyId) },
@@ -176,8 +171,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         toggleReady = { lobbyId -> lobbyViewModel.toggleReady(lobbyId) },
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",
                         playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
-                    )
-                )
+                        startGame = { lobbyId -> lobbyViewModel.startGame(lobbyId) }))
             }
         }
     }

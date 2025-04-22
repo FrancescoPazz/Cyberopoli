@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.composables.scan
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
@@ -10,57 +11,72 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.common.InputImage
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    AndroidView(modifier = Modifier
-        .size(250.dp)
-        .padding(16.dp), factory = { ctx ->
-        val previewView = PreviewView(ctx)
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+    val previewView = remember {
+        PreviewView(context).apply {
+            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+        }
+    }
+
+    DisposableEffect(previewView) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        val executor = ContextCompat.getMainExecutor(context)
 
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build().apply {
-                surfaceProvider = previewView.surfaceProvider
+            val cameraProvider = try {
+                cameraProviderFuture.get()
+            } catch (e: Exception) {
+                Log.e("QRCodeScanner", "Error getting camera provider", e)
+                return@addListener
             }
 
-            val imageAnalysis = ImageAnalysis.Builder()
+            val previewUseCase = Preview.Builder().build().also {
+                it.surfaceProvider = previewView.surfaceProvider
+            }
+
+            val analysisUseCase = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
+                .also { analysis ->
+                    analysis.setAnalyzer(executor, QRCodeAnalyzer { code ->
+                        onQRCodeScanned(code)
+                    })
+                }
 
-            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ctx)) { imageProxy ->
-                imageProxy.image?.let { mediaImage ->
-                    val image = InputImage.fromMediaImage(
-                        mediaImage, imageProxy.imageInfo.rotationDegrees
-                    )
-                    BarcodeScanning.getClient().process(image).addOnSuccessListener { barcodes ->
-                        barcodes.firstOrNull()?.rawValue?.let { value ->
-                            onQRCodeScanned(value)
-                        }
-                    }.addOnCompleteListener { imageProxy.close() }
-                } ?: imageProxy.close()
-            }
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
-                    lifecycleOwner, cameraSelector, preview, imageAnalysis
+                    lifecycleOwner,
+                    CameraSelector.DEFAULT_BACK_CAMERA,
+                    previewUseCase,
+                    analysisUseCase
                 )
-            } catch (exc: Exception) {
-                throw exc
+            } catch (e: Exception) {
+                Log.e("QRCodeScanner", "Error bind camera", e)
             }
-        }, ContextCompat.getMainExecutor(ctx))
-        previewView
-    })
+        }, executor)
+
+        onDispose {
+            ProcessCameraProvider.getInstance(context).get().unbindAll()
+        }
+    }
+
+    AndroidView(
+        factory = { previewView }, modifier = Modifier
+            .size(300.dp)
+            .padding(16.dp)
+    )
 }

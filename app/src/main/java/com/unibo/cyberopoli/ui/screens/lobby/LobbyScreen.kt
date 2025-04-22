@@ -1,7 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -18,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,13 +35,12 @@ import com.unibo.cyberopoli.util.UsageStatsHelper
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
-    navController: NavHostController,
-    lobbyParams: LobbyParams
+    navController: NavHostController, lobbyParams: LobbyParams
 ) {
     val context = LocalContext.current
     val activity = LocalActivity.current as ComponentActivity
 
-    val lobbyId    = lobbyParams.scannedLobbyId
+    val lobbyId = lobbyParams.scannedLobbyId
     val playerName = lobbyParams.playerName
 
     if (lobbyId.isNotBlank()) {
@@ -51,7 +48,7 @@ fun LobbyScreen(
             lobbyParams.joinLobby(lobbyId, playerName)
             lobbyParams.observeLobby(lobbyId)
 
-            val permHandler     = PermissionHandler(activity)
+            val permHandler = PermissionHandler(activity)
             val usageStatsHelper = UsageStatsHelper(context)
             if (permHandler.hasUsageStatsPermission()) {
                 usageStatsHelper.logUsageStats()

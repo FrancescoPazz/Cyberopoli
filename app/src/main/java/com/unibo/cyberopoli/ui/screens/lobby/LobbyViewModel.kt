@@ -101,4 +101,10 @@ class LobbyViewModel : ViewModel() {
         }
         super.onCleared()
     }
+
+    fun startGame(lobbyId: String) {
+        realtimeDB.getReference(LOBBIES).child(lobbyId)
+            .child("status")
+            .setValue("in_progress")
+    }
 }
