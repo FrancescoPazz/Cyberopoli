@@ -13,15 +13,26 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.unibo.cyberopoli.data.models.Lobby
 import com.unibo.cyberopoli.data.models.PlayerInfo
+import com.unibo.cyberopoli.data.repositories.UserRepository
 
 
 private const val LOBBIES = "lobbies"
 private const val PLAYERS = "players"
 
-class LobbyViewModel : ViewModel() {
+class LobbyViewModel(
+    private val userRepository: UserRepository = UserRepository()
+) : ViewModel() {
 
     private val realtimeDB =
         Firebase.database("https://cyberopoli-default-rtdb.europe-west1.firebasedatabase.app/")
+
+    init {
+        loadUserData()
+    }
+
+    fun loadUserData() {
+        userRepository.loadUserData()
+    }
 
     private val _lobby = MutableLiveData<Lobby?>()
     val lobby: LiveData<Lobby?> = _lobby

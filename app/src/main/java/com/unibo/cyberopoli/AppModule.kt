@@ -24,7 +24,7 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get(), get()) }
-    viewModel { LobbyViewModel() }
+    viewModel { LobbyViewModel(get()) }
 
     single { SettingsRepository(get()) }
     single { UserRepository() }

@@ -86,9 +86,15 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             Theme.System -> isSystemInDarkTheme()
         }
     ) {
+        val startRoute = when (authState.value) {
+            is AuthState.Authenticated -> CyberopoliRoute.Home
+            is AuthState.Anonymous -> CyberopoliRoute.Scan
+            else -> CyberopoliRoute.Auth
+        }
+
         NavHost(
             navController = navController,
-            startDestination = if (authState.value == AuthState.Authenticated) CyberopoliRoute.Home else CyberopoliRoute.Auth,
+            startDestination = startRoute,
         ) {
             composable<CyberopoliRoute.Auth> {
                 val authParams = AuthParams(authState = authViewModel.authState,

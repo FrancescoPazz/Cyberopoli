@@ -29,11 +29,14 @@ class AuthViewModel(
     }
 
     private fun checkAuthStatus() {
-        if (auth.currentUser != null) {
-            _authState.value = AuthState.Authenticated
-            userRepository.loadUserData()
-        } else {
-            _authState.value = AuthState.Unauthenticated
+        val user = auth.currentUser
+        _authState.value = when {
+            user == null -> AuthState.Unauthenticated
+            user.isAnonymous -> AuthState.Anonymous
+            else -> {
+                userRepository.loadUserData()
+                AuthState.Authenticated
+            }
         }
     }
 
