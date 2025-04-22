@@ -45,16 +45,4 @@ fun ProfileStatsSection(
     }
 }
 
-@Composable
-fun StatItem(label: String, value: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            color = MaterialTheme.colorScheme.primary,
-            text = value,
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-        )
-        Text(color = MaterialTheme.colorScheme.primary, text = label)
-    }
-}
+
