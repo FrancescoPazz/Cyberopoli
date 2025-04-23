@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.unibo.cyberopoli.data.models.RankingUser
+import com.unibo.cyberopoli.data.models.auth.UserData
 
 @Composable
-fun RankingListSection(users: List<RankingUser>) {
+fun RankingListSection(users: List<UserData>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {

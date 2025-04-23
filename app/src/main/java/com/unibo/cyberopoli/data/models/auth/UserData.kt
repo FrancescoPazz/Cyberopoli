@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.models
+package com.unibo.cyberopoli.data.models.auth
 
 import com.google.firebase.Timestamp
 
@@ -16,15 +16,4 @@ data class UserData(
     val totalMedals: Int? = 0,
     val bestScore: Int? = 0,
     val averageScore: Int? = 0
-)
-
-data class GuestData(
-    val guestId: String? = null,
-    val name: String? = null,
-    val creationDate: Timestamp?,
-    val score: Int? = 0,
-)
-
-data class MatchHistory(
-    val date: String, val title: String, val result: String, val points: String
 )

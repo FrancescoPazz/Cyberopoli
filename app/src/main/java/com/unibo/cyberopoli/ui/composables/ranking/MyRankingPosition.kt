@@ -21,11 +21,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.RankingUser
+import com.unibo.cyberopoli.data.models.auth.UserData
 
 @Composable
-fun MyRankingPosition(user: RankingUser?) {
-    val avatarRes = when (user?.avatarUrl) {
+fun MyRankingPosition(user: UserData?) {
+    val avatarRes = when (user?.profileImageUrl) {
         "avatar_male_1" -> R.drawable.avatar_male_1
         "avatar_male_2" -> R.drawable.avatar_male_2
         "avatar_female_1" -> R.drawable.avatar_female_1
@@ -55,7 +55,7 @@ fun MyRankingPosition(user: RankingUser?) {
                 text = stringResource(R.string.my_rank), style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "#${user?.rank} ${user?.name} ${user?.surname} ${user?.score} pt",
+                text = "#${user?.level} ${user?.name} ${user?.surname} ${user?.score} pt",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }

@@ -11,8 +11,8 @@ import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
-import com.unibo.cyberopoli.data.models.Lobby
-import com.unibo.cyberopoli.data.models.PlayerInfo
+import com.unibo.cyberopoli.data.models.lobby.Lobby
+import com.unibo.cyberopoli.data.models.lobby.PlayerInfo
 import com.unibo.cyberopoli.data.repositories.UserRepository
 
 

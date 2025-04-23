@@ -88,7 +88,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     ) {
         val startRoute = when (authState.value) {
             is AuthState.Authenticated -> CyberopoliRoute.Home
-            is AuthState.Anonymous -> CyberopoliRoute.Scan
             else -> CyberopoliRoute.Auth
         }
 
@@ -140,7 +139,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             composable<CyberopoliRoute.Home> {
                 HomeScreen(
                     navController, HomeParams(
-                        user = homeViewModel.user.observeAsState(),
+                        user = profileViewModel.userData.observeAsState(),
                         loadUserData = { homeViewModel.loadUserData() },
                     )
                 )
@@ -148,8 +147,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             composable<CyberopoliRoute.Profile> {
                 ProfileScreen(
                     navController, ProfileParams(
-                        user = profileViewModel.user.observeAsState(),
-                        loadUserData = { profileViewModel.loadUserData() },
+                        user = profileViewModel.userData.observeAsState(),
+                        loadUserData = { homeViewModel.loadUserData() },
                         changeAvatar = { profileViewModel.changeAvatar() },
                     )
                 )
@@ -178,7 +177,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         leaveLobby = { lobbyId -> lobbyViewModel.leaveLobby(lobbyId) },
                         toggleReady = { lobbyId -> lobbyViewModel.toggleReady(lobbyId) },
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                        playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
+                        playerName = "${profileViewModel.userData.value?.name} ${profileViewModel.userData.value?.surname ?: ""}",
                         startGame = { lobbyId -> lobbyViewModel.startGame(lobbyId) },
                         deleteAnonymousUserAndSignOut = {
                             authViewModel.deleteAnonymousUserAndSignOut()

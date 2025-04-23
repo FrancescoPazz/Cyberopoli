@@ -17,7 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.MatchHistory
+import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.profile.MatchHistory
 import com.unibo.cyberopoli.ui.composables.BottomBar
 import com.unibo.cyberopoli.ui.composables.TopBar
 import com.unibo.cyberopoli.ui.composables.profile.MatchHistorySection
@@ -68,12 +69,16 @@ fun ProfileScreen(
                         onEditProfileClick = { profileParams.changeAvatar() },
                         onShareClick = { /* TODO */ })
                     Spacer(modifier = Modifier.height(16.dp))
-                    profileParams.user.value!!.totalGames?.let {
-                        profileParams.user.value!!.totalWins?.let { it1 ->
-                            profileParams.user.value!!.totalMedals?.let { it2 ->
-                                ProfileStatsSection(
-                                    totalGames = it, totalWins = it1, totalMedals = it2
-                                )
+                    (profileParams.user.value as? UserData)?.let { user ->
+                        user.totalGames?.let { totalGames ->
+                            user.totalWins?.let { totalWins ->
+                                user.totalMedals?.let { totalMedals ->
+                                    ProfileStatsSection(
+                                        totalGames = totalGames,
+                                        totalWins = totalWins,
+                                        totalMedals = totalMedals
+                                    )
+                                }
                             }
                         }
                     }

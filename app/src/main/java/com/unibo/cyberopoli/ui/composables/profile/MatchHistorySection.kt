@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.MatchHistory
+import com.unibo.cyberopoli.data.models.profile.MatchHistory
 
 @Composable
 fun MatchHistorySection(matchHistory: List<MatchHistory>) {

@@ -9,7 +9,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.UserData
 import com.unibo.cyberopoli.data.repositories.UserRepository
 import com.unibo.cyberopoli.ui.contracts.AuthState
 
@@ -22,8 +21,6 @@ class AuthViewModel(
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
 
-    val user: LiveData<UserData?> = userRepository.userLiveData
-
     init {
         checkAuthStatus()
     }
@@ -31,9 +28,12 @@ class AuthViewModel(
     private fun checkAuthStatus() {
         val user = auth.currentUser
         _authState.value = when {
-            user == null -> AuthState.Unauthenticated
-            user.isAnonymous -> AuthState.Anonymous
-            else -> {
+            user == null          -> AuthState.Unauthenticated
+            user.isAnonymous      -> {
+                userRepository.loadUserData()
+                AuthState.Anonymous
+            }
+            else                  -> {
                 userRepository.loadUserData()
                 AuthState.Authenticated
             }

@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.models
+package com.unibo.cyberopoli.data.models.lobby
 
 data class Lobby(
     val matchId: String = "",
@@ -6,8 +6,4 @@ data class Lobby(
     val status: String = "waiting",
     val createdAt: Long = System.currentTimeMillis(),
     val players: Map<String, PlayerInfo> = mapOf()
-)
-
-data class PlayerInfo(
-    val name: String = "", var ready: Boolean = false, var score: Int = 50, var win: Boolean = false
 )

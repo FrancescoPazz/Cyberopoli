@@ -20,17 +20,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.RankingUser
+import com.unibo.cyberopoli.data.models.auth.UserData
 
 @Composable
-fun Top3RankingSection(users: List<RankingUser>) {
+fun Top3RankingSection(users: List<UserData>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
     ) {
-        users.sortedBy { it.rank }.forEach { user ->
-            val (avatarSize, offsetY) = when (user.rank) {
+        users.sortedBy { it.level }.forEach { user ->
+            val (avatarSize, offsetY) = when (user.level) {
                 1 -> 80.dp to (-16).dp
                 2 -> 70.dp to (-8).dp
                 3 -> 60.dp to 0.dp
@@ -46,7 +46,7 @@ fun Top3RankingSection(users: List<RankingUser>) {
             ) {
                 Image(
                     painter = painterResource(
-                        when (user.avatarUrl) {
+                        when (user.profileImageUrl) {
                             "avatar_male_1" -> R.drawable.avatar_male_1
                             "avatar_male_2" -> R.drawable.avatar_male_2
                             "avatar_female_1" -> R.drawable.avatar_female_1
@@ -61,7 +61,7 @@ fun Top3RankingSection(users: List<RankingUser>) {
                     contentScale = ContentScale.Crop
                 )
 
-                if (user.rank == 1) {
+                if (user.level == 1) {
                     Text(
                         text = "\uD83D\uDC51", style = MaterialTheme.typography.bodyLarge
                     )

@@ -21,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.RankingUser
+import com.unibo.cyberopoli.data.models.auth.UserData
 
 @Composable
-fun RankingListItem(user: RankingUser) {
+fun RankingListItem(user: UserData) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +32,7 @@ fun RankingListItem(user: RankingUser) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "${user.rank}",
+            text = "${user.level}",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.width(24.dp)
@@ -54,7 +54,7 @@ fun RankingListItem(user: RankingUser) {
         Column {
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = user.name,
+                text = user.name ?: "",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )

@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.UserData
+import com.unibo.cyberopoli.data.models.auth.UserData
 
 @Composable
 fun ProfileHeader(

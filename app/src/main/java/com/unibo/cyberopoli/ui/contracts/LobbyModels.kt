@@ -1,7 +1,7 @@
 package com.unibo.cyberopoli.ui.contracts
 
 import androidx.compose.runtime.State
-import com.unibo.cyberopoli.data.models.Lobby
+import com.unibo.cyberopoli.data.models.lobby.Lobby
 
 data class LobbyParams(
     val lobby: State<Lobby?>,
