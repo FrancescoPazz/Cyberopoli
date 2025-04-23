@@ -12,7 +12,10 @@ class CyberopoliApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@CyberopoliApplication)
-            modules(appModule)
+            modules(
+                supabaseModule,
+                appModule
+            )
         }
     }
 }

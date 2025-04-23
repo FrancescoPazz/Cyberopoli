@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.data.models.auth
 
-import com.google.firebase.Timestamp
+import java.security.Timestamp
+
 
 data class GuestData(
     val uid: String = "",

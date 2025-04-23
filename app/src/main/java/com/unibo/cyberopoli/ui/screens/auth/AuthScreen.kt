@@ -100,11 +100,12 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 0 -> LoginCard(
                     authParams.authState.observeAsState(),
                     authParams.login,
+                    authParams.loginGoogleUser,
                     authParams.resetPassword
                 )
 
                 1 -> SignUpCard(authParams.authState.observeAsState(), authParams.signUp)
-                2 -> GuestCard(navController, authParams.signInAnonymously)
+                2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }
     })

@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.auth.composables
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthState
 fun LoginCard(
     authState: State<AuthState?>,
     login: (email: String, password: String) -> Unit,
+    googleLogin: (context: Context) -> Unit,
     resetPassword: (email: String) -> Unit
 ) {
     val email = remember { mutableStateOf("") }
@@ -72,6 +75,11 @@ fun LoginCard(
             ) {
                 Text("Forgot password?")
             }
+
+            val context = LocalContext.current
+            GoogleSignInButton(
+                onClick = { googleLogin(context) },
+            )
         } else {
             Text(
                 text = stringResource(R.string.reset_password_title),

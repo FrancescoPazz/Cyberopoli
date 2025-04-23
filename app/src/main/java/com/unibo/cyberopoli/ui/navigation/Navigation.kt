@@ -12,28 +12,28 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.ui.screens.auth.AuthParams
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
-import com.unibo.cyberopoli.ui.screens.home.HomeParams
-import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
-import com.unibo.cyberopoli.ui.screens.profile.ProfileParams
-import com.unibo.cyberopoli.ui.screens.ranking.RankingParams
-import com.unibo.cyberopoli.ui.screens.scan.ScanParams
-import com.unibo.cyberopoli.ui.screens.settings.SettingsParams
 import com.unibo.cyberopoli.ui.screens.ar.ARScreen
+import com.unibo.cyberopoli.ui.screens.auth.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
+import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
+import com.unibo.cyberopoli.ui.screens.home.HomeParams
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
 import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
+import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
+import com.unibo.cyberopoli.ui.screens.profile.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
+import com.unibo.cyberopoli.ui.screens.ranking.RankingParams
 import com.unibo.cyberopoli.ui.screens.ranking.RankingScreen
 import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
+import com.unibo.cyberopoli.ui.screens.scan.ScanParams
 import com.unibo.cyberopoli.ui.screens.scan.ScanScreen
 import com.unibo.cyberopoli.ui.screens.scan.ScanViewModel
 import com.unibo.cyberopoli.ui.screens.settings.SettingScreen
+import com.unibo.cyberopoli.ui.screens.settings.SettingsParams
 import com.unibo.cyberopoli.ui.screens.settings.SettingsViewModel
 import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
 import kotlinx.serialization.Serializable
@@ -96,27 +96,24 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             startDestination = startRoute,
         ) {
             composable<CyberopoliRoute.Auth> {
-                val authParams = AuthParams(authState = authViewModel.authState,
-                    login = { email, password -> authViewModel.login(context, email, password) },
-                    signUp = { email, password, name, surname ->
-                        authViewModel.signUp(
-                            context, email, password, name, surname
-                        )
-                    },
-                    resetPassword = { email ->
-                        authViewModel.sendPasswordResetEmail(context, email)
-                    },
-                    signInAnonymously = { name, onSuccess ->
-                        authViewModel.signInAnonymously(name, onSuccess)
-                    })
-                AuthScreen(navController, authParams)
+                AuthScreen(
+                    navController, AuthParams(
+                        authState = authViewModel.authState,
+                        login = authViewModel::login,
+                        signUp = authViewModel::signUp,
+                        loginGoogleUser = authViewModel::loginGoogle,
+                        resetPassword = authViewModel::sendPasswordReset,
+                        loginAnonymously = authViewModel::loginAnonymously
+                    )
+                )
             }
             composable<CyberopoliRoute.Scan> {
-                val scanParams = ScanParams(
-                    setScannedValue = { value -> scanViewModel.setScannedValue(value) },
-                    authState = authViewModel.authState,
+                ScanScreen(
+                    navController, ScanParams(
+                        setScannedValue = scanViewModel::setScannedValue,
+                        authState = authViewModel.authState
+                    )
                 )
-                ScanScreen(navController, scanParams)
             }
             composable<CyberopoliRoute.ARScreen> {
                 ARScreen(navController)
@@ -124,15 +121,11 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             composable<CyberopoliRoute.Settings> {
                 SettingScreen(
                     navController, SettingsParams(
-                        changeTheme = { theme -> settingsViewModel.changeTheme(theme) },
+                        changeTheme = settingsViewModel::changeTheme,
                         themeState = themeState,
-                        updatePasswordWithOldPassword = { oldPassword, newPassword, onSuccess, onError ->
-                            settingsViewModel.updatePasswordWithOldPassword(
-                                oldPassword, newPassword, onSuccess, onError
-                            )
-                        },
+                        updatePasswordWithOldPassword = settingsViewModel::updatePasswordWithOldPassword,
                         authState = authViewModel.authState,
-                        logout = { authViewModel.logout() },
+                        logout = authViewModel::logout
                     )
                 )
             }
@@ -140,7 +133,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 HomeScreen(
                     navController, HomeParams(
                         user = profileViewModel.userData.observeAsState(),
-                        loadUserData = { homeViewModel.loadUserData() },
+                        loadUserData = homeViewModel::loadUserData
                     )
                 )
             }
@@ -148,8 +141,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 ProfileScreen(
                     navController, ProfileParams(
                         user = profileViewModel.userData.observeAsState(),
-                        loadUserData = { homeViewModel.loadUserData() },
-                        changeAvatar = { profileViewModel.changeAvatar() },
+                        loadUserData = homeViewModel::loadUserData,
+                        changeAvatar = profileViewModel::changeAvatar
                     )
                 )
             }
@@ -158,8 +151,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 RankingScreen(
                     navController, RankingParams(
                         rankingData = rankingViewModel.ranking.observeAsState(),
-                        loadUserData = { rankingViewModel.loadUserData() },
-                        getMyRanking = { rankingViewModel.getMyRanking() },
+                        loadUserData = rankingViewModel::loadUserData,
+                        getMyRanking = rankingViewModel::getMyRanking
                     )
                 )
             }
@@ -168,21 +161,15 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 LobbyScreen(
                     navController, LobbyParams(
                         lobby = lobbyViewModel.lobby.observeAsState(),
-                        joinLobby = { lobbyId, playerName ->
-                            lobbyViewModel.joinLobby(
-                                lobbyId, playerName
-                            )
-                        },
-                        observeLobby = { lobbyId -> lobbyViewModel.observeLobby(lobbyId) },
-                        leaveLobby = { lobbyId -> lobbyViewModel.leaveLobby(lobbyId) },
-                        toggleReady = { lobbyId -> lobbyViewModel.toggleReady(lobbyId) },
+                        joinLobby = lobbyViewModel::joinLobby,
+                        observeLobby = lobbyViewModel::observeLobby,
+                        leaveLobby = lobbyViewModel::leaveLobby,
+                        toggleReady = lobbyViewModel::toggleReady,
+                        startGame = lobbyViewModel::startGame,
+                        deleteAnonymousUserAndSignOut = authViewModel::deleteAnonymousUserAndSignOut,
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                        playerName = "${profileViewModel.userData.value?.name} ${profileViewModel.userData.value?.surname ?: ""}",
-                        startGame = { lobbyId -> lobbyViewModel.startGame(lobbyId) },
-                        deleteAnonymousUserAndSignOut = {
-                            authViewModel.deleteAnonymousUserAndSignOut()
-                        },
-                        isGuest = authState.value == AuthState.Anonymous
+                        playerName = "${profileViewModel.userData.value?.name} ${profileViewModel.userData.value?.surname}",
+                        isGuest = authViewModel.authState.value is AuthState.Anonymous
                     )
                 )
             }

@@ -66,15 +66,23 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.firebase.auth)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.firestore.ktx)
     implementation(libs.guava)
     implementation(libs.coil.compose)
-    implementation(libs.firebase.storage)
-    implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.database)
+
+    // Supabase
+    implementation(platform(libs.bom.vversion))
+    implementation(libs.postgrest.kt)
+    implementation(libs.auth.kt)
+    implementation(libs.realtime.kt)
+
+    // Google Auth
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    // Ktor Client
+    implementation(libs.ktor.client.okhttp)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

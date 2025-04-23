@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.auth.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +19,7 @@ import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 
 @Composable
 fun GuestCard(
-    navController: NavController, signInAnonymously: (String, (Boolean, String?) -> Unit) -> Unit
+    navController: NavController, loginAnonymously: (String) -> Unit
 ) {
     val context = LocalContext.current
     val guestName = remember { mutableStateOf("") }
@@ -41,12 +40,7 @@ fun GuestCard(
         AuthButton(
             text = stringResource(R.string.enter).uppercase(), onClick = {
                 if (guestName.value.isNotBlank()) {
-                    signInAnonymously(guestName.value) { success, _ ->
-                        if (!success) {
-                            Toast.makeText(context, R.string.enter_guest_error, Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
+                    loginAnonymously(guestName.value)
                     navController.navigate(CyberopoliRoute.Scan) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
