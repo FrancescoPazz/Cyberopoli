@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.repositories.UserRepository
-import com.unibo.cyberopoli.ui.contracts.AuthState
 
 class AuthViewModel(
     private val userRepository: UserRepository = UserRepository()

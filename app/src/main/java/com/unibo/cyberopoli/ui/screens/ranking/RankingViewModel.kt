@@ -10,7 +10,7 @@ import com.unibo.cyberopoli.data.repositories.UserRepository
 
 class RankingViewModel(
     private val userRepository: UserRepository = UserRepository(),
-    private val rankingRepository: RankingRepository = RankingRepository()
+    rankingRepository: RankingRepository = RankingRepository()
 ) : ViewModel() {
     private val currentUser: LiveData<CurrentUser?> = userRepository.currentUserLiveData
     val ranking: LiveData<List<UserData>> = rankingRepository.rankingLiveData

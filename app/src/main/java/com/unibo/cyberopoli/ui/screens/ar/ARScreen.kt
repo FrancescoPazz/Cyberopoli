@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
 import com.google.ar.core.TrackingFailureReason
-import com.unibo.cyberopoli.ui.composables.ar.Reticle
+import com.unibo.cyberopoli.ui.screens.ar.composables.Reticle
 import com.unibo.cyberopoli.util.ARHelper
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull

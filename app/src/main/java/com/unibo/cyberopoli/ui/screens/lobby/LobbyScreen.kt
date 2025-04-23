@@ -25,11 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.composables.BottomBar
-import com.unibo.cyberopoli.ui.composables.TopBar
-import com.unibo.cyberopoli.ui.composables.auth.AuthButton
-import com.unibo.cyberopoli.ui.composables.lobby.PlayerRow
-import com.unibo.cyberopoli.ui.contracts.LobbyParams
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
+import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
 import com.unibo.cyberopoli.util.PermissionHandler
 import com.unibo.cyberopoli.util.UsageStatsHelper
 

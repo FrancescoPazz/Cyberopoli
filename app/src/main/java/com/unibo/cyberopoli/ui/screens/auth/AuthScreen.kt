@@ -28,15 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.CyberopoliRoute
-import com.unibo.cyberopoli.ui.composables.BottomBar
-import com.unibo.cyberopoli.ui.composables.TopBar
-import com.unibo.cyberopoli.ui.composables.auth.AuthHeader
-import com.unibo.cyberopoli.ui.composables.auth.GuestCard
-import com.unibo.cyberopoli.ui.composables.auth.LoginCard
-import com.unibo.cyberopoli.ui.composables.auth.SignUpCard
-import com.unibo.cyberopoli.ui.contracts.AuthParams
-import com.unibo.cyberopoli.ui.contracts.AuthState
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.auth.composables.AuthHeader
+import com.unibo.cyberopoli.ui.screens.auth.composables.GuestCard
+import com.unibo.cyberopoli.ui.screens.auth.composables.LoginCard
+import com.unibo.cyberopoli.ui.screens.auth.composables.SignUpCard
 
 @Composable
 fun AuthScreen(navController: NavController, authParams: AuthParams) {

@@ -17,15 +17,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.auth.UserData
 import com.unibo.cyberopoli.data.models.profile.MatchHistory
-import com.unibo.cyberopoli.ui.composables.BottomBar
-import com.unibo.cyberopoli.ui.composables.TopBar
-import com.unibo.cyberopoli.ui.composables.profile.MatchHistorySection
-import com.unibo.cyberopoli.ui.composables.profile.ProfileChartSection
-import com.unibo.cyberopoli.ui.composables.profile.ProfileHeader
-import com.unibo.cyberopoli.ui.composables.profile.ProfileStatsSection
-import com.unibo.cyberopoli.ui.contracts.ProfileParams
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.profile.composables.MatchHistorySection
+import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileChartSection
+import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileHeader
+import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileStatsSection
 
 @Composable
 fun ProfileScreen(
@@ -69,7 +67,7 @@ fun ProfileScreen(
                         onEditProfileClick = { profileParams.changeAvatar() },
                         onShareClick = { /* TODO */ })
                     Spacer(modifier = Modifier.height(16.dp))
-                    (profileParams.user.value as? UserData)?.let { user ->
+                    (profileParams.user.value)?.let { user ->
                         user.totalGames?.let { totalGames ->
                             user.totalWins?.let { totalWins ->
                                 user.totalMedals?.let { totalMedals ->

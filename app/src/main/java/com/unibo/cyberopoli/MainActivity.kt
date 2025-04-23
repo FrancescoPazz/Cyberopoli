@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.navigation.compose.rememberNavController
-import com.unibo.cyberopoli.ui.CyberopoliNavGraph
+import com.unibo.cyberopoli.ui.navigation.CyberopoliNavGraph
 
 class MainActivity : ComponentActivity() {
 

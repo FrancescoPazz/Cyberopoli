@@ -14,13 +14,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.unibo.cyberopoli.ui.composables.BottomBar
-import com.unibo.cyberopoli.ui.composables.TopBar
-import com.unibo.cyberopoli.ui.composables.ranking.MyRankingPosition
-import com.unibo.cyberopoli.ui.composables.ranking.RankingListSection
-import com.unibo.cyberopoli.ui.composables.ranking.RankingTabs
-import com.unibo.cyberopoli.ui.composables.ranking.Top3RankingSection
-import com.unibo.cyberopoli.ui.contracts.RankingParams
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.ranking.composables.MyRankingPosition
+import com.unibo.cyberopoli.ui.screens.ranking.composables.RankingListSection
+import com.unibo.cyberopoli.ui.screens.ranking.composables.RankingTabs
+import com.unibo.cyberopoli.ui.screens.ranking.composables.Top3RankingSection
 
 @Composable
 fun RankingScreen(

@@ -1,0 +1,19 @@
+package com.unibo.cyberopoli.ui.screens.auth
+
+import androidx.lifecycle.LiveData
+
+data class AuthParams(
+    val authState: LiveData<AuthState>,
+    val login: (email: String, password: String) -> Unit,
+    val signUp: (email: String, password: String, name: String, surname: String) -> Unit,
+    val resetPassword: (email: String) -> Unit,
+    val signInAnonymously: (String, (Boolean, String?) -> Unit) -> Unit
+)
+
+sealed class AuthState {
+    data object Authenticated : AuthState()
+    data object Unauthenticated : AuthState()
+    data object Anonymous : AuthState()
+    data object Loading : AuthState()
+    data class Error(val message: String) : AuthState()
+}

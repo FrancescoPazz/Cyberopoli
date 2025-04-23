@@ -37,11 +37,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.Theme
-import com.unibo.cyberopoli.ui.composables.BottomBar
-import com.unibo.cyberopoli.ui.composables.TopBar
-import com.unibo.cyberopoli.ui.contracts.AuthState
-import com.unibo.cyberopoli.ui.contracts.SettingsParams
+import com.unibo.cyberopoli.data.models.theme.Theme
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.auth.AuthState
 
 @Composable
 fun SettingScreen(

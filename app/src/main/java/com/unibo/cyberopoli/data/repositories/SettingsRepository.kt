@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.unibo.cyberopoli.data.models.Theme
+import com.unibo.cyberopoli.data.models.theme.Theme
 import kotlinx.coroutines.flow.map
 
 class SettingsRepository(
