@@ -46,7 +46,7 @@ fun LobbyScreen(
 
     if (lobbyId.isNotBlank()) {
         DisposableEffect(lobbyId) {
-            lobbyParams.joinLobby(lobbyId, playerName)
+            lobbyParams.joinLobby(lobbyId)
             lobbyParams.observeLobby(lobbyId)
 
             val permHandler = PermissionHandler(activity)
@@ -58,8 +58,8 @@ fun LobbyScreen(
             }
 
             onDispose {
-                lobbyParams.leaveLobby(lobbyId)
-                lobbyParams.deleteAnonymousUserAndSignOut()
+                lobbyParams.leaveLobby()
+                //lobbyParams.deleteAnonymousUserAndSignOut()
             }
         }
     }
@@ -82,7 +82,9 @@ fun LobbyScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                val playersMap = lobbyParams.lobby.value!!.players
+                val playersMap = lobbyParams.players
+                    ?.associateBy { it.userId }
+                    ?: emptyMap()
                 val playersList = playersMap.entries.map { it.key to it.value }
 
                 Column {
@@ -91,7 +93,7 @@ fun LobbyScreen(
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(playersList) { (_, playerInfo) ->
                             PlayerRow(
-                                playerName = playerInfo.name, isReady = playerInfo.ready
+                                playerName = playerInfo.name!!, isReady = playerInfo.isReady!!
                             )
                         }
                     }

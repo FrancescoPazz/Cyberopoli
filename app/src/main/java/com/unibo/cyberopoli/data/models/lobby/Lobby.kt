@@ -1,9 +1,19 @@
 package com.unibo.cyberopoli.data.models.lobby
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Lobby(
-    val matchId: String = "",
-    val hostId: String = "",
-    val status: String = "waiting",
-    val createdAt: Long = System.currentTimeMillis(),
-    val players: Map<String, PlayerInfo> = mapOf()
+    @SerialName("id")
+    val lobbyId: String? = null,
+
+    @SerialName("host_id")
+    val hostId: String? = null,
+
+    @SerialName("status")
+    val status: String? = "waiting",
+
+    @SerialName("created_at")
+    val createdAt: String? = null,
 )

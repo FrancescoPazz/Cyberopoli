@@ -3,6 +3,7 @@ package com.unibo.cyberopoli
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.unibo.cyberopoli.data.repositories.AuthRepository
+import com.unibo.cyberopoli.data.repositories.LobbyRepository
 import com.unibo.cyberopoli.data.repositories.RankingRepository
 import com.unibo.cyberopoli.data.repositories.SettingsRepository
 import com.unibo.cyberopoli.data.repositories.UserRepository
@@ -25,11 +26,12 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get(), get()) }
-    viewModel { LobbyViewModel(get()) }
+    viewModel { LobbyViewModel(get(), get()) }
 
     single { AuthRepository(get()) }
     single { SettingsRepository(get()) }
     single { UserRepository(get()) }
     single { RankingRepository(get()) }
+    single { LobbyRepository(get()) }
     single { get<Context>().dataStore }
 }

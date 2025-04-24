@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class ThemeState(val theme: Theme)
-
 class SettingsViewModel(
     private val repository: SettingsRepository
 ) : ViewModel() {

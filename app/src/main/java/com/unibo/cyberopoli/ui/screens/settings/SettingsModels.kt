@@ -11,3 +11,5 @@ data class SettingsParams(
     val authState: LiveData<AuthState>,
     val logout: () -> Unit,
 )
+
+data class ThemeState(val theme: Theme)
