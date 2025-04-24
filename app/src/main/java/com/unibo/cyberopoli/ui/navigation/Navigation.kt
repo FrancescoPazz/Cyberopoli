@@ -68,8 +68,6 @@ sealed interface CyberopoliRoute {
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun CyberopoliNavGraph(navController: NavHostController) {
-    val context = LocalContext.current
-
     val authViewModel = koinViewModel<AuthViewModel>()
     val authState = authViewModel.authState.observeAsState()
 
@@ -132,7 +130,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             composable<CyberopoliRoute.Home> {
                 HomeScreen(
                     navController, HomeParams(
-                        user = profileViewModel.userData.observeAsState(),
+                        user = profileViewModel.user.observeAsState(),
                         loadUserData = homeViewModel::loadUserData
                     )
                 )
@@ -140,7 +138,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             composable<CyberopoliRoute.Profile> {
                 ProfileScreen(
                     navController, ProfileParams(
-                        user = profileViewModel.userData.observeAsState(),
+                        user = profileViewModel.user.observeAsState(),
                         loadUserData = homeViewModel::loadUserData,
                         changeAvatar = profileViewModel::changeAvatar
                     )
@@ -168,7 +166,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         startGame = lobbyViewModel::startGame,
                         deleteAnonymousUserAndSignOut = authViewModel::deleteAnonymousUserAndSignOut,
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                        playerName = "${profileViewModel.userData.value?.name} ${profileViewModel.userData.value?.surname}",
+                        playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
                         isGuest = authViewModel.authState.value is AuthState.Anonymous
                     )
                 )

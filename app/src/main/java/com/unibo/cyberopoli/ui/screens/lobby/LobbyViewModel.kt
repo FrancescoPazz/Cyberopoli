@@ -11,7 +11,7 @@ private const val LOBBIES = "lobbies"
 private const val PLAYERS = "players"
 
 class LobbyViewModel(
-    private val userRepository: UserRepository = UserRepository()
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
 

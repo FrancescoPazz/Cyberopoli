@@ -31,11 +31,6 @@ import com.unibo.cyberopoli.ui.screens.home.composables.StatCard
 fun HomeScreen(
     navController: NavController, homeParams: HomeParams
 ) {
-
-    LaunchedEffect(Unit) {
-        homeParams.loadUserData()
-    }
-
     Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->

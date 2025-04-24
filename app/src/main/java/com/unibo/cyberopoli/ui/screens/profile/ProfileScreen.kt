@@ -68,17 +68,11 @@ fun ProfileScreen(
                         onShareClick = { /* TODO */ })
                     Spacer(modifier = Modifier.height(16.dp))
                     (profileParams.user.value)?.let { user ->
-                        user.totalGames?.let { totalGames ->
-                            user.totalWins?.let { totalWins ->
-                                user.totalMedals?.let { totalMedals ->
-                                    ProfileStatsSection(
-                                        totalGames = totalGames,
-                                        totalWins = totalWins,
-                                        totalMedals = totalMedals
-                                    )
-                                }
-                            }
-                        }
+                        ProfileStatsSection(
+                            totalGames = user.totalGames,
+                            totalWins = user.totalWins,
+                            totalMedals = user.totalMedals
+                        )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     ProfileChartSection(

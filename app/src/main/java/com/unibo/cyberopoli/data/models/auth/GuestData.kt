@@ -6,5 +6,6 @@ import java.security.Timestamp
 data class GuestData(
     val uid: String = "",
     val name: String = "",
+    val surname: String = "",
     val creationDate: Timestamp? = null
 )

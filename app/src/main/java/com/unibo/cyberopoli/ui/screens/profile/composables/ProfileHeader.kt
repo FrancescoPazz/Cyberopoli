@@ -36,7 +36,7 @@ import com.unibo.cyberopoli.data.models.auth.UserData
 fun ProfileHeader(
     userData: UserData, onEditProfileClick: () -> Unit, onShareClick: () -> Unit
 ) {
-    val avatarRes = when (userData.profileImageUrl) {
+    val avatarRes = when (userData.avatarUrl) {
         "avatar_male_1" -> R.drawable.avatar_male_1
         "avatar_male_2" -> R.drawable.avatar_male_2
         "avatar_female_1" -> R.drawable.avatar_female_1
@@ -73,8 +73,8 @@ fun ProfileHeader(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                userData.name?.let { name ->
-                    userData.surname?.let { surname ->
+                userData.name.let { name ->
+                    userData.surname.let { surname ->
                         Text(
                             color = MaterialTheme.colorScheme.primary,
                             text = "$name $surname",

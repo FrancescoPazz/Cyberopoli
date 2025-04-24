@@ -25,7 +25,7 @@ import com.unibo.cyberopoli.data.models.auth.UserData
 
 @Composable
 fun MyRankingPosition(user: UserData?) {
-    val avatarRes = when (user?.profileImageUrl) {
+    val avatarRes = when (user?.avatarUrl) {
         "avatar_male_1" -> R.drawable.avatar_male_1
         "avatar_male_2" -> R.drawable.avatar_male_2
         "avatar_female_1" -> R.drawable.avatar_female_1

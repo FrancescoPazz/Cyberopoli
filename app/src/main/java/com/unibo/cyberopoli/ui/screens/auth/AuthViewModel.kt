@@ -18,16 +18,13 @@ class AuthViewModel(
     val authState: LiveData<AuthState> = _authState
 
     init {
-        checkAuthStatus()
-    }
-
-    private fun checkAuthStatus() {
-        val user = authRepo.currentUser()
-        if (user != null) {
-            _authState.value = AuthState.Authenticated
-            userRepo.loadUserData()
-        } else {
-            _authState.value = AuthState.Unauthenticated
+        viewModelScope.launch {
+            authRepo.authStateFlow().collect { state ->
+                    _authState.postValue(state)
+                    if (state is AuthState.Authenticated) {
+                        userRepo.loadUserData()
+                    }
+                }
         }
     }
 
@@ -52,10 +49,10 @@ class AuthViewModel(
     fun signUp(email: String, password: String, name: String, surname: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepo.signUp(email, password).collect { resp ->
+            authRepo.signUp(email, password, name, surname).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepo.loadUserData()
+                        //userRepo.loadUserData()
                         _authState.value = AuthState.Authenticated
                     }
 

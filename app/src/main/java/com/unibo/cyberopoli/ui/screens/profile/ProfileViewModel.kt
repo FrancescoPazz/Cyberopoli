@@ -1,28 +1,21 @@
 package com.unibo.cyberopoli.ui.screens.profile
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
-import com.unibo.cyberopoli.data.models.auth.CurrentUser
+import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.UserData
 import com.unibo.cyberopoli.data.repositories.UserRepository
+import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val userRepository: UserRepository = UserRepository()
+    private val userRepo: UserRepository
 ) : ViewModel() {
 
-    private val currentUser: LiveData<CurrentUser?> = userRepository.currentUserLiveData
-
-    val userData = MediatorLiveData<UserData?>().apply {
-        addSource(currentUser) { cu ->
-            value = (cu as? CurrentUser.Registered)?.data
-        }
-    }
-
-    init {
-        userRepository.loadUserData()
-    }
+    val user: LiveData<UserData?> = userRepo.currentUserLiveData
 
     fun changeAvatar() {
+        viewModelScope.launch {
+            userRepo.changeAvatar()
+        }
     }
 }

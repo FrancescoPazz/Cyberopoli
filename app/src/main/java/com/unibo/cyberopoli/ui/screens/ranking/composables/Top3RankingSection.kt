@@ -46,7 +46,7 @@ fun Top3RankingSection(users: List<UserData>) {
             ) {
                 Image(
                     painter = painterResource(
-                        when (user.profileImageUrl) {
+                        when (user.avatarUrl) {
                             "avatar_male_1" -> R.drawable.avatar_male_1
                             "avatar_male_2" -> R.drawable.avatar_male_2
                             "avatar_female_1" -> R.drawable.avatar_female_1
