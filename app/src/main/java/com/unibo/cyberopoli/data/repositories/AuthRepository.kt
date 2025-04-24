@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
 import java.security.MessageDigest
 import java.util.UUID
 
@@ -184,6 +183,7 @@ class AuthRepository(
         }
     }
 
+    // Reset password
     fun resetPassword(email: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.resetPasswordForEmail(email)

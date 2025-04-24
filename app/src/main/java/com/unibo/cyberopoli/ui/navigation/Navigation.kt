@@ -166,7 +166,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         deleteAnonymousUserAndSignOut = authViewModel::deleteAnonymousUserAndSignOut,
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",
                         playerName = "${profileViewModel.user.value?.name} ${profileViewModel.user.value?.surname}",
-                        isGuest = authViewModel.authState.value is AuthState.Anonymous
+                        isGuest = profileViewModel.user.value?.isGuest!!,
                     )
                 )
             }
