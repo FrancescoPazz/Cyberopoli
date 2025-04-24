@@ -30,6 +30,6 @@ val appModule = module {
     single { AuthRepository(get()) }
     single { SettingsRepository(get()) }
     single { UserRepository(get()) }
-    single { RankingRepository() }
+    single { RankingRepository(get()) }
     single { get<Context>().dataStore }
 }

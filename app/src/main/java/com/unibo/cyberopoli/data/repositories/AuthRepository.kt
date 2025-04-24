@@ -15,10 +15,11 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.status.SessionStatus
-import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.auth.user.UserSession
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.JsonObject
@@ -33,15 +34,13 @@ private const val GOOGLE_SERVER_CLIENT_ID =
 class AuthRepository(
     private val supabase: SupabaseClient
 ) {
-    fun authStateFlow(): Flow<AuthState> =
-        supabase.auth.sessionStatus.map { status ->
-            when (status) {
-                is SessionStatus.Initializing   -> AuthState.Loading
-                is SessionStatus.Authenticated  -> AuthState.Authenticated
-                is SessionStatus.NotAuthenticated,
-                is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
-            }
+    fun authStateFlow(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
+        when (status) {
+            is SessionStatus.Initializing -> AuthState.Loading
+            is SessionStatus.Authenticated -> AuthState.Authenticated
+            is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
         }
+    }
 
     // Login
     fun signIn(email: String, password: String): Flow<AuthResponse> = flow {
@@ -72,15 +71,14 @@ class AuthRepository(
 
             Log.d("AuthRepository", "Sign-up avvenuto, userId = $userId")
 
-            val json = buildJsonObject {
-                put("id", JsonPrimitive(userId))
-                put("email", JsonPrimitive(email))
-                put("name", JsonPrimitive(name))
-                put("surname", JsonPrimitive(surname))
-                put("is_guest", JsonPrimitive(false))
-            }
-
-            supabase.from("users").upsert(json)
+            val user = UserData(
+                id = userId,
+                email = email,
+                name = name,
+                surname = surname,
+                isGuest = false
+            )
+            supabase.from("users").upsert(user)
 
             emit(AuthResponse.Success)
         } catch (e: Exception) {
@@ -92,6 +90,7 @@ class AuthRepository(
 
     private fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()
+        Log.d("AuthRepository", "Raw nonce: $rawNonce")
         val bytes = rawNonce.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
@@ -101,6 +100,7 @@ class AuthRepository(
     // Google Sign In
     fun signInWithGoogle(context: Context): Flow<AuthResponse> = flow {
         val hashedNonce = createNonce()
+        Log.d("AuthRepository", "Hashed nonce: $hashedNonce")
         val googleIdOption = GetGoogleIdOption.Builder().setServerClientId(GOOGLE_SERVER_CLIENT_ID)
             .setNonce(hashedNonce).setAutoSelectEnabled(false).setFilterByAuthorizedAccounts(false)
             .build()
@@ -120,6 +120,26 @@ class AuthRepository(
                 idToken = googleIdToken
                 provider = Google
             }
+
+            supabase.auth.sessionStatus.filterIsInstance<SessionStatus.Authenticated>().first()
+
+            val session = supabase.auth.currentSessionOrNull()
+                ?: throw IllegalStateException("No session found after Google login")
+            val userId = session.user?.id
+            val email = session.user?.email
+            val fullName = session.user?.userMetadata?.get("full_name").toString().trim('"')
+            val name = fullName.substringBefore(" ")
+            val surname = fullName.substringAfter(" ", "")
+
+            val user = UserData(
+                id = userId,
+                email = email,
+                name = name,
+                surname = surname,
+                isGuest = false
+            )
+            supabase.from("users").upsert(user)
+
             emit(AuthResponse.Success)
         } catch (e: Exception) {
             Log.e("AuthViewModel", "Error logging in with Google: ${e.message}")
