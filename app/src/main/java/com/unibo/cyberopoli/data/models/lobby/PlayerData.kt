@@ -11,9 +11,6 @@ data class PlayerData(
     @SerialName("user_id")
     val userId: String? = null,
 
-    @SerialName("user_name")
-    val name: String? = null,
-
     @SerialName("ready")
     val isReady: Boolean? = false,
 

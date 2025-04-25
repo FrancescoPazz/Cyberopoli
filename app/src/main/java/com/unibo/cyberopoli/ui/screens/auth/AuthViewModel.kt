@@ -56,7 +56,7 @@ class AuthViewModel(
             authRepo.signUp(email, password, name, surname).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        _authState.value = AuthState.Authenticated
+                        _authState.value = AuthState.Unauthenticated
                     }
 
                     is AuthResponse.Failure -> {

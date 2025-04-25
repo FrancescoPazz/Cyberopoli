@@ -54,13 +54,13 @@ fun RankingListItem(user: UserData) {
         Column {
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = user.name ?: "",
+                text = user.displayName,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = "${user.score} pt",
+                text = "${user.totalScore} pt",
                 style = MaterialTheme.typography.bodySmall
             )
         }

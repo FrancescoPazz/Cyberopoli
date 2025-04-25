@@ -14,70 +14,65 @@ class LobbyViewModel(
     private val userRepository: UserRepository,
     private val lobbyRepository: LobbyRepository
 ) : ViewModel() {
-    private val currentPlayer: LiveData<PlayerData?> = lobbyRepository.currentPlayerLiveData
-    val players: LiveData<List<PlayerData>?> = lobbyRepository.playersLiveData
 
     private val _lobby = MutableLiveData<Lobby?>()
     val lobby: LiveData<Lobby?> = _lobby
+
+    private val _players = MutableLiveData<List<PlayerData>>()
+    val players: LiveData<List<PlayerData>> = _players
+
+    private val _currentPlayer = MutableLiveData<PlayerData?>()
+    val currentPlayer: LiveData<PlayerData?> = _currentPlayer
 
     init {
         userRepository.loadUserData()
     }
 
-    fun observeLobby(lobbyId: String) {
+    fun startLobbyFlow(lobbyId: String) {
         viewModelScope.launch {
-            val existing = lobbyRepository.getLobby(lobbyId)
-            if (existing != null) {
-                _lobby.postValue(existing)
-            } else {
-                val me = userRepository.currentUserLiveData.value ?: return@launch
-                val created = lobbyRepository.createLobby(
-                    lobbyId = lobbyId,
-                    hostId = me.id!!,
-                )
-                _lobby.postValue(created)
-            }
+            val me = userRepository.currentUserLiveData.value?.id ?: return@launch
 
-            val meId = userRepository.currentUserLiveData.value?.id ?: return@launch
-            lobbyRepository.fetchCurrentPlayer(lobbyId, meId)
-        }
-    }
+            val lobbyObj = lobbyRepository.createOrGetLobby(lobbyId, me)
+            _lobby.postValue(lobbyObj)
 
-    fun joinLobby(lobbyId: String) {
-        viewModelScope.launch {
-            val me = userRepository.currentUserLiveData.value ?: return@launch
             val player = PlayerData(
                 lobbyId = lobbyId,
-                userId  = me.id!!,
+                userId  = me,
                 isReady = false
             )
-            lobbyRepository.joinLobby(player)
-            lobbyRepository.getLobbyPlayers(lobbyId)
-            observeLobby(lobbyId)
+            val joined = lobbyRepository.joinLobby(player)
+            _currentPlayer.postValue(joined)
+
+            _players.postValue(lobbyRepository.fetchPlayers(lobbyId))
+            _currentPlayer.postValue(
+                lobbyRepository.fetchCurrentPlayer(lobbyId, me)
+            )
         }
     }
 
-    fun toggleReady(lobbyId: String) {
+    fun toggleReady() {
         viewModelScope.launch {
-            val player = currentPlayer.value ?: return@launch
-            lobbyRepository.toggleReady(player.userId!!, player.isReady!!)
-            observeLobby(lobbyId)
+            val p = _currentPlayer.value ?: return@launch
+            val updated = lobbyRepository.toggleReady(p)
+            _currentPlayer.postValue(updated)
+            _players.postValue(lobbyRepository.fetchPlayers(p.lobbyId!!))
         }
     }
 
     fun leaveLobby() {
         viewModelScope.launch {
-            val me = currentPlayer.value ?: return@launch
-            lobbyRepository.leaveLobby(me.userId!!)
-            _lobby.postValue(null)
-            lobbyRepository.currentPlayerLiveData.postValue(null)
+            val p = _currentPlayer.value ?: return@launch
+            lobbyRepository.leaveLobby(p.lobbyId!!, p.userId!!)
+            _currentPlayer.postValue(null)
+            _players.postValue(emptyList())
         }
     }
 
-    fun startGame(lobbyId: String) {
+    fun startGame() {
         viewModelScope.launch {
-            lobbyRepository.startGame(lobbyId)
-            observeLobby(lobbyId)
+            val l = _lobby.value ?: return@launch
+            lobbyRepository.startGame(l.lobbyId!!)
+            _lobby.postValue(l.copy(status = "started"))
         }
     }
 }

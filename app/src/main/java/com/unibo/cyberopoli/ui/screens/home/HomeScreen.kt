@@ -67,7 +67,7 @@ fun HomeScreen(
                 ) {
                     StatCard(
                         scoreTitle = stringResource(R.string.total_score),
-                        scoreValue = homeParams.user.value?.score?.toString() ?: "0",
+                        scoreValue = homeParams.user.value?.totalScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
@@ -83,13 +83,13 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatCard(
-                        scoreTitle = stringResource(R.string.best_score),
-                        scoreValue = homeParams.user.value?.bestScore?.toString() ?: "0",
+                        scoreTitle = stringResource(R.string.best_score), // TODO: DA CAMBIARE
+                        scoreValue = homeParams.user.value?.totalScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        scoreTitle = stringResource(R.string.average_score),
-                        scoreValue = homeParams.user.value?.averageScore?.toString() ?: "0",
+                        scoreTitle = stringResource(R.string.average_score), // TODO: DA CAMBIARE
+                        scoreValue = homeParams.user.value?.totalScore?.toString() ?: "0",
                         modifier = Modifier.weight(1f)
                     )
                 }

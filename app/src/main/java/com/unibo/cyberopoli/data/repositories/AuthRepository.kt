@@ -73,8 +73,9 @@ class AuthRepository(
             val user = UserData(
                 id = userId,
                 email = email,
-                name = name,
-                surname = surname,
+                firstName = name,
+                lastName = surname,
+                displayName = "$name $surname",
                 isGuest = false
             )
             supabase.from("users").upsert(user)
@@ -124,7 +125,7 @@ class AuthRepository(
 
             val session = supabase.auth.currentSessionOrNull()
                 ?: throw IllegalStateException("No session found after Google login")
-            val userId = session.user?.id
+            val userId = session.user?.id!!
             val email = session.user?.email
             val fullName = session.user?.userMetadata?.get("full_name").toString().trim('"')
             val name = fullName.substringBefore(" ")
@@ -133,8 +134,8 @@ class AuthRepository(
             val user = UserData(
                 id = userId,
                 email = email,
-                name = name,
-                surname = surname,
+                firstName = name,
+                lastName = surname,
                 isGuest = false
             )
             supabase.from("users").upsert(user)
@@ -160,9 +161,13 @@ class AuthRepository(
 
         // Database insertion
         try {
+            val session = supabase.auth.currentSessionOrNull()
+                ?: throw IllegalStateException("No session found after Google login")
+            val userId = session.user?.id!!
             val user = UserData(
-                name = name,
-                surname = surname,
+                id = userId,
+                firstName = name,
+                lastName = surname,
                 isGuest = true,
             )
             supabase.from("users").insert(user)

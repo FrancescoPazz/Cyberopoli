@@ -68,13 +68,13 @@ fun Top3RankingSection(users: List<UserData>) {
                 }
 
                 Text(
-                    text = "${user.name} ${user.surname}",
+                    text = user.displayName,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(top = 4.dp)
                 )
 
                 Text(
-                    text = "${user.score} pt", style = MaterialTheme.typography.bodySmall
+                    text = "${user.totalScore} pt", style = MaterialTheme.typography.bodySmall
                 )
             }
         }

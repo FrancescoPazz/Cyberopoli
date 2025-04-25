@@ -2,9 +2,7 @@ package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +15,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -29,38 +26,22 @@ import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
-import com.unibo.cyberopoli.util.PermissionHandler
-import com.unibo.cyberopoli.util.UsageStatsHelper
+import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
     navController: NavHostController, lobbyParams: LobbyParams
 ) {
-    val context = LocalContext.current
-    val activity = LocalActivity.current as ComponentActivity
-
-    val lobbyId = lobbyParams.scannedLobbyId
+    Log.d("LobbyScreen", "LobbyParams: $lobbyParams")
+    val lobbyId = UUID.nameUUIDFromBytes(lobbyParams.scannedLobbyId.toByteArray()).toString()
+    Log.d("LobbyScreen", "LobbyId: $lobbyId")
     val playerName = lobbyParams.playerName
     Log.d("LobbyScreen", "LobbyId: $lobbyId, PlayerName: $playerName")
 
     if (lobbyId.isNotBlank()) {
-        DisposableEffect(lobbyId) {
-            lobbyParams.joinLobby(lobbyId)
-            lobbyParams.observeLobby(lobbyId)
-
-            val permHandler = PermissionHandler(activity)
-            val usageStatsHelper = UsageStatsHelper(context)
-            if (permHandler.hasUsageStatsPermission()) {
-                usageStatsHelper.logUsageStats()
-            } else {
-                permHandler.requestUsageStatsPermission()
-            }
-
-            onDispose {
-                lobbyParams.leaveLobby()
-                //lobbyParams.deleteAnonymousUserAndSignOut()
-            }
+        LaunchedEffect(lobbyId) {
+            lobbyParams.startLobbyFlow(lobbyId)
         }
     }
 
@@ -82,9 +63,7 @@ fun LobbyScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                val playersMap = lobbyParams.players
-                    ?.associateBy { it.userId }
-                    ?: emptyMap()
+                val playersMap = lobbyParams.players?.associateBy { it.userId } ?: emptyMap()
                 val playersList = playersMap.entries.map { it.key to it.value }
 
                 Column {
@@ -93,15 +72,18 @@ fun LobbyScreen(
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(playersList) { (_, playerInfo) ->
                             PlayerRow(
-                                playerName = playerInfo.name!!, isReady = playerInfo.isReady!!
+                                playerName = playerInfo.userId!!, isReady = playerInfo.isReady!!
                             )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    AuthButton(stringResource(R.string.ready), onClick = {
-                        lobbyParams.toggleReady(lobbyParams.scannedLobbyId)
-                    })
+                    AuthButton(
+                        text = stringResource(R.string.ready),
+                        onClick = {
+                            lobbyParams.toggleReady()
+                        }
+                    )
 
                     AuthButton(stringResource(R.string.exit), onClick = {
                         lobbyParams.deleteAnonymousUserAndSignOut()

@@ -104,7 +104,7 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                     authParams.resetPassword
                 )
 
-                1 -> SignUpCard(authParams.authState.observeAsState(), authParams.signUp)
+                1 -> SignUpCard(navController, authParams.authState.observeAsState(), authParams.signUp)
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }

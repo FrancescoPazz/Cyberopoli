@@ -1,104 +1,93 @@
 package com.unibo.cyberopoli.data.repositories
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.PlayerData
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import java.util.UUID
 
 class LobbyRepository(
     private val supabase: SupabaseClient
 ) {
-    val currentPlayerLiveData = MutableLiveData<PlayerData?>()
-    val playersLiveData = MutableLiveData<List<PlayerData>?>()
 
-    suspend fun fetchCurrentPlayer(lobbyId: String, userId: String) {
-        try {
-            val player = supabase.from("lobby_members").select {
-                    filter {
-                        eq("lobby_id", lobbyId)
-                        eq("user_id", userId)
-                    }
-                }.decodeSingle<PlayerData>()
-            currentPlayerLiveData.postValue(player)
-        } catch (e: Exception) {
-            Log.e("LobbyRepo", "fetchCurrentPlayer: ${e.message}")
-            currentPlayerLiveData.postValue(null)
-        }
-    }
-
-    suspend fun getLobby(lobbyId: String): Lobby? = try {
-        supabase.from("lobbies").select {
-                filter {
-                    eq("id", lobbyId)
-                }
-            }.decodeSingle<Lobby>()
-    } catch (e: Exception) {
-        Log.e("LobbyRepo", "getLobby: ${e.message}")
-        null
-    }
-
-    suspend fun createLobby(
-        lobbyId: String,
-        hostId: String,
-    ): Lobby? = try {
+    suspend fun createOrGetLobby(lobbyId: String, hostId: String): Lobby? = try {
         val lobby = Lobby(
-            lobbyId = UUID.fromString(lobbyId).toString(),
+            lobbyId = lobbyId,
             hostId = hostId,
+            status = "waiting"
         )
 
-        val json = JsonObject(
-            mapOf(
-                "host_id" to JsonPrimitive(hostId),
-                "status" to JsonPrimitive("waiting")
-            )
-        )
-        supabase.from("lobbies").upsert(json).decodeSingle<Lobby>()
+        supabase.from("lobbies")
+            .upsert(lobby) {
+                select()
+            }
+            .decodeSingle<Lobby>()
     } catch (e: Exception) {
-        Log.e("LobbyRepo", "createLobby: ${e.message}")
+        Log.e("LobbyRepo", "createOrGetLobby: ${e.message}")
         null
     }
 
-    suspend fun joinLobby(player: PlayerData) {
-        try {
-            supabase.from("lobby_members").upsert(player)
-        } catch (e: Exception) {
-            Log.e("LobbyRepo", "joinLobby: ${e.message}")
-        }
+    suspend fun joinLobby(player: PlayerData): PlayerData? = try {
+        supabase.from("lobby_members")
+            .insert(player) {
+                select()
+            }
+            .decodeSingle<PlayerData>()
+    } catch (e: Exception) {
+        Log.e("LobbyRepo", "joinLobby: ${e.message}")
+        null
     }
 
-    suspend fun getLobbyPlayers(lobbyId: String): List<PlayerData>? = try {
-        val players = supabase.from("lobby_members").select {
+    suspend fun fetchPlayers(lobbyId: String): List<PlayerData> = try {
+        supabase.from("lobby_members")
+            .select {
+                filter { eq("lobby_id", lobbyId) }
+            }
+            .decodeList()
+    } catch (e: Exception) {
+        Log.e("LobbyRepo", "fetchPlayers: ${e.message}")
+        emptyList()
+    }
+
+    suspend fun fetchCurrentPlayer(lobbyId: String, userId: String): PlayerData? = try {
+        supabase.from("lobby_members")
+            .select {
                 filter {
                     eq("lobby_id", lobbyId)
+                    eq("user_id", userId)
                 }
-            }.decodeList<PlayerData>()
-        playersLiveData.postValue(players)
-        players
+            }
+            .decodeSingle()
     } catch (e: Exception) {
-        Log.e("LobbyRepo", "getLobbyPlayers: ${e.message}")
+        Log.e("LobbyRepo", "fetchCurrentPlayer: ${e.message}")
         null
     }
 
-    suspend fun toggleReady(playerId: String, isReady: Boolean) {
-        try {
-            supabase.from("players").update(mapOf("is_ready" to isReady)) {
-                    filter {
-                        eq("id", playerId)
-                    }
-                }
-        } catch (e: Exception) {
-            Log.e("LobbyRepo", "toggleReady: ${e.message}")
-        }
+    suspend fun toggleReady(player: PlayerData): PlayerData? = try {
+        val playerData = player.copy(
+            isReady = !player.isReady!!
+        )
+        supabase.from("lobby_members")
+            .upsert(playerData) {
+                select()
+            }
+            .decodeSingle<PlayerData>()
+    } catch (e: Exception) {
+        Log.e("LobbyRepo", "toggleReady: ${e.message}")
+        null
     }
 
-    suspend fun leaveLobby(playerId: String) {
+    suspend fun leaveLobby(lobbyId: String, userId: String) {
         try {
-            supabase.from("players").delete { filter { eq("id", playerId) } }
+            supabase.from("lobby_members")
+                .delete {
+                    filter {
+                        eq("lobby_id", lobbyId)
+                        eq("user_id",  userId)
+                    }
+                }
         } catch (e: Exception) {
             Log.e("LobbyRepo", "leaveLobby: ${e.message}")
         }
@@ -106,10 +95,18 @@ class LobbyRepository(
 
     suspend fun startGame(lobbyId: String) {
         try {
-            supabase.from("lobbies").update(mapOf("status" to "started")) {
-                    filter {
-                        eq("id", lobbyId)
-                    }
+            val lobby = supabase.from("lobbies")
+                .select {
+                    filter { eq("id", lobbyId) }
+                }
+                .decodeSingle<Lobby>()
+            val lobbyData = lobby.copy(
+                status = "started"
+            )
+
+            supabase.from("lobbies")
+                .update(lobbyData) {
+                    filter { eq("id", lobbyId) }
                 }
         } catch (e: Exception) {
             Log.e("LobbyRepo", "startGame: ${e.message}")

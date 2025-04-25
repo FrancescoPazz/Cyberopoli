@@ -73,16 +73,12 @@ fun ProfileHeader(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                userData.name.let { name ->
-                    userData.surname.let { surname ->
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            text = "$name $surname",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        )
-                    }
-                }
+                Text(
+                    color = MaterialTheme.colorScheme.primary,
+                    text = userData.displayName,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                )
 
                 Text(
                     color = MaterialTheme.colorScheme.primary,
@@ -111,7 +107,6 @@ fun ProfileHeader(
                             )
                         }, onClick = onShareClick
                     )
-
                 }
             }
         }

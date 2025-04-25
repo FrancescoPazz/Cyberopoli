@@ -20,11 +20,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 
 @Composable
 fun SignUpCard(
+    navController: NavController,
     authState: State<AuthState?>,
     signUp: (email: String, password: String, name: String, surname: String) -> Unit,
 ) {
@@ -101,6 +104,12 @@ fun SignUpCard(
                     signUp(
                         email.value, password.value, name.value, surname.value
                     )
+                    navController.navigate(CyberopoliRoute.Auth) {
+                        popUpTo(CyberopoliRoute.Auth) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
             },
             enabled = authState.value != AuthState.Loading,
