@@ -59,6 +59,10 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 }
             }
 
+            is AuthState.AnonymousAuthenticated -> {
+                navController.navigate(CyberopoliRoute.Scan)
+            }
+
             is AuthState.Error -> Toast.makeText(
                 context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
             ).show()

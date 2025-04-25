@@ -20,6 +20,8 @@ class UserRepository(
             "UserRepository", "loadUserData: no authenticated user"
         )
 
+        Log.d("UserRepository", "loadUserData: userId: ${supabase.auth.currentUserOrNull()?.userMetadata?.get("email")}")
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val resp = supabase.from("users").select {

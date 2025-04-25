@@ -36,7 +36,13 @@ class AuthRepository(
     fun authStateFlow(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
         when (status) {
             is SessionStatus.Initializing -> AuthState.Loading
-            is SessionStatus.Authenticated -> AuthState.Authenticated
+            is SessionStatus.Authenticated -> {
+                if (supabase.auth.currentUserOrNull()?.userMetadata?.get("email") != null) {
+                    AuthState.Authenticated
+                } else {
+                    AuthState.AnonymousAuthenticated
+                }
+            }
             is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
         }
     }

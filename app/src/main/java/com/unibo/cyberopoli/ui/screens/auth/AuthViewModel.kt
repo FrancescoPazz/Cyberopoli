@@ -92,7 +92,7 @@ class AuthViewModel(
                 when (resp) {
                     is AuthResponse.Success -> {
                         userRepo.loadUserData()
-                        _authState.value = AuthState.Authenticated
+                        _authState.value = AuthState.AnonymousAuthenticated
                     }
 
                     is AuthResponse.Failure -> {
