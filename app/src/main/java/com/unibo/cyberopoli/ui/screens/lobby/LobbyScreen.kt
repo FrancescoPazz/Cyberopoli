@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
 import java.util.UUID
@@ -83,8 +84,13 @@ fun LobbyScreen(
                     })
 
                     AuthButton(stringResource(R.string.exit), onClick = {
-                        lobbyParams.deleteAnonymousUserAndSignOut()
-                        navController.navigateUp()
+                        lobbyParams.leaveLobby()
+                        //lobbyParams.deleteAnonymousUserAndSignOut()
+                        navController.navigate(CyberopoliRoute.Home) {
+                            popUpTo(CyberopoliRoute.Home) {
+                                inclusive = true
+                            }
+                        }
                     })
                 }
             }

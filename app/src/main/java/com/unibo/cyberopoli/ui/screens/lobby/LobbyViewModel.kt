@@ -59,7 +59,7 @@ class LobbyViewModel(
     fun leaveLobby() {
         viewModelScope.launch {
             val p = _currentPlayer.value ?: return@launch
-            lobbyRepository.leaveLobby(p.lobbyId!!, p.userId!!)
+            lobbyRepository.leaveLobby(p.lobbyId!!, p.userId!!, lobby.value?.hostId!! == p.userId)
             _currentPlayer.postValue(null)
             _players.postValue(emptyList())
         }

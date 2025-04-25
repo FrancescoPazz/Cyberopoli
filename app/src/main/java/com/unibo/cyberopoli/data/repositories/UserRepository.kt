@@ -23,12 +23,17 @@ class UserRepository(
         Log.d("UserRepository", "loadUserData: userId: ${supabase.auth.currentUserOrNull()?.userMetadata?.get("email")}")
 
         CoroutineScope(Dispatchers.IO).launch {
+
+            Log.d("UserRepository", "loadUserData: userId: $userId")
+
             try {
                 val resp = supabase.from("users").select {
                     filter {
                         eq("id", userId)
                     }
                 }
+
+                Log.d("UserRepository", "loadUserData: response: $resp")
 
                 val userData = resp.decodeList<UserData>()
                 Log.d("UserRepository", "loadUserData: $userData")

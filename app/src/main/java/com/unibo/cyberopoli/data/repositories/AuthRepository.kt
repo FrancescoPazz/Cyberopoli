@@ -81,7 +81,6 @@ class AuthRepository(
                 email = email,
                 firstName = name,
                 lastName = surname,
-                displayName = "$name $surname",
                 isGuest = false
             )
             supabase.from("users").upsert(user)
