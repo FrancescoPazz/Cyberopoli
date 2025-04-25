@@ -24,7 +24,6 @@ class SettingsViewModel(
 
     fun updatePasswordWithOldPassword(
         oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
-    ) = viewModelScope.launch {
-    }
+    ) = viewModelScope.launch {}
 
 }

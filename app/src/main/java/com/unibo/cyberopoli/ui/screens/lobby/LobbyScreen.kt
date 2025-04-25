@@ -78,12 +78,9 @@ fun LobbyScreen(
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    AuthButton(
-                        text = stringResource(R.string.ready),
-                        onClick = {
-                            lobbyParams.toggleReady()
-                        }
-                    )
+                    AuthButton(text = stringResource(R.string.ready), onClick = {
+                        lobbyParams.toggleReady()
+                    })
 
                     AuthButton(stringResource(R.string.exit), onClick = {
                         lobbyParams.deleteAnonymousUserAndSignOut()

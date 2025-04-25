@@ -20,11 +20,11 @@ class AuthViewModel(
     init {
         viewModelScope.launch {
             authRepo.authStateFlow().collect { state ->
-                    _authState.postValue(state)
-                    if (state is AuthState.Authenticated) {
-                        userRepo.loadUserData()
-                    }
+                _authState.postValue(state)
+                if (state is AuthState.Authenticated) {
+                    userRepo.loadUserData()
                 }
+            }
         }
     }
 

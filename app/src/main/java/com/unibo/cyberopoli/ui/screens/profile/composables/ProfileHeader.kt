@@ -82,7 +82,7 @@ fun ProfileHeader(
 
                 Text(
                     color = MaterialTheme.colorScheme.primary,
-                    text = "${stringResource(R.string.level)}: ${userData.level.toString()}",
+                    text = "${stringResource(R.string.level)}: ${userData.level}",
                     textAlign = TextAlign.Center
                 )
 

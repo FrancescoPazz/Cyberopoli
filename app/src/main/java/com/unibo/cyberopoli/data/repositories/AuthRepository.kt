@@ -132,11 +132,7 @@ class AuthRepository(
             val surname = fullName.substringAfter(" ", "")
 
             val user = UserData(
-                id = userId,
-                email = email,
-                firstName = name,
-                lastName = surname,
-                isGuest = false
+                id = userId, email = email, firstName = name, lastName = surname, isGuest = false
             )
             supabase.from("users").upsert(user)
 

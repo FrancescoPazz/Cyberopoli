@@ -5,15 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlayerData(
-    @SerialName("lobby_id")
-    val lobbyId: String? = null,
+    @SerialName("lobby_id") val lobbyId: String? = null,
 
-    @SerialName("user_id")
-    val userId: String? = null,
+    @SerialName("user_id") val userId: String? = null,
 
-    @SerialName("ready")
-    val isReady: Boolean? = false,
+    @SerialName("ready") val isReady: Boolean? = false,
 
-    @SerialName("joined_at")
-    val joinedAt: String? = null,
+    @SerialName("joined_at") val joinedAt: String? = null,
 )

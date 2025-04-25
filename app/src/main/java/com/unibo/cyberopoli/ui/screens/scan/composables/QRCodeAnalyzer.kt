@@ -24,8 +24,8 @@ class QRCodeAnalyzer(
             mediaImage, imageProxy.imageInfo.rotationDegrees
         )
         scanner.process(input).addOnSuccessListener { barcodes ->
-                barcodes.firstOrNull()?.rawValue?.let(onCodeScanned)
-            }.addOnFailureListener { Log.e("QRCodeAnalyzer", "Error processing image: $it") }
+            barcodes.firstOrNull()?.rawValue?.let(onCodeScanned)
+        }.addOnFailureListener { Log.e("QRCodeAnalyzer", "Error processing image: $it") }
             .addOnCompleteListener { imageProxy.close() }
     }
 }

@@ -11,8 +11,7 @@ import com.unibo.cyberopoli.data.repositories.UserRepository
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
-    private val userRepository: UserRepository,
-    private val lobbyRepository: LobbyRepository
+    private val userRepository: UserRepository, private val lobbyRepository: LobbyRepository
 ) : ViewModel() {
 
     private val _lobby = MutableLiveData<Lobby?>()
@@ -36,9 +35,7 @@ class LobbyViewModel(
             _lobby.postValue(lobbyObj)
 
             val player = PlayerData(
-                lobbyId = lobbyId,
-                userId  = me,
-                isReady = false
+                lobbyId = lobbyId, userId = me, isReady = false
             )
             val joined = lobbyRepository.joinLobby(player)
             _currentPlayer.postValue(joined)

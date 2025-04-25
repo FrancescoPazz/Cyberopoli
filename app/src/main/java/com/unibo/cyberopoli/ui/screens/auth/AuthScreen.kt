@@ -28,9 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthHeader
 import com.unibo.cyberopoli.ui.screens.auth.composables.GuestCard
 import com.unibo.cyberopoli.ui.screens.auth.composables.LoginCard
@@ -104,7 +104,12 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                     authParams.resetPassword
                 )
 
-                1 -> SignUpCard(navController, authParams.authState.observeAsState(), authParams.signUp)
+                1 -> SignUpCard(
+                    navController,
+                    authParams.authState.observeAsState(),
+                    authParams.signUp
+                )
+
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }

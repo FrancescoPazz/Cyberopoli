@@ -19,9 +19,7 @@ import com.unibo.cyberopoli.R
 @Composable
 fun GoogleSignInButton(onClick: () -> Unit) {
     OutlinedButton(
-        onClick = onClick,
-        shape = RoundedCornerShape(10.dp),
-        modifier = Modifier.fillMaxWidth()
+        onClick = onClick, shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(R.drawable.ic_google),

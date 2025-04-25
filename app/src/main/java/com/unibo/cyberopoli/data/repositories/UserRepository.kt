@@ -17,8 +17,7 @@ class UserRepository(
 
     fun loadUserData() {
         val userId = supabase.auth.currentUserOrNull()?.id ?: Log.d(
-            "UserRepository",
-            "loadUserData: no authenticated user"
+            "UserRepository", "loadUserData: no authenticated user"
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -52,15 +51,15 @@ class UserRepository(
         }
 
         val currentAvatar = currentUserLiveData.value?.avatarUrl ?: "avatar_male_1"
-        val avatarList = listOf("avatar_male_1", "avatar_male_2", "avatar_female_1", "avatar_female_2")
+        val avatarList =
+            listOf("avatar_male_1", "avatar_male_2", "avatar_female_1", "avatar_female_2")
         val currentIndex = avatarList.indexOf(currentAvatar).takeIf { it >= 0 } ?: 0
         val nextIndex = if (currentIndex == avatarList.lastIndex) 0 else currentIndex + 1
         val newAvatar = avatarList[nextIndex]
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                supabase.from("users")
-                    .update(mapOf("avatar_url" to newAvatar)) {
+                supabase.from("users").update(mapOf("avatar_url" to newAvatar)) {
                         filter {
                             eq("id", userId)
                         }
