@@ -171,7 +171,9 @@ class AuthRepository(
                 lastName = surname,
                 isGuest = true,
             )
-            supabase.from("users").insert(user)
+            supabase.from("users").upsert(user)
+
+            emit(AuthResponse.Success)
         } catch (e: Exception) {
             Log.e("AuthRepository", "Error inserting anonymous user into database: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Database insertion error"))

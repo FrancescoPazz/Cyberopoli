@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,35 +32,41 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
+import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
+import kotlinx.coroutines.delay
 import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
-    navController: NavHostController, lobbyParams: LobbyParams
+    navController: NavHostController,
+    lobbyParams: LobbyParams
 ) {
-    var hasJoined by remember { mutableStateOf(false) }
+    var hasJoinedLobby by remember { mutableStateOf(false) }
     val shouldLeaveLobby by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    Log.d("LobbyScreen", "LobbyParams: $lobbyParams")
-    val lobbyId = UUID.nameUUIDFromBytes(lobbyParams.scannedLobbyId.toByteArray()).toString()
-    Log.d("LobbyScreen", "LobbyId: $lobbyId")
+    val lobbyId = remember(lobbyParams.scannedLobbyId) {
+        UUID.nameUUIDFromBytes(lobbyParams.scannedLobbyId.toByteArray()).toString()
+    }
     val playerName = lobbyParams.playerName
+
+    Log.d("LobbyScreen", "LobbyParams: $lobbyParams")
+    Log.d("LobbyScreen", "LobbyId: $lobbyId")
     Log.d("LobbyScreen", "LobbyId: $lobbyId, PlayerName: $playerName")
 
     LaunchedEffect(lobbyId) {
-        if (!hasJoined && lobbyId.isNotBlank()) {
+        if (!hasJoinedLobby && lobbyId.isNotBlank()) {
             Log.d("LobbyScreen", "Starting lobby flow...")
             lobbyParams.startLobbyFlow(lobbyId)
-            hasJoined = true
+            hasJoinedLobby = true
         }
     }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY && hasJoined) {
+            if (event == Lifecycle.Event.ON_DESTROY && hasJoinedLobby) {
                 Log.d("LobbyScreen", "Leaving lobby...")
                 lobbyParams.leaveLobby()
             }
@@ -73,24 +78,27 @@ fun LobbyScreen(
         }
     }
 
+    LaunchedEffect(shouldLeaveLobby) {
+        if (shouldLeaveLobby) {
+            delay(300)
+            lobbyParams.leaveLobby()
+        }
+    }
+
     BackHandler {
         lobbyParams.leaveLobby()
         navController.popBackStack()
     }
 
-    LaunchedEffect(shouldLeaveLobby) {
-        if (shouldLeaveLobby) {
-            kotlinx.coroutines.delay(300)
-            lobbyParams.leaveLobby()
-        }
-    }
-
-    Scaffold(topBar = {
-        TopBar(navController = navController, onBackPressed = {
-            lobbyParams.leaveLobby()
-            navController.popBackStack()
-        })
-    }, bottomBar = { if (!lobbyParams.isGuest) BottomBar(navController) }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopBar(navController = navController, onBackPressed = {
+                lobbyParams.leaveLobby()
+                navController.popBackStack()
+            })
+        },
+        bottomBar = { if (!lobbyParams.isGuest) BottomBar(navController) }
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -98,13 +106,9 @@ fun LobbyScreen(
                 .padding(16.dp)
         ) {
             if (lobbyParams.lobby.value == null) {
-                Text(
-                    text = stringResource(R.string.lobby_loading),
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                LoadingScreen()
             } else {
-                val playersMap = lobbyParams.players.value.associateBy { it.userId }
-                val playersList = playersMap.entries.map { it.key to it.value }
+                val playersList = lobbyParams.players.value.map { it.userId to it }
 
                 Column {
                     Text(text = "Players (${playersList.size}/8) in lobby...")
@@ -112,7 +116,7 @@ fun LobbyScreen(
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(playersList) { (_, playerInfo) ->
                             PlayerRow(
-                                playerName = playerInfo.displayName ?: playerInfo.userId!!,
+                                playerName = playerInfo.displayName ?: playerInfo.userId ?: "Unknown",
                                 isReady = playerInfo.isReady ?: false
                             )
                         }
@@ -125,7 +129,6 @@ fun LobbyScreen(
 
                     AuthButton(stringResource(R.string.exit), onClick = {
                         lobbyParams.leaveLobby()
-                        //lobbyParams.deleteAnonymousUserAndSignOut()
                         navController.popBackStack()
                     })
                 }
