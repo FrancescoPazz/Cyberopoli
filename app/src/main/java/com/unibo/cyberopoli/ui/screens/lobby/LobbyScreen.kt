@@ -15,16 +15,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
 import java.util.UUID
@@ -34,24 +41,56 @@ import java.util.UUID
 fun LobbyScreen(
     navController: NavHostController, lobbyParams: LobbyParams
 ) {
+    var hasJoined by remember { mutableStateOf(false) }
+    val shouldLeaveLobby by remember { mutableStateOf(false) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     Log.d("LobbyScreen", "LobbyParams: $lobbyParams")
     val lobbyId = UUID.nameUUIDFromBytes(lobbyParams.scannedLobbyId.toByteArray()).toString()
     Log.d("LobbyScreen", "LobbyId: $lobbyId")
     val playerName = lobbyParams.playerName
     Log.d("LobbyScreen", "LobbyId: $lobbyId, PlayerName: $playerName")
 
-    if (lobbyId.isNotBlank()) {
-        LaunchedEffect(lobbyId) {
+    LaunchedEffect(lobbyId) {
+        if (!hasJoined && lobbyId.isNotBlank()) {
+            Log.d("LobbyScreen", "Starting lobby flow...")
             lobbyParams.startLobbyFlow(lobbyId)
+            hasJoined = true
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY && hasJoined) {
+                Log.d("LobbyScreen", "Leaving lobby...")
+                lobbyParams.leaveLobby()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
     BackHandler {
-        navController.navigateUp()
+        lobbyParams.leaveLobby()
+        navController.popBackStack()
     }
 
-    Scaffold(topBar = { TopBar(navController) },
-        bottomBar = { if (!lobbyParams.isGuest) BottomBar(navController) }) { paddingValues ->
+    LaunchedEffect(shouldLeaveLobby) {
+        if (shouldLeaveLobby) {
+            kotlinx.coroutines.delay(300)
+            lobbyParams.leaveLobby()
+        }
+    }
+
+    Scaffold(topBar = {
+        TopBar(navController = navController, onBackPressed = {
+            lobbyParams.leaveLobby()
+            navController.popBackStack()
+        })
+    }, bottomBar = { if (!lobbyParams.isGuest) BottomBar(navController) }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,8 +112,8 @@ fun LobbyScreen(
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(playersList) { (_, playerInfo) ->
                             PlayerRow(
-                               playerName = playerInfo.displayName ?: playerInfo.userId!!,
-                               isReady = playerInfo.isReady ?: false
+                                playerName = playerInfo.displayName ?: playerInfo.userId!!,
+                                isReady = playerInfo.isReady ?: false
                             )
                         }
                     }
@@ -87,11 +126,7 @@ fun LobbyScreen(
                     AuthButton(stringResource(R.string.exit), onClick = {
                         lobbyParams.leaveLobby()
                         //lobbyParams.deleteAnonymousUserAndSignOut()
-                        navController.navigate(CyberopoliRoute.Home) {
-                            popUpTo(CyberopoliRoute.Home) {
-                                inclusive = true
-                            }
-                        }
+                        navController.popBackStack()
                     })
                 }
             }

@@ -21,7 +21,6 @@ class LobbyViewModel(
     val players: LiveData<List<PlayerData>> = _players
 
     private val _currentPlayer = MutableLiveData<PlayerData?>()
-    val currentPlayer: LiveData<PlayerData?> = _currentPlayer
 
     init {
         userRepository.loadUserData()

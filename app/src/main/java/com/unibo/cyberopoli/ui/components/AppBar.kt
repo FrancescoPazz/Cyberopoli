@@ -34,7 +34,7 @@ import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController) {
+fun TopBar(navController: NavController, onBackPressed: (() -> Unit)? = null) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
     CenterAlignedTopAppBar(title = {
@@ -49,7 +49,13 @@ fun TopBar(navController: NavController) {
         else MaterialTheme.colorScheme.onSurface
     ), navigationIcon = {
         if (navController.previousBackStackEntry != null) {
-            IconButton(onClick = { navController.navigateUp() }) {
+            IconButton(onClick = {
+                if (onBackPressed != null) {
+                    onBackPressed()
+                } else {
+                    navController.navigateUp()
+                }
+            }) {
                 Icon(
                     Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = stringResource(R.string.back),

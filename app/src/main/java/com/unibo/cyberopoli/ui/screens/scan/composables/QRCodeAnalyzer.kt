@@ -12,6 +12,7 @@ class QRCodeAnalyzer(
     private val onCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
     private val scanner = BarcodeScanning.getClient()
+    private var hasScanned = false
 
     @OptIn(ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
@@ -24,7 +25,12 @@ class QRCodeAnalyzer(
             mediaImage, imageProxy.imageInfo.rotationDegrees
         )
         scanner.process(input).addOnSuccessListener { barcodes ->
-            barcodes.firstOrNull()?.rawValue?.let(onCodeScanned)
+            if (!hasScanned) {
+                barcodes.firstOrNull()?.rawValue?.let { code ->
+                    onCodeScanned(code)
+                    hasScanned = true
+                }
+            }
         }.addOnFailureListener { Log.e("QRCodeAnalyzer", "Error processing image: $it") }
             .addOnCompleteListener { imageProxy.close() }
     }

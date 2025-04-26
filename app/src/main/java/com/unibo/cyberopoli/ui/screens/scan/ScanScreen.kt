@@ -43,13 +43,27 @@ fun ScanScreen(
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
 
+    var hasCameraPermission by remember {
+        mutableStateOf(permissionHandler.hasCameraPermission())
+    }
+
     val appName = stringResource(R.string.app_name).lowercase()
     val invalidCode = stringResource(R.string.invalid_code)
     var scannedValue by remember { mutableStateOf("") }
 
+    val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
+        if (granted) {
+            hasCameraPermission = true
+        } else {
+            Toast.makeText(
+                activity, "Camera permission denied", Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     LaunchedEffect(Unit) {
-        if (!permissionHandler.hasCameraPermission()) {
-            permissionHandler.requestCameraPermission()
+        if (!hasCameraPermission) {
+            launcher.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -57,16 +71,7 @@ fun ScanScreen(
         if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
     }, content = { paddingValues ->
 
-        if (!permissionHandler.hasCameraPermission()) {
-            val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
-                if (granted) {
-                    permissionHandler.requestCameraPermission()
-                } else {
-                    Toast.makeText(
-                        activity, "Camera permission denied", Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
+        if (!hasCameraPermission) {
             Box(
                 Modifier
                     .fillMaxSize()

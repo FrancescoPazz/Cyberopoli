@@ -72,16 +72,16 @@ class LobbyRepository(
 
     suspend fun leaveLobby(lobbyId: String, userId: String, isHost: Boolean) {
         try {
+            Log.d("LobbyRepo", "leaveLobby: $lobbyId, $userId, $isHost")
+            supabase.from("lobby_members").delete {
+                filter {
+                    eq("lobby_id", lobbyId)
+                    eq("user_id", userId)
+                }
+            }
             if (isHost) {
                 supabase.from("lobbies").delete {
-                        filter { eq("id", lobbyId) }
-                    }
-            } else {
-                supabase.from("lobby_members").delete {
-                    filter {
-                        eq("lobby_id", lobbyId)
-                        eq("user_id", userId)
-                    }
+                    filter { eq("id", lobbyId) }
                 }
             }
         } catch (e: Exception) {
