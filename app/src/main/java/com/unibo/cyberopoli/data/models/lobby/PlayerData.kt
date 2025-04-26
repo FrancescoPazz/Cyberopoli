@@ -12,4 +12,6 @@ data class PlayerData(
     @SerialName("ready") val isReady: Boolean? = false,
 
     @SerialName("joined_at") val joinedAt: String? = null,
+
+    @SerialName("display_name") val displayName: String? = null
 )

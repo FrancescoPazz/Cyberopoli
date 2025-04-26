@@ -35,7 +35,8 @@ class LobbyViewModel(
             _lobby.postValue(lobbyObj)
 
             val player = PlayerData(
-                lobbyId = lobbyId, userId = me, isReady = false
+                lobbyId = lobbyId, userId = me, isReady = false,
+                displayName = userRepository.currentUserLiveData.value?.displayName
             )
             val joined = lobbyRepository.joinLobby(player)
             _currentPlayer.postValue(joined)
