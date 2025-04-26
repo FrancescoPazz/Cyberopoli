@@ -73,7 +73,8 @@ fun LobbyScreen(
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(playersList) { (_, playerInfo) ->
                             PlayerRow(
-                                playerName = playerInfo.userId!!, isReady = playerInfo.isReady!!
+                               playerName = playerInfo.displayName ?: playerInfo.userId!!,
+                               isReady = playerInfo.isReady!!
                             )
                         }
                     }

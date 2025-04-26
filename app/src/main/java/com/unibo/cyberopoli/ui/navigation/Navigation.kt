@@ -38,6 +38,7 @@ import com.unibo.cyberopoli.ui.screens.settings.SettingsViewModel
 import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinContext
 
 sealed interface CyberopoliRoute {
     @Serializable
@@ -77,104 +78,106 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
 
-    CyberopoliTheme(
-        darkTheme = when (themeState.theme) {
-            Theme.Light -> false
-            Theme.Dark -> true
-            Theme.System -> isSystemInDarkTheme()
-        }
-    ) {
-        if (authState.value == null || authState.value == AuthState.Loading) {
-            LoadingScreen()
-            return@CyberopoliTheme
-        }
-
-        val startRoute = when (authState.value) {
-            is AuthState.Authenticated -> CyberopoliRoute.Home
-            else -> CyberopoliRoute.Auth
-        }
-
-        NavHost(
-            navController = navController,
-            startDestination = startRoute,
+    KoinContext {
+        CyberopoliTheme(
+            darkTheme = when (themeState.theme) {
+                Theme.Light -> false
+                Theme.Dark -> true
+                Theme.System -> isSystemInDarkTheme()
+            }
         ) {
-            composable<CyberopoliRoute.Auth> {
-                AuthScreen(
-                    navController, AuthParams(
-                        authState = authViewModel.authState,
-                        login = authViewModel::login,
-                        signUp = authViewModel::signUp,
-                        loginGoogleUser = authViewModel::loginGoogle,
-                        resetPassword = authViewModel::sendPasswordReset,
-                        loginAnonymously = authViewModel::loginAnonymously
-                    )
-                )
+            if (authState.value == null || authState.value == AuthState.Loading) {
+                LoadingScreen()
+                return@CyberopoliTheme
             }
-            composable<CyberopoliRoute.Scan> {
-                ScanScreen(
-                    navController, ScanParams(
-                        setScannedValue = scanViewModel::setScannedValue,
-                        authState = authViewModel.authState
-                    )
-                )
+
+            val startRoute = when (authState.value) {
+                is AuthState.Authenticated -> CyberopoliRoute.Home
+                else -> CyberopoliRoute.Auth
             }
-            composable<CyberopoliRoute.ARScreen> {
-                ARScreen(navController)
-            }
-            composable<CyberopoliRoute.Settings> {
-                SettingScreen(
-                    navController, SettingsParams(
-                        changeTheme = settingsViewModel::changeTheme,
-                        themeState = themeState,
-                        updatePasswordWithOldPassword = settingsViewModel::updatePasswordWithOldPassword,
-                        authState = authViewModel.authState,
-                        logout = authViewModel::logout
+
+            NavHost(
+                navController = navController,
+                startDestination = startRoute,
+            ) {
+                composable<CyberopoliRoute.Auth> {
+                    AuthScreen(
+                        navController, AuthParams(
+                            authState = authViewModel.authState,
+                            login = authViewModel::login,
+                            signUp = authViewModel::signUp,
+                            loginGoogleUser = authViewModel::loginGoogle,
+                            resetPassword = authViewModel::sendPasswordReset,
+                            loginAnonymously = authViewModel::loginAnonymously
+                        )
                     )
-                )
-            }
-            composable<CyberopoliRoute.Home> {
-                HomeScreen(
-                    navController, HomeParams(
-                        user = profileViewModel.user.observeAsState(),
-                        loadUserData = homeViewModel::loadUserData
+                }
+                composable<CyberopoliRoute.Scan> {
+                    ScanScreen(
+                        navController, ScanParams(
+                            setScannedValue = scanViewModel::setScannedValue,
+                            authState = authViewModel.authState
+                        )
                     )
-                )
-            }
-            composable<CyberopoliRoute.Profile> {
-                ProfileScreen(
-                    navController, ProfileParams(
-                        user = profileViewModel.user.observeAsState(),
-                        loadUserData = homeViewModel::loadUserData,
-                        changeAvatar = profileViewModel::changeAvatar
+                }
+                composable<CyberopoliRoute.ARScreen> {
+                    ARScreen(navController)
+                }
+                composable<CyberopoliRoute.Settings> {
+                    SettingScreen(
+                        navController, SettingsParams(
+                            changeTheme = settingsViewModel::changeTheme,
+                            themeState = themeState,
+                            updatePasswordWithOldPassword = settingsViewModel::updatePasswordWithOldPassword,
+                            authState = authViewModel.authState,
+                            logout = authViewModel::logout
+                        )
                     )
-                )
-            }
-            composable<CyberopoliRoute.Ranking> {
-                val rankingViewModel = koinViewModel<RankingViewModel>()
-                RankingScreen(
-                    navController, RankingParams(
-                        rankingData = rankingViewModel.ranking.observeAsState(),
-                        loadUserData = rankingViewModel::loadUserData,
-                        getMyRanking = rankingViewModel::getMyRanking
+                }
+                composable<CyberopoliRoute.Home> {
+                    HomeScreen(
+                        navController, HomeParams(
+                            user = profileViewModel.user.observeAsState(),
+                            loadUserData = homeViewModel::loadUserData
+                        )
                     )
-                )
-            }
-            composable<CyberopoliRoute.Lobby> {
-                val lobbyViewModel = koinViewModel<LobbyViewModel>()
-                LobbyScreen(
-                    navController, LobbyParams(
-                        lobby = lobbyViewModel.lobby.observeAsState(),
-                        startLobbyFlow = lobbyViewModel::startLobbyFlow,
-                        leaveLobby = lobbyViewModel::leaveLobby,
-                        toggleReady = lobbyViewModel::toggleReady,
-                        startGame = lobbyViewModel::startGame,
-                        deleteAnonymousUserAndSignOut = authViewModel::deleteAnonymousUserAndSignOut,
-                        scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                        playerName = "${profileViewModel.user.value?.displayName}",
-                        isGuest = profileViewModel.user.value?.isGuest!!,
-                        players = lobbyViewModel.players.value,
+                }
+                composable<CyberopoliRoute.Profile> {
+                    ProfileScreen(
+                        navController, ProfileParams(
+                            user = profileViewModel.user.observeAsState(),
+                            loadUserData = homeViewModel::loadUserData,
+                            changeAvatar = profileViewModel::changeAvatar
+                        )
                     )
-                )
+                }
+                composable<CyberopoliRoute.Ranking> {
+                    val rankingViewModel = koinViewModel<RankingViewModel>()
+                    RankingScreen(
+                        navController, RankingParams(
+                            rankingData = rankingViewModel.ranking.observeAsState(),
+                            loadUserData = rankingViewModel::loadUserData,
+                            getMyRanking = rankingViewModel::getMyRanking
+                        )
+                    )
+                }
+                composable<CyberopoliRoute.Lobby> {
+                    val lobbyViewModel = koinViewModel<LobbyViewModel>()
+                    LobbyScreen(
+                        navController, LobbyParams(
+                            lobby = lobbyViewModel.lobby.observeAsState(),
+                            startLobbyFlow = lobbyViewModel::startLobbyFlow,
+                            leaveLobby = lobbyViewModel::leaveLobby,
+                            toggleReady = lobbyViewModel::toggleReady,
+                            startGame = lobbyViewModel::startGame,
+                            deleteAnonymousUserAndSignOut = authViewModel::deleteAnonymousUserAndSignOut,
+                            scannedLobbyId = scanViewModel.scannedValue.value ?: "",
+                            playerName = "${profileViewModel.user.value?.displayName}",
+                            isGuest = profileViewModel.user.value?.isGuest ?: true,
+                            players = lobbyViewModel.players.value,
+                        )
+                    )
+                }
             }
         }
     }
