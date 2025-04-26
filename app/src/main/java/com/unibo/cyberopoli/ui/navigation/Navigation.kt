@@ -19,6 +19,7 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeParams
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
 import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
+import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
@@ -83,6 +84,11 @@ fun CyberopoliNavGraph(navController: NavHostController) {
             Theme.System -> isSystemInDarkTheme()
         }
     ) {
+        if (authState.value == null || authState.value == AuthState.Loading) {
+            LoadingScreen()
+            return@CyberopoliTheme
+        }
+
         val startRoute = when (authState.value) {
             is AuthState.Authenticated -> CyberopoliRoute.Home
             else -> CyberopoliRoute.Auth

@@ -44,32 +44,7 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
         stringResource(R.string.signup),
         stringResource(R.string.guest)
     )
-
     val authState = authParams.authState.observeAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(authState.value) {
-        when (authState.value) {
-            is AuthState.Authenticated -> {
-                navController.navigate(CyberopoliRoute.Home) {
-                    popUpTo(CyberopoliRoute.Auth) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-
-            is AuthState.AnonymousAuthenticated -> {
-                navController.navigate(CyberopoliRoute.Scan)
-            }
-
-            is AuthState.Error -> Toast.makeText(
-                context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
-            ).show()
-
-            else -> Unit
-        }
-    }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
         if (authState.value == AuthState.Authenticated) BottomBar(navController)
