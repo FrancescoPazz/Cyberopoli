@@ -64,7 +64,7 @@ fun LobbyScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                val playersMap = lobbyParams.players?.associateBy { it.userId } ?: emptyMap()
+                val playersMap = lobbyParams.players.value.associateBy { it.userId }
                 val playersList = playersMap.entries.map { it.key to it.value }
 
                 Column {
@@ -74,7 +74,7 @@ fun LobbyScreen(
                         items(playersList) { (_, playerInfo) ->
                             PlayerRow(
                                playerName = playerInfo.displayName ?: playerInfo.userId!!,
-                               isReady = playerInfo.isReady!!
+                               isReady = playerInfo.isReady ?: false
                             )
                         }
                     }

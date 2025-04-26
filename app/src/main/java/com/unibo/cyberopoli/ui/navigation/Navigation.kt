@@ -174,7 +174,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             scannedLobbyId = scanViewModel.scannedValue.value ?: "",
                             playerName = "${profileViewModel.user.value?.displayName}",
                             isGuest = profileViewModel.user.value?.isGuest ?: true,
-                            players = lobbyViewModel.players.value,
+                            players = lobbyViewModel.players.observeAsState(emptyList()),
                         )
                     )
                 }

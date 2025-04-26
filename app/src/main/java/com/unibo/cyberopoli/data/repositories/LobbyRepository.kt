@@ -54,12 +54,17 @@ class LobbyRepository(
     }
 
     suspend fun toggleReady(player: PlayerData): PlayerData? = try {
-        val playerData = player.copy(
-            isReady = !player.isReady!!
-        )
-        supabase.from("lobby_members").upsert(playerData) {
+        val newReady = !(player.isReady ?: false)
+
+        supabase.from("lobby_members")
+            .update(mapOf("ready" to newReady)) {
+                filter {
+                    eq("lobby_id", player.lobbyId!!)
+                    eq("user_id", player.userId!!)
+                }
                 select()
-            }.decodeSingle<PlayerData>()
+            }
+            .decodeSingle<PlayerData>()
     } catch (e: Exception) {
         Log.e("LobbyRepo", "toggleReady: ${e.message}")
         null
