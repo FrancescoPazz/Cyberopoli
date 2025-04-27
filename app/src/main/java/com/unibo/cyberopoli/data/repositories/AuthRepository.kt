@@ -223,20 +223,15 @@ class AuthRepository(
 
     // Delete anonymous user
     fun deleteAnonymousUserAndSignOut(guestId: String): Flow<AuthResponse> = flow {
-        Log.d("GuestCleanUpService", "Cleaning up guest $guestId…")
-
         supabase.auth.signOut()
-
-        // supabase.auth.admin.deleteUser(guestId)
-
+        supabase.auth.importAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwdGFndXpwdmRwcm1oeHJsZW5pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDgzMzk1NCwiZXhwIjoyMDYwNDA5OTU0fQ.hOchS-a7nJCpRxFZXmtgxGUn9tbiCChuEE92Zfdh2jc")
+        supabase.auth.admin.deleteUser(guestId)
         supabase.from("users").delete {
-                filter { eq("id", guestId) }
-            }
-
+            filter { eq("id", guestId) }
+        }
         clearSavedGuestId()
-
         emit(AuthResponse.Success)
     }.catch { e ->
-            Log.e("GuestCleanUpService", "Error deleting guest $guestId", e)
-        }
+        Log.e("GuestCleanUpService", "Error deleting guest $guestId", e)
+    }
 }
