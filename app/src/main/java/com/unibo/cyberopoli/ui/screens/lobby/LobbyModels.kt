@@ -12,7 +12,6 @@ data class LobbyParams(
     val scannedLobbyId: String,
     val playerName: String,
     val startGame: () -> Unit,
-    val deleteAnonymousUserAndSignOut: () -> Unit,
     val isGuest: Boolean,
     val players: State<List<PlayerData>>
 )

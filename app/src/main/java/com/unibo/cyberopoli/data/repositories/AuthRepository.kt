@@ -4,6 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.unibo.cyberopoli.data.models.auth.UserData
@@ -15,11 +19,12 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.status.SessionStatus
-import io.github.jan.supabase.auth.user.UserSession
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.JsonObject
@@ -31,7 +36,7 @@ private const val GOOGLE_SERVER_CLIENT_ID =
     "965652282511-hveojtrsgklpr52hbi54qg9ct477llmh.apps.googleusercontent.com"
 
 class AuthRepository(
-    private val supabase: SupabaseClient
+    private val supabase: SupabaseClient, private val dataStore: DataStore<Preferences>
 ) {
     fun authStateFlow(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
         when (status) {
@@ -43,6 +48,7 @@ class AuthRepository(
                     AuthState.AnonymousAuthenticated
                 }
             }
+
             is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
         }
     }
@@ -77,11 +83,7 @@ class AuthRepository(
             Log.d("AuthRepository", "Sign-up avvenuto, userId = $userId")
 
             val user = UserData(
-                id = userId,
-                email = email,
-                firstName = name,
-                lastName = surname,
-                isGuest = false
+                id = userId, email = email, firstName = name, lastName = surname, isGuest = false
             )
             supabase.from("users").upsert(user)
 
@@ -148,6 +150,10 @@ class AuthRepository(
         }
     }
 
+    companion object {
+        private val GUEST_KEY = stringPreferencesKey("guest_id")
+    }
+
     // Sign in anonymously
     fun signInAnonymously(name: String, surname: String = ""): Flow<AuthResponse> = flow {
         try {
@@ -173,10 +179,23 @@ class AuthRepository(
             )
             supabase.from("users").upsert(user)
 
+            dataStore.edit { preferences ->
+                preferences[GUEST_KEY] = user.id
+            }
+
             emit(AuthResponse.Success)
         } catch (e: Exception) {
             Log.e("AuthRepository", "Error inserting anonymous user into database: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Database insertion error"))
+        }
+    }
+
+    suspend fun getSavedGuestId(): String? =
+        dataStore.data.map { prefs -> prefs[GUEST_KEY] }.firstOrNull()
+
+    private suspend fun clearSavedGuestId() {
+        dataStore.edit { prefs ->
+            prefs.remove(GUEST_KEY)
         }
     }
 
@@ -203,24 +222,21 @@ class AuthRepository(
     }
 
     // Delete anonymous user
-    fun deleteAnonymousUserAndSignOut(): Flow<AuthResponse> = flow {
-        try {
-            val session: UserSession? = supabase.auth.currentSessionOrNull()
-            session?.user?.id?.let { userId ->
-                supabase.auth.admin.deleteUser(userId)
+    fun deleteAnonymousUserAndSignOut(guestId: String): Flow<AuthResponse> = flow {
+        Log.d("GuestCleanUpService", "Cleaning up guest $guestId…")
+
+        supabase.auth.signOut()
+
+        // supabase.auth.admin.deleteUser(guestId)
+
+        supabase.from("users").delete {
+                filter { eq("id", guestId) }
             }
 
-            // Delete user from the database
-            supabase.from("users").delete {
-                filter {
-                    supabase.auth.currentUserOrNull()?.id?.let { eq("id", it) }
-                }
-            }
+        clearSavedGuestId()
 
-            supabase.auth.signOut()
-            emit(AuthResponse.Success)
-        } catch (e: Exception) {
-            emit(AuthResponse.Failure(e.message ?: "Error deleting user"))
+        emit(AuthResponse.Success)
+    }.catch { e ->
+            Log.e("GuestCleanUpService", "Error deleting guest $guestId", e)
         }
-    }
 }

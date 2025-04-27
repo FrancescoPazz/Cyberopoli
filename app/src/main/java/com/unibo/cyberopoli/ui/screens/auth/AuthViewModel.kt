@@ -125,17 +125,4 @@ class AuthViewModel(
             }
         }
     }
-
-    fun deleteAnonymousUserAndSignOut() {
-        viewModelScope.launch {
-            _authState.value = AuthState.Loading
-            val ok = authRepo.deleteAnonymousUserAndSignOut().single()
-            if (ok is AuthResponse.Success) {
-                userRepo.clearUserData()
-                _authState.value = AuthState.Unauthenticated
-            } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error("Error deleting user")
-            }
-        }
-    }
 }

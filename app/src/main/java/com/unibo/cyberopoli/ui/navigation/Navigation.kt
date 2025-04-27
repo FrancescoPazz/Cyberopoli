@@ -170,7 +170,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             leaveLobby = lobbyViewModel::leaveLobby,
                             toggleReady = lobbyViewModel::toggleReady,
                             startGame = lobbyViewModel::startGame,
-                            deleteAnonymousUserAndSignOut = authViewModel::deleteAnonymousUserAndSignOut,
                             scannedLobbyId = scanViewModel.scannedValue.value ?: "",
                             playerName = "${profileViewModel.user.value?.displayName}",
                             isGuest = profileViewModel.user.value?.isGuest ?: true,
