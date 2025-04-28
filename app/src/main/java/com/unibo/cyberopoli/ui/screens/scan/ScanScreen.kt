@@ -40,95 +40,92 @@ import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
 fun ScanScreen(
-    navController: NavHostController,
-    scanParams: ScanParams
+    navController: NavHostController, scanParams: ScanParams
 ) {
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
 
-    var hasCameraPermission by remember {
-        mutableStateOf(permissionHandler.hasCameraPermission())
-    }
-
+    var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
     var manualCode by remember { mutableStateOf("") }
     val appName = stringResource(R.string.app_name).lowercase()
     val invalidCode = stringResource(R.string.invalid_code)
 
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
         hasCameraPermission = granted
-        if (!granted) {
-            Toast.makeText(activity, "Camera permission denied", Toast.LENGTH_SHORT).show()
-        }
+        if (!granted) Toast.makeText(activity, "Camera permission denied", Toast.LENGTH_SHORT)
+            .show()
     }
 
     LaunchedEffect(Unit) {
-        if (!hasCameraPermission) {
-            launcher.launch(Manifest.permission.CAMERA)
-        }
+        if (!hasCameraPermission) launcher.launch(Manifest.permission.CAMERA)
     }
 
-    Scaffold(
-        topBar = { TopBar(navController) },
-        bottomBar = {
-            if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
-        }
-    ) { paddingValues ->
-
+    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
+        if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
+    }) { paddingValues ->
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+                .padding(16.dp)
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Text3D(
+                    text = stringResource(R.string.scan),
+                    textColor = MaterialTheme.colorScheme.tertiary,
+                    shadowColor = MaterialTheme.colorScheme.secondary
+                )
+            }
+
             if (hasCameraPermission) {
-                QRCodeScanner { value ->
-                    if (value.contains(appName)) {
-                        scanParams.setScannedValue(value)
-                        navController.navigate(CyberopoliRoute.Lobby)
-                    } else {
-                        Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+                Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    QRCodeScanner { value ->
+                        if (value.contains(appName)) {
+                            scanParams.setScannedValue(value)
+                            navController.navigate(CyberopoliRoute.Lobby)
+                        } else {
+                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
             } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(R.string.camera_permission_required),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-
-                    Spacer(Modifier.height(16.dp))
-
-                    Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
-                        Text("Request Camera Permission")
-                    }
-
-                    Spacer(Modifier.height(32.dp))
-
-                    OutlinedTextField(
-                        value = manualCode,
-                        onValueChange = { manualCode = it.filter { ch -> ch.isDigit() } },
-                        label = { Text("Inserisci codice lobby") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(Modifier.height(16.dp))
-
-                    Button(
-                        enabled = manualCode.length >= 4,
-                        onClick = {
-                            if (manualCode.isNotBlank()) {
-                                scanParams.setScannedValue(manualCode)
-                                navController.navigate(CyberopoliRoute.Lobby)
-                            } else {
-                                Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Entra in lobby")
+                        Text(
+                            text = stringResource(R.string.camera_permission_required),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
+                            Text("stringResource(R.string.request_camera)")
+                        }
+                        Spacer(Modifier.height(32.dp))
+                        OutlinedTextField(
+                            value = manualCode,
+                            onValueChange = { manualCode = it.filter { ch -> ch.isDigit() } },
+                            label = { Text("stringResource(R.string.enter_code)") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(enabled = manualCode.length >= 4, onClick = {
+                            scanParams.setScannedValue(manualCode)
+                            navController.navigate(CyberopoliRoute.Lobby)
+                        }) {
+                            Text(stringResource(R.string.enter))
+                        }
                     }
                 }
             }

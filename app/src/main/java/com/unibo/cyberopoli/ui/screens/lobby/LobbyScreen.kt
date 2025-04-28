@@ -1,32 +1,18 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
@@ -35,127 +21,87 @@ import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
-import kotlinx.coroutines.delay
-import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
     navController: NavHostController,
-    lobbyParams: LobbyParams
+    params: LobbyParams
 ) {
-    var hasJoinedLobby by remember { mutableStateOf(false) }
-    val shouldLeaveLobby by remember { mutableStateOf(false) }
-    val lifecycleOwner = LocalLifecycleOwner.current
+    var hasJoined by remember { mutableStateOf(false) }
 
-    val lobbyId = remember(lobbyParams.scannedLobbyId) {
-        UUID.nameUUIDFromBytes(lobbyParams.scannedLobbyId.toByteArray()).toString()
-    }
-    val playerName = lobbyParams.player.displayName
-
-    val lobby by lobbyParams.lobby
-    val players by lobbyParams.players
-    val me = lobbyParams.player.userId
-
-    val isHost = remember(lobby, me) {
-        lobby?.hostId == me
-    }
-    val allReady = remember(players) {
-        players.isNotEmpty() && players.all { it.isReady == true }
-    }
-
-    Log.d("LobbyScreen", "LobbyParams: $lobbyParams")
-    Log.d("LobbyScreen", "LobbyId: $lobbyId")
-    Log.d("LobbyScreen", "LobbyId: $lobbyId, PlayerName: $playerName")
-
-    LaunchedEffect(lobbyId) {
-        if (!hasJoinedLobby && lobbyId.isNotBlank()) {
-            Log.d("LobbyScreen", "Starting lobby flow...")
-            lobbyParams.startLobbyFlow(lobbyId)
-            hasJoinedLobby = true
-        }
-    }
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY && hasJoinedLobby) {
-                Log.d("LobbyScreen", "Leaving lobby...")
-                lobbyParams.leaveLobby()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    LaunchedEffect(shouldLeaveLobby) {
-        if (shouldLeaveLobby) {
-            delay(300)
-            lobbyParams.leaveLobby()
+    LaunchedEffect(params.scannedLobbyId) {
+        if (!hasJoined && params.scannedLobbyId.isNotBlank()) {
+            params.startLobbyFlow(params.scannedLobbyId)
+            hasJoined = true
         }
     }
 
     BackHandler {
-        lobbyParams.leaveLobby()
+        params.leaveLobby()
         navController.popBackStack()
     }
 
     Scaffold(
         topBar = {
-            TopBar(navController = navController, onBackPressed = {
-                lobbyParams.leaveLobby()
+            TopBar(navController) {
+                params.leaveLobby()
                 navController.popBackStack()
-            })
+            }
         },
-        bottomBar = { if (!lobbyParams.isGuest) BottomBar(navController) }
+        bottomBar = { if (!params.isGuest) BottomBar(navController) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            if (lobbyParams.lobby.value == null) {
+            if (params.lobbyId.isNullOrEmpty() || params.members.isEmpty()) {
                 LoadingScreen()
             } else {
-                val playersList = lobbyParams.players.value.map { it.userId to it }
-
-                LaunchedEffect(playersList) {
-                    Log.d("LobbyScreen", "Players list updated: $playersList")
-                    //lobbyViewModel.checkAllReadyAndStart(navController)
-                }
-
-
-                Column {
-                    Text(text = "Players (${playersList.size}/8) in lobby...")
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = stringResource(
+                            R.string.players_in_lobby,
+                            params.members.size
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     LazyColumn(modifier = Modifier.weight(1f)) {
-                        items(playersList) { (_, playerInfo) ->
+                        items(params.members) { member ->
                             PlayerRow(
-                                playerName = playerInfo.displayName ?: playerInfo.userId ?: "Unknown",
-                                isReady = playerInfo.isReady ?: false
+                                playerName = member.user.displayName,
+                                isReady = member.isReady
                             )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    AuthButton(text = stringResource(R.string.ready), onClick = {
-                        lobbyParams.toggleReady()
-                    })
 
-                    AuthButton(stringResource(R.string.exit), onClick = {
-                        lobbyParams.leaveLobby()
-                        navController.popBackStack()
-                    })
+                    AuthButton(
+                        text = stringResource(R.string.ready),
+                        onClick = params.toggleReady
+                    )
 
-                    if (isHost && allReady) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AuthButton(
+                        text = stringResource(R.string.exit),
+                        onClick = {
+                            params.leaveLobby()
+                            navController.popBackStack()
+                        }
+                    )
+
+                    if (params.isHost && params.allReady) {
                         Spacer(modifier = Modifier.height(16.dp))
                         AuthButton(
-                            text = "Start",
+                            text = stringResource(R.string.start),
                             onClick = {
-                                lobbyParams.startGame()
+                                params.startGame()
                                 navController.navigate(CyberopoliRoute.Match)
                             }
                         )

@@ -90,6 +90,8 @@
     <string name="exit">Esci</string>
     <string name="lobby_loading">Caricamento lobby in corso…</string>
     <string name="waiting">In attesa</string>
+    <string name="players_in_lobby">Giocatori in lobby</string>
+    <string name="start">Inizia</string>
 
     <!-- ================================= -->
     <!-- Partita / Gioco -->
