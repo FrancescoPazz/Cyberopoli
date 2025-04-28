@@ -2,7 +2,7 @@ package com.unibo.cyberopoli.data.repositories
 
 import android.util.Log
 import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.lobby.PlayerData
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 
@@ -23,16 +23,16 @@ class LobbyRepository(
         null
     }
 
-    suspend fun joinLobby(player: PlayerData): PlayerData? = try {
+    suspend fun joinLobby(player: LobbyMemberData): LobbyMemberData? = try {
         supabase.from("lobby_members").insert(player) {
                 select()
-            }.decodeSingle<PlayerData>()
+            }.decodeSingle<LobbyMemberData>()
     } catch (e: Exception) {
         Log.e("LobbyRepo", "joinLobby: ${e.message}")
         null
     }
 
-    suspend fun fetchPlayers(lobbyId: String): List<PlayerData> = try {
+    suspend fun fetchPlayers(lobbyId: String): List<LobbyMemberData> = try {
         supabase.from("lobby_members").select {
                 filter { eq("lobby_id", lobbyId) }
             }.decodeList()
@@ -41,7 +41,7 @@ class LobbyRepository(
         emptyList()
     }
 
-    suspend fun fetchCurrentPlayer(lobbyId: String, userId: String): PlayerData? = try {
+    suspend fun fetchCurrentPlayer(lobbyId: String, userId: String): LobbyMemberData? = try {
         supabase.from("lobby_members").select {
                 filter {
                     eq("lobby_id", lobbyId)
@@ -53,7 +53,7 @@ class LobbyRepository(
         null
     }
 
-    suspend fun toggleReady(player: PlayerData): PlayerData? = try {
+    suspend fun toggleReady(player: LobbyMemberData): LobbyMemberData? = try {
         val newReady = !(player.isReady ?: false)
 
         supabase.from("lobby_members")
@@ -64,7 +64,7 @@ class LobbyRepository(
                 }
                 select()
             }
-            .decodeSingle<PlayerData>()
+            .decodeSingle<LobbyMemberData>()
     } catch (e: Exception) {
         Log.e("LobbyRepo", "toggleReady: ${e.message}")
         null

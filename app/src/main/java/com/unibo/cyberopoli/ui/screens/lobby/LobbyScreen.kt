@@ -50,7 +50,18 @@ fun LobbyScreen(
     val lobbyId = remember(lobbyParams.scannedLobbyId) {
         UUID.nameUUIDFromBytes(lobbyParams.scannedLobbyId.toByteArray()).toString()
     }
-    val playerName = lobbyParams.playerName
+    val playerName = lobbyParams.player.displayName
+
+    val lobby by lobbyParams.lobby
+    val players by lobbyParams.players
+    val me = lobbyParams.player.userId
+
+    val isHost = remember(lobby, me) {
+        lobby?.hostId == me
+    }
+    val allReady = remember(players) {
+        players.isNotEmpty() && players.all { it.isReady == true }
+    }
 
     Log.d("LobbyScreen", "LobbyParams: $lobbyParams")
     Log.d("LobbyScreen", "LobbyId: $lobbyId")
@@ -110,6 +121,12 @@ fun LobbyScreen(
             } else {
                 val playersList = lobbyParams.players.value.map { it.userId to it }
 
+                LaunchedEffect(playersList) {
+                    Log.d("LobbyScreen", "Players list updated: $playersList")
+                    //lobbyViewModel.checkAllReadyAndStart(navController)
+                }
+
+
                 Column {
                     Text(text = "Players (${playersList.size}/8) in lobby...")
 
@@ -131,6 +148,17 @@ fun LobbyScreen(
                         lobbyParams.leaveLobby()
                         navController.popBackStack()
                     })
+
+                    if (isHost && allReady) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AuthButton(
+                            text = "Start",
+                            onClick = {
+                                lobbyParams.startGame()
+                                navController.navigate("match_screen")
+                            }
+                        )
+                    }
                 }
             }
         }

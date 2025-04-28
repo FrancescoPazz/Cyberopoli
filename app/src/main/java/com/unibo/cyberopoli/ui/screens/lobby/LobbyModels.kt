@@ -2,7 +2,7 @@ package com.unibo.cyberopoli.ui.screens.lobby
 
 import androidx.compose.runtime.State
 import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.lobby.PlayerData
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
 
 data class LobbyParams(
     val lobby: State<Lobby?>,
@@ -10,8 +10,8 @@ data class LobbyParams(
     val leaveLobby: () -> Unit,
     val toggleReady: () -> Unit,
     val scannedLobbyId: String,
-    val playerName: String,
     val startGame: () -> Unit,
     val isGuest: Boolean,
-    val players: State<List<PlayerData>>
+    val player: LobbyMemberData,
+    val players: State<List<LobbyMemberData>>
 )

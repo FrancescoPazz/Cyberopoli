@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
 import com.unibo.cyberopoli.data.models.theme.Theme
 import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthParams
@@ -23,6 +24,9 @@ import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
+import com.unibo.cyberopoli.ui.screens.match.MatchParams
+import com.unibo.cyberopoli.ui.screens.match.MatchScreen
+import com.unibo.cyberopoli.ui.screens.match.MatchViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
@@ -64,6 +68,9 @@ sealed interface CyberopoliRoute {
 
     @Serializable
     data object Lobby : CyberopoliRoute
+
+    @Serializable
+    data object Match : CyberopoliRoute
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -171,11 +178,24 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             toggleReady = lobbyViewModel::toggleReady,
                             startGame = lobbyViewModel::startGame,
                             scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                            playerName = "${profileViewModel.user.value?.displayName}",
+                            player = LobbyMemberData(
+                                userId = profileViewModel.user.value?.id,
+                                displayName = profileViewModel.user.value?.displayName,
+                                isReady = false
+                            ),
                             isGuest = profileViewModel.user.value?.isGuest ?: true,
                             players = lobbyViewModel.players.observeAsState(emptyList()),
                         )
                     )
+                }
+                composable<CyberopoliRoute.Match> {
+                    val matchViewModel = koinViewModel<MatchViewModel>()
+                    MatchScreen(navController, MatchParams(
+                        match = matchViewModel.match.collectAsStateWithLifecycle(),
+                        players = matchViewModel.players.collectAsStateWithLifecycle(),
+                        currentTurnIndex = matchViewModel.currentTurnIndex.collectAsStateWithLifecycle(),
+                        nextTurn = matchViewModel::nextTurn
+                    ))
                 }
             }
         }

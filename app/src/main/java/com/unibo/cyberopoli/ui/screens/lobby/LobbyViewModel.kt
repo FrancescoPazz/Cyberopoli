@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.lobby.PlayerData
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
 import com.unibo.cyberopoli.data.repositories.LobbyRepository
 import com.unibo.cyberopoli.data.repositories.UserRepository
 import kotlinx.coroutines.launch
@@ -17,10 +17,10 @@ class LobbyViewModel(
     private val _lobby = MutableLiveData<Lobby?>()
     val lobby: LiveData<Lobby?> = _lobby
 
-    private val _players = MutableLiveData<List<PlayerData>>()
-    val players: LiveData<List<PlayerData>> = _players
+    private val _players = MutableLiveData<List<LobbyMemberData>>()
+    val players: LiveData<List<LobbyMemberData>> = _players
 
-    private val _currentPlayer = MutableLiveData<PlayerData?>()
+    private val _currentPlayer = MutableLiveData<LobbyMemberData?>()
 
     init {
         userRepository.loadUserData()
@@ -33,7 +33,7 @@ class LobbyViewModel(
             val lobbyObj = lobbyRepository.createOrGetLobby(lobbyId, me)
             _lobby.postValue(lobbyObj)
 
-            val player = PlayerData(
+            val player = LobbyMemberData(
                 lobbyId = lobbyId, userId = me, isReady = false,
                 displayName = userRepository.currentUserLiveData.value?.displayName
             )
@@ -65,11 +65,22 @@ class LobbyViewModel(
         }
     }
 
+    fun checkAllReadyAndStart() {
+        viewModelScope.launch {
+            val readyPlayers = players.value?.filter { it.isReady == true }
+            if (readyPlayers?.size == players.value?.size && readyPlayers?.isNotEmpty() == true) {
+                startGame()
+            }
+        }
+    }
+
+
     fun startGame() {
         viewModelScope.launch {
-            val l = _lobby.value ?: return@launch
-            lobbyRepository.startGame(l.lobbyId!!)
-            _lobby.postValue(l.copy(status = "started"))
+            lobby.value?.lobbyId?.let {
+                lobbyRepository.startGame(it)
+                _lobby.postValue(lobby.value!!.copy(status = "in_progress"))
+            }
         }
     }
 }
