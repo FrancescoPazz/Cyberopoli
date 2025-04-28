@@ -4,9 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -21,10 +18,8 @@ import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.JsonObject
@@ -36,7 +31,7 @@ private const val GOOGLE_SERVER_CLIENT_ID =
     "965652282511-hveojtrsgklpr52hbi54qg9ct477llmh.apps.googleusercontent.com"
 
 class AuthRepository(
-    private val supabase: SupabaseClient, private val dataStore: DataStore<Preferences>
+    private val supabase: SupabaseClient
 ) {
     fun authStateFlow(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
         when (status) {
@@ -150,10 +145,6 @@ class AuthRepository(
         }
     }
 
-    companion object {
-        private val GUEST_KEY = stringPreferencesKey("guest_id")
-    }
-
     // Sign in anonymously
     fun signInAnonymously(name: String, surname: String = ""): Flow<AuthResponse> = flow {
         try {
@@ -179,23 +170,10 @@ class AuthRepository(
             )
             supabase.from("users").upsert(user)
 
-            dataStore.edit { preferences ->
-                preferences[GUEST_KEY] = user.id
-            }
-
             emit(AuthResponse.Success)
         } catch (e: Exception) {
             Log.e("AuthRepository", "Error inserting anonymous user into database: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Database insertion error"))
-        }
-    }
-
-    suspend fun getSavedGuestId(): String? =
-        dataStore.data.map { prefs -> prefs[GUEST_KEY] }.firstOrNull()
-
-    private suspend fun clearSavedGuestId() {
-        dataStore.edit { prefs ->
-            prefs.remove(GUEST_KEY)
         }
     }
 
@@ -219,19 +197,5 @@ class AuthRepository(
             Log.e("AuthRepository", "Error resetting password: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Reset password error"))
         }
-    }
-
-    // Delete anonymous user
-    fun deleteAnonymousUserAndSignOut(guestId: String): Flow<AuthResponse> = flow {
-        supabase.auth.signOut()
-        supabase.auth.importAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwdGFndXpwdmRwcm1oeHJsZW5pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDgzMzk1NCwiZXhwIjoyMDYwNDA5OTU0fQ.hOchS-a7nJCpRxFZXmtgxGUn9tbiCChuEE92Zfdh2jc")
-        supabase.auth.admin.deleteUser(guestId)
-        supabase.from("users").delete {
-            filter { eq("id", guestId) }
-        }
-        clearSavedGuestId()
-        emit(AuthResponse.Success)
-    }.catch { e ->
-        Log.e("GuestCleanUpService", "Error deleting guest $guestId", e)
     }
 }
