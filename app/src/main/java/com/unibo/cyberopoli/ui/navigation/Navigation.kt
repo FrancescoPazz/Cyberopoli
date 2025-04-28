@@ -10,8 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.unibo.cyberopoli.domain.model.LobbyMember
-import com.unibo.cyberopoli.domain.model.User
 import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthScreen

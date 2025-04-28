@@ -1,9 +1,10 @@
 package com.unibo.cyberopoli.domain.repository
 
 import com.unibo.cyberopoli.domain.model.MatchPlayer
+import com.unibo.cyberopoli.ui.screens.match.Match
 
 interface IMatchRepository {
-    suspend fun createMatch(lobbyId: String): String
+    suspend fun createMatch(lobbyId: String): Match
 
     suspend fun getMatchPlayers(matchId: String): List<MatchPlayer>
 

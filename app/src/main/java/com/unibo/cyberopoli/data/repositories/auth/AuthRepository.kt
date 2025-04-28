@@ -1,3 +1,4 @@
+// File: app/src/main/java/com/unibo/cyberopoli/data/repositories/auth/SupabaseAuthRepository.kt
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
@@ -7,6 +8,8 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.domain.model.User
+import com.unibo.cyberopoli.domain.repository.IAuthRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthResponse
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import io.github.jan.supabase.SupabaseClient
@@ -31,25 +34,22 @@ private const val GOOGLE_SERVER_CLIENT_ID =
 
 class AuthRepository(
     private val supabase: SupabaseClient
-) {
-    fun authStateFlow(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
+) : IAuthRepository {
+
+    override fun authState(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
         when (status) {
             is SessionStatus.Initializing -> AuthState.Loading
-            is SessionStatus.Authenticated -> {
-                if (supabase.auth.currentUserOrNull()?.userMetadata?.get("email") != null) {
+            is SessionStatus.Authenticated ->
+                if (supabase.auth.currentUserOrNull()?.userMetadata?.get("email") != null)
                     AuthState.Authenticated
-                } else {
+                else
                     AuthState.AnonymousAuthenticated
-                }
-            }
-
-            is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
+            is SessionStatus.NotAuthenticated,
+            is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
         }
     }
 
-    // Login
-    fun signIn(email: String, password: String): Flow<AuthResponse> = flow {
-        Log.d("AuthRepository", "Attempting to log in with email: $email")
+    override fun signIn(email: String, password: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.signInWith(Email) {
                 this.email = email
@@ -57,144 +57,136 @@ class AuthRepository(
             }
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error logging in: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Login error"))
         }
     }
 
-    // Sign up
-    fun signUp(
-        email: String, password: String, name: String, surname: String
+    override fun signUp(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String
     ): Flow<AuthResponse> = flow {
         try {
-            val signUpResult = supabase.auth.signUpWith(Email) {
+            val result = supabase.auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
             }
-            val userId = signUpResult?.id
-                ?: throw IllegalStateException("Sign-up success but user.id is null")
-
-            Log.d("AuthRepository", "Sign-up avvenuto, userId = $userId")
+            val userId = result?.id
+                ?: throw IllegalStateException("SignUp succeeded but userId is null")
 
             val user = UserData(
-                id = userId, email = email, firstName = name, lastName = surname, isGuest = false
+                id = userId,
+                email = email,
+                firstName = firstName,
+                lastName = lastName,
+                isGuest = false
             )
             supabase.from("users").upsert(user)
-
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error during sign up or database insertion: ${e.message}")
-            emit(AuthResponse.Failure(e.message ?: "Sign up or database insertion error"))
+            emit(AuthResponse.Failure(e.message ?: "Sign up error"))
         }
     }
 
-
     private fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()
-        Log.d("AuthRepository", "Raw nonce: $rawNonce")
-        val bytes = rawNonce.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
+        val digest = md.digest(rawNonce.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }
     }
 
-    // Google Sign In
-    fun signInWithGoogle(context: Context): Flow<AuthResponse> = flow {
-        val hashedNonce = createNonce()
-        Log.d("AuthRepository", "Hashed nonce: $hashedNonce")
-        val googleIdOption = GetGoogleIdOption.Builder().setServerClientId(GOOGLE_SERVER_CLIENT_ID)
-            .setNonce(hashedNonce).setAutoSelectEnabled(false).setFilterByAuthorizedAccounts(false)
+    override fun signInWithGoogle(context: Context): Flow<AuthResponse> = flow {
+        val nonce = createNonce()
+        val option = GetGoogleIdOption.Builder()
+            .setServerClientId(GOOGLE_SERVER_CLIENT_ID)
+            .setNonce(nonce)
             .build()
-        val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
-        val credentialManager = CredentialManager.create(context)
+        val request = GetCredentialRequest.Builder().addCredentialOption(option).build()
+        val manager = CredentialManager.create(context)
 
         try {
-            val result = credentialManager.getCredential(
-                context = context, request = request
-            )
-
-            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
-
-            val googleIdToken = googleIdTokenCredential.idToken
+            val cred = manager.getCredential(context, request)
+            val tokenCred = GoogleIdTokenCredential.createFrom(cred.credential.data)
+            val idToken = tokenCred.idToken
 
             supabase.auth.signInWith(IDToken) {
-                idToken = googleIdToken
+                this.idToken = idToken
                 provider = Google
             }
-
             supabase.auth.sessionStatus.filterIsInstance<SessionStatus.Authenticated>().first()
 
             val session = supabase.auth.currentSessionOrNull()
-                ?: throw IllegalStateException("No session found after Google login")
-            val userId = session.user?.id!!
-            val email = session.user?.email
-            val fullName = session.user?.userMetadata?.get("full_name").toString().trim('"')
-            val name = fullName.substringBefore(" ")
-            val surname = fullName.substringAfter(" ", "")
+                ?: throw IllegalStateException("No session after Google login")
+            val info = session.user!!
+            val fullName = info.userMetadata?.get("full_name").toString().trim('"')
+            val (fn, ln) = fullName.split(" ", limit = 2).let { it[0] to it.getOrElse(1) { "" } }
 
             val user = UserData(
-                id = userId, email = email, firstName = name, lastName = surname, isGuest = false
+                id = info.id,
+                email = info.email,
+                firstName = fn,
+                lastName = ln,
+                isGuest = false
             )
             supabase.from("users").upsert(user)
-
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthViewModel", "Error logging in with Google: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Google login error"))
         }
     }
 
-    // Sign in anonymously
-    fun signInAnonymously(name: String, surname: String = ""): Flow<AuthResponse> = flow {
+    override fun signInAnonymously(name: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.signInAnonymously(
                 data = JsonObject(mapOf("name" to JsonPrimitive(name)))
             )
-            emit(AuthResponse.Success)
-        } catch (e: Exception) {
-            Log.e("AuthRepository", "Error signing in anonymously: ${e.message}")
-            emit(AuthResponse.Failure(e.message ?: "Anonymous login error"))
-        }
-
-        // Database insertion
-        try {
             val session = supabase.auth.currentSessionOrNull()
-                ?: throw IllegalStateException("No session found after Google login")
-            val userId = session.user?.id!!
+                ?: throw IllegalStateException("No session after anonymous login")
+            val userId = session.user!!.id
             val user = UserData(
                 id = userId,
+                email = null,
                 firstName = name,
-                lastName = surname,
-                isGuest = true,
+                lastName = null,
+                isGuest = true
             )
             supabase.from("users").upsert(user)
-
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error inserting anonymous user into database: ${e.message}")
-            emit(AuthResponse.Failure(e.message ?: "Database insertion error"))
+            emit(AuthResponse.Failure(e.message ?: "Anonymous login error"))
         }
     }
 
-    // Sign out
-    fun signOut(): Flow<AuthResponse> = flow {
+    override fun signOut(): Flow<AuthResponse> = flow {
         try {
             supabase.auth.signOut()
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error signing out: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Sign out error"))
         }
     }
 
-    // Reset password
-    fun resetPassword(email: String): Flow<AuthResponse> = flow {
+    override fun resetPassword(email: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.resetPasswordForEmail(email)
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error resetting password: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Reset password error"))
         }
+    }
+
+    override suspend fun currentUser(): User? {
+        val session = supabase.auth.currentSessionOrNull() ?: return null
+        val data = session.user!!
+        return User(
+            id = data.id,
+            displayName = data.userMetadata?.get("full_name")?.toString()?.trim('"') ?: data.id,
+            isGuest = supabase.from("users").select {
+                filter { eq("id", data.id) }
+            }.decodeList<UserData>().firstOrNull()?.isGuest ?: false,
+            email = data.email,
+            avatarUrl = null
+        )
     }
 }

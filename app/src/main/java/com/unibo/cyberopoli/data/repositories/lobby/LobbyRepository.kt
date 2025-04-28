@@ -1,4 +1,3 @@
-// File: app/src/main/java/com/unibo/cyberopoli/data/repositories/lobby/LobbyRepositoryImpl.kt
 package com.unibo.cyberopoli.data.repositories.lobby
 
 import android.util.Log
