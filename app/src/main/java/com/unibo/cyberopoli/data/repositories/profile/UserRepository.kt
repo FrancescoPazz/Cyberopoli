@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.repositories
+package com.unibo.cyberopoli.data.repositories.profile
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

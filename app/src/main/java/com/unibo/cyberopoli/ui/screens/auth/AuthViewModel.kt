@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unibo.cyberopoli.data.repositories.AuthRepository
-import com.unibo.cyberopoli.data.repositories.UserRepository
+import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
+import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 

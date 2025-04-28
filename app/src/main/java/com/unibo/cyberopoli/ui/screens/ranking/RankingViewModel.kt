@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.unibo.cyberopoli.data.models.auth.UserData
-import com.unibo.cyberopoli.data.repositories.RankingRepository
-import com.unibo.cyberopoli.data.repositories.UserRepository
+import com.unibo.cyberopoli.data.repositories.profile.RankingRepository
+import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 
 class RankingViewModel(
     private val userRepo: UserRepository, rankingRepository: RankingRepository

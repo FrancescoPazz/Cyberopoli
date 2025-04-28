@@ -31,6 +31,7 @@ import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
@@ -155,7 +156,7 @@ fun LobbyScreen(
                             text = "Start",
                             onClick = {
                                 lobbyParams.startGame()
-                                navController.navigate("match_screen")
+                                navController.navigate(CyberopoliRoute.Match)
                             }
                         )
                     }

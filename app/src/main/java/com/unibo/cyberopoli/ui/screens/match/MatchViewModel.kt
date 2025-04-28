@@ -3,7 +3,7 @@ package com.unibo.cyberopoli.ui.screens.match
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.match.MatchPlayerData
-import com.unibo.cyberopoli.data.repositories.MatchRepository
+import com.unibo.cyberopoli.data.repositories.match.MatchRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

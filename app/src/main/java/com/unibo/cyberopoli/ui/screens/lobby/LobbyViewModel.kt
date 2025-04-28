@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
-import com.unibo.cyberopoli.data.repositories.LobbyRepository
-import com.unibo.cyberopoli.data.repositories.UserRepository
+import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
@@ -64,16 +64,6 @@ class LobbyViewModel(
             _players.postValue(emptyList())
         }
     }
-
-    fun checkAllReadyAndStart() {
-        viewModelScope.launch {
-            val readyPlayers = players.value?.filter { it.isReady == true }
-            if (readyPlayers?.size == players.value?.size && readyPlayers?.isNotEmpty() == true) {
-                startGame()
-            }
-        }
-    }
-
 
     fun startGame() {
         viewModelScope.launch {

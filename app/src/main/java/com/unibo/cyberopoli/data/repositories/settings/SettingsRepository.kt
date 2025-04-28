@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.repositories
+package com.unibo.cyberopoli.data.repositories.settings
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

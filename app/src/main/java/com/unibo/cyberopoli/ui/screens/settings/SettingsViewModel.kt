@@ -3,7 +3,7 @@ package com.unibo.cyberopoli.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.data.repositories.SettingsRepository
+import com.unibo.cyberopoli.data.repositories.settings.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

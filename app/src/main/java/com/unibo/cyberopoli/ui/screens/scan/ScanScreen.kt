@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +40,8 @@ import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
 fun ScanScreen(
-    navController: NavHostController, scanParams: ScanParams
+    navController: NavHostController,
+    scanParams: ScanParams
 ) {
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
@@ -47,17 +50,14 @@ fun ScanScreen(
         mutableStateOf(permissionHandler.hasCameraPermission())
     }
 
+    var manualCode by remember { mutableStateOf("") }
     val appName = stringResource(R.string.app_name).lowercase()
     val invalidCode = stringResource(R.string.invalid_code)
-    var scannedValue by remember { mutableStateOf("") }
 
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
-        if (granted) {
-            hasCameraPermission = true
-        } else {
-            Toast.makeText(
-                activity, "Camera permission denied", Toast.LENGTH_SHORT
-            ).show()
+        hasCameraPermission = granted
+        if (!granted) {
+            Toast.makeText(activity, "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -67,59 +67,71 @@ fun ScanScreen(
         }
     }
 
-    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
-    }, content = { paddingValues ->
+    Scaffold(
+        topBar = { TopBar(navController) },
+        bottomBar = {
+            if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
+        }
+    ) { paddingValues ->
 
-        if (!hasCameraPermission) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp), contentAlignment = Alignment.Center
-            ) {
-                Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
-                    Text("Request Camera Permission")
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (hasCameraPermission) {
+                QRCodeScanner { value ->
+                    if (value.contains(appName)) {
+                        scanParams.setScannedValue(value)
+                        navController.navigate(CyberopoliRoute.Lobby)
+                    } else {
+                        Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
+            } else {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text3D(
-                        stringResource(R.string.scan),
-                        textColor = MaterialTheme.colorScheme.tertiary,
-                        shadowColor = MaterialTheme.colorScheme.secondary
+                    Text(
+                        text = stringResource(R.string.camera_permission_required),
+                        style = MaterialTheme.typography.bodyLarge
                     )
 
-                    Spacer(modifier = Modifier.height(46.dp))
+                    Spacer(Modifier.height(16.dp))
 
-                    QRCodeScanner { value ->
-                        scannedValue = value
-                        if (scannedValue.contains(appName)) {
-                            scanParams.setScannedValue(scannedValue)
-                            navController.navigate(CyberopoliRoute.Lobby)
-                        } else {
-                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)
-                                .show()
-                        }
+                    Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
+                        Text("Request Camera Permission")
                     }
 
-                    Spacer(modifier = Modifier.height(46.dp))
+                    Spacer(Modifier.height(32.dp))
 
-                    Text(
-                        text = stringResource(R.string.qrcode_hint),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.tertiary
+                    OutlinedTextField(
+                        value = manualCode,
+                        onValueChange = { manualCode = it.filter { ch -> ch.isDigit() } },
+                        label = { Text("Inserisci codice lobby") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Button(
+                        enabled = manualCode.length >= 4,
+                        onClick = {
+                            if (manualCode.isNotBlank()) {
+                                scanParams.setScannedValue(manualCode)
+                                navController.navigate(CyberopoliRoute.Lobby)
+                            } else {
+                                Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    ) {
+                        Text("Entra in lobby")
+                    }
                 }
             }
         }
-    })
-
+    }
 }

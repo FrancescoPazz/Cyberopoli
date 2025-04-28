@@ -1,71 +1,114 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ================================= -->
+    <!-- Identità dell’App -->
+    <!-- ================================= -->
     <string name="app_name">Cyberopoli</string>
+
+    <!-- ================================= -->
+    <!-- Autenticazione e Gestione Utente -->
+    <!-- ================================= -->
+    <!-- Accesso / Registrazione -->
     <string name="login">Accedi</string>
     <string name="signup">Registrati</string>
     <string name="guest">Ospite</string>
-    <string name="back">Indietro</string>
-    <string name="enter">Entra</string>
-    <string name="username">Username</string>
-    <string name="birth_date">Data di nascita</string>
-    <string name="email">Email</string>
+    <string name="logout">Esci</string>
+
+    <!-- Campi dei form -->
+    <string name="username">Nome utente</string>
     <string name="name">Nome</string>
     <string name="last_name">Cognome</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="password_confirm">Conferma password</string>
-    <string name="scan">Scansione</string>
-    <string name="invalid_code">Codice non valido</string>
-    <string name="qrcode_hint">Inquadra il QR Code per accedere alla lobby</string>
-    <string name="settings">Impostazioni</string>
-    <string name="old_password">Vecchia Password</string>
-    <string name="change_password">Cambia Password</string>
-    <string name="notifications">Notifiche</string>
-    <string name="enable_notifications">Abilita le notifiche</string>
-    <string name="dark">Scuro</string>
-    <string name="light">Chiaro</string>
-    <string name="system">Sistema</string>
+    <string name="password_confirm">Conferma Password</string>
+
+    <!-- Validazioni ed errori -->
     <string name="login_failed">Accesso fallito</string>
-    <string name="empty_fields">L\'email o la password non possono essere vuoti</string>
-    <string name="logout">Disconnettiti</string>
+    <string name="signup_failed">Registrazione fallita</string>
+    <string name="empty_fields">Email o password non possono essere vuote</string>
+    <string name="password_not_match">Le password non corrispondono</string>
+    <string name="empty_email_warning">L’email non può essere vuota</string>
+    <string name="enter_guest_error">Impossibile accedere come ospite</string>
+    <string name="user_unauthenticated">Utente non autenticato</string>
+
+    <!-- Reimposta/Cambio password -->
+    <string name="change_password">Cambia Password</string>
+    <string name="old_password">Vecchia Password</string>
+    <string name="password_change_success">Cambio password avvenuto con successo</string>
+    <string name="password_change_fail">Cambio password fallito</string>
+    <string name="reset_password_title">Reimposta Password</string>
+    <string name="send_reset_email">Invia email</string>
+    <string name="back_to_login">Torna al login</string>
+    <string name="reset_password_failed">Invio email di reset fallito</string>
+
+    <!-- ================================= -->
+    <!-- Navigazione e Schermate -->
+    <!-- ================================= -->
+    <string name="back">Indietro</string>
+    <string name="enter">Entra</string>
     <string name="home">Home</string>
     <string name="ranking">Classifica</string>
     <string name="profile">Profilo</string>
-    <string name="latest_matches">Ultime partite</string>
-    <string name="result">Risultato</string>
-    <string name="recent_stats">Statistiche Recenti</string>
+    <string name="settings">Impostazioni</string>
+
+    <!-- ================================= -->
+    <!-- Scansione / Codice QR -->
+    <!-- ================================= -->
+    <string name="scan">Scansiona</string>
+    <string name="invalid_code">Codice non valido</string>
+    <string name="qrcode_hint">Scansiona il codice QR per accedere alla lobby.</string>
+    <string name="camera_permission_required">
+        È necessario il permesso per usare la fotocamera per scansionare il codice QR.
+    </string>
+
+    <!-- ================================= -->
+    <!-- Impostazioni -->
+    <!-- ================================= -->
+    <string name="notifications">Notifiche</string>
+    <string name="enable_notifications">Abilita notifiche</string>
+    <string name="dark">Scuro</string>
+    <string name="light">Chiaro</string>
+    <string name="system">Sistema</string>
+
+    <!-- ================================= -->
+    <!-- Profilo e Dettagli Classifica -->
+    <!-- ================================= -->
     <string name="avatar">Avatar</string>
     <string name="edit">Modifica</string>
     <string name="share">Condividi</string>
-    <string name="matches">Partite</string>
-    <string name="wins">Vittorie</string>
-    <string name="badges">Medaglie</string>
-    <string name="my_rank">Il mio posizionamento</string>
     <string name="daily">Giornaliero</string>
     <string name="weekly">Settimanale</string>
     <string name="monthly">Mensile</string>
     <string name="filters">Filtri</string>
-    <string name="signup_failed">Registrazione fallita</string>
-    <string name="level">Livello</string>
-    <string name="loading">Caricamento</string>
-    <string name="user_unauthenticated">Utente non autenticato</string>
-    <string name="score_chart">Grafico dei punteggi</string>
-    <string name="account_statistics">Statistiche del profilo</string>
-    <string name="total_score">Punteggio totale</string>
-    <string name="games_played">Partite giocate</string>
-    <string name="best_score">Miglior punteggio</string>
-    <string name="average_score">Punteggio medio</string>
+    <string name="my_rank">La mia posizione</string>
+
+    <!-- ================================= -->
+    <!-- Lobby -->
+    <!-- ================================= -->
     <string name="ready">Pronto</string>
     <string name="not_ready">Non pronto</string>
     <string name="exit">Esci</string>
     <string name="lobby_loading">Caricamento lobby in corso…</string>
     <string name="waiting">In attesa</string>
-    <string name="password_not_match">Le password non corrispondono</string>
-    <string name="reset_password_title">Reimposta Password</string>
-    <string name="send_reset_email">Invia email</string>
-    <string name="back_to_login">Torna all\'accesso</string>
-    <string name="empty_email_warning">L\'email non può essere vuota</string>
-    <string name="reset_password_failed">Consegna email reset password fallita</string>
-    <string name="password_change_success">Password cambiata con successo</string>
-    <string name="password_change_fail">Il cambio password non è avvenuto correttamente</string>
-    <string name="enter_guest_error">Impossibile entrare come guest</string>
+
+    <!-- ================================= -->
+    <!-- Partita / Gioco -->
+    <!-- ================================= -->
+    <string name="matches">Partite</string>
+    <string name="latest_matches">Ultime partite</string>
+    <string name="result">Risultato</string>
+    <string name="recent_stats">Statistiche recenti</string>
+    <string name="wins">Vittorie</string>
+    <string name="badges">Badge</string>
+    <string name="level">Livello</string>
+    <string name="loading">Caricamento</string>
+
+    <!-- Statistiche e Grafici -->
+    <string name="score_chart">Grafico Punteggio</string>
+    <string name="account_statistics">Statistiche Account</string>
+    <string name="total_score">Punteggio Totale</string>
+    <string name="games_played">Partite Giocate</string>
+    <string name="best_score">Punteggio Migliore</string>
+    <string name="average_score">Punteggio Medio</string>
+
 </resources>

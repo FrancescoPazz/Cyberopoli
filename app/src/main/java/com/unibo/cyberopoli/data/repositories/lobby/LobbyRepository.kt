@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.repositories
+package com.unibo.cyberopoli.data.repositories.lobby
 
 import android.util.Log
 import com.unibo.cyberopoli.data.models.lobby.Lobby
@@ -95,7 +95,7 @@ class LobbyRepository(
                     filter { eq("id", lobbyId) }
                 }.decodeSingle<Lobby>()
             val lobbyData = lobby.copy(
-                status = "started"
+                status = "in_progress"
             )
 
             supabase.from("lobbies").update(lobbyData) {

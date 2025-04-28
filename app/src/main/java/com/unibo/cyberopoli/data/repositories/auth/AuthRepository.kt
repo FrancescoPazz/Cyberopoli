@@ -1,10 +1,9 @@
-package com.unibo.cyberopoli.data.repositories
+package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.unibo.cyberopoli.data.models.auth.UserData

@@ -2,12 +2,12 @@ package com.unibo.cyberopoli
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
-import com.unibo.cyberopoli.data.repositories.AuthRepository
-import com.unibo.cyberopoli.data.repositories.LobbyRepository
-import com.unibo.cyberopoli.data.repositories.MatchRepository
-import com.unibo.cyberopoli.data.repositories.RankingRepository
-import com.unibo.cyberopoli.data.repositories.SettingsRepository
-import com.unibo.cyberopoli.data.repositories.UserRepository
+import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
+import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import com.unibo.cyberopoli.data.repositories.match.MatchRepository
+import com.unibo.cyberopoli.data.repositories.profile.RankingRepository
+import com.unibo.cyberopoli.data.repositories.settings.SettingsRepository
+import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
