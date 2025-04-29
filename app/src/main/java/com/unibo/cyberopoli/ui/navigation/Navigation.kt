@@ -142,8 +142,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val members by lobbyVm.members.collectAsStateWithLifecycle()
                     val currentUserId = profileViewModel.user.value?.id
                     val isGuest = profileViewModel.user.value?.isGuest ?: false
-                    val isHost = members.firstOrNull()?.user?.id == currentUserId
-                    val allReady = members.isNotEmpty() && members.all { it.isReady }
+                    val isHost = members.firstOrNull()?.userId == currentUserId
+                    val allReady = members.isNotEmpty() && members.all { it.isReady == true }
 
                     LobbyScreen(navController, LobbyParams(
                         scannedLobbyId = scanViewModel.scannedValue.value ?: "",

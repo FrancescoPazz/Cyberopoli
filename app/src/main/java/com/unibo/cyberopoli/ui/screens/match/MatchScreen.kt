@@ -24,7 +24,7 @@ fun MatchScreen(
 
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text("Cyberopoli - Turno di ${currentPlayer.user.displayName}") })
+                TopAppBar(title = { Text("Cyberopoli - Turno di ${currentPlayer.displayName}") })
             }
         ) { paddingValues ->
             Column(
@@ -35,7 +35,7 @@ fun MatchScreen(
                 Text("Giocatori nella partita:")
 
                 players.forEach { player ->
-                    Text("${player.user.displayName}: ${player.score} punti")
+                    Text("${player.displayName}: ${player.score} punti")
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))

@@ -73,8 +73,8 @@ fun LobbyScreen(
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(params.members) { member ->
                             PlayerRow(
-                                playerName = member.user.displayName,
-                                isReady = member.isReady
+                                playerName = member.displayName ?: "ERROR",
+                                isReady = member.isReady ?: false,
                             )
                         }
                     }

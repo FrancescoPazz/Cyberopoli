@@ -1,16 +1,16 @@
 package com.unibo.cyberopoli.domain.repository
 
-import com.unibo.cyberopoli.domain.model.LobbyMember
-import com.unibo.cyberopoli.domain.model.User
+import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
 
 interface ILobbyRepository {
-    suspend fun createOrGetLobby(lobbyId: String, host: User): String
+    suspend fun createOrGetLobby(lobbyId: String, host: UserData): String
 
-    suspend fun joinLobby(lobbyId: String, member: LobbyMember)
+    suspend fun joinLobby(lobbyId: String, member: LobbyMemberData)
 
-    suspend fun fetchMembers(lobbyId: String): List<LobbyMember>
+    suspend fun fetchMembers(lobbyId: String): List<LobbyMemberData>
 
-    suspend fun toggleReady(lobbyId: String, userId: String, isReady: Boolean): LobbyMember
+    suspend fun toggleReady(lobbyId: String, userId: String, isReady: Boolean): LobbyMemberData
 
     suspend fun leaveLobby(lobbyId: String, userId: String, isHost: Boolean)
 

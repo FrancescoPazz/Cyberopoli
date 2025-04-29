@@ -3,7 +3,7 @@ package com.unibo.cyberopoli.ui.screens.match
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.State
-import com.unibo.cyberopoli.domain.model.MatchPlayer
+import com.unibo.cyberopoli.data.models.match.MatchPlayerData
 
 @Serializable
 data class Match(
@@ -35,7 +35,7 @@ data class Cell(
 
 data class MatchParams(
     val match: State<Match?>,
-    val players: State<List<MatchPlayer>>,
+    val players: State<List<MatchPlayerData>>,
     val currentTurnIndex: State<Int>,
     val nextTurn: () -> Unit
 )

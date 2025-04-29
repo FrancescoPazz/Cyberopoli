@@ -8,7 +8,7 @@ data class UserData(
     @SerialName("id") val id: String,
     @SerialName("email") val email: String? = null,
     @SerialName("is_guest") val isGuest: Boolean = false,
-    @SerialName("first_name") val firstName: String,
+    @SerialName("first_name") val firstName: String? = null,
     @SerialName("last_name") val lastName: String? = null,
     @SerialName("display_name") val displayName: String = "$firstName $lastName",
     @SerialName("avatar_url") val avatarUrl: String? = null,

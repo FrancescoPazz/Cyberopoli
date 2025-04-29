@@ -8,7 +8,6 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.unibo.cyberopoli.data.models.auth.UserData
-import com.unibo.cyberopoli.domain.model.User
 import com.unibo.cyberopoli.domain.repository.IAuthRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthResponse
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
@@ -176,10 +175,10 @@ class AuthRepository(
         }
     }
 
-    override suspend fun currentUser(): User? {
+    override suspend fun currentUser(): UserData? {
         val session = supabase.auth.currentSessionOrNull() ?: return null
         val data = session.user!!
-        return User(
+        return UserData(
             id = data.id,
             displayName = data.userMetadata?.get("full_name")?.toString()?.trim('"') ?: data.id,
             isGuest = supabase.from("users").select {

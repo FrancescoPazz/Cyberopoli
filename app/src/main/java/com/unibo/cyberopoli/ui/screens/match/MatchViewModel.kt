@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.match.MatchPlayerData
 import com.unibo.cyberopoli.data.repositories.match.MatchRepository
-import com.unibo.cyberopoli.domain.model.MatchPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +15,7 @@ class MatchViewModel(
     private val _match = MutableStateFlow<Match?>(null)
     val match = _match.asStateFlow()
 
-    private val _players = MutableStateFlow<List<MatchPlayer>>(emptyList())
+    private val _players = MutableStateFlow<List<MatchPlayerData>>(emptyList())
     val players = _players.asStateFlow()
 
     private val _currentTurnIndex = MutableStateFlow(0)
