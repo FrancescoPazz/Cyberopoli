@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.domain.repository
+package com.unibo.cyberopoli.data.repositories.lobby
 
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember

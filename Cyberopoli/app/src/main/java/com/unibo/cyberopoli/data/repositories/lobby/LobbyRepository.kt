@@ -4,7 +4,7 @@ import android.util.Log
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.domain.repository.ILobbyRepository as DomainLobbyRepository
+import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import java.util.UUID

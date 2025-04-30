@@ -6,7 +6,6 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.unibo.cyberopoli.data.models.auth.User
-import com.unibo.cyberopoli.domain.repository.IAuthRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthResponse
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import io.github.jan.supabase.SupabaseClient

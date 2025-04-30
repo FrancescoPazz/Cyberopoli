@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.domain.repository
+package com.unibo.cyberopoli.data.repositories.match
 
 import com.unibo.cyberopoli.data.models.match.MatchPlayer
 import com.unibo.cyberopoli.ui.screens.match.Match

@@ -3,7 +3,7 @@ package com.unibo.cyberopoli.data.repositories.match
 import com.unibo.cyberopoli.data.models.match.MatchPlayer
 import com.unibo.cyberopoli.ui.screens.match.Match
 import io.github.jan.supabase.SupabaseClient
-import com.unibo.cyberopoli.domain.repository.IMatchRepository as DomainMatchRepository
+import com.unibo.cyberopoli.data.repositories.match.IMatchRepository as DomainMatchRepository
 
 class MatchRepository(
     private val supabase: SupabaseClient
