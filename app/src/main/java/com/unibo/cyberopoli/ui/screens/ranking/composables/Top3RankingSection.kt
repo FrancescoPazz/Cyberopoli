@@ -20,10 +20,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 
 @Composable
-fun Top3RankingSection(users: List<UserData>) {
+fun Top3RankingSection(users: List<User>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

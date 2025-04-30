@@ -2,12 +2,11 @@
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
-import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.domain.repository.IAuthRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthResponse
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
@@ -74,7 +73,7 @@ class AuthRepository(
             val userId = result?.id
                 ?: throw IllegalStateException("SignUp succeeded but userId is null")
 
-            val user = UserData(
+            val user = User(
                 id = userId,
                 email = email,
                 firstName = firstName,
@@ -121,7 +120,7 @@ class AuthRepository(
             val fullName = info.userMetadata?.get("full_name").toString().trim('"')
             val (fn, ln) = fullName.split(" ", limit = 2).let { it[0] to it.getOrElse(1) { "" } }
 
-            val user = UserData(
+            val user = User(
                 id = info.id,
                 email = info.email,
                 firstName = fn,
@@ -143,7 +142,7 @@ class AuthRepository(
             val session = supabase.auth.currentSessionOrNull()
                 ?: throw IllegalStateException("No session after anonymous login")
             val userId = session.user!!.id
-            val user = UserData(
+            val user = User(
                 id = userId,
                 email = null,
                 firstName = name,
@@ -175,15 +174,15 @@ class AuthRepository(
         }
     }
 
-    override suspend fun currentUser(): UserData? {
+    override suspend fun currentUser(): User? {
         val session = supabase.auth.currentSessionOrNull() ?: return null
         val data = session.user!!
-        return UserData(
+        return User(
             id = data.id,
             displayName = data.userMetadata?.get("full_name")?.toString()?.trim('"') ?: data.id,
             isGuest = supabase.from("users").select {
                 filter { eq("id", data.id) }
-            }.decodeList<UserData>().firstOrNull()?.isGuest ?: false,
+            }.decodeList<User>().firstOrNull()?.isGuest ?: false,
             email = data.email,
             avatarUrl = null
         )

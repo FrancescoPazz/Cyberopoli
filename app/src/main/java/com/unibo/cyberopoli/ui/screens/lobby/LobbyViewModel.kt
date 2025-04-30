@@ -2,8 +2,8 @@ package com.unibo.cyberopoli.ui.screens.lobby
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unibo.cyberopoli.data.models.auth.UserData
-import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
+import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,12 +20,12 @@ class LobbyViewModel(
     private val _lobbyId = MutableStateFlow<String?>(null)
     val lobbyId: StateFlow<String?> = _lobbyId.asStateFlow()
 
-    private val _members = MutableStateFlow<List<LobbyMemberData>>(emptyList())
-    val members: StateFlow<List<LobbyMemberData>> = _members.asStateFlow()
+    private val _members = MutableStateFlow<List<LobbyMember>>(emptyList())
+    val members: StateFlow<List<LobbyMember>> = _members.asStateFlow()
 
     fun startLobbyFlow(requestedId: String) = viewModelScope.launch {
         val userData = userRepository.currentUserLiveData.value ?: return@launch
-        val me = UserData(
+        val me = User(
             id = userData.id,
             displayName = userData.displayName,
             isGuest = userData.isGuest
@@ -34,7 +34,7 @@ class LobbyViewModel(
         _lobbyId.value = createdId
         lobbyRepo.joinLobby(
             createdId,
-            LobbyMemberData(
+            LobbyMember(
                 lobbyId     = createdId,
                 userId      = me.id,
                 isReady     = false,

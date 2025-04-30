@@ -21,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 
 @Composable
-fun MyRankingPosition(user: UserData?) {
+fun MyRankingPosition(user: User?) {
     val avatarRes = when (user?.avatarUrl) {
         "avatar_male_1" -> R.drawable.avatar_male_1
         "avatar_male_2" -> R.drawable.avatar_male_2

@@ -30,13 +30,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 
 @Composable
 fun ProfileHeader(
-    userData: UserData, onEditProfileClick: () -> Unit, onShareClick: () -> Unit
+    user: User, onEditProfileClick: () -> Unit, onShareClick: () -> Unit
 ) {
-    val avatarRes = when (userData.avatarUrl) {
+    val avatarRes = when (user.avatarUrl) {
         "avatar_male_1" -> R.drawable.avatar_male_1
         "avatar_male_2" -> R.drawable.avatar_male_2
         "avatar_female_1" -> R.drawable.avatar_female_1
@@ -75,14 +75,14 @@ fun ProfileHeader(
 
                 Text(
                     color = MaterialTheme.colorScheme.primary,
-                    text = userData.displayName,
+                    text = user.displayName,
                     fontWeight = FontWeight.Bold,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 )
 
                 Text(
                     color = MaterialTheme.colorScheme.primary,
-                    text = "${stringResource(R.string.level)}: ${userData.level}",
+                    text = "${stringResource(R.string.level)}: ${user.level}",
                     textAlign = TextAlign.Center
                 )
 

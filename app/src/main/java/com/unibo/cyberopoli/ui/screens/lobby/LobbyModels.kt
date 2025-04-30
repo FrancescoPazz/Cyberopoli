@@ -1,11 +1,11 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
-import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 data class LobbyParams(
     val scannedLobbyId: String,
     val lobbyId: String?,
-    val members: List<LobbyMemberData>,
+    val members: List<LobbyMember>,
     val isGuest: Boolean,
     val isHost: Boolean,
     val allReady: Boolean,

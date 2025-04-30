@@ -63,7 +63,7 @@ fun ProfileScreen(
                         text = stringResource(R.string.loading), modifier = Modifier.padding(16.dp)
                     )
                 } else {
-                    ProfileHeader(userData = profileParams.user.value!!,
+                    ProfileHeader(user = profileParams.user.value!!,
                         onEditProfileClick = { profileParams.changeAvatar() },
                         onShareClick = { /* TODO */ })
                     Spacer(modifier = Modifier.height(16.dp))

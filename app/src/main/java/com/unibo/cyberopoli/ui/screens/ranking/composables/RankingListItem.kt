@@ -21,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 
 @Composable
-fun RankingListItem(user: UserData) {
+fun RankingListItem(user: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

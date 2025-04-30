@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LobbyMemberData(
+data class LobbyMember(
     @SerialName("lobby_id") val lobbyId: String? = null,
 
     @SerialName("user_id") val userId: String? = null,

@@ -1,7 +1,7 @@
 package com.unibo.cyberopoli.domain.repository
 
 import android.content.Context
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.ui.screens.auth.AuthResponse
 import com.unibo.cyberopoli.ui.screens.auth.AuthState
 import kotlinx.coroutines.flow.Flow
@@ -21,5 +21,5 @@ interface IAuthRepository {
 
     fun resetPassword(email: String): Flow<AuthResponse>
 
-    suspend fun currentUser(): UserData?
+    suspend fun currentUser(): User?
 }

@@ -1,9 +1,9 @@
 package com.unibo.cyberopoli.ui.screens.home
 
 import androidx.compose.runtime.State
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 
 data class HomeParams(
-    val user: State<UserData?>,
+    val user: State<User?>,
     val loadUserData: () -> Unit,
 )

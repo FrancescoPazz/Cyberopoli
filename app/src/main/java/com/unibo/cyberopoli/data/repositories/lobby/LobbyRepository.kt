@@ -1,20 +1,19 @@
 package com.unibo.cyberopoli.data.repositories.lobby
 
 import android.util.Log
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.lobby.LobbyMemberData
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.domain.repository.ILobbyRepository as DomainLobbyRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
-import java.time.Instant
 import java.util.UUID
 
 class LobbyRepository(
     private val supabase: SupabaseClient
 ) : DomainLobbyRepository {
 
-    override suspend fun createOrGetLobby(lobbyId: String, host: UserData): String {
+    override suspend fun createOrGetLobby(lobbyId: String, host: User): String {
         val lobby = Lobby(
             lobbyId = UUID.nameUUIDFromBytes(lobbyId.toByteArray()).toString(),
             hostId = host.id,
@@ -31,8 +30,8 @@ class LobbyRepository(
         }
     }
 
-    override suspend fun joinLobby(lobbyId: String, member: LobbyMemberData) {
-        val data = LobbyMemberData(
+    override suspend fun joinLobby(lobbyId: String, member: LobbyMember) {
+        val data = LobbyMember(
             lobbyId = lobbyId,
             userId = member.userId,
             isReady = member.isReady,
@@ -46,12 +45,12 @@ class LobbyRepository(
         }
     }
 
-    override suspend fun fetchMembers(lobbyId: String): List<LobbyMemberData> = try {
-        val raw: List<LobbyMemberData> = supabase.from("lobby_members")
+    override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> = try {
+        val raw: List<LobbyMember> = supabase.from("lobby_members")
             .select { filter { eq("lobby_id", lobbyId) } }
             .decodeList()
         raw.map { d ->
-            LobbyMemberData(
+            LobbyMember(
                 lobbyId = d.lobbyId,
                 userId = d.userId,
                 displayName = d.displayName,
@@ -64,7 +63,7 @@ class LobbyRepository(
         emptyList()
     }
 
-    override suspend fun toggleReady(lobbyId: String, userId: String, isReady: Boolean): LobbyMemberData {
+    override suspend fun toggleReady(lobbyId: String, userId: String, isReady: Boolean): LobbyMember {
         return try {
             supabase.from("lobby_members").update(mapOf("ready" to isReady)) {
                 filter {
@@ -72,7 +71,7 @@ class LobbyRepository(
                     eq("user_id", userId)
                 }
                 select()
-            }.decodeSingle<LobbyMemberData>()
+            }.decodeSingle<LobbyMember>()
             fetchMembers(lobbyId).first { it.userId == userId }
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "toggleReady: ${e.message}")

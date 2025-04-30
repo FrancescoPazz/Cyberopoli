@@ -2,7 +2,7 @@ package com.unibo.cyberopoli.data.repositories.profile
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.unibo.cyberopoli.data.models.auth.UserData
+import com.unibo.cyberopoli.data.models.auth.User
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class UserRepository(
     private val supabase: SupabaseClient
 ) {
-    val currentUserLiveData = MutableLiveData<UserData?>()
+    val currentUserLiveData = MutableLiveData<User?>()
 
     fun loadUserData() {
         val userId = supabase.auth.currentUserOrNull()?.id ?: Log.d(
@@ -35,7 +35,7 @@ class UserRepository(
 
                 Log.d("UserRepository", "loadUserData: response: $resp")
 
-                val userData = resp.decodeList<UserData>()
+                val userData = resp.decodeList<User>()
                 Log.d("UserRepository", "loadUserData: $userData")
                 if (userData.isNotEmpty()) {
                     currentUserLiveData.postValue(userData[0])
