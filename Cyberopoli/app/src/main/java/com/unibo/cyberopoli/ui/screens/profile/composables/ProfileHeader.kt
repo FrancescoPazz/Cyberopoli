@@ -75,7 +75,7 @@ fun ProfileHeader(
 
                 Text(
                     color = MaterialTheme.colorScheme.primary,
-                    text = user.displayName,
+                    text = user.username,
                     fontWeight = FontWeight.Bold,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 )

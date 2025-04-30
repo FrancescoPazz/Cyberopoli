@@ -74,8 +74,8 @@ class AuthRepository(
             val user = User(
                 id = userId,
                 email = email,
-                firstName = firstName,
-                lastName = lastName,
+                name = firstName,
+                surname = lastName,
                 isGuest = false
             )
             supabase.from("users").upsert(user)
@@ -121,8 +121,8 @@ class AuthRepository(
             val user = User(
                 id = info.id,
                 email = info.email,
-                firstName = fn,
-                lastName = ln,
+                name = fn,
+                surname = ln,
                 isGuest = false
             )
             supabase.from("users").upsert(user)
@@ -143,8 +143,8 @@ class AuthRepository(
             val user = User(
                 id = userId,
                 email = null,
-                firstName = name,
-                lastName = null,
+                name = name,
+                surname = null,
                 isGuest = true
             )
             supabase.from("users").upsert(user)
@@ -177,7 +177,7 @@ class AuthRepository(
         val data = session.user!!
         return User(
             id = data.id,
-            displayName = data.userMetadata?.get("full_name")?.toString()?.trim('"') ?: data.id,
+            username = data.userMetadata?.get("full_name")?.toString()?.trim('"') ?: data.id,
             isGuest = supabase.from("users").select {
                 filter { eq("id", data.id) }
             }.decodeList<User>().firstOrNull()?.isGuest ?: false,

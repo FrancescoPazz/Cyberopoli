@@ -68,7 +68,7 @@ fun Top3RankingSection(users: List<User>) {
                 }
 
                 Text(
-                    text = user.displayName,
+                    text = user.username,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(top = 4.dp)
                 )

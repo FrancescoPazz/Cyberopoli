@@ -27,7 +27,7 @@ class LobbyViewModel(
         val userData = userRepository.currentUserLiveData.value ?: return@launch
         val me = User(
             id = userData.id,
-            displayName = userData.displayName,
+            username = userData.username,
             isGuest = userData.isGuest
         )
         val createdId = lobbyRepo.createOrGetLobby(requestedId, me)
@@ -39,7 +39,7 @@ class LobbyViewModel(
                 userId      = me.id,
                 isReady     = false,
                 joinedAt    = Instant.now().toString(),
-                displayName = me.displayName
+                displayName = me.username
             )
         )
         refreshMembers()

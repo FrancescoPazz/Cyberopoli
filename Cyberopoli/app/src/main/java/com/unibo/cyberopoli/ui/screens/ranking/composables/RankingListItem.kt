@@ -54,7 +54,7 @@ fun RankingListItem(user: User) {
         Column {
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = user.displayName,
+                text = user.username,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )

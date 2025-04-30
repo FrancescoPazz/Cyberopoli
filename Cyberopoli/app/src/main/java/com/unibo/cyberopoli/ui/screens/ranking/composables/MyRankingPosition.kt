@@ -55,7 +55,7 @@ fun MyRankingPosition(user: User?) {
                 text = stringResource(R.string.my_rank), style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "#${user?.level} ${user?.displayName} ${user?.totalScore} pt",
+                text = "#${user?.level} ${user?.username} ${user?.totalScore} pt",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
