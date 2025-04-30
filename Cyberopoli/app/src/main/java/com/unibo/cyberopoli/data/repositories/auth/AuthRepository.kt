@@ -1,4 +1,3 @@
-// File: app/src/main/java/com/unibo/cyberopoli/data/repositories/auth/SupabaseAuthRepository.kt
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
