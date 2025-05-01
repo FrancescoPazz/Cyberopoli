@@ -6,11 +6,11 @@ import java.time.Instant
 
 @Serializable
 data class Lobby(
-    @SerialName("id") val id: String? = null,
+    @SerialName("id") val id: String,
 
-    @SerialName("host_id") val hostId: String? = null,
+    @SerialName("host_id") val hostId: String,
 
-    @SerialName("status") val status: String? = "waiting",
+    @SerialName("status") var status: String,
 
     @SerialName("created_at") val createdAt: String = Instant.now().toString(),
 )

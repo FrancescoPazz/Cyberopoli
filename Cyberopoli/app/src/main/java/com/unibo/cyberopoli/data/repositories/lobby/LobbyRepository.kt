@@ -20,10 +20,10 @@ class LobbyRepository(
             status = "waiting"
         )
         return try {
-            val created: Lobby = supabase.from("lobbies").upsert(lobby) {
+            val created: Lobby = supabase.from("lobbies").insert(lobby) {
                 select()
             }.decodeSingle()
-            created.id ?: throw IllegalStateException("Lobby ID is null")
+            created.id
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "createOrGetLobby: ${e.message}")
             lobbyId
