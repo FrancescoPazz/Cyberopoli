@@ -7,11 +7,11 @@ import java.time.Instant
 @Serializable
 data class User(
     @SerialName("id") val id: String,
+    @SerialName("name") val name: String? = null,
+    @SerialName("surname") val surname: String? = null,
+    @SerialName("username") val username: String,
     @SerialName("email") val email: String? = null,
     @SerialName("is_guest") val isGuest: Boolean = false,
-    @SerialName("first_name") val name: String? = null,
-    @SerialName("last_name") val surname: String? = null,
-    @SerialName("display_name") val username: String = "$name $surname",
     @SerialName("avatar_url") val avatarUrl: String? = null,
     @SerialName("level") val level: Int = 1,
     @SerialName("total_score") val totalScore: Int = 0,

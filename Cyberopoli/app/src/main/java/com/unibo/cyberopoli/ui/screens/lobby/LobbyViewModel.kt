@@ -36,10 +36,7 @@ class LobbyViewModel(
             createdId,
             LobbyMember(
                 lobbyId     = createdId,
-                userId      = me.id,
-                isReady     = false,
-                joinedAt    = Instant.now().toString(),
-                displayName = me.username
+                userId      = me.id
             )
         )
         refreshMembers()

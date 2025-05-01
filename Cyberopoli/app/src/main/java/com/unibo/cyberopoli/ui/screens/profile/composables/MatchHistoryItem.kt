@@ -19,10 +19,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.profile.MatchHistory
+import com.unibo.cyberopoli.data.models.game.GameHistory
 
 @Composable
-fun MatchHistoryItem(match: MatchHistory) {
+fun MatchHistoryItem(match: GameHistory) {
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier

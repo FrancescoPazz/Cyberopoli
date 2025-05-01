@@ -96,14 +96,17 @@
     <!-- ================================= -->
     <!-- Partita / Gioco -->
     <!-- ================================= -->
-    <string name="matches">Partite</string>
-    <string name="latest_matches">Ultime partite</string>
+    <string name="games">Partite</string>
+    <string name="latest_games">Ultime partite</string>
     <string name="result">Risultato</string>
     <string name="recent_stats">Statistiche recenti</string>
     <string name="wins">Vittorie</string>
     <string name="badges">Badge</string>
     <string name="level">Livello</string>
     <string name="loading">Caricamento</string>
+    <string name="turn_of">Turno di </string>
+    <string name="players_in_game">Giocatori in gioco</string>
+    <string name="turn_pass">Passa il turno</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

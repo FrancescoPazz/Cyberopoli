@@ -29,12 +29,15 @@ import com.unibo.cyberopoli.ui.screens.auth.AuthState
 fun SignUpCard(
     navController: NavController,
     authState: State<AuthState?>,
-    signUp: (email: String, password: String, name: String, surname: String) -> Unit,
+    signUp: (
+        name: String?, surname: String?, username: String, email: String, password: String
+    ) -> Unit,
 ) {
     val context = LocalContext.current
 
     val name = remember { mutableStateOf("") }
     val surname = remember { mutableStateOf("") }
+    val username = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
@@ -60,6 +63,15 @@ fun SignUpCard(
         AuthOutlinedTextField(
             value = surname,
             placeholder = stringResource(R.string.last_name),
+            imageVector = Icons.Default.Person,
+            singleLine = true,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        AuthOutlinedTextField(
+            value = username,
+            placeholder = stringResource(R.string.username),
             imageVector = Icons.Default.Person,
             singleLine = true,
         )
@@ -102,7 +114,7 @@ fun SignUpCard(
                     ).show()
                 } else {
                     signUp(
-                        email.value, password.value, name.value, surname.value
+                        name.value, surname.value, username.value, email.value, password.value
                     )
                     navController.navigate(CyberopoliRoute.Auth) {
                         popUpTo(CyberopoliRoute.Auth) {

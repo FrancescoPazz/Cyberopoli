@@ -11,7 +11,9 @@ interface IAuthRepository {
 
     fun signIn(email: String, password: String): Flow<AuthResponse>
 
-    fun signUp(email: String, password: String, firstName: String, lastName: String): Flow<AuthResponse>
+    fun signUp(
+        name: String?, surname: String?, username: String, email: String, password: String
+    ): Flow<AuthResponse>
 
     fun signInAnonymously(name: String): Flow<AuthResponse>
 

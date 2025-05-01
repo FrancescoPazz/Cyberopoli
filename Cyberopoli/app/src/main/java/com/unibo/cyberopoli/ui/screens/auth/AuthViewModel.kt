@@ -46,14 +46,12 @@ class AuthViewModel(
         }
     }
 
-    fun signUp(email: String, password: String, name: String, surname: String) {
-        if (name.isBlank() && surname.isBlank()) {
-            _authState.value = AuthState.Error("Name or surname required")
-            return
-        }
+    fun signUp(
+        name: String?, surname: String?, username: String, email: String, password: String
+    ) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepo.signUp(email, password, name, surname).collect { resp ->
+            authRepo.signUp(name, surname, username, email, password).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
                         _authState.value = AuthState.Unauthenticated

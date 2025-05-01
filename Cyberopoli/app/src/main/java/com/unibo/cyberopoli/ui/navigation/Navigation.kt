@@ -22,9 +22,9 @@ import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
-import com.unibo.cyberopoli.ui.screens.match.MatchParams
-import com.unibo.cyberopoli.ui.screens.match.MatchScreen
-import com.unibo.cyberopoli.ui.screens.match.MatchViewModel
+import com.unibo.cyberopoli.ui.screens.game.GameParams
+import com.unibo.cyberopoli.ui.screens.game.MatchScreen
+import com.unibo.cyberopoli.ui.screens.game.GameViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
@@ -159,9 +159,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ))
                 }
                 composable<CyberopoliRoute.Match> {
-                    val matchVm = koinViewModel<MatchViewModel>()
-                    MatchScreen(navController, MatchParams(
-                        match = matchVm.match.collectAsStateWithLifecycle(),
+                    val matchVm = koinViewModel<GameViewModel>()
+                    MatchScreen(navController, GameParams(
+                        game = matchVm.game.collectAsStateWithLifecycle(),
                         players = matchVm.players.collectAsStateWithLifecycle(),
                         currentTurnIndex = matchVm.currentTurnIndex.collectAsStateWithLifecycle(),
                         nextTurn = matchVm::nextTurn

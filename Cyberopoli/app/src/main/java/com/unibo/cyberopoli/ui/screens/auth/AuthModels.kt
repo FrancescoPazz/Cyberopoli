@@ -7,7 +7,9 @@ data class AuthParams(
     val authState: LiveData<AuthState>,
     val login: (email: String, password: String) -> Unit,
     val loginGoogleUser: (context: Context) -> Unit,
-    val signUp: (email: String, password: String, name: String, surname: String) -> Unit,
+    val signUp: (
+        name: String?, surname: String?, username: String, email: String, password: String
+    ) -> Unit,
     val resetPassword: (email: String) -> Unit,
     val loginAnonymously: (String) -> Unit
 )

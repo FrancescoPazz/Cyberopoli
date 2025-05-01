@@ -15,7 +15,7 @@ class LobbyRepository(
 
     override suspend fun createOrGetLobby(lobbyId: String, host: User): String {
         val lobby = Lobby(
-            lobbyId = UUID.nameUUIDFromBytes(lobbyId.toByteArray()).toString(),
+            id = UUID.nameUUIDFromBytes(lobbyId.toByteArray()).toString(),
             hostId = host.id,
             status = "waiting"
         )
@@ -23,7 +23,7 @@ class LobbyRepository(
             val created: Lobby = supabase.from("lobbies").upsert(lobby) {
                 select()
             }.decodeSingle()
-            created.lobbyId ?: throw IllegalStateException("Lobby ID is null")
+            created.id ?: throw IllegalStateException("Lobby ID is null")
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "createOrGetLobby: ${e.message}")
             lobbyId
@@ -35,8 +35,7 @@ class LobbyRepository(
             lobbyId = lobbyId,
             userId = member.userId,
             isReady = member.isReady,
-            joinedAt = member.joinedAt.toString(),
-            displayName = member.displayName
+            joinedAt = member.joinedAt
         )
         try {
             supabase.from("lobby_members").insert(data) { select() }
@@ -53,8 +52,7 @@ class LobbyRepository(
             LobbyMember(
                 lobbyId = d.lobbyId,
                 userId = d.userId,
-                displayName = d.displayName,
-                isReady = d.isReady ?: false,
+                isReady = d.isReady,
                 joinedAt = d.joinedAt
             )
         }

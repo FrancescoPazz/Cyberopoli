@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.profile.MatchHistory
+import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.profile.composables.MatchHistorySection
@@ -34,13 +34,13 @@ fun ProfileScreen(
         profileParams.loadUserData()
     }
 
-    val matchHistory = listOf(
-        MatchHistory(
+    val gameHistories = listOf(
+        GameHistory(
             date = "15 Feb 2024",
             title = "Torneo Settimanale",
             result = "Vittoria",
             points = "+25 punti"
-        ), MatchHistory(
+        ), GameHistory(
             date = "14 Feb 2024",
             title = "Partita Amichevole",
             result = "Sconfitta",
@@ -79,7 +79,7 @@ fun ProfileScreen(
                         recentStats = listOf(5, 3, 7, 6, 8, 2, 9)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    MatchHistorySection(matchHistory = matchHistory)
+                    MatchHistorySection(gameHistory = gameHistories)
                 }
             }
         })

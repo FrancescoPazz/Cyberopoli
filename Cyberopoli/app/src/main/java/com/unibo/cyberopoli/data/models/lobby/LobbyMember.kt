@@ -2,16 +2,15 @@ package com.unibo.cyberopoli.data.models.lobby
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.Instant
 
 @Serializable
 data class LobbyMember(
-    @SerialName("lobby_id") val lobbyId: String? = null,
+    @SerialName("lobby_id") val lobbyId: String,
 
-    @SerialName("user_id") val userId: String? = null,
+    @SerialName("user_id") val userId: String,
 
-    @SerialName("ready") val isReady: Boolean? = false,
+    @SerialName("ready") var isReady: Boolean = false,
 
-    @SerialName("joined_at") val joinedAt: String? = null,
-
-    @SerialName("display_name") val displayName: String? = null
+    @SerialName("joined_at") val joinedAt: String = Instant.now().toString(),
 )

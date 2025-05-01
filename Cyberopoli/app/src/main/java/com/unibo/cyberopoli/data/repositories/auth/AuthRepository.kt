@@ -58,10 +58,11 @@ class AuthRepository(
     }
 
     override fun signUp(
+        name: String?,
+        surname: String?,
+        username: String,
         email: String,
-        password: String,
-        firstName: String,
-        lastName: String
+        password: String
     ): Flow<AuthResponse> = flow {
         try {
             val result = supabase.auth.signUpWith(Email) {
@@ -73,10 +74,10 @@ class AuthRepository(
 
             val user = User(
                 id = userId,
-                email = email,
-                name = firstName,
-                surname = lastName,
-                isGuest = false
+                name = name,
+                surname = surname,
+                username = username,
+                email = email
             )
             supabase.from("users").upsert(user)
             emit(AuthResponse.Success)
@@ -120,10 +121,10 @@ class AuthRepository(
 
             val user = User(
                 id = info.id,
-                email = info.email,
                 name = fn,
                 surname = ln,
-                isGuest = false
+                username = fullName,
+                email = info.email
             )
             supabase.from("users").upsert(user)
             emit(AuthResponse.Success)
@@ -132,10 +133,10 @@ class AuthRepository(
         }
     }
 
-    override fun signInAnonymously(name: String): Flow<AuthResponse> = flow {
+    override fun signInAnonymously(username: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.signInAnonymously(
-                data = JsonObject(mapOf("name" to JsonPrimitive(name)))
+                data = JsonObject(mapOf("name" to JsonPrimitive(username)))
             )
             val session = supabase.auth.currentSessionOrNull()
                 ?: throw IllegalStateException("No session after anonymous login")
@@ -143,7 +144,7 @@ class AuthRepository(
             val user = User(
                 id = userId,
                 email = null,
-                name = name,
+                username = username,
                 surname = null,
                 isGuest = true
             )

@@ -12,19 +12,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.profile.MatchHistory
+import com.unibo.cyberopoli.data.models.game.GameHistory
 
 @Composable
-fun MatchHistorySection(matchHistory: List<MatchHistory>) {
+fun MatchHistorySection(gameHistory: List<GameHistory>) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             color = MaterialTheme.colorScheme.primary,
-            text = stringResource(R.string.latest_matches),
+            text = stringResource(R.string.latest_games),
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        matchHistory.forEach { match ->
+        gameHistory.forEach { match ->
             MatchHistoryItem(match)
             Spacer(modifier = Modifier.height(8.dp))
         }

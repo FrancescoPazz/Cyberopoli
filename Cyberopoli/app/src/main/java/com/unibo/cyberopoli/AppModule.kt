@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
-import com.unibo.cyberopoli.data.repositories.match.MatchRepository
+import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.profile.RankingRepository
 import com.unibo.cyberopoli.data.repositories.settings.SettingsRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
-import com.unibo.cyberopoli.ui.screens.match.MatchViewModel
+import com.unibo.cyberopoli.ui.screens.game.GameViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
 import com.unibo.cyberopoli.ui.screens.scan.ScanViewModel
@@ -29,13 +29,13 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get(), get()) }
     viewModel { LobbyViewModel(get(), get()) }
-    viewModel { MatchViewModel(get()) }
+    viewModel { GameViewModel(get()) }
 
     single { AuthRepository(get()) }
     single { SettingsRepository(get()) }
     single { UserRepository(get()) }
     single { RankingRepository(get()) }
     single { LobbyRepository(get()) }
-    single { MatchRepository(get()) }
+    single { GameRepository(get()) }
     single { get<Context>().dataStore }
 }

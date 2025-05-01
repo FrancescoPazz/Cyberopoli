@@ -1,5 +1,5 @@
-package com.unibo.cyberopoli.data.models.profile
+package com.unibo.cyberopoli.data.models.game
 
-data class MatchHistory(
+data class GameHistory(
     val date: String, val title: String, val result: String, val points: String
 )

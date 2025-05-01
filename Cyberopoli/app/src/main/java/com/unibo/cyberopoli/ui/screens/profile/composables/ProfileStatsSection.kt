@@ -35,8 +35,8 @@ fun ProfileStatsSection(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StatItem(label = stringResource(R.string.matches), value = totalGames.toString())
-            StatItem(label = stringResource(R.string.matches), value = totalWins.toString())
+            StatItem(label = stringResource(R.string.games), value = totalGames.toString())
+            StatItem(label = stringResource(R.string.games), value = totalWins.toString())
             StatItem(label = stringResource(R.string.badges), value = totalMedals.toString())
         }
     }
