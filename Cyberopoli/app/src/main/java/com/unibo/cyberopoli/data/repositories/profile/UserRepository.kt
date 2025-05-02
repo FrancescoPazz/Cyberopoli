@@ -9,23 +9,41 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.unibo.cyberopoli.data.repositories.profile.IUserInterface as DomainUserRepository
+
 
 class UserRepository(
     private val supabase: SupabaseClient
-) {
+) : DomainUserRepository {
     val currentUserLiveData = MutableLiveData<User?>()
 
-    fun loadUserData() {
+    override fun loadUserData(): User? {
         val userId = supabase.auth.currentUserOrNull()?.id ?: Log.d(
             "UserRepository", "loadUserData: no authenticated user"
         )
-
-        Log.d("UserRepository", "loadUserData: userId: ${supabase.auth.currentUserOrNull()?.userMetadata?.get("email")}")
-
         CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val resp = supabase.from("users").select {
+                    filter {
+                        eq("id", userId)
+                    }
+                }
+                val userData = resp.decodeList<User>()
+                if (userData.isNotEmpty()) {
+                    return@launch currentUserLiveData.postValue(userData[0])
+                } else {
+                    currentUserLiveData.postValue(null)
+                }
 
-            Log.d("UserRepository", "loadUserData: userId: $userId")
+            } catch (e: Exception) {
+                currentUserLiveData.postValue(null)
+            }
+        }
+        return null
+    }
 
+    override fun loadUserData(userId: String): User? {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val resp = supabase.from("users").select {
                     filter {
@@ -33,27 +51,22 @@ class UserRepository(
                     }
                 }
 
-                Log.d("UserRepository", "loadUserData: response: $resp")
-
                 val userData = resp.decodeList<User>()
-                Log.d("UserRepository", "loadUserData: $userData")
                 if (userData.isNotEmpty()) {
-                    currentUserLiveData.postValue(userData[0])
+                    return@launch currentUserLiveData.postValue(userData[0])
                 } else {
-                    Log.d("UserRepository", "loadUserData: no user data found")
                     currentUserLiveData.postValue(null)
                 }
 
             } catch (e: Exception) {
-                Log.e("UserRepository", "Exception loading user data", e)
                 currentUserLiveData.postValue(null)
             }
         }
+        return null
     }
 
     fun changeAvatar() {
         val userId = supabase.auth.currentUserOrNull()?.id ?: run {
-            Log.d("UserRepository", "changeAvatar: no authenticated user")
             return
         }
 

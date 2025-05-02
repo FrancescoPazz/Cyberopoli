@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.Instant
 
 class LobbyViewModel(
     private val userRepository: UserRepository,
@@ -36,7 +35,8 @@ class LobbyViewModel(
             createdId,
             LobbyMember(
                 lobbyId     = createdId,
-                userId      = me.id
+                userId      = me.id,
+                user        = me
             )
         )
         refreshMembers()

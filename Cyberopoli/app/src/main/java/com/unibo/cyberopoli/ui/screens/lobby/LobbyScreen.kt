@@ -1,14 +1,25 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,8 +36,7 @@ import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
-    navController: NavHostController,
-    params: LobbyParams
+    navController: NavHostController, params: LobbyParams
 ) {
     var hasJoined by remember { mutableStateOf(false) }
 
@@ -42,15 +52,12 @@ fun LobbyScreen(
         navController.popBackStack()
     }
 
-    Scaffold(
-        topBar = {
-            TopBar(navController) {
-                params.leaveLobby()
-                navController.popBackStack()
-            }
-        },
-        bottomBar = { if (!params.isGuest) BottomBar(navController) }
-    ) { paddingValues ->
+    Scaffold(topBar = {
+        TopBar(navController) {
+            params.leaveLobby()
+            navController.popBackStack()
+        }
+    }, bottomBar = { if (!params.isGuest) BottomBar(navController) }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,16 +71,16 @@ fun LobbyScreen(
                 Column(modifier = Modifier.fillMaxSize()) {
                     Text(
                         text = stringResource(
-                            R.string.players_in_lobby,
-                            params.members.size
+                            R.string.players_in_lobby, params.members.size
                         )
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(params.members) { member ->
+                            Log.d("LobbyScreen", "Member: $member")
                             PlayerRow(
-                                playerName = member.userId,
+                                playerName = member.user?.username ?: member.userId,
                                 isReady = member.isReady,
                             )
                         }
@@ -82,29 +89,22 @@ fun LobbyScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     AuthButton(
-                        text = stringResource(R.string.ready),
-                        onClick = params.toggleReady
+                        text = stringResource(R.string.ready), onClick = params.toggleReady
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    AuthButton(
-                        text = stringResource(R.string.exit),
-                        onClick = {
-                            params.leaveLobby()
-                            navController.popBackStack()
-                        }
-                    )
+                    AuthButton(text = stringResource(R.string.exit), onClick = {
+                        params.leaveLobby()
+                        navController.popBackStack()
+                    })
 
                     if (params.isHost && params.allReady) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        AuthButton(
-                            text = stringResource(R.string.start),
-                            onClick = {
-                                params.startGame()
-                                navController.navigate(CyberopoliRoute.Match)
-                            }
-                        )
+                        AuthButton(text = stringResource(R.string.start), onClick = {
+                            params.startGame()
+                            navController.navigate(CyberopoliRoute.Match)
+                        })
                     }
                 }
             }

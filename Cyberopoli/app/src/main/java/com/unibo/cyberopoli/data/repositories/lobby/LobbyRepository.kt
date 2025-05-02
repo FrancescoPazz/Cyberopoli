@@ -4,10 +4,12 @@ import android.util.Log
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 import java.util.UUID
+import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
 
 class LobbyRepository(
     private val supabase: SupabaseClient
@@ -35,7 +37,8 @@ class LobbyRepository(
             lobbyId = lobbyId,
             userId = member.userId,
             isReady = member.isReady,
-            joinedAt = member.joinedAt
+            joinedAt = member.joinedAt,
+            user = member.user
         )
         try {
             supabase.from("lobby_members").insert(data) { select() }
@@ -45,15 +48,17 @@ class LobbyRepository(
     }
 
     override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> = try {
-        val raw: List<LobbyMember> = supabase.from("lobby_members")
-            .select { filter { eq("lobby_id", lobbyId) } }
-            .decodeList()
+        val raw: List<LobbyMemberRaw> = supabase.from("lobby_members").select(
+            Columns.raw("*, users(*)") // JOIN users table
+            ).decodeList<LobbyMemberRaw>()
+
         raw.map { d ->
             LobbyMember(
                 lobbyId = d.lobbyId,
                 userId = d.userId,
                 isReady = d.isReady,
-                joinedAt = d.joinedAt
+                joinedAt = d.joinedAt,
+                user = d.user
             )
         }
     } catch (e: Exception) {
@@ -61,7 +66,11 @@ class LobbyRepository(
         emptyList()
     }
 
-    override suspend fun toggleReady(lobbyId: String, userId: String, isReady: Boolean): LobbyMember {
+    override suspend fun toggleReady(
+        lobbyId: String,
+        userId: String,
+        isReady: Boolean
+    ): LobbyMember {
         return try {
             supabase.from("lobby_members").update(mapOf("ready" to isReady)) {
                 filter {
