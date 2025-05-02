@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.game
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,47 +33,52 @@ fun GameScreen(
 ) {
     var hasStarted by remember { mutableStateOf(false) }
 
-    LaunchedEffect(gameParams.game) {
-        Log.d("GameScreen", "Game: ${gameParams.game}")
-        if (!hasStarted) {
-            gameParams.startGame()
+    LaunchedEffect(gameParams.lobbyId, gameParams.lobbyMembers, gameParams.game) {
+        Log.d("GameScreen", "LaunchedEffect: ${gameParams.game.value} ${gameParams.lobbyId}, ${gameParams.lobbyMembers}")
+        if (!hasStarted
+            && gameParams.lobbyId.isNotBlank()
+            && gameParams.lobbyMembers.isNotEmpty()
+        ) {
+            gameParams.startGame(
+                gameParams.lobbyId,
+                gameParams.lobbyMembers
+            )
             hasStarted = true
         }
-        Log.d("GameScreen", "Game2: ${gameParams.game}")
+    }
+
+    BackHandler {
+        gameParams.leaveGame()
+        navController.popBackStack()
     }
 
     val game by gameParams.game
     val players by gameParams.players
-    val currentTurnIndex by gameParams.currentTurnIndex
+    val turnIdx by gameParams.currentTurnIndex
 
     if (game == null || players.isEmpty()) {
         LoadingScreen()
     } else {
-        val currentPlayer = players[currentTurnIndex]
-
-        Scaffold(topBar = {
-            TopBar(navController)
-        }, content = { paddingValues ->
+        val currentPlayer = players[turnIdx]
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = { TopBar(navController) }) { paddingValues ->
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
                     .padding(16.dp)
-                    .fillMaxSize(),
+                    .fillMaxSize()
             ) {
                 Text("${stringResource(R.string.players_in_game)}:")
-                Spacer(modifier = Modifier.height(8.dp))
-
-                players.forEach { player ->
-                    Text("${player.user?.username}: ${player.score} pt.")
+                Spacer(Modifier.height(8.dp))
+                players.forEach { p ->
+                    Text("${p.user?.username}: ${p.score} pt.")
                 }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Button(onClick = { gameParams.nextTurn() }) {
+                Spacer(Modifier.height(32.dp))
+                Button(onClick = gameParams.nextTurn) {
                     Text(stringResource(R.string.turn_pass))
                 }
             }
-        })
+        }
     }
-
 }

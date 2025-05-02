@@ -3,6 +3,7 @@ package com.unibo.cyberopoli.ui.screens.game
 import androidx.compose.runtime.State
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 enum class SocialMediaType {
     YOUTUBE, WHATSAPP, REDDIT, TIKTOK
@@ -22,9 +23,12 @@ data class Cell(
 )
 
 data class GameParams(
+    val lobbyId: String,
+    val lobbyMembers: List<LobbyMember>,
     val game: State<Game?>,
     val players: State<List<GamePlayer>>,
     val currentTurnIndex: State<Int>,
+    val startGame: (String, List<LobbyMember>) -> Unit,
     val nextTurn: () -> Unit,
-    val startGame: () -> Unit,
+    val leaveGame: () -> Unit
 )

@@ -34,6 +34,48 @@ class GameRepository(
         }
     }
 
+    override suspend fun joinGame(game: Game, userId: String): GamePlayer? {
+        return try {
+            val toInsert = mapOf(
+                "lobby_id" to game.lobbyId,
+                "game_id"  to game.id,
+                "user_id"  to userId,
+                "score"    to 50
+            )
+
+            val raw: GamePlayerRaw = supabase
+                .from("game_players")
+                .insert(toInsert) {
+                    select(Columns.raw("""
+                  lobby_id,
+                  game_id,
+                  user_id,
+                  score,
+                  users (
+                    id,
+                    username,
+                    name,
+                    surname,
+                    avatar_url
+                  )
+                """.trimIndent()))
+                }
+                .decodeSingle()
+
+            GamePlayer(
+                lobbyId = raw.lobbyId,
+                gameId  = raw.gameId,
+                userId  = raw.userId,
+                score   = raw.score,
+                user    = raw.user
+            )
+        } catch (e: Exception) {
+            Log.e("GameRepoImpl", "joinGame: ${e.message}")
+            null
+        }
+    }
+
+
     override suspend fun getGamePlayers(matchId: String): List<GamePlayer> {
         return try {
             val raw: List<GamePlayerRaw> = supabase

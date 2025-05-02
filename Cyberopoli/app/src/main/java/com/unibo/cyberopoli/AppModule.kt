@@ -29,7 +29,7 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get(), get()) }
     viewModel { LobbyViewModel(get(), get()) }
-    viewModel { GameViewModel(get()) }
+    viewModel { GameViewModel(get(), get()) }
 
     single { AuthRepository(get()) }
     single { SettingsRepository(get()) }

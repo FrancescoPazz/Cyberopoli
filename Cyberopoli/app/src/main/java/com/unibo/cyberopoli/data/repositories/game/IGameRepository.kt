@@ -8,6 +8,8 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 interface IGameRepository {
     suspend fun createGame(lobbyId: String, lobbyMembers: List<LobbyMember>): Game
 
+    suspend fun joinGame(game: Game, userId: String): GamePlayer?
+
     suspend fun getGamePlayers(matchId: String): List<GamePlayer>
 
     suspend fun setNextTurn(game: Game, nextTurn: String): Game?

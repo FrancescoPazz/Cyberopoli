@@ -159,13 +159,26 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 }
                 composable<CyberopoliRoute.Game> {
                     val gameVm = koinViewModel<GameViewModel>()
-                    GameScreen(navController, GameParams(
-                        game = gameVm.game.collectAsStateWithLifecycle(),
-                        players = gameVm.players.collectAsStateWithLifecycle(),
-                        currentTurnIndex = gameVm.currentTurnIndex.collectAsStateWithLifecycle(),
-                        nextTurn = gameVm::nextTurn,
-                        startGame = { (gameVm::startGame)(lobbyVm.lobbyId.value ?: "", lobbyVm.members.value) },
-                    ))
+
+                    val lobbyId       = lobbyVm.lobbyId.value ?: ""
+                    val members       = lobbyVm.members.collectAsStateWithLifecycle().value
+                    val gameState     = gameVm.game.collectAsStateWithLifecycle()
+                    val playersState  = gameVm.players.collectAsStateWithLifecycle()
+                    val turnIndex     = gameVm.currentTurnIndex.collectAsStateWithLifecycle()
+
+                    GameScreen(
+                        navController,
+                        GameParams(
+                            lobbyId        = lobbyId,
+                            lobbyMembers   = members,
+                            game           = gameState,
+                            players        = playersState,
+                            currentTurnIndex = turnIndex,
+                            startGame      = gameVm::startGame,
+                            nextTurn       = gameVm::nextTurn,
+                            leaveGame      = lobbyVm::leaveLobby
+                        )
+                    )
                 }
             }
         }
