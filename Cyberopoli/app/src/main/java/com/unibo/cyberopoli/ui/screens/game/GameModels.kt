@@ -25,5 +25,6 @@ data class GameParams(
     val game: State<Game?>,
     val players: State<List<GamePlayer>>,
     val currentTurnIndex: State<Int>,
-    val nextTurn: () -> Unit
+    val nextTurn: () -> Unit,
+    val startGame: () -> Unit,
 )

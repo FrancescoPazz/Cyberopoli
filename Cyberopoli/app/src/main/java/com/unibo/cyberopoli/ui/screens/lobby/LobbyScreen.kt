@@ -40,9 +40,9 @@ fun LobbyScreen(
 ) {
     var hasJoined by remember { mutableStateOf(false) }
 
-    LaunchedEffect(params.scannedLobbyId) {
-        if (!hasJoined && params.scannedLobbyId.isNotBlank()) {
-            params.startLobbyFlow(params.scannedLobbyId)
+    LaunchedEffect(params.lobbyId) {
+        if (!hasJoined && params.lobbyId.isNotBlank()) {
+            params.startLobbyFlow(params.lobbyId)
             hasJoined = true
         }
     }
@@ -65,7 +65,7 @@ fun LobbyScreen(
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (params.lobbyId.isNullOrEmpty() || params.members.isEmpty()) {
+            if (params.lobbyId.isEmpty() || params.members.isEmpty()) {
                 LoadingScreen()
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -102,8 +102,9 @@ fun LobbyScreen(
                     if (params.isHost && params.allReady) {
                         Spacer(modifier = Modifier.height(16.dp))
                         AuthButton(text = stringResource(R.string.start), onClick = {
+                            Log.d("LobbyScreen", "Starting game...")
                             params.startGame()
-                            navController.navigate(CyberopoliRoute.Match)
+                            navController.navigate(CyberopoliRoute.Game)
                         })
                     }
                 }

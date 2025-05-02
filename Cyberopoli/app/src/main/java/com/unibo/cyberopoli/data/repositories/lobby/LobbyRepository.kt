@@ -8,7 +8,6 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
-import java.util.UUID
 import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
 
 class LobbyRepository(
@@ -17,7 +16,7 @@ class LobbyRepository(
 
     override suspend fun createOrGetLobby(lobbyId: String, host: User): String {
         val lobby = Lobby(
-            id = UUID.nameUUIDFromBytes(lobbyId.toByteArray()).toString(),
+            id = lobbyId,
             hostId = host.id,
             status = "waiting"
         )
@@ -49,7 +48,7 @@ class LobbyRepository(
 
     override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> = try {
         val raw: List<LobbyMemberRaw> = supabase.from("lobby_members").select(
-            Columns.raw("*, users(*)") // JOIN users table
+            Columns.raw("*, users(*)")
             ).decodeList<LobbyMemberRaw>()
 
         raw.map { d ->

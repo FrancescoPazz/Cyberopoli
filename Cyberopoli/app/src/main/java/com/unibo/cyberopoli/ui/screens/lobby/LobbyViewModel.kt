@@ -22,14 +22,14 @@ class LobbyViewModel(
     private val _members = MutableStateFlow<List<LobbyMember>>(emptyList())
     val members: StateFlow<List<LobbyMember>> = _members.asStateFlow()
 
-    fun startLobbyFlow(requestedId: String) = viewModelScope.launch {
+    fun startLobbyFlow(lobbyId: String) = viewModelScope.launch {
         val userData = userRepository.currentUserLiveData.value ?: return@launch
         val me = User(
             id = userData.id,
             username = userData.username,
             isGuest = userData.isGuest
         )
-        val createdId = lobbyRepo.createOrGetLobby(requestedId, me)
+        val createdId = lobbyRepo.createOrGetLobby(lobbyId, me)
         _lobbyId.value = createdId
         lobbyRepo.joinLobby(
             createdId,

@@ -23,7 +23,7 @@ import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.game.GameParams
-import com.unibo.cyberopoli.ui.screens.game.MatchScreen
+import com.unibo.cyberopoli.ui.screens.game.GameScreen
 import com.unibo.cyberopoli.ui.screens.game.GameViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.ProfileScreen
@@ -42,6 +42,7 @@ import com.unibo.cyberopoli.data.models.theme.Theme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
+import java.util.UUID
 
 sealed interface CyberopoliRoute {
     @Serializable data object Auth : CyberopoliRoute
@@ -52,7 +53,7 @@ sealed interface CyberopoliRoute {
     @Serializable data object Profile : CyberopoliRoute
     @Serializable data object Ranking : CyberopoliRoute
     @Serializable data object Lobby : CyberopoliRoute
-    @Serializable data object Match : CyberopoliRoute
+    @Serializable data object Game : CyberopoliRoute
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -65,6 +66,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val homeViewModel = koinViewModel<HomeViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
+    val lobbyVm = koinViewModel<LobbyViewModel>()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
 
     KoinContext {
@@ -137,17 +139,14 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ))
                 }
                 composable<CyberopoliRoute.Lobby> {
-                    val lobbyVm = koinViewModel<LobbyViewModel>()
-                    val lobbyId by lobbyVm.lobbyId.collectAsStateWithLifecycle()
                     val members by lobbyVm.members.collectAsStateWithLifecycle()
                     val currentUserId = profileViewModel.user.value?.id
                     val isGuest = profileViewModel.user.value?.isGuest ?: false
                     val isHost = members.firstOrNull()?.userId == currentUserId
-                    val allReady = members.isNotEmpty() && members.all { it.isReady == true }
+                    val allReady = members.isNotEmpty() && members.all { it.isReady }
 
                     LobbyScreen(navController, LobbyParams(
-                        scannedLobbyId = scanViewModel.scannedValue.value ?: "",
-                        lobbyId = lobbyId,
+                        lobbyId = UUID.nameUUIDFromBytes(scanViewModel.scannedValue.value?.toByteArray() ?: "".toByteArray()).toString(),
                         members = members,
                         isGuest = isGuest,
                         isHost = isHost,
@@ -158,13 +157,14 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         startGame = lobbyVm::startGame
                     ))
                 }
-                composable<CyberopoliRoute.Match> {
-                    val matchVm = koinViewModel<GameViewModel>()
-                    MatchScreen(navController, GameParams(
-                        game = matchVm.game.collectAsStateWithLifecycle(),
-                        players = matchVm.players.collectAsStateWithLifecycle(),
-                        currentTurnIndex = matchVm.currentTurnIndex.collectAsStateWithLifecycle(),
-                        nextTurn = matchVm::nextTurn
+                composable<CyberopoliRoute.Game> {
+                    val gameVm = koinViewModel<GameViewModel>()
+                    GameScreen(navController, GameParams(
+                        game = gameVm.game.collectAsStateWithLifecycle(),
+                        players = gameVm.players.collectAsStateWithLifecycle(),
+                        currentTurnIndex = gameVm.currentTurnIndex.collectAsStateWithLifecycle(),
+                        nextTurn = gameVm::nextTurn,
+                        startGame = { (gameVm::startGame)(lobbyVm.lobbyId.value ?: "", lobbyVm.members.value) },
                     ))
                 }
             }
