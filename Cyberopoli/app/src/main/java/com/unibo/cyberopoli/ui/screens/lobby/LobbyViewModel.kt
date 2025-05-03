@@ -53,7 +53,7 @@ class LobbyViewModel(
         val meId    = userRepository.currentUserLiveData.value?.id ?: return@launch
         val member  = _members.value.firstOrNull { it.userId == meId } ?: return@launch
 
-        val newReady = !(member.isReady ?: false)
+        val newReady = !(member.isReady)
         lobbyRepo.toggleReady(lobbyId, meId, newReady)
         refreshMembers()
     }
