@@ -51,6 +51,7 @@ class GameRepository(
                   game_id,
                   user_id,
                   score,
+                  cell_position,
                   users (
                     id,
                     username,
@@ -67,6 +68,7 @@ class GameRepository(
                 gameId  = raw.gameId,
                 userId  = raw.userId,
                 score   = raw.score,
+                cellPosition = raw.cellPosition,
                 user    = raw.user
             )
         } catch (e: Exception) {
@@ -75,6 +77,46 @@ class GameRepository(
         }
     }
 
+    override suspend fun updatePlayer(game: Game, updatedPlayer: GamePlayer): GamePlayer? {
+        return try {
+            val raw: GamePlayerRaw = supabase
+                .from("game_players")
+                .update(updatedPlayer) {
+                    filter {
+                        eq("lobby_id", game.lobbyId)
+                        eq("game_id",  game.id)
+                        eq("user_id",  updatedPlayer.userId)
+                    }
+                    select(Columns.raw("""
+                    lobby_id,
+                    game_id,
+                    user_id,
+                    score,
+                    cell_position,
+                    users (
+                      id,
+                      username,
+                      name,
+                      surname,
+                      avatar_url
+                    )
+                """.trimIndent()))
+                }
+                .decodeSingle()
+
+            GamePlayer(
+                lobbyId      = raw.lobbyId,
+                gameId       = raw.gameId,
+                userId       = raw.userId,
+                score        = raw.score,
+                cellPosition = raw.cellPosition,
+                user         = raw.user
+            )
+        } catch (e: Exception) {
+            Log.e("GameRepoImpl", "updatePlayer: ${e.message}")
+            null
+        }
+    }
 
     override suspend fun getGamePlayers(matchId: String): List<GamePlayer> {
         return try {
@@ -86,6 +128,7 @@ class GameRepository(
                         game_id,
                         user_id,
                         score,
+                        cell_position,
                         users (
                           id,
                           username,
@@ -102,6 +145,7 @@ class GameRepository(
                     gameId  = r.gameId,
                     userId  = r.userId,
                     score   = r.score,
+                    cellPosition = r.cellPosition,
                     user    = u
                 )
             }
@@ -113,9 +157,10 @@ class GameRepository(
 
     override suspend fun setNextTurn(game: Game, nextTurn: String): Game? {
         return try {
+            val updatedGame = game.copy(turn = nextTurn)
             val updated: Game = supabase
                 .from("games")
-                .update(mapOf("turn" to nextTurn)) {
+                .update(updatedGame) {
                     filter {
                         eq("lobby_id", game.lobbyId)
                         eq("id", game.id)

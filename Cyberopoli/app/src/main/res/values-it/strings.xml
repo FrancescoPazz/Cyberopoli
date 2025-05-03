@@ -107,6 +107,13 @@
     <string name="turn_of">Turno di </string>
     <string name="players_in_game">Giocatori in gioco</string>
     <string name="turn_pass">Passa il turno</string>
+    <string name="manage">Gestisci</string>
+    <string name="roll_dice">Lancia il dado</string>
+    <string name="move_on">Spostati di</string>
+    <string name="cells">Caselle</string>
+    <string name="chance">Probabilità</string>
+    <string name="hacker">Hacker</string>
+    <string name="internet_points">Punti Internet</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

@@ -107,6 +107,14 @@
     <string name="turn_of">Turn of</string>
     <string name="players_in_game">Players in game</string>
     <string name="turn_pass">Pass turn</string>
+    <string name="manage">Manage</string>
+    <string name="roll_dice">Roll Dice</string>
+    <string name="move_on">Move forward</string>
+    <string name="cells">Cells</string>
+    <string name="chance">Chance</string>
+    <string name="hacker">Hacker</string>
+    <string name="internet_points">Internet points</string>
+
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>

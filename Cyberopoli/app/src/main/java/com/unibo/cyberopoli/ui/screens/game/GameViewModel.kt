@@ -31,6 +31,11 @@ class GameViewModel(
     private val _currentTurnIndex = MutableStateFlow(0)
     val currentTurnIndex = _currentTurnIndex.asStateFlow()
 
+    private val _phase = MutableStateFlow(Phase.ROLL_DICE)
+    val phase = _phase.asStateFlow()
+
+    private val _diceRoll = MutableStateFlow<Int?>(null)
+    val diceRoll = _diceRoll.asStateFlow()
 
     fun startGame(
         lobbyId: String,
@@ -60,7 +65,40 @@ class GameViewModel(
         }
     }
 
-    fun nextTurn() {
+    fun rollDice() {
+        val roll = (1..6).random()
+        _diceRoll.value = roll
+        _phase.value = Phase.MOVE
+    }
+
+    fun movePlayer() {
+        val g = _game.value ?: return
+        viewModelScope.launch {
+            val myPlayer = _players.value
+                .firstOrNull { it.userId == userRepository.currentUserLiveData.value?.id }
+                ?: return@launch
+            val updatedPlayer = myPlayer.copy(cellPosition = myPlayer.cellPosition + _diceRoll.value!!)
+            repo.updatePlayer(g, updatedPlayer)
+            refreshPlayers()
+            _phase.value = Phase.END_TURN
+        }
+    }
+
+    fun performChance() {
+        _phase.value = Phase.END_TURN
+    }
+
+    fun performHacker() {
+        _phase.value = Phase.END_TURN
+    }
+
+    fun endTurn() {
+        nextTurn()
+        _diceRoll.value = null
+        _phase.value = Phase.WAIT
+    }
+
+    private fun nextTurn() {
         val count = _players.value.size
         if (count == 0) return
         _currentTurnIndex.value = (_currentTurnIndex.value + 1) % count
@@ -70,18 +108,20 @@ class GameViewModel(
             val nextPlayer = _players.value[_currentTurnIndex.value]
             repo.setNextTurn(g, nextPlayer.userId)
             refreshEvents()
+            updateTurnIndex()
         }
     }
 
-    fun updatePlayerPoints(userId: String, value: Int, gameEventType: GameEventType) {
+    fun updatePlayerPoints(userId: String?, value: Int, gameEventType: GameEventType) {
         val g = _game.value ?: return
         viewModelScope.launch {
             val evt = GameEvent(
-                lobbyId       = g.lobbyId,
-                gameId        = g.id,
-                senderUserId  = userId,
-                eventType     = gameEventType,
-                value         = value
+                lobbyId         = g.lobbyId,
+                gameId          = g.id,
+                senderUserId    = userRepository.currentUserLiveData.value?.id!!,
+                eventType       = gameEventType,
+                value           = value,
+                recipientUserId = userId,
             )
             repo.addGameEvent(evt)
             refreshPlayers()

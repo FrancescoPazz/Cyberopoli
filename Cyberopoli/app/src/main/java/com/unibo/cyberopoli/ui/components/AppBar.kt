@@ -136,7 +136,7 @@ fun BottomBar(navController: NavController) {
                         text = item.name,
                         color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                     )
-                }, selected = currentRoute == item.route.toString(), onClick = {
+                }, selected = isSelected, onClick = {
                     if (currentRoute != item.route.toString()) {
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId)

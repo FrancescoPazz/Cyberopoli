@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavHostController
@@ -160,25 +161,37 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 composable<CyberopoliRoute.Game> {
                     val gameVm = koinViewModel<GameViewModel>()
 
-                    val lobbyId       = lobbyVm.lobbyId.value ?: ""
-                    val members       = lobbyVm.members.collectAsStateWithLifecycle().value
-                    val gameState     = gameVm.game.collectAsStateWithLifecycle()
-                    val playersState  = gameVm.players.collectAsStateWithLifecycle()
-                    val turnIndex     = gameVm.currentTurnIndex.collectAsStateWithLifecycle()
+                    val lobbyId     by lobbyVm.lobbyId.collectAsStateWithLifecycle(null)
+                    val members     by lobbyVm.members.collectAsStateWithLifecycle()
+                    val gameState   by gameVm.game.collectAsStateWithLifecycle()
+                    val players     by gameVm.players.collectAsStateWithLifecycle()
+                    val turnIndex   by gameVm.currentTurnIndex.collectAsStateWithLifecycle()
+                    val phase       by gameVm.phase.collectAsStateWithLifecycle()
+                    val diceRoll    by gameVm.diceRoll.collectAsStateWithLifecycle()
 
-                    GameScreen(
-                        navController,
-                        GameParams(
-                            lobbyId        = lobbyId,
-                            lobbyMembers   = members,
-                            game           = gameState,
-                            players        = playersState,
-                            currentTurnIndex = turnIndex,
-                            startGame      = gameVm::startGame,
-                            nextTurn       = gameVm::nextTurn,
-                            leaveGame      = lobbyVm::leaveLobby
+                    if (lobbyId == null || members.isEmpty()) {
+                        LoadingScreen()
+                    } else {
+                        GameScreen(
+                            navController = navController,
+                            gameParams = GameParams(
+                                lobbyId          = lobbyId!!,
+                                lobbyMembers     = members,
+                                game             = derivedStateOf { gameState },
+                                players          = derivedStateOf { players },
+                                currentTurnIndex = derivedStateOf { turnIndex },
+                                phase            = derivedStateOf { phase },
+                                diceRoll         = derivedStateOf { diceRoll },
+                                startGame        = gameVm::startGame,
+                                rollDice         = gameVm::rollDice,
+                                movePlayer       = gameVm::movePlayer,
+                                performChance    = gameVm::performChance,
+                                performHacker    = gameVm::performHacker,
+                                endTurn          = gameVm::endTurn,
+                                leaveGame        = lobbyVm::leaveLobby
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

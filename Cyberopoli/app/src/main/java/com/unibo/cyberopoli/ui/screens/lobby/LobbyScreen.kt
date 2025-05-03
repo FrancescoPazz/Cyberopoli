@@ -122,7 +122,10 @@ fun LobbyScreen(
                             Log.d("LobbyScreen", "Starting game...")
                             suppressLeaveOnStop = true
                             params.startGame()
-                            navController.navigate(CyberopoliRoute.Game)
+                            navController.navigate(CyberopoliRoute.Game) {
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         })
                     }
                 }

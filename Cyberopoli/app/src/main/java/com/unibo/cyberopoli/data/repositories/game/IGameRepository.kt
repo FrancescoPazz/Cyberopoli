@@ -10,6 +10,8 @@ interface IGameRepository {
 
     suspend fun joinGame(game: Game, userId: String): GamePlayer?
 
+    suspend fun updatePlayer(game: Game, updatedPlayer: GamePlayer): GamePlayer?
+
     suspend fun getGamePlayers(matchId: String): List<GamePlayer>
 
     suspend fun setNextTurn(game: Game, nextTurn: String): Game?

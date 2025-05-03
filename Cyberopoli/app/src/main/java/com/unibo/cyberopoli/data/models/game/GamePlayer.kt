@@ -3,6 +3,7 @@ package com.unibo.cyberopoli.data.models.game
 import com.unibo.cyberopoli.data.models.auth.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class GamePlayerRaw(
@@ -10,6 +11,7 @@ data class GamePlayerRaw(
     @SerialName("game_id")  val gameId:   String,
     @SerialName("user_id")  val userId:   String,
     @SerialName("score")    val score:    Int,
+    @SerialName("cell_position") val cellPosition: Int,
     @SerialName("users")    val user:     User
 )
 
@@ -22,6 +24,8 @@ data class GamePlayer(
     @SerialName("user_id") val userId: String,
 
     @SerialName("score") var score: Int = 50,
+
+    @SerialName("cell_position") val cellPosition: Int = 0,
 
     @Transient val user: User? = null
 )
