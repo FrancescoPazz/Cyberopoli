@@ -114,7 +114,7 @@
     <string name="chance">Chance</string>
     <string name="hacker">Hacker</string>
     <string name="internet_points">Internet points</string>
-
+    <string name="wait_your_turn">Wait your turn</string>
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>

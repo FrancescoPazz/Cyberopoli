@@ -81,26 +81,26 @@ class GameRepository(
         return try {
             val raw: GamePlayerRaw = supabase
                 .from("game_players")
-                .update(updatedPlayer) {
+                .update(mapOf("cell_position" to updatedPlayer.cellPosition)) {
                     filter {
                         eq("lobby_id", game.lobbyId)
                         eq("game_id",  game.id)
                         eq("user_id",  updatedPlayer.userId)
                     }
                     select(Columns.raw("""
-                    lobby_id,
-                    game_id,
-                    user_id,
-                    score,
-                    cell_position,
-                    users (
-                      id,
-                      username,
-                      name,
-                      surname,
-                      avatar_url
-                    )
-                """.trimIndent()))
+          lobby_id,
+          game_id,
+          user_id,
+          score,
+          cell_position,
+          users (
+            id,
+            username,
+            name,
+            surname,
+            avatar_url
+          )
+        """.trimIndent()))
                 }
                 .decodeSingle()
 
@@ -165,6 +165,7 @@ class GameRepository(
                         eq("lobby_id", game.lobbyId)
                         eq("id", game.id)
                     }
+                    select()
                 }
                 .decodeSingle()
 

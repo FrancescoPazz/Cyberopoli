@@ -120,7 +120,23 @@ fun GameBottomBar(
                     onClick = onEndTurn
                 )
             }
-            else -> {}
+            else -> {
+                NavigationBarItem(
+                    icon = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_stop_hand),
+                                contentDescription = stringResource(R.string.wait_your_turn),
+                                tint = Color.Unspecified
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.wait_your_turn))
+                        }
+                    },
+                    selected = false,
+                    onClick = onEndTurn
+                )
+            }
         }
     }
 }

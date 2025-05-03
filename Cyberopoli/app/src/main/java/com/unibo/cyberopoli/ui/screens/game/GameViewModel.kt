@@ -18,6 +18,8 @@ class GameViewModel(
     private val userRepository: UserRepository,
     private val repo: GameRepository
 ) : ViewModel() {
+    private val myUserId: String?
+        get() = userRepository.currentUserLiveData.value?.id
 
     private val _game = MutableStateFlow<Game?>(null)
     val game = _game.asStateFlow()
@@ -56,10 +58,9 @@ class GameViewModel(
     }
 
     private fun joinGame() {
-        val userData = userRepository.currentUserLiveData.value
         val g = _game.value ?: return
         viewModelScope.launch {
-            repo.joinGame(g, userData?.id!!)
+            repo.joinGame(g, myUserId!!)
             Log.d("GameViewModel", "joinGame(): joined as player to ${g.id}")
             refreshPlayers()
         }
@@ -71,18 +72,39 @@ class GameViewModel(
         _phase.value = Phase.MOVE
     }
 
+    private fun perimeterPath(rows: Int, cols: Int): List<Int> {
+        val path = mutableListOf<Int>()
+        for (c in 0 until cols)        path += c
+        for (r in 1 until rows - 1)    path += r * cols + (cols - 1)
+        for (c in cols - 1 downTo 0)    path += (rows - 1) * cols + c
+        for (r in rows - 2 downTo 1)    path += r * cols
+        return path
+    }
+
     fun movePlayer() {
         val g = _game.value ?: return
+        val roll = _diceRoll.value ?: return
         viewModelScope.launch {
-            val myPlayer = _players.value
-                .firstOrNull { it.userId == userRepository.currentUserLiveData.value?.id }
-                ?: return@launch
-            val updatedPlayer = myPlayer.copy(cellPosition = myPlayer.cellPosition + _diceRoll.value!!)
-            repo.updatePlayer(g, updatedPlayer)
+            val me = _players.value.first { it.userId == myUserId }
+            val path = perimeterPath(rows = 5, cols = 5)
+            val startIdx = path.indexOf(me.cellPosition).takeIf { it >= 0 } ?: 0
+            val nextIdx = (startIdx + roll) % path.size
+            val newPos = path[nextIdx]
+            val updated = repo.updatePlayer(
+                g,
+                me.copy(cellPosition = newPos)
+            )
+            if (updated == null) {
+                Log.e("GameViewModel", "movePlayer: updatePlayer è tornato null!")
+            } else {
+                Log.d("GameViewModel", "movePlayer: successo, nuova pos = ${updated.cellPosition}")
+            }
             refreshPlayers()
             _phase.value = Phase.END_TURN
         }
     }
+
+
 
     fun performChance() {
         _phase.value = Phase.END_TURN
@@ -93,15 +115,16 @@ class GameViewModel(
     }
 
     fun endTurn() {
-        nextTurn()
-        _diceRoll.value = null
         _phase.value = Phase.WAIT
+        _diceRoll.value = null
+        nextTurn()
     }
 
     private fun nextTurn() {
         val count = _players.value.size
         if (count == 0) return
         _currentTurnIndex.value = (_currentTurnIndex.value + 1) % count
+        Log.d("GameViewModel", "Next turn: current index = ${_currentTurnIndex.value}, players count = $count")
 
         val g = _game.value ?: return
         viewModelScope.launch {
@@ -118,7 +141,7 @@ class GameViewModel(
             val evt = GameEvent(
                 lobbyId         = g.lobbyId,
                 gameId          = g.id,
-                senderUserId    = userRepository.currentUserLiveData.value?.id!!,
+                senderUserId    = myUserId!!,
                 eventType       = gameEventType,
                 value           = value,
                 recipientUserId = userId,
@@ -144,7 +167,16 @@ class GameViewModel(
     }
 
     private fun updateTurnIndex() {
-        _currentTurnIndex.value = _players.value.indexOfFirst { it.userId == _game.value?.turn }
-        Log.d("GameViewModel", "Current turn index: ${_currentTurnIndex.value}")
+        val idx = _players.value.indexOfFirst { it.userId == _game.value?.turn }
+        _currentTurnIndex.value = idx
+
+        _phase.value = if (_players.value.getOrNull(idx)?.userId == myUserId) {
+            Phase.ROLL_DICE
+        } else {
+            Phase.WAIT
+        }
+
+        Log.d("GameViewModel", "Current turn index: $idx, phase = ${_phase.value}")
     }
+
 }

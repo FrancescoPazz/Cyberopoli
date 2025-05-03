@@ -114,6 +114,7 @@
     <string name="chance">Probabilità</string>
     <string name="hacker">Hacker</string>
     <string name="internet_points">Punti Internet</string>
+    <string name="wait_your_turn">Aspetta il tuo turno</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

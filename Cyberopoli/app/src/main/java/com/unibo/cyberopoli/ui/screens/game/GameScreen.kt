@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.game
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,10 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.game.composables.GameMap
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 
@@ -35,6 +41,21 @@ fun GameScreen(
     navController: NavHostController, gameParams: GameParams
 ) {
     var hasStarted by remember { mutableStateOf(false) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                Log.d("LobbyScreen", "ON_STOP: leaving lobby")
+                gameParams.leaveGame()
+                navController.navigate(CyberopoliRoute.Home)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     LaunchedEffect(gameParams.lobbyId, gameParams.lobbyMembers) {
         if (!hasStarted && gameParams.lobbyId.isNotBlank() && gameParams.lobbyMembers.isNotEmpty()) {
@@ -76,9 +97,7 @@ fun GameScreen(
                     .fillMaxSize()
                     .background(Color(0xFF1E1E2F))
             ) {
-                GameMap(rows = 5, cols = 5, players = players, onMove = {
-                    gameParams.movePlayer()
-                })
+                GameMap(rows = 5, cols = 5, players = players)
 
                 Spacer(Modifier.weight(1f))
 
