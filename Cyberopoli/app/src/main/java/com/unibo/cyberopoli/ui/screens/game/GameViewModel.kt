@@ -8,7 +8,7 @@ import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.data.repositories.game.IGameRepository
+import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val userRepository: UserRepository,
-    private val repo: IGameRepository
+    private val repo: GameRepository
 ) : ViewModel() {
 
     private val _game = MutableStateFlow<Game?>(null)
@@ -73,9 +73,6 @@ class GameViewModel(
         }
     }
 
-    /**
-     * Aggiunge un evento di cambio punteggio
-     */
     fun updatePlayerPoints(userId: String, value: Int, gameEventType: GameEventType) {
         val g = _game.value ?: return
         viewModelScope.launch {

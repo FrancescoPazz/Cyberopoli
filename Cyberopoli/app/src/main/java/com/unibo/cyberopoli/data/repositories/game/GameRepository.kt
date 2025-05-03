@@ -36,11 +36,11 @@ class GameRepository(
 
     override suspend fun joinGame(game: Game, userId: String): GamePlayer? {
         return try {
-            val toInsert = mapOf(
-                "lobby_id" to game.lobbyId,
-                "game_id"  to game.id,
-                "user_id"  to userId,
-                "score"    to 50
+            val toInsert = GamePlayer(
+                lobbyId = game.lobbyId,
+                gameId  = game.id,
+                userId  = userId,
+                score   = 50
             )
 
             val raw: GamePlayerRaw = supabase
