@@ -35,7 +35,7 @@ fun CellOccupantsLayer(
 
             Box(
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(24.dp)
                     .align(alignment)
                     .padding(2.dp)
                     .background(Color.Cyan, shape = CircleShape),
@@ -53,7 +53,7 @@ fun CellOccupantsLayer(
                     painter = painterResource(avatarRes),
                     contentDescription = stringResource(R.string.avatar),
                     modifier = Modifier
-                        .size(12.dp)
+                        .size(20.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
