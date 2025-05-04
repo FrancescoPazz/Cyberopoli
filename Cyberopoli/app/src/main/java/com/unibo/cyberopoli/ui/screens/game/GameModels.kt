@@ -8,10 +8,17 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 
 enum class CellType(val resource: Int?) {
-    YOUTUBE(R.drawable.ic_youtube), WHATSAPP(R.drawable.ic_whatsapp), REDDIT(R.drawable.ic_reddit), TIKTOK(
-        R.drawable.ic_tiktok
-    ),
-    CHANCE(R.drawable.ic_chance), HACKER(R.drawable.ic_hacker), COMMON(null)
+    YOUTUBE(R.drawable.ic_youtube),
+    WHATSAPP(R.drawable.ic_whatsapp),
+    TIKTOK(R.drawable.ic_tiktok),
+    INSTAGRAM(R.drawable.ic_instagram),
+    FACEBOOK(R.drawable.ic_facebook),
+    TELEGRAM(R.drawable.ic_telegram),
+    DISCORD(R.drawable.ic_discord),
+    SNAPCHAT(R.drawable.ic_snap),
+    CHANCE(R.drawable.ic_chance),
+    HACKER(R.drawable.ic_hacker),
+    COMMON(null)
 }
 
 data class Cell(
