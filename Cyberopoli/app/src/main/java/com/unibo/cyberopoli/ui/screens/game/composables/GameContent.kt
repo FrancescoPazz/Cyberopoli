@@ -14,8 +14,6 @@ import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.game.Cell
-import com.unibo.cyberopoli.ui.screens.game.CellType
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 
 @Composable
@@ -41,8 +39,7 @@ fun GameContent(
                 .fillMaxSize()
                 .background(Color(0xFF1E1E2F))
         ) {
-            val cells = remember { createAllCells() }
-
+            val cells = remember { createBoardCells() }
 
             GameMap(
                 cells = cells, rows = 5, cols = 5, players = players
@@ -55,25 +52,4 @@ fun GameContent(
                 onManageClick = { /* TODO: manage player */ })
         }
     }
-}
-
-fun createAllCells(rows: Int = 5, cols: Int = 5): List<Cell> =
-    List(rows * cols) { idx ->
-        Cell(
-            id          = idx.toString(),
-            type        = if (idx in perimeterPath(rows,cols)) CellType.YOUTUBE else CellType.COMMON,
-            title       = "Cella $idx",
-            description = "Descrizione cella $idx",
-            imageUrl    = if (idx in perimeterPath(rows,cols)) "" else "YOUTUBE",
-            points      = if (idx in perimeterPath(rows,cols)) 0 else 10
-        )
-    }
-
-fun perimeterPath(rows: Int, cols: Int): List<Int> {
-    val path = mutableListOf<Int>()
-    for (c in 0 until cols)        path += c
-    for (r in 1 until rows - 1)    path += r * cols + (cols - 1)
-    for (c in cols - 1 downTo 0)    path += (rows - 1) * cols + c
-    for (r in rows - 2 downTo 1)    path += r * cols
-    return path
 }

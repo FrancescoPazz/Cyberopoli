@@ -28,16 +28,10 @@ fun GameMap(
             .padding(12.dp),
         userScrollEnabled = false
     ) {
-        items(rows * cols) { idx ->
+        items(cells.size) { idx ->
             val cell = cells[idx]
-            val row = idx / cols
-            val col = idx % cols
-            val isBorder = row == 0 || row == rows - 1 || col == 0 || col == cols - 1
-            val occupants = posMap[idx].orEmpty().take(4)
-
-            GameCell(
-                cell = cell, isBorder = isBorder, occupants = occupants
-            )
+            val isBorder = idx in PERIMETER_INDICES
+            GameCell(cell, isBorder, posMap[idx].orEmpty().take(4))
         }
     }
 }
