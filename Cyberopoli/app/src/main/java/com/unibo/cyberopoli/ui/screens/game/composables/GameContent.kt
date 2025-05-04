@@ -21,12 +21,13 @@ fun GameContent(
     gameParams: GameParams,
     currentPlayer: GamePlayer,
     players: List<GamePlayer>,
+    onMoveAnimated: (Int) -> Unit
 ) {
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = { TopBar(navController) }, bottomBar = {
         GameBottomBar(phase = gameParams.phase.value,
             diceRoll = gameParams.diceRoll.value,
             onRoll = { gameParams.rollDice() },
-            onMove = { gameParams.movePlayer() },
+            onMove = { onMoveAnimated(it) },
             onChance = { gameParams.performChance() },
             onHacker = { gameParams.performHacker() },
             onEndTurn = { gameParams.endTurn() })
