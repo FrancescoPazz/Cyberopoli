@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.game.Cell
+import com.unibo.cyberopoli.ui.screens.game.CellType
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 
 @Composable
@@ -38,14 +41,39 @@ fun GameContent(
                 .fillMaxSize()
                 .background(Color(0xFF1E1E2F))
         ) {
+            val cells = remember { createAllCells() }
+
+
             GameMap(
-                rows = 5, cols = 5, players = players
+                cells = cells, rows = 5, cols = 5, players = players
             )
 
             Spacer(Modifier.weight(1f))
 
-            ScoreAndManageRow(score = currentPlayer.score,
+            ScoreAndManageRow(
+                score = currentPlayer.score,
                 onManageClick = { /* TODO: manage player */ })
         }
     }
+}
+
+fun createAllCells(rows: Int = 5, cols: Int = 5): List<Cell> =
+    List(rows * cols) { idx ->
+        Cell(
+            id          = idx.toString(),
+            type        = if (idx in perimeterPath(rows,cols)) CellType.YOUTUBE else CellType.COMMON,
+            title       = "Cella $idx",
+            description = "Descrizione cella $idx",
+            imageUrl    = if (idx in perimeterPath(rows,cols)) "" else "YOUTUBE",
+            points      = if (idx in perimeterPath(rows,cols)) 0 else 10
+        )
+    }
+
+fun perimeterPath(rows: Int, cols: Int): List<Int> {
+    val path = mutableListOf<Int>()
+    for (c in 0 until cols)        path += c
+    for (r in 1 until rows - 1)    path += r * cols + (cols - 1)
+    for (c in cols - 1 downTo 0)    path += (rows - 1) * cols + c
+    for (r in rows - 2 downTo 1)    path += r * cols
+    return path
 }

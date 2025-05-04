@@ -10,10 +10,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.ui.screens.game.Cell
 
 @Composable
 fun GameMap(
-    rows: Int, cols: Int, players: List<GamePlayer>
+    cells: List<Cell>, rows: Int, cols: Int, players: List<GamePlayer>
 ) {
     val posMap = remember(players) {
         players.groupBy { it.cellPosition }
@@ -28,13 +29,14 @@ fun GameMap(
         userScrollEnabled = false
     ) {
         items(rows * cols) { idx ->
+            val cell = cells[idx]
             val row = idx / cols
             val col = idx % cols
             val isBorder = row == 0 || row == rows - 1 || col == 0 || col == cols - 1
             val occupants = posMap[idx].orEmpty().take(4)
 
             GameCell(
-                isBorder = isBorder, occupants = occupants
+                cell = cell, isBorder = isBorder, occupants = occupants
             )
         }
     }

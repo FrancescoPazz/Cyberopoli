@@ -1,16 +1,17 @@
 package com.unibo.cyberopoli.ui.screens.game
 
 import androidx.compose.runtime.State
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
-enum class SocialMediaType {
-    YOUTUBE, WHATSAPP, REDDIT, TIKTOK
-}
 
-enum class CellType {
-    SOCIAL_MEDIA, CHANCE, HACKER, COMMON
+enum class CellType(val resource: Int?) {
+    YOUTUBE(R.drawable.ic_youtube), WHATSAPP(R.drawable.ic_whatsapp), REDDIT(R.drawable.ic_reddit), TIKTOK(
+        R.drawable.ic_tiktok
+    ),
+    CHANCE(R.drawable.ic_chance), HACKER(R.drawable.ic_hacker), COMMON(null)
 }
 
 data class Cell(
@@ -23,12 +24,7 @@ data class Cell(
 )
 
 enum class Phase {
-    WAIT,
-    ROLL_DICE,
-    MOVE,
-    CHANCE,
-    HACKER,
-    END_TURN
+    WAIT, ROLL_DICE, MOVE, CHANCE, HACKER, END_TURN
 }
 
 data class GameParams(
