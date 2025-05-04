@@ -57,13 +57,11 @@ class GameViewModel(
         }
     }
 
-    private fun joinGame() {
+    private suspend fun joinGame() {
         val g = _game.value ?: return
-        viewModelScope.launch {
-            repo.joinGame(g, myUserId!!)
-            Log.d("GameViewModel", "joinGame(): joined as player to ${g.id}")
-            refreshPlayers()
-        }
+        repo.joinGame(g, myUserId!!)
+        Log.d("GameViewModel", "joinGame(): joined as player to ${g.id}")
+        refreshPlayers()
     }
 
     fun rollDice() {
