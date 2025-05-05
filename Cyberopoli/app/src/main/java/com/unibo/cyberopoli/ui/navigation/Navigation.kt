@@ -188,7 +188,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 performChance    = gameVm::performChance,
                                 performHacker    = gameVm::performHacker,
                                 endTurn          = gameVm::endTurn,
-                                leaveGame        = lobbyVm::leaveLobby
+                                leaveGame        = lobbyVm::leaveLobby,
+                                landedCellType   = gameVm.landedCellType.collectAsStateWithLifecycle(),
+                                updatePlayerPoints = gameVm::updatePlayerPoints
                             )
                         )
                     }

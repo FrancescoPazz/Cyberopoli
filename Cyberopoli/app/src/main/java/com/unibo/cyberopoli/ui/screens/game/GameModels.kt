@@ -3,11 +3,13 @@ package com.unibo.cyberopoli.ui.screens.game
 import androidx.compose.runtime.State
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.Game
+import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 
 enum class CellType(val resource: Int?) {
+    START(R.drawable.ic_start),
     YOUTUBE(R.drawable.ic_youtube),
     WHATSAPP(R.drawable.ic_whatsapp),
     TIKTOK(R.drawable.ic_tiktok),
@@ -48,5 +50,7 @@ data class GameParams(
     val performChance: () -> Unit,
     val performHacker: () -> Unit,
     val endTurn: () -> Unit,
-    val leaveGame: () -> Unit
+    val leaveGame: () -> Unit,
+    val landedCellType: State<CellType?>,
+    val updatePlayerPoints: (userId: String, value: Int, gameEventType: GameEventType) -> Unit
 )

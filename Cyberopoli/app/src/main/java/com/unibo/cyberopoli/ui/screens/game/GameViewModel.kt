@@ -10,6 +10,7 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.ui.screens.game.composables.PERIMETER_CELL_CONFIGS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -38,6 +39,9 @@ class GameViewModel(
 
     private val _diceRoll = MutableStateFlow<Int?>(null)
     val diceRoll = _diceRoll.asStateFlow()
+
+    private val _landedCellType = MutableStateFlow<CellType>(CellType.START)
+    val landedCellType = _landedCellType.asStateFlow()
 
     fun startGame(
         lobbyId: String,
@@ -80,25 +84,37 @@ class GameViewModel(
     }
 
     fun movePlayer() {
-        val g = _game.value ?: return
+        val g    = _game.value ?: return
         val roll = _diceRoll.value ?: return
+
         viewModelScope.launch {
-            val me = _players.value.first { it.userId == myUserId }
-            val path = perimeterPath(rows = 5, cols = 5)
+            val me       = _players.value.first { it.userId == myUserId }
+            val path     = perimeterPath(rows = 5, cols = 5)
             val startIdx = path.indexOf(me.cellPosition).takeIf { it >= 0 } ?: 0
-            val nextIdx = (startIdx + roll) % path.size
-            val newPos = path[nextIdx]
-            val updated = repo.updatePlayer(
-                g,
-                me.copy(cellPosition = newPos)
-            )
+            val nextIdx  = (startIdx + roll) % path.size
+            val newPos   = path[nextIdx]
+
+            val updated = repo.updatePlayer(g, me.copy(cellPosition = newPos))
             if (updated == null) {
                 Log.e("GameViewModel", "movePlayer: updatePlayer è tornato null!")
             } else {
                 Log.d("GameViewModel", "movePlayer: successo, nuova pos = ${updated.cellPosition}")
             }
             refreshPlayers()
-            _phase.value = Phase.END_TURN
+
+            val cellType = PERIMETER_CELL_CONFIGS.find { it.index == newPos }
+                ?.cell
+                ?.type
+                ?: CellType.COMMON
+            _landedCellType.value = cellType
+
+            Log.d("GameViewModel", "Landed on cell type: $cellType")
+
+            _phase.value = when (cellType) {
+                CellType.CHANCE  -> Phase.CHANCE
+                CellType.HACKER  -> Phase.HACKER
+                else             -> Phase.END_TURN
+            }
         }
     }
 
@@ -133,7 +149,7 @@ class GameViewModel(
         }
     }
 
-    fun updatePlayerPoints(userId: String?, value: Int, gameEventType: GameEventType) {
+    fun updatePlayerPoints(userId: String, value: Int, gameEventType: GameEventType) {
         val g = _game.value ?: return
         viewModelScope.launch {
             val evt = GameEvent(

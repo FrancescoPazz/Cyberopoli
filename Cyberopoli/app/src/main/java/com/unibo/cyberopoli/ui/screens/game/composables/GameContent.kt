@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.game.composables
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,13 +8,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.screens.game.CellType
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 
 @Composable
@@ -24,6 +31,17 @@ fun GameContent(
     players: List<GamePlayer>,
     onMoveAnimated: (Int) -> Unit
 ) {
+    var showGameDialog by remember { mutableStateOf(false) }
+    val question = "Qual è la capitale d'Italia?"
+    val options  = listOf("Milano", "Roma", "Napoli")
+
+    LaunchedEffect(gameParams.phase.value, gameParams.landedCellType.value) {
+        if (gameParams.landedCellType.value != CellType.START) {
+            Log.d("GameContent", "Landed on ${gameParams.landedCellType.value}")
+            showGameDialog = true
+        }
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = { TopBar(navController) }, bottomBar = {
         GameBottomBar(phase = gameParams.phase.value,
             diceRoll = gameParams.diceRoll.value,
@@ -49,7 +67,36 @@ fun GameContent(
 
             ScoreAndManageRow(
                 score = currentPlayer.score,
-                onManageClick = { /* TODO: manage player */ })
+                onManageClick = { /* TODO: manage player */ }
+            )
+
+            if (showGameDialog) {
+                GameDialog(
+                    question = question,
+                    options  = options,
+                    onOptionSelected = { idx ->
+                        if (idx == 1) {
+                            gameParams.updatePlayerPoints(
+                                currentPlayer.userId,
+                                5,
+                                GameEventType.CHANCE
+                            )
+                        } else {
+                            gameParams.updatePlayerPoints(
+                                currentPlayer.userId,
+                                -5,
+                                GameEventType.CHANCE
+                            )
+                        }
+                        showGameDialog = false
+                        gameParams.endTurn()
+                    },
+                    onDismiss = {
+                        showGameDialog = false
+                        gameParams.endTurn()
+                    }
+                )
+            }
         }
     }
 }

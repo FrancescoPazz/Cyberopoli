@@ -16,7 +16,7 @@ val PERIMETER_INDICES: List<Int> = buildList {
 
 data class CellConfig(val index: Int, val cell: Cell)
 val PERIMETER_CELL_CONFIGS: List<CellConfig> = listOf(
-    CellConfig(0,  Cell("0", CellType.YOUTUBE,  "YouTube",  "Guadagni +10", "", 10)),
+    CellConfig(0,  Cell("0", CellType.START,  "Start",  "", "", 0)),
     CellConfig(1,  Cell("1", CellType.WHATSAPP, "WhatsApp", "Perdi 5", "", -5)),
     CellConfig(2,  Cell("2", CellType.DISCORD,  "Discord",  "Bonus casuale", "", 7)),
     CellConfig(3,  Cell("3", CellType.TIKTOK,   "TikTok",   "Salto +2", "", 0)),
