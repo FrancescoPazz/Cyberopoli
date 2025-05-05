@@ -20,7 +20,7 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 
 @Composable
-fun CellOccupantsLayer(
+fun CellOccupants(
     occupants: List<GamePlayer>
 ) {
     Box(Modifier.fillMaxSize()) {

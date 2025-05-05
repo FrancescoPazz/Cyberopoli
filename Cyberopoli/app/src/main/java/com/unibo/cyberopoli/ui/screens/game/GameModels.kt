@@ -1,36 +1,11 @@
 package com.unibo.cyberopoli.ui.screens.game
 
 import androidx.compose.runtime.State
-import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.game.CellType
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-
-
-enum class CellType(val resource: Int?) {
-    START(R.drawable.ic_start),
-    YOUTUBE(R.drawable.ic_youtube),
-    WHATSAPP(R.drawable.ic_whatsapp),
-    TIKTOK(R.drawable.ic_tiktok),
-    INSTAGRAM(R.drawable.ic_instagram),
-    FACEBOOK(R.drawable.ic_facebook),
-    TELEGRAM(R.drawable.ic_telegram),
-    DISCORD(R.drawable.ic_discord),
-    SNAPCHAT(R.drawable.ic_snap),
-    CHANCE(R.drawable.ic_chance),
-    HACKER(R.drawable.ic_hacker),
-    COMMON(null)
-}
-
-data class Cell(
-    val id: String,
-    val type: CellType,
-    val title: String,
-    val description: String,
-    val imageUrl: String,
-    val points: Int
-)
 
 enum class Phase {
     WAIT, ROLL_DICE, MOVE, CHANCE, HACKER, END_TURN

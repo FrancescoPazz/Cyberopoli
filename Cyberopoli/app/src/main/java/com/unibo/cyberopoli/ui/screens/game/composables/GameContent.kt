@@ -16,11 +16,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.data.models.game.CellType
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.game.createBoard
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.game.CellType
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 
 @Composable
@@ -57,7 +58,7 @@ fun GameContent(
                 .fillMaxSize()
                 .background(Color(0xFF1E1E2F))
         ) {
-            val cells = remember { createBoardCells() }
+            val cells = remember { createBoard() }
 
             GameMap(
                 cells = cells, rows = 5, cols = 5, players = players

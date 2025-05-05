@@ -11,8 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.unibo.cyberopoli.data.models.game.Cell
 import com.unibo.cyberopoli.data.models.game.GamePlayer
-import com.unibo.cyberopoli.ui.screens.game.Cell
+import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 
 @Composable
 fun GameMap(
@@ -33,7 +34,7 @@ fun GameMap(
     ) {
         items(cells.size) { idx ->
             val cell = cells[idx]
-            val isBorder = idx in PERIMETER_INDICES
+            val isBorder = idx in PERIMETER_PATH
             GameCell(cell, isBorder, posMap[idx].orEmpty().take(4))
         }
     }

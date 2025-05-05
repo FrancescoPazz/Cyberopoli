@@ -3,14 +3,15 @@ package com.unibo.cyberopoli.ui.screens.game
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unibo.cyberopoli.data.models.game.CellType
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
-import com.unibo.cyberopoli.ui.screens.game.composables.PERIMETER_CELL_CONFIGS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -102,9 +103,7 @@ class GameViewModel(
             }
             refreshPlayers()
 
-            val cellType = PERIMETER_CELL_CONFIGS.find { it.index == newPos }
-                ?.cell
-                ?.type
+            val cellType = PERIMETER_CELLS[newPos]?.type
                 ?: CellType.COMMON
             _landedCellType.value = cellType
 

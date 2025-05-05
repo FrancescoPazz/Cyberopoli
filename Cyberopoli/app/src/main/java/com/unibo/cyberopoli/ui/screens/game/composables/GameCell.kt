@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.unibo.cyberopoli.data.models.game.Cell
 import com.unibo.cyberopoli.data.models.game.GamePlayer
-import com.unibo.cyberopoli.ui.screens.game.Cell
 
 @Composable
 fun GameCell(
@@ -41,6 +41,6 @@ fun GameCell(
                     .background(Color.Transparent)
             )
         }
-        CellOccupantsLayer(occupants)
+        CellOccupants(occupants)
     }
 }
