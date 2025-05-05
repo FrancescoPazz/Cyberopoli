@@ -160,7 +160,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 }
                 composable<CyberopoliRoute.Game> {
                     val gameVm = koinViewModel<GameViewModel>()
-
                     val lobbyId     by lobbyVm.lobbyId.collectAsStateWithLifecycle(null)
                     val members     by lobbyVm.members.collectAsStateWithLifecycle()
                     val gameState   by gameVm.game.collectAsStateWithLifecycle()
@@ -168,6 +167,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val turnIndex   by gameVm.currentTurnIndex.collectAsStateWithLifecycle()
                     val phase       by gameVm.phase.collectAsStateWithLifecycle()
                     val diceRoll    by gameVm.diceRoll.collectAsStateWithLifecycle()
+                    val dialogData  by gameVm.dialog.collectAsStateWithLifecycle()
 
                     if (lobbyId == null || members.isEmpty()) {
                         LoadingScreen()
@@ -175,22 +175,25 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         GameScreen(
                             navController = navController,
                             gameParams = GameParams(
-                                lobbyId          = lobbyId!!,
-                                lobbyMembers     = members,
-                                game             = derivedStateOf { gameState },
-                                players          = derivedStateOf { players },
-                                currentTurnIndex = derivedStateOf { turnIndex },
-                                phase            = derivedStateOf { phase },
-                                diceRoll         = derivedStateOf { diceRoll },
-                                startGame        = gameVm::startGame,
-                                rollDice         = gameVm::rollDice,
-                                movePlayer       = gameVm::movePlayer,
-                                performChance    = gameVm::performChance,
-                                performHacker    = gameVm::performHacker,
-                                endTurn          = gameVm::endTurn,
-                                leaveGame        = lobbyVm::leaveLobby,
-                                landedCellType   = gameVm.landedCellType.collectAsStateWithLifecycle(),
-                                updatePlayerPoints = gameVm::updatePlayerPoints
+                                lobbyId              = lobbyId!!,
+                                lobbyMembers         = members,
+                                game                 = derivedStateOf { gameState },
+                                players              = derivedStateOf { players },
+                                currentTurnIndex     = derivedStateOf { turnIndex },
+                                phase                = derivedStateOf { phase },
+                                diceRoll             = derivedStateOf { diceRoll },
+                                dialogData           = derivedStateOf { dialogData },
+                                onDialogOptionSelected = gameVm::onDialogOptionSelected,
+                                onDialogDismiss        = gameVm::onDialogDismiss,
+                                startGame            = gameVm::startGame,
+                                rollDice             = gameVm::rollDice,
+                                movePlayer           = gameVm::movePlayer,
+                                performChance        = gameVm::performChance,
+                                performHacker        = gameVm::performHacker,
+                                endTurn              = gameVm::endTurn,
+                                leaveGame            = lobbyVm::leaveLobby,
+                                landedCellType       = gameVm.landedCellType.collectAsStateWithLifecycle(),
+                                updatePlayerPoints   = gameVm::updatePlayerPoints
                             )
                         )
                     }

@@ -32,17 +32,6 @@ fun GameContent(
     players: List<GamePlayer>,
     onMoveAnimated: (Int) -> Unit
 ) {
-    var showGameDialog by remember { mutableStateOf(false) }
-    val question = "Qual è la capitale d'Italia?"
-    val options  = listOf("Milano", "Roma", "Napoli")
-
-    LaunchedEffect(gameParams.phase.value, gameParams.landedCellType.value) {
-        if (gameParams.landedCellType.value != CellType.START) {
-            Log.d("GameContent", "Landed on ${gameParams.landedCellType.value}")
-            showGameDialog = true
-        }
-    }
-
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = { TopBar(navController) }, bottomBar = {
         GameBottomBar(phase = gameParams.phase.value,
             diceRoll = gameParams.diceRoll.value,
@@ -70,34 +59,6 @@ fun GameContent(
                 score = currentPlayer.score,
                 onManageClick = { /* TODO: manage player */ }
             )
-
-            if (showGameDialog) {
-                GameDialog(
-                    question = question,
-                    options  = options,
-                    onOptionSelected = { idx ->
-                        if (idx == 1) {
-                            gameParams.updatePlayerPoints(
-                                currentPlayer.userId,
-                                5,
-                                GameEventType.CHANCE
-                            )
-                        } else {
-                            gameParams.updatePlayerPoints(
-                                currentPlayer.userId,
-                                -5,
-                                GameEventType.CHANCE
-                            )
-                        }
-                        showGameDialog = false
-                        gameParams.endTurn()
-                    },
-                    onDismiss = {
-                        showGameDialog = false
-                        gameParams.endTurn()
-                    }
-                )
-            }
         }
     }
 }

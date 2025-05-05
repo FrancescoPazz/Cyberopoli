@@ -9,6 +9,7 @@ import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
+import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
@@ -16,9 +17,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+sealed class GameDialogData {
+    data class Chance(val question: String, val options: List<String>) : GameDialogData()
+    data class Hacker(val question: String, val options: List<String>) : GameDialogData()
+}
+
 class GameViewModel(
-    private val userRepository: UserRepository,
-    private val repo: GameRepository
+    private val userRepository: UserRepository, private val repo: GameRepository
 ) : ViewModel() {
     private val myUserId: String?
         get() = userRepository.currentUserLiveData.value?.id
@@ -44,18 +49,17 @@ class GameViewModel(
     private val _landedCellType = MutableStateFlow<CellType>(CellType.START)
     val landedCellType = _landedCellType.asStateFlow()
 
+    private val _dialog = MutableStateFlow<GameDialogData?>(null)
+    val dialog = _dialog.asStateFlow()
+
     fun startGame(
-        lobbyId: String,
-        lobbyMembers: List<LobbyMember>
+        lobbyId: String, lobbyMembers: List<LobbyMember>
     ) {
         viewModelScope.launch {
             Log.d("GameViewModel", "Starting game with lobbyId=$lobbyId, members=$lobbyMembers")
             val newGame = repo.createGame(lobbyId, lobbyMembers)
             _game.value = newGame
-            Log.d("GameViewModel", "Game created: $newGame")
-
             joinGame()
-
             refreshPlayers()
             refreshEvents()
             updateTurnIndex()
@@ -65,7 +69,6 @@ class GameViewModel(
     private suspend fun joinGame() {
         val g = _game.value ?: return
         repo.joinGame(g, myUserId!!)
-        Log.d("GameViewModel", "joinGame(): joined as player to ${g.id}")
         refreshPlayers()
     }
 
@@ -75,49 +78,70 @@ class GameViewModel(
         _phase.value = Phase.MOVE
     }
 
-    private fun perimeterPath(rows: Int, cols: Int): List<Int> {
-        val path = mutableListOf<Int>()
-        for (c in 0 until cols)        path += c
-        for (r in 1 until rows - 1)    path += r * cols + (cols - 1)
-        for (c in cols - 1 downTo 0)    path += (rows - 1) * cols + c
-        for (r in rows - 2 downTo 1)    path += r * cols
-        return path
-    }
-
     fun movePlayer() {
-        val g    = _game.value ?: return
+        val g = _game.value ?: return
         val roll = _diceRoll.value ?: return
 
         viewModelScope.launch {
-            val me       = _players.value.first { it.userId == myUserId }
-            val path     = perimeterPath(rows = 5, cols = 5)
-            val startIdx = path.indexOf(me.cellPosition).takeIf { it >= 0 } ?: 0
-            val nextIdx  = (startIdx + roll) % path.size
-            val newPos   = path[nextIdx]
+            val me = _players.value.first { it.userId == myUserId }
+            val path = PERIMETER_PATH
+            val startIdx = path.indexOf(me.cellPosition).coerceAtLeast(0)
+            val nextIdx = (startIdx + roll) % path.size
+            val newPos = path[nextIdx]
 
-            val updated = repo.updatePlayer(g, me.copy(cellPosition = newPos))
-            if (updated == null) {
-                Log.e("GameViewModel", "movePlayer: updatePlayer è tornato null!")
-            } else {
-                Log.d("GameViewModel", "movePlayer: successo, nuova pos = ${updated.cellPosition}")
-            }
+            repo.updatePlayer(g, me.copy(cellPosition = newPos))
             refreshPlayers()
 
-            val cellType = PERIMETER_CELLS[newPos]?.type
-                ?: CellType.COMMON
+            val cellType = PERIMETER_CELLS[newPos]?.type ?: CellType.COMMON
             _landedCellType.value = cellType
 
-            Log.d("GameViewModel", "Landed on cell type: $cellType")
-
             _phase.value = when (cellType) {
-                CellType.CHANCE  -> Phase.CHANCE
-                CellType.HACKER  -> Phase.HACKER
-                else             -> Phase.END_TURN
+                CellType.CHANCE -> Phase.CHANCE
+                CellType.HACKER -> Phase.HACKER
+                else -> Phase.END_TURN
             }
+
+            handleLanded(cellType)
         }
     }
 
+    private fun handleLanded(cellType: CellType) {
+        when (cellType) {
+            CellType.CHANCE -> _dialog.value = GameDialogData.Chance(
+                question = "Qual è la capitale d'Italia?",
+                options = listOf("Milano", "Roma", "Napoli")
+            )
 
+            CellType.HACKER -> _dialog.value = GameDialogData.Hacker(
+                question = "Un hacker ti sfida: cosa fai?",
+                options = listOf("Bloccalo", "Scappa", "Negozia")
+            )
+
+            else -> Unit
+        }
+    }
+
+    fun onDialogOptionSelected(idx: Int, playerId: String) {
+        when (val d = _dialog.value) {
+            is GameDialogData.Chance -> {
+                val delta = if (idx == 1) +5 else -5
+                updatePlayerPoints(playerId, delta, GameEventType.CHANCE)
+            }
+
+            is GameDialogData.Hacker -> {
+                // implementa logica Hacker
+            }
+
+            null -> return
+        }
+        _dialog.value = null
+        endTurn()
+    }
+
+    fun onDialogDismiss() {
+        _dialog.value = null
+        endTurn()
+    }
 
     fun performChance() {
         _phase.value = Phase.END_TURN
@@ -137,59 +161,45 @@ class GameViewModel(
         val count = _players.value.size
         if (count == 0) return
         _currentTurnIndex.value = (_currentTurnIndex.value + 1) % count
-        Log.d("GameViewModel", "Next turn: current index = ${_currentTurnIndex.value}, players count = $count")
-
-        val g = _game.value ?: return
         viewModelScope.launch {
-            val nextPlayer = _players.value[_currentTurnIndex.value]
-            repo.setNextTurn(g, nextPlayer.userId)
+            repo.setNextTurn(
+                _game.value!!, _players.value[_currentTurnIndex.value].userId
+            )
             refreshEvents()
             updateTurnIndex()
         }
     }
 
+    private fun updateTurnIndex() {
+        val idx = _players.value.indexOfFirst { it.userId == _game.value?.turn }
+        _currentTurnIndex.value = idx
+        _phase.value =
+            if (_players.value.getOrNull(idx)?.userId == myUserId) Phase.ROLL_DICE else Phase.WAIT
+    }
+
     fun updatePlayerPoints(userId: String, value: Int, gameEventType: GameEventType) {
-        val g = _game.value ?: return
         viewModelScope.launch {
-            val evt = GameEvent(
-                lobbyId         = g.lobbyId,
-                gameId          = g.id,
-                senderUserId    = myUserId!!,
-                eventType       = gameEventType,
-                value           = value,
-                recipientUserId = userId,
+            val g = _game.value ?: return@launch
+            repo.addGameEvent(
+                GameEvent(
+                    lobbyId = g.lobbyId,
+                    gameId = g.id,
+                    senderUserId = myUserId!!,
+                    eventType = gameEventType,
+                    value = value,
+                    recipientUserId = userId
+                )
             )
-            repo.addGameEvent(evt)
             refreshPlayers()
             refreshEvents()
         }
     }
 
     private suspend fun refreshPlayers() {
-        _players.value = _game.value
-            ?.let { repo.getGamePlayers(it.id) }
-            .orEmpty()
-        Log.d("GameViewModel", "Players refreshed: ${_players.value}")
+        _players.value = _game.value?.id?.let { repo.getGamePlayers(it) }.orEmpty()
     }
 
     private suspend fun refreshEvents() {
-        _events.value = _game.value
-            ?.let { repo.getGameEvents(it.lobbyId, it.id) }
-            .orEmpty()
-        Log.d("GameViewModel", "Events refreshed: ${_events.value}")
+        _events.value = _game.value?.let { repo.getGameEvents(it.lobbyId, it.id) }.orEmpty()
     }
-
-    private fun updateTurnIndex() {
-        val idx = _players.value.indexOfFirst { it.userId == _game.value?.turn }
-        _currentTurnIndex.value = idx
-
-        _phase.value = if (_players.value.getOrNull(idx)?.userId == myUserId) {
-            Phase.ROLL_DICE
-        } else {
-            Phase.WAIT
-        }
-
-        Log.d("GameViewModel", "Current turn index: $idx, phase = ${_phase.value}")
-    }
-
 }

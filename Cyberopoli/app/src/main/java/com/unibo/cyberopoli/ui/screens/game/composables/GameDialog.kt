@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun GameDialog(
+    title: String,
     question: String,
     options: List<String>,
     onOptionSelected: (Int) -> Unit,
@@ -33,7 +34,7 @@ fun GameDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    text = "Chance!",
+                    text = title,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.headlineSmall
                 )
