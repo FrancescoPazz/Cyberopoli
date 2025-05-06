@@ -34,9 +34,11 @@ fun LoadingQuestionDialog() {
             ) {
                 CircularProgressIndicator()
                 Spacer(Modifier.height(16.dp))
-                Text(stringResource(R.string.loading),
+                Text(
+                    stringResource(R.string.loading),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium)
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }

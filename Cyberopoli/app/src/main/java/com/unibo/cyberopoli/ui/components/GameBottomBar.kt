@@ -31,7 +31,7 @@ fun GameBottomBar(
         containerColor = Color(0xFF27293D),
         tonalElevation = 8.dp
     ) {
-        when(phase) {
+        when (phase) {
             Phase.ROLL_DICE -> {
                 NavigationBarItem(
                     icon = {
@@ -44,63 +44,55 @@ fun GameBottomBar(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(R.string.roll_dice))
                         }
-                    },
-                    selected = false,
-                    onClick = onRoll
+                    }, selected = false, onClick = onRoll
                 )
             }
-            Phase.MOVE -> {
-                NavigationBarItem(
-                    icon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_move_on),
-                                contentDescription = "${stringResource(R.string.move_on)} $diceRoll ${stringResource(R.string.cells)}",
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("${stringResource(R.string.move_on)} $diceRoll ${stringResource(R.string.cells)}")
-                        }
-                    },
-                    selected = false,
-                    onClick = { onMove(diceRoll ?: 0) }
-                )
-            }
-            Phase.CHANCE -> {
-                NavigationBarItem(
-                    icon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_chance),
-                                contentDescription = stringResource(R.string.chance),
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.chance))
-                        }
 
-                    },
-                    selected = false,
-                    onClick = { }
-                )
+            Phase.MOVE -> {
+                NavigationBarItem(icon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_move_on),
+                            contentDescription = "${stringResource(R.string.move_on)} $diceRoll ${
+                                stringResource(R.string.cells)
+                            }",
+                            tint = Color.Unspecified
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("${stringResource(R.string.move_on)} $diceRoll ${stringResource(R.string.cells)}")
+                    }
+                }, selected = false, onClick = { onMove(diceRoll ?: 0) })
             }
+
+            Phase.CHANCE -> {
+                NavigationBarItem(icon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chance),
+                            contentDescription = stringResource(R.string.chance),
+                            tint = Color.Unspecified
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.chance))
+                    }
+
+                }, selected = false, onClick = { })
+            }
+
             Phase.HACKER -> {
-                NavigationBarItem(
-                    icon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_hacker),
-                                contentDescription = stringResource(R.string.hacker),
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.hacker))
-                        }
-                    },
-                    selected = false,
-                    onClick = { }
-                )
+                NavigationBarItem(icon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_hacker),
+                            contentDescription = stringResource(R.string.hacker),
+                            tint = Color.Unspecified
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.hacker))
+                    }
+                }, selected = false, onClick = { })
             }
+
             Phase.END_TURN -> {
                 NavigationBarItem(
                     icon = {
@@ -113,27 +105,22 @@ fun GameBottomBar(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(R.string.turn_pass))
                         }
-                    },
-                    selected = false,
-                    onClick = onEndTurn
+                    }, selected = false, onClick = onEndTurn
                 )
             }
+
             else -> {
-                NavigationBarItem(
-                    icon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_stop_hand),
-                                contentDescription = stringResource(R.string.wait_your_turn),
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.wait_your_turn))
-                        }
-                    },
-                    selected = false,
-                    onClick = { }
-                )
+                NavigationBarItem(icon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_stop_hand),
+                            contentDescription = stringResource(R.string.wait_your_turn),
+                            tint = Color.Unspecified
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.wait_your_turn))
+                    }
+                }, selected = false, onClick = { })
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun GameDialog(
@@ -30,13 +30,17 @@ fun GameDialog(
             modifier = Modifier.padding(16.dp)
         ) {
             Column(Modifier.padding(24.dp)) {
-                Text(title,
+                Text(
+                    title,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.headlineSmall)
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Spacer(Modifier.height(16.dp))
-                Text(message,
+                Text(
+                    message,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium)
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 Spacer(Modifier.height(24.dp))
 
                 if (options.isNotEmpty()) {
@@ -52,8 +56,7 @@ fun GameDialog(
                     }
                 } else {
                     Button(
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth()
+                        onClick = onDismiss, modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("OK")
                     }

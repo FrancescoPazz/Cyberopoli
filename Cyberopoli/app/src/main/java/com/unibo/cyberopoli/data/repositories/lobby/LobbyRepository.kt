@@ -16,9 +16,7 @@ class LobbyRepository(
 
     override suspend fun createOrGetLobby(lobbyId: String, host: User): String {
         val lobby = Lobby(
-            id = lobbyId,
-            hostId = host.id,
-            status = "waiting"
+            id = lobbyId, hostId = host.id, status = "waiting"
         )
         return try {
             val created: Lobby = supabase.from("lobbies").insert(lobby) {
@@ -49,7 +47,7 @@ class LobbyRepository(
     override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> = try {
         val raw: List<LobbyMemberRaw> = supabase.from("lobby_members").select(
             Columns.raw("*, users(*)")
-            ).decodeList<LobbyMemberRaw>()
+        ).decodeList<LobbyMemberRaw>()
 
         raw.map { d ->
             LobbyMember(
@@ -66,9 +64,7 @@ class LobbyRepository(
     }
 
     override suspend fun toggleReady(
-        lobbyId: String,
-        userId: String,
-        isReady: Boolean
+        lobbyId: String, userId: String, isReady: Boolean
     ): LobbyMember {
         return try {
             supabase.from("lobby_members").update(mapOf("ready" to isReady)) {

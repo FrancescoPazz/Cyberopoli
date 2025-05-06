@@ -35,13 +35,13 @@ class AuthRepository(
     override fun authState(): Flow<AuthState> = supabase.auth.sessionStatus.map { status ->
         when (status) {
             is SessionStatus.Initializing -> AuthState.Loading
-            is SessionStatus.Authenticated ->
-                if (supabase.auth.currentUserOrNull()?.userMetadata?.get("email") != null)
-                    AuthState.Authenticated
-                else
-                    AuthState.AnonymousAuthenticated
-            is SessionStatus.NotAuthenticated,
-            is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
+            is SessionStatus.Authenticated -> if (supabase.auth.currentUserOrNull()?.userMetadata?.get(
+                    "email"
+                ) != null
+            ) AuthState.Authenticated
+            else AuthState.AnonymousAuthenticated
+
+            is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
         }
     }
 
@@ -58,26 +58,18 @@ class AuthRepository(
     }
 
     override fun signUp(
-        name: String?,
-        surname: String?,
-        username: String,
-        email: String,
-        password: String
+        name: String?, surname: String?, username: String, email: String, password: String
     ): Flow<AuthResponse> = flow {
         try {
             val result = supabase.auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
             }
-            val userId = result?.id
-                ?: throw IllegalStateException("SignUp succeeded but userId is null")
+            val userId =
+                result?.id ?: throw IllegalStateException("SignUp succeeded but userId is null")
 
             val user = User(
-                id = userId,
-                name = name,
-                surname = surname,
-                username = username,
-                email = email
+                id = userId, name = name, surname = surname, username = username, email = email
             )
             supabase.from("users").upsert(user)
             emit(AuthResponse.Success)
@@ -95,10 +87,9 @@ class AuthRepository(
 
     override fun signInWithGoogle(context: Context): Flow<AuthResponse> = flow {
         val nonce = createNonce()
-        val option = GetGoogleIdOption.Builder()
-            .setServerClientId(GOOGLE_SERVER_CLIENT_ID)
-            .setNonce(nonce)
-            .build()
+        val option =
+            GetGoogleIdOption.Builder().setServerClientId(GOOGLE_SERVER_CLIENT_ID).setNonce(nonce)
+                .build()
         val request = GetCredentialRequest.Builder().addCredentialOption(option).build()
         val manager = CredentialManager.create(context)
 
@@ -120,11 +111,7 @@ class AuthRepository(
             val (fn, ln) = fullName.split(" ", limit = 2).let { it[0] to it.getOrElse(1) { "" } }
 
             val user = User(
-                id = info.id,
-                name = fn,
-                surname = ln,
-                username = fullName,
-                email = info.email
+                id = info.id, name = fn, surname = ln, username = fullName, email = info.email
             )
             supabase.from("users").upsert(user)
             emit(AuthResponse.Success)
@@ -142,11 +129,7 @@ class AuthRepository(
                 ?: throw IllegalStateException("No session after anonymous login")
             val userId = session.user!!.id
             val user = User(
-                id = userId,
-                email = null,
-                username = username,
-                surname = null,
-                isGuest = true
+                id = userId, email = null, username = username, surname = null, isGuest = true
             )
             supabase.from("users").upsert(user)
             emit(AuthResponse.Success)

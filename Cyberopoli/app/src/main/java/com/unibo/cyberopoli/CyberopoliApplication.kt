@@ -14,8 +14,7 @@ class CyberopoliApplication : Application() {
             androidLogger()
             androidContext(this@CyberopoliApplication)
             modules(
-                supabaseModule,
-                appModule
+                supabaseModule, appModule
             )
         }
     }

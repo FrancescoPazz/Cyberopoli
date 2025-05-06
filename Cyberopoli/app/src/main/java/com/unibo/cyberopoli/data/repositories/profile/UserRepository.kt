@@ -80,10 +80,10 @@ class UserRepository(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 supabase.from("users").update(mapOf("avatar_url" to newAvatar)) {
-                        filter {
-                            eq("id", userId)
-                        }
+                    filter {
+                        eq("id", userId)
                     }
+                }
 
                 loadUserData()
             } catch (e: Exception) {

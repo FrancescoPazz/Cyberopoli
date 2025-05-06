@@ -17,9 +17,7 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 
 @Composable
 fun GameCell(
-    cell: Cell,
-    isBorder: Boolean,
-    occupants: List<GamePlayer>
+    cell: Cell, isBorder: Boolean, occupants: List<GamePlayer>
 ) {
     Box(
         modifier = Modifier

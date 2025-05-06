@@ -25,19 +25,17 @@ class HFService(private val token: String) {
         install(HttpTimeout) {
             requestTimeoutMillis = 120_000
             connectTimeoutMillis = 20_000
-            socketTimeoutMillis  = 120_000
+            socketTimeoutMillis = 120_000
         }
     }
 
     suspend fun generateChat(
-        model: String,
-        userPrompt: String
+        model: String, userPrompt: String
     ): String {
         val url = "https://router.huggingface.co/novita/v3/openai/chat/completions"
 
         val request = ChatRequest(
-            model = model,
-            messages = listOf(ChatMessage(role = "user", content = userPrompt))
+            model = model, messages = listOf(ChatMessage(role = "user", content = userPrompt))
         )
 
         val response = client.post(url) {
@@ -54,37 +52,23 @@ class HFService(private val token: String) {
         }
 
         val chatResponse = json.decodeFromString(ChatResponse.serializer(), raw)
-        return chatResponse.choices
-            .firstOrNull()
-            ?.message
-            ?.content
-            ?: "💥 Errore: nessuna risposta"
+        return chatResponse.choices.firstOrNull()?.message?.content ?: "💥 Errore: nessuna risposta"
     }
 }
 
 @Serializable
-data class HfRequest(val inputs: String)
-@Serializable
-data class HfResponse(val generated_text: String)
-
-@Serializable
 data class ChatMessage(
-    val role: String,
-    val content: String
+    val role: String, val content: String
 )
 
 @Serializable
 data class ChatRequest(
-    val model: String,
-    val messages: List<ChatMessage>,
-    val stream: Boolean = false
+    val model: String, val messages: List<ChatMessage>, val stream: Boolean = false
 )
 
 @Serializable
 data class ChatChoice(
-    val index: Int,
-    val message: ChatMessage,
-    val finish_reason: String? = null
+    val index: Int, val message: ChatMessage, val finish_reason: String? = null
 )
 
 @Serializable

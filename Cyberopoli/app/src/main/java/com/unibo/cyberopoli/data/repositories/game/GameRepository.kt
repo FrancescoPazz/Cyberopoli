@@ -18,15 +18,10 @@ class GameRepository(
 
     override suspend fun createGame(lobbyId: String, lobbyMembers: List<LobbyMember>): Game {
         val newGame = Game(
-            lobbyId = lobbyId,
-            id      = UUID.randomUUID().toString(),
-            turn    = lobbyMembers[0].userId
+            lobbyId = lobbyId, id = UUID.randomUUID().toString(), turn = lobbyMembers[0].userId
         )
         return try {
-            val created: Game = supabase
-                .from("games")
-                .insert(newGame) { select() }
-                .decodeSingle()
+            val created: Game = supabase.from("games").insert(newGame) { select() }.decodeSingle()
             created
         } catch (e: Exception) {
             Log.e("GameRepoImpl", "createGame: ${e.message}")
@@ -37,16 +32,13 @@ class GameRepository(
     override suspend fun joinGame(game: Game, userId: String): GamePlayer? {
         return try {
             val toInsert = GamePlayer(
-                lobbyId = game.lobbyId,
-                gameId  = game.id,
-                userId  = userId,
-                score   = 50
+                lobbyId = game.lobbyId, gameId = game.id, userId = userId, score = 50
             )
 
-            val raw: GamePlayerRaw = supabase
-                .from("game_players")
-                .insert(toInsert) {
-                    select(Columns.raw("""
+            val raw: GamePlayerRaw = supabase.from("game_players").insert(toInsert) {
+                    select(
+                        Columns.raw(
+                            """
                   lobby_id,
                   game_id,
                   user_id,
@@ -59,17 +51,18 @@ class GameRepository(
                     surname,
                     avatar_url
                   )
-                """.trimIndent()))
-                }
-                .decodeSingle()
+                """.trimIndent()
+                        )
+                    )
+                }.decodeSingle()
 
             GamePlayer(
                 lobbyId = raw.lobbyId,
-                gameId  = raw.gameId,
-                userId  = raw.userId,
-                score   = raw.score,
+                gameId = raw.gameId,
+                userId = raw.userId,
+                score = raw.score,
                 cellPosition = raw.cellPosition,
-                user    = raw.user
+                user = raw.user
             )
         } catch (e: Exception) {
             Log.e("GameRepoImpl", "joinGame: ${e.message}")
@@ -79,15 +72,16 @@ class GameRepository(
 
     override suspend fun updatePlayer(game: Game, updatedPlayer: GamePlayer): GamePlayer? {
         return try {
-            val raw: GamePlayerRaw = supabase
-                .from("game_players")
+            val raw: GamePlayerRaw = supabase.from("game_players")
                 .update(mapOf("cell_position" to updatedPlayer.cellPosition)) {
                     filter {
                         eq("lobby_id", game.lobbyId)
-                        eq("game_id",  game.id)
-                        eq("user_id",  updatedPlayer.userId)
+                        eq("game_id", game.id)
+                        eq("user_id", updatedPlayer.userId)
                     }
-                    select(Columns.raw("""
+                    select(
+                        Columns.raw(
+                            """
           lobby_id,
           game_id,
           user_id,
@@ -100,17 +94,18 @@ class GameRepository(
             surname,
             avatar_url
           )
-        """.trimIndent()))
-                }
-                .decodeSingle()
+        """.trimIndent()
+                        )
+                    )
+                }.decodeSingle()
 
             GamePlayer(
-                lobbyId      = raw.lobbyId,
-                gameId       = raw.gameId,
-                userId       = raw.userId,
-                score        = raw.score,
+                lobbyId = raw.lobbyId,
+                gameId = raw.gameId,
+                userId = raw.userId,
+                score = raw.score,
                 cellPosition = raw.cellPosition,
-                user         = raw.user
+                user = raw.user
             )
         } catch (e: Exception) {
             Log.e("GameRepoImpl", "updatePlayer: ${e.message}")
@@ -120,10 +115,9 @@ class GameRepository(
 
     override suspend fun getGamePlayers(matchId: String): List<GamePlayer> {
         return try {
-            val raw: List<GamePlayerRaw> = supabase
-                .from("game_players")
-                .select(
-                    Columns.raw("""
+            val raw: List<GamePlayerRaw> = supabase.from("game_players").select(
+                    Columns.raw(
+                        """
                         lobby_id,
                         game_id,
                         user_id,
@@ -136,17 +130,18 @@ class GameRepository(
                           surname,
                           avatar_url
                         )
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 ).decodeList()
             raw.map { r ->
                 val u = r.user
                 GamePlayer(
                     lobbyId = r.lobbyId,
-                    gameId  = r.gameId,
-                    userId  = r.userId,
-                    score   = r.score,
+                    gameId = r.gameId,
+                    userId = r.userId,
+                    score = r.score,
                     cellPosition = r.cellPosition,
-                    user    = u
+                    user = u
                 )
             }
         } catch (e: Exception) {
@@ -158,16 +153,13 @@ class GameRepository(
     override suspend fun setNextTurn(game: Game, nextTurn: String): Game? {
         return try {
             val updatedGame = game.copy(turn = nextTurn)
-            val updated: Game = supabase
-                .from("games")
-                .update(updatedGame) {
+            val updated: Game = supabase.from("games").update(updatedGame) {
                     filter {
                         eq("lobby_id", game.lobbyId)
                         eq("id", game.id)
                     }
                     select()
-                }
-                .decodeSingle()
+                }.decodeSingle()
 
             updated
         } catch (e: Exception) {
@@ -178,10 +170,10 @@ class GameRepository(
 
     override suspend fun addGameEvent(event: GameEvent): GameEvent? {
         return try {
-            val inserted: GameEvent = supabase
-                .from("game_events")
-                .insert(event) {
-                    select(Columns.raw("""
+            val inserted: GameEvent = supabase.from("game_events").insert(event) {
+                    select(
+                        Columns.raw(
+                            """
                         *,
                         users(
                           id,
@@ -190,9 +182,10 @@ class GameRepository(
                           surname,
                           avatar_url
                         )
-                    """.trimIndent()))
-                }
-                .decodeSingle()
+                    """.trimIndent()
+                        )
+                    )
+                }.decodeSingle()
 
             inserted
         } catch (e: Exception) {
@@ -203,10 +196,9 @@ class GameRepository(
 
     override suspend fun getGameEvents(lobbyId: String, gameId: String): List<GameEvent> {
         return try {
-            val raw: List<GameEvent> = supabase
-                .from("game_events")
-                .select(
-                    Columns.raw("""
+            val raw: List<GameEvent> = supabase.from("game_events").select(
+                    Columns.raw(
+                        """
                         lobby_id,
                         game_id,
                         sender_user_id,
@@ -221,14 +213,14 @@ class GameRepository(
                           surname,
                           avatar_url
                         )
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 ) {
                     filter {
                         eq("lobby_id", lobbyId)
                         eq("game_id", gameId)
                     }
-                }
-                .decodeList()
+                }.decodeList()
             raw
         } catch (e: Exception) {
             Log.e("GameRepoImpl", "getGameEvents: ${e.message}")

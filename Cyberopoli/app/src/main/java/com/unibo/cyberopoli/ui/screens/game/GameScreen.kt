@@ -1,17 +1,26 @@
 package com.unibo.cyberopoli.ui.screens.game
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
-import com.unibo.cyberopoli.ui.screens.game.composables.*
+import com.unibo.cyberopoli.ui.screens.game.composables.GameContent
+import com.unibo.cyberopoli.ui.screens.game.composables.GameDialog
+import com.unibo.cyberopoli.ui.screens.game.composables.GameLifecycleHandler
+import com.unibo.cyberopoli.ui.screens.game.composables.GameStarterEffect
+import com.unibo.cyberopoli.ui.screens.game.composables.LoadingQuestionDialog
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import kotlinx.coroutines.delay
 
 @Composable
 fun GameScreen(
-    navController: NavHostController,
-    gameParams: GameParams
+    navController: NavHostController, gameParams: GameParams
 ) {
     var hasStarted by remember { mutableStateOf(false) }
     GameLifecycleHandler(gameParams, navController)
@@ -22,8 +31,6 @@ fun GameScreen(
     val game by gameParams.game
     val players by gameParams.players
     val turnIdx by gameParams.currentTurnIndex
-    val phase by gameParams.phase
-    val diceRoll by gameParams.diceRoll
     val dialogData by gameParams.dialogData
 
     var stepsToAnimate by remember { mutableStateOf(0) }
@@ -53,13 +60,11 @@ fun GameScreen(
     if (game == null || players.isEmpty() || players.getOrNull(turnIdx) == null) {
         LoadingScreen()
     } else {
-        GameContent(
-            navController = navController,
+        GameContent(navController = navController,
             gameParams = gameParams,
             currentPlayer = players[turnIdx],
             players = displayPlayers,
-            onMoveAnimated = { stepsToAnimate = it }
-        )
+            onMoveAnimated = { stepsToAnimate = it })
     }
 
     if (isLoadingQuestion) {
@@ -71,18 +76,12 @@ fun GameScreen(
             is GameDialogData.Question -> Triple(data.title, data.prompt, data.options)
             is GameDialogData.Result -> Triple(data.title, data.message, listOf("OK"))
         }
-        GameDialog(
-            title = title,
-            message = message,
-            options = options,
-            onOptionSelected = { idx ->
-                if (data is GameDialogData.Question) {
-                    gameParams.onDialogOptionSelected(idx)
-                } else {
-                    gameParams.onResultDismiss()
-                }
-            },
-            onDismiss = { gameParams.onResultDismiss() }
-        )
+        GameDialog(title = title, message = message, options = options, onOptionSelected = { idx ->
+            if (data is GameDialogData.Question) {
+                gameParams.onDialogOptionSelected(idx)
+            } else {
+                gameParams.onResultDismiss()
+            }
+        }, onDismiss = { gameParams.onResultDismiss() })
     }
 }

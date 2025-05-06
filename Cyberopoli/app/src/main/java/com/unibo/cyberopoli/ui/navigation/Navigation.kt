@@ -49,20 +49,28 @@ import java.util.UUID
 sealed interface CyberopoliRoute {
     @Serializable
     data object Auth : CyberopoliRoute
+
     @Serializable
     data object Scan : CyberopoliRoute
+
     @Serializable
     data object ARScreen : CyberopoliRoute
+
     @Serializable
     data object Settings : CyberopoliRoute
+
     @Serializable
     data object Home : CyberopoliRoute
+
     @Serializable
     data object Profile : CyberopoliRoute
+
     @Serializable
     data object Ranking : CyberopoliRoute
+
     @Serializable
     data object Lobby : CyberopoliRoute
+
     @Serializable
     data object Game : CyberopoliRoute
 }

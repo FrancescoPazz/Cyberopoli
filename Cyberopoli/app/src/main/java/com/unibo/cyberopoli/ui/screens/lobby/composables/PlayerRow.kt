@@ -25,14 +25,10 @@ fun PlayerRow(playerName: String, isReady: Boolean) {
         Text(text = playerName)
 
         Text(
-            text = if (isReady)
-                stringResource(R.string.ready)
-            else
-                stringResource(R.string.waiting),
-            color = if (isReady)
-                MaterialTheme.colorScheme.tertiary
-            else
-                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            text = if (isReady) stringResource(R.string.ready)
+            else stringResource(R.string.waiting),
+            color = if (isReady) MaterialTheme.colorScheme.tertiary
+            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )
     }
 }

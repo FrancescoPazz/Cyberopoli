@@ -19,8 +19,8 @@ class RankingRepository(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val users: List<User> = supabase.from("users").select {
-                        order("total_score", order = Order.DESCENDING)
-                    }.decodeList<User>()
+                    order("total_score", order = Order.DESCENDING)
+                }.decodeList<User>()
 
                 rankingLiveData.postValue(users)
             } catch (e: Exception) {
