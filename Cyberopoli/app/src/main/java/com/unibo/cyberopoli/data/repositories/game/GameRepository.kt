@@ -210,8 +210,10 @@ class GameRepository(
                         lobby_id,
                         game_id,
                         sender_user_id,
+                        recipient_user_id,
                         event_type,
                         created_at,
+                        value,
                         users(
                           id,
                           username,

@@ -1,19 +1,10 @@
 package com.unibo.cyberopoli.ui.screens.game
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
-import com.unibo.cyberopoli.ui.screens.game.composables.GameContent
-import com.unibo.cyberopoli.ui.screens.game.composables.GameDialog
-import com.unibo.cyberopoli.ui.screens.game.composables.GameLifecycleHandler
-import com.unibo.cyberopoli.ui.screens.game.composables.GameStarterEffect
+import com.unibo.cyberopoli.ui.screens.game.composables.*
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import kotlinx.coroutines.delay
 
@@ -23,71 +14,75 @@ fun GameScreen(
     gameParams: GameParams
 ) {
     var hasStarted by remember { mutableStateOf(false) }
-
-    val game       by gameParams.game
-    val players    by gameParams.players
-    val turnIdx    by gameParams.currentTurnIndex
-    val phase      by gameParams.phase
-    val diceRoll   by gameParams.diceRoll
-    val dialogData by gameParams.dialogData
-
-    var stepsToAnimate by remember { mutableStateOf(0) }
-    val animatedPos = remember { mutableStateMapOf<String, Int>() }
-
     GameLifecycleHandler(gameParams, navController)
     GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
 
-    BackHandler {
-        gameParams.leaveGame()
-        navController.popBackStack()
-    }
+    BackHandler { gameParams.leaveGame(); navController.popBackStack() }
 
-    LaunchedEffect(stepsToAnimate) {
-        if (stepsToAnimate <= 0) return@LaunchedEffect
-        val path = PERIMETER_PATH
-        val me   = players.first { it.userId == game!!.turn }
-        val startIdx = path.indexOf(me.cellPosition).coerceAtLeast(0)
+    val game by gameParams.game
+    val players by gameParams.players
+    val turnIdx by gameParams.currentTurnIndex
+    val phase by gameParams.phase
+    val diceRoll by gameParams.diceRoll
+    val dialogData by gameParams.dialogData
 
-        repeat(stepsToAnimate) { step ->
-            val idx = path[(startIdx + step + 1) % path.size]
-            animatedPos[me.userId] = idx
-            delay(500L)
+    var stepsToAnimate by remember { mutableStateOf(0) }
+    val animatedPositions = remember { mutableStateMapOf<String, Int>() }
+
+    val isLoadingQuestion by gameParams.isLoadingQuestion
+
+    LaunchedEffect(stepsToAnimate, players, game) {
+        if (stepsToAnimate > 0 && game != null) {
+            val path = PERIMETER_PATH
+            val current = players.first { it.userId == game!!.turn }
+            val startIdx = path.indexOf(current.cellPosition).coerceAtLeast(0)
+
+            repeat(stepsToAnimate) { i ->
+                animatedPositions[current.userId] = path[(startIdx + i + 1) % path.size]
+                delay(500L)
+            }
+            gameParams.movePlayer()
+            stepsToAnimate = 0
         }
-
-        gameParams.movePlayer()
-        stepsToAnimate = 0
     }
 
     val displayPlayers = players.map { p ->
-        p.copy(cellPosition = animatedPos[p.userId] ?: p.cellPosition)
+        p.copy(cellPosition = animatedPositions[p.userId] ?: p.cellPosition)
     }
 
     if (game == null || players.isEmpty() || players.getOrNull(turnIdx) == null) {
         LoadingScreen()
     } else {
         GameContent(
-            navController    = navController,
-            gameParams       = gameParams,
-            currentPlayer    = players[turnIdx],
-            players          = displayPlayers,
-            onMoveAnimated   = { stepsToAnimate = it }
+            navController = navController,
+            gameParams = gameParams,
+            currentPlayer = players[turnIdx],
+            players = displayPlayers,
+            onMoveAnimated = { stepsToAnimate = it }
         )
     }
 
+    if (isLoadingQuestion) {
+        LoadingQuestionDialog()
+    }
+
     dialogData?.let { data ->
-        val (title, question, options) = when (data) {
-            is GameDialogData.Chance -> Triple("Chance!", data.question, data.options)
-            is GameDialogData.Hacker -> Triple("Hacker!", data.question, data.options)
+        val (title, message, options) = when (data) {
+            is GameDialogData.Question -> Triple(data.title, data.prompt, data.options)
+            is GameDialogData.Result -> Triple(data.title, data.message, listOf("OK"))
         }
         GameDialog(
-            title            = title,
-            question         = question,
-            options          = options,
+            title = title,
+            message = message,
+            options = options,
             onOptionSelected = { idx ->
-                val playerId = players[turnIdx].userId
-                gameParams.onDialogOptionSelected(idx, playerId)
+                if (data is GameDialogData.Question) {
+                    gameParams.onDialogOptionSelected(idx)
+                } else {
+                    gameParams.onResultDismiss()
+                }
             },
-            onDismiss        = { gameParams.onDialogDismiss() }
+            onDismiss = { gameParams.onResultDismiss() }
         )
     }
 }

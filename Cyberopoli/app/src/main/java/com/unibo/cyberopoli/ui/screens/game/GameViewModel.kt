@@ -10,196 +10,200 @@ import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.Phase
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.data.services.HFService
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 sealed class GameDialogData {
-    data class Chance(val question: String, val options: List<String>) : GameDialogData()
-    data class Hacker(val question: String, val options: List<String>) : GameDialogData()
+    data class Question(
+        val title: String,
+        val prompt: String,
+        val options: List<String>,
+        val correctIndex: Int
+    ) : GameDialogData()
+    data class Result(val title: String, val message: String) : GameDialogData()
 }
 
 class GameViewModel(
-    private val userRepository: UserRepository, private val repo: GameRepository
+    private val userRepository: UserRepository,
+    private val repo: GameRepository
 ) : ViewModel() {
-    private val myUserId: String?
-        get() = userRepository.currentUserLiveData.value?.id
+    private val hfService = HFService("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")
 
     private val _game = MutableStateFlow<Game?>(null)
-    val game = _game.asStateFlow()
+    val game: StateFlow<Game?> = _game.asStateFlow()
 
     private val _players = MutableStateFlow<List<GamePlayer>>(emptyList())
-    val players = _players.asStateFlow()
+    val players: StateFlow<List<GamePlayer>> = _players.asStateFlow()
 
     private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
-    val events = _events.asStateFlow()
-
-    private val _currentTurnIndex = MutableStateFlow(0)
-    val currentTurnIndex = _currentTurnIndex.asStateFlow()
+    val events: StateFlow<List<GameEvent>> = _events.asStateFlow()
 
     private val _phase = MutableStateFlow(Phase.ROLL_DICE)
-    val phase = _phase.asStateFlow()
+    val phase: StateFlow<Phase> = _phase.asStateFlow()
 
     private val _diceRoll = MutableStateFlow<Int?>(null)
-    val diceRoll = _diceRoll.asStateFlow()
+    val diceRoll: StateFlow<Int?> = _diceRoll.asStateFlow()
 
-    private val _landedCellType = MutableStateFlow<CellType>(CellType.START)
-    val landedCellType = _landedCellType.asStateFlow()
+    private val _landed = MutableStateFlow<CellType>(CellType.START)
+    private val landedCellType: StateFlow<CellType> = _landed.asStateFlow()
 
     private val _dialog = MutableStateFlow<GameDialogData?>(null)
-    val dialog = _dialog.asStateFlow()
+    val dialog: StateFlow<GameDialogData?> = _dialog.asStateFlow()
 
-    fun startGame(
-        lobbyId: String, lobbyMembers: List<LobbyMember>
-    ) {
+    private val _isLoadingQuestion = MutableStateFlow(false)
+    val isLoadingQuestion: StateFlow<Boolean> = _isLoadingQuestion.asStateFlow()
+
+    private var pendingGameEvent: GameEvent? = null
+
+    fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) =
         viewModelScope.launch {
-            Log.d("GameViewModel", "Starting game with lobbyId=$lobbyId, members=$lobbyMembers")
             val newGame = repo.createGame(lobbyId, lobbyMembers)
             _game.value = newGame
             joinGame()
-            refreshPlayers()
-            refreshEvents()
-            updateTurnIndex()
+            refreshGameState()
         }
-    }
 
     private suspend fun joinGame() {
-        val g = _game.value ?: return
-        repo.joinGame(g, myUserId!!)
+        _game.value?.let { repo.joinGame(it, userId) }
         refreshPlayers()
     }
 
     fun rollDice() {
-        val roll = (1..6).random()
-        _diceRoll.value = roll
+        _diceRoll.value = (1..6).random()
         _phase.value = Phase.MOVE
     }
 
-    fun movePlayer() {
-        val g = _game.value ?: return
-        val roll = _diceRoll.value ?: return
-
-        viewModelScope.launch {
-            val me = _players.value.first { it.userId == myUserId }
-            val path = PERIMETER_PATH
-            val startIdx = path.indexOf(me.cellPosition).coerceAtLeast(0)
-            val nextIdx = (startIdx + roll) % path.size
-            val newPos = path[nextIdx]
-
-            repo.updatePlayer(g, me.copy(cellPosition = newPos))
-            refreshPlayers()
-
-            val cellType = PERIMETER_CELLS[newPos]?.type ?: CellType.COMMON
-            _landedCellType.value = cellType
-
-            _phase.value = when (cellType) {
-                CellType.CHANCE -> Phase.CHANCE
-                CellType.HACKER -> Phase.HACKER
-                else -> Phase.END_TURN
+    fun movePlayer() = viewModelScope.launch {
+        _game.value?.let { game ->
+            _players.value.firstOrNull { it.userId == userId }?.let { me ->
+                val newPos = computeNewPosition(me.cellPosition, _diceRoll.value ?: 0)
+                repo.updatePlayer(game, me.copy(cellPosition = newPos))
+                refreshGameState()
+                handleLanding(PERIMETER_CELLS[newPos]?.type)
             }
-
-            handleLanded(cellType)
         }
     }
 
-    private fun handleLanded(cellType: CellType) {
+    private fun computeNewPosition(current: Int, roll: Int): Int {
+        val path = PERIMETER_PATH
+        val idx = (path.indexOf(current).coerceAtLeast(0) + roll) % path.size
+        return path[idx]
+    }
+
+    private fun handleLanding(cellType: CellType?) {
         when (cellType) {
-            CellType.CHANCE -> _dialog.value = GameDialogData.Chance(
-                question = "Qual è la capitale d'Italia?",
-                options = listOf("Milano", "Roma", "Napoli")
+            CellType.CHANCE -> askQuestion(
+                title = "Domanda Sicurezza",
+                prompt = buildChoicePrompt(
+                    "una domanda a scelta multipla sulla sicurezza informatica",
+                    3
+                ),
+                points = 5,
+                eventType = GameEventType.CHANCE
             )
-
-            CellType.HACKER -> _dialog.value = GameDialogData.Hacker(
-                question = "Un hacker ti sfida: cosa fai?",
-                options = listOf("Bloccalo", "Scappa", "Negozia")
+            CellType.HACKER -> askQuestion(
+                title = "Scenario Hacker",
+                prompt = buildChoicePrompt(
+                    "uno scenario di attacco hacker e proponi 3 azioni possibili",
+                    3
+                ),
+                points = 10,
+                eventType = GameEventType.HACKER
             )
-
-            else -> Unit
+            else -> _phase.value = Phase.END_TURN
         }
     }
 
-    fun onDialogOptionSelected(idx: Int, playerId: String) {
-        when (val d = _dialog.value) {
-            is GameDialogData.Chance -> {
-                val delta = if (idx == 1) +5 else -5
-                updatePlayerPoints(playerId, delta, GameEventType.CHANCE)
-            }
+    private fun buildChoicePrompt(description: String, optionsCount: Int): String =
+        "Genera $description. " +
+                "La voglio in questo formato specifico: DOMANDA==<testo>||OPZIONI==<${optionsCount} opzioni separate da ';;'>||CORRETTA==<indice che parte da 0>"
 
-            is GameDialogData.Hacker -> {
-                // implementa logica Hacker
-            }
-
-            null -> return
+    private fun askQuestion(
+        title: String,
+        prompt: String,
+        points: Int,
+        eventType: GameEventType
+    ) = viewModelScope.launch {
+        _isLoadingQuestion.value = true
+        try {
+            val raw = hfService.generateChat(model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt)
+            val (question, options, correct) = parseStructured(raw)
+            pendingGameEvent = GameEvent(
+                lobbyId = _game.value!!.lobbyId,
+                gameId = _game.value!!.id,
+                senderUserId = userId,
+                recipientUserId = userId,
+                eventType = eventType,
+                value = points,
+                createdAt = Instant.now().toString()
+            )
+            _dialog.value = GameDialogData.Question(title, question, options, correct)
+        } finally {
+            _isLoadingQuestion.value = false
         }
+    }
+
+    fun onDialogOptionSelected(idx: Int) = viewModelScope.launch {
+        (dialog.value as? GameDialogData.Question)?.let { q ->
+            val correct = (idx == q.correctIndex)
+            val delta = if (correct) q.correctIndex else -q.correctIndex
+            pendingGameEvent?.copy(value = delta)?.also { repo.addGameEvent(it) }
+            val title = if (correct) "Corretto!" else "Sbagliato!"
+            val message = if (correct) "Hai guadagnato $delta punti." else "Hai perso ${-delta} punti."
+            _dialog.value = GameDialogData.Result(title, message)
+        }
+    }
+
+    fun onResultDismiss() {
         _dialog.value = null
         endTurn()
-    }
-
-    fun onDialogDismiss() {
-        _dialog.value = null
-        endTurn()
-    }
-
-    fun performChance() {
-        _phase.value = Phase.END_TURN
-    }
-
-    fun performHacker() {
-        _phase.value = Phase.END_TURN
     }
 
     fun endTurn() {
-        _phase.value = Phase.WAIT
         _diceRoll.value = null
+        _phase.value = Phase.WAIT
         nextTurn()
     }
 
-    private fun nextTurn() {
-        val count = _players.value.size
-        if (count == 0) return
-        _currentTurnIndex.value = (_currentTurnIndex.value + 1) % count
-        viewModelScope.launch {
-            repo.setNextTurn(
-                _game.value!!, _players.value[_currentTurnIndex.value].userId
-            )
-            refreshEvents()
-            updateTurnIndex()
+    private fun nextTurn() = viewModelScope.launch {
+        _game.value?.let { game ->
+            _players.value.let { players ->
+                val nextIdx = (players.indexOfFirst { it.userId == game.turn } + 1) % players.size
+                repo.setNextTurn(game, players[nextIdx].userId)
+                refreshGameState()
+            }
         }
     }
 
-    private fun updateTurnIndex() {
-        val idx = _players.value.indexOfFirst { it.userId == _game.value?.turn }
-        _currentTurnIndex.value = idx
-        _phase.value =
-            if (_players.value.getOrNull(idx)?.userId == myUserId) Phase.ROLL_DICE else Phase.WAIT
+    private fun refreshGameState() {
+        viewModelScope.launch { refreshPlayers(); refreshEvents() }
+        _phase.value = if (userId == _game.value?.turn) Phase.ROLL_DICE else Phase.WAIT
     }
 
-    fun updatePlayerPoints(userId: String, value: Int, gameEventType: GameEventType) {
-        viewModelScope.launch {
-            val g = _game.value ?: return@launch
-            repo.addGameEvent(
-                GameEvent(
-                    lobbyId = g.lobbyId,
-                    gameId = g.id,
-                    senderUserId = myUserId!!,
-                    eventType = gameEventType,
-                    value = value,
-                    recipientUserId = userId
-                )
-            )
-            refreshPlayers()
-            refreshEvents()
-        }
+    private fun refreshPlayers() = viewModelScope.launch {
+        _game.value?.id?.let { _players.value = repo.getGamePlayers(it) }
     }
 
-    private suspend fun refreshPlayers() {
-        _players.value = _game.value?.id?.let { repo.getGamePlayers(it) }.orEmpty()
+    private fun refreshEvents() = viewModelScope.launch {
+        _game.value?.let { _events.value = repo.getGameEvents(it.lobbyId, it.id) }
     }
 
-    private suspend fun refreshEvents() {
-        _events.value = _game.value?.let { repo.getGameEvents(it.lobbyId, it.id) }.orEmpty()
+    private fun parseStructured(raw: String): Triple<String, List<String>, Int> {
+        val parts = raw.split("||").map { it.trim() }
+        val question = parts[0].substringAfter("DOMANDA==").trim()
+        val options = parts[1].substringAfter("OPZIONI==").split(";;").map { it.trim() }
+        val correct = parts[2].substringAfter("CORRETTA==").toIntOrNull() ?: 0
+        return Triple(question, options, correct)
     }
+
+    private val userId: String
+        get() = userRepository.currentUserLiveData.value?.id.orEmpty()
 }

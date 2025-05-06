@@ -37,9 +37,8 @@ fun GameContent(
             diceRoll = gameParams.diceRoll.value,
             onRoll = { gameParams.rollDice() },
             onMove = { onMoveAnimated(it) },
-            onChance = { gameParams.performChance() },
-            onHacker = { gameParams.performHacker() },
-            onEndTurn = { gameParams.endTurn() })
+            onEndTurn = { gameParams.endTurn() }
+        )
     }) { padding ->
         Column(
             modifier = Modifier

@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.screens.game.Phase
+import com.unibo.cyberopoli.data.models.game.Phase
 
 @Composable
 fun GameBottomBar(
@@ -24,9 +24,7 @@ fun GameBottomBar(
     diceRoll: Int?,
     onRoll: () -> Unit,
     onMove: (Int) -> Unit,
-    onChance: () -> Unit,
-    onHacker: () -> Unit,
-    onEndTurn: () -> Unit
+    onEndTurn: () -> Unit,
 ) {
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
@@ -83,7 +81,7 @@ fun GameBottomBar(
 
                     },
                     selected = false,
-                    onClick = onChance
+                    onClick = { }
                 )
             }
             Phase.HACKER -> {
@@ -100,7 +98,7 @@ fun GameBottomBar(
                         }
                     },
                     selected = false,
-                    onClick = onHacker
+                    onClick = { }
                 )
             }
             Phase.END_TURN -> {
@@ -134,7 +132,7 @@ fun GameBottomBar(
                         }
                     },
                     selected = false,
-                    onClick = onEndTurn
+                    onClick = { }
                 )
             }
         }

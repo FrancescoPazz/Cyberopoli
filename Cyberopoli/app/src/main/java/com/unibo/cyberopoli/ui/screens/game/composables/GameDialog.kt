@@ -18,41 +18,44 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 @Composable
 fun GameDialog(
     title: String,
-    question: String,
-    options: List<String>,
-    onOptionSelected: (Int) -> Unit,
+    message: String,
+    options: List<String> = emptyList(),
+    onOptionSelected: (Int) -> Unit = {},
     onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            color = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
             shape = RoundedCornerShape(16.dp),
             tonalElevation = 8.dp,
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            Column(modifier = Modifier.padding(24.dp)) {
-                Text(
-                    text = title,
+            Column(Modifier.padding(24.dp)) {
+                Text(title,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = question,
+                    style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(16.dp))
+                Text(message,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                options.forEachIndexed { index, label ->
+                    style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(24.dp))
+
+                if (options.isNotEmpty()) {
+                    options.forEachIndexed { idx, label ->
+                        Button(
+                            onClick = { onOptionSelected(idx) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Text(label)
+                        }
+                    }
+                } else {
                     Button(
-                        onClick = { onOptionSelected(index) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                        onClick = onDismiss,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = label)
+                        Text("OK")
                     }
                 }
             }
