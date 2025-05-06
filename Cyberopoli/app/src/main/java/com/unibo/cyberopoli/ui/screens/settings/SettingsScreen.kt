@@ -40,8 +40,7 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.theme.Theme
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
-
+import com.unibo.cyberopoli.data.models.auth.AuthState
 @Composable
 fun SettingScreen(
     navController: NavController,

@@ -9,6 +9,8 @@ import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
+import com.unibo.cyberopoli.data.models.auth.AuthResponse
+import com.unibo.cyberopoli.data.models.auth.AuthState
 
 class AuthViewModel(
     private val authRepo: AuthRepository, private val userRepo: UserRepository

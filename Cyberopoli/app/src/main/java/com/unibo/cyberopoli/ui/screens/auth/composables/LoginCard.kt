@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
+import com.unibo.cyberopoli.data.models.auth.AuthState
 
 @Composable
 fun LoginCard(

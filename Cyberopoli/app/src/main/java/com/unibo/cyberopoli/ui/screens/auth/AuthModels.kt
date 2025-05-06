@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.ui.screens.auth
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.unibo.cyberopoli.data.models.auth.AuthState
 
 data class AuthParams(
     val authState: LiveData<AuthState>,
@@ -14,15 +15,3 @@ data class AuthParams(
     val loginAnonymously: (String) -> Unit
 )
 
-sealed class AuthState {
-    data object Authenticated : AuthState()
-    data object AnonymousAuthenticated : AuthState()
-    data object Unauthenticated : AuthState()
-    data object Loading : AuthState()
-    data class Error(val message: String) : AuthState()
-}
-
-sealed interface AuthResponse {
-    data object Success : AuthResponse
-    data class Failure(val message: String) : AuthResponse
-}

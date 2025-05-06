@@ -33,7 +33,7 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
+import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.composables.Text3D
 import com.unibo.cyberopoli.ui.screens.scan.composables.QRCodeScanner
 import com.unibo.cyberopoli.util.PermissionHandler

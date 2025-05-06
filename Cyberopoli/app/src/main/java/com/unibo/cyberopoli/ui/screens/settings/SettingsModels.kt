@@ -2,8 +2,7 @@ package com.unibo.cyberopoli.ui.screens.settings
 
 import androidx.lifecycle.LiveData
 import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
-
+import com.unibo.cyberopoli.data.models.auth.AuthState
 data class SettingsParams(
     val changeTheme: (Theme) -> Unit,
     val themeState: ThemeState,

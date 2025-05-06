@@ -16,7 +16,7 @@ import com.unibo.cyberopoli.data.models.theme.Theme
 import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
+import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 import com.unibo.cyberopoli.ui.screens.game.GameScreen

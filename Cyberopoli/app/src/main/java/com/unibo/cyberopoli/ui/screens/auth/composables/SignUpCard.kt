@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
-import com.unibo.cyberopoli.ui.screens.auth.AuthState
+import com.unibo.cyberopoli.data.models.auth.AuthState
 
 @Composable
 fun SignUpCard(
