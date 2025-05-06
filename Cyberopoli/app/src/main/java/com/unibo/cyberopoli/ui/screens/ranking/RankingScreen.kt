@@ -18,7 +18,6 @@ import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.ranking.composables.MyRankingPosition
 import com.unibo.cyberopoli.ui.screens.ranking.composables.RankingListSection
-import com.unibo.cyberopoli.ui.screens.ranking.composables.RankingTabs
 import com.unibo.cyberopoli.ui.screens.ranking.composables.Top3RankingSection
 
 @Composable
@@ -37,9 +36,6 @@ fun RankingScreen(
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
             ) {
-                RankingTabs(selectedTabIndex = 0, onTabSelected = { /* TODO */ })
-
-                Spacer(modifier = Modifier.height(8.dp))
                 if (rankingParams.rankingData.value == null) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     Text(text = "Loading...", modifier = Modifier.padding(16.dp))
