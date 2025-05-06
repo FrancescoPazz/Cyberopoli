@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.game
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.game.CellType
@@ -15,6 +16,7 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import com.unibo.cyberopoli.data.services.HFService
+import com.unibo.cyberopoli.util.UsageStatsHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +24,10 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 
 class GameViewModel(
-    private val userRepository: UserRepository, private val gameRepository: GameRepository
+    private val userRepository: UserRepository,
+    private val gameRepository: GameRepository,
+    private val usageStatsHelper: UsageStatsHelper
+
 ) : ViewModel() {
     private val hfService = HFService("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")
 
@@ -82,36 +87,106 @@ class GameViewModel(
         return path[idx]
     }
 
+    fun askWellbeingQuestion(description: String) = viewModelScope.launch {
+        _isLoadingQuestion.value = true
+        try {
+            val topApps = usageStatsHelper.getTopUsedApps()
+                .joinToString(separator = "; ") { "${it.first}:${it.second / 1000}s" }
+            val total = usageStatsHelper.getTodayUsageTime() / 1000
+            val dataStr = """
+          {
+            "topApps": "$topApps",
+            "totalUsageSec": $total
+          }
+        """.trimIndent()
+
+            val prompt = buildString {
+                append("Sulla base di questi dati registrati su questo dispositivo: ")
+                append(dataStr)
+                append(" allora Genera $description. ")
+                append("La voglio in questo formato specifico: DOMANDA==<testo>||OPZIONI==<3 opzioni separate da ';;'>||CORRETTA==<indice che parte da 0>")
+            }
+
+            val raw = hfService.generateChat(
+                model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt
+            )
+
+            val (question, options, correct) = parseStructured(raw)
+            pendingGameEvent = GameEvent(
+                lobbyId = _game.value!!.lobbyId,
+                gameId = _game.value!!.id,
+                senderUserId = userId,
+                recipientUserId = userId,
+                eventType = GameEventType.CHANCE,
+                value = 0,
+                createdAt = Instant.now().toString()
+            )
+            _dialog.value = GameDialogData.Question(
+                title = "Benessere Digitale",
+                prompt = question,
+                options = options,
+                correctIndex = correct
+            )
+        } finally {
+            _isLoadingQuestion.value = false
+        }
+    }
+
+
     private fun handleLanding(cellType: CellType?) {
         when (cellType) {
             CellType.CHANCE -> askQuestion(
-                title = "Domanda Sicurezza", prompt = buildChoicePrompt(
-                    "una domanda a scelta multipla sulla sicurezza informatica"
-                ), points = 5, eventType = GameEventType.CHANCE
+                title = "Domanda Sicurezza",
+                description = "una domanda a scelta multipla sulla sicurezza informatica",
+                points = 5,
+                eventType = GameEventType.CHANCE
             )
 
             CellType.HACKER -> askQuestion(
-                title = "Scenario Hacker", prompt = buildChoicePrompt(
-                    "uno scenario di attacco hacker e proponi 3 azioni possibili"
-                ), points = 10, eventType = GameEventType.HACKER
+                title = "Scenario Hacker",
+                description = "uno scenario di attacco hacker e proponi 3 azioni possibili",
+                points = 10,
+                eventType = GameEventType.HACKER
             )
 
             else -> _phase.value = Phase.END_TURN
         }
     }
 
-    private fun buildChoicePrompt(description: String): String =
-        "Genera $description. " + "La voglio in questo formato specifico: DOMANDA==<testo>||OPZIONI==<3 opzioni separate da ';;'>||CORRETTA==<indice che parte da 0>"
-
     private fun askQuestion(
-        title: String, prompt: String, points: Int, eventType: GameEventType
+        title: String,
+        description: String,
+        points: Int,
+        eventType: GameEventType,
     ) = viewModelScope.launch {
         _isLoadingQuestion.value = true
         try {
+            val topApps = usageStatsHelper.getTopUsedApps()
+                .joinToString("; ") { "${it.first}:${it.second / 1000}s" }
+            val totalSec = usageStatsHelper.getTodayUsageTime() / 1000
+
+            val dataStr = """
+                          {
+                            "topApps": "$topApps",
+                            "totalUsageSec": $totalSec
+                          }
+                          """.trimIndent()
+
+            val usageDataPrefix = "Sulla base di questi dati registrati su questo dispositivo: $dataStr allora "
+
+            val prompt = buildString {
+                append(usageDataPrefix)
+                append("genera $description. ")
+                append("La voglio in questo formato specifico: ")
+                append("DOMANDA==<testo>||OPZIONI==<3 opzioni brevi separate da ';;'>||CORRETTA==<indice che parte da 0>")
+            }
+
+            Log.d("GameViewModel", "Prompt: $prompt")
+
             val raw = hfService.generateChat(
-                model = "deepseek/deepseek-prover-v2-671b",
-                userPrompt = prompt
+                model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt
             )
+
             val (question, options, correct) = parseStructured(raw)
             pendingGameEvent = GameEvent(
                 lobbyId = _game.value!!.lobbyId,
@@ -122,7 +197,9 @@ class GameViewModel(
                 value = points,
                 createdAt = Instant.now().toString()
             )
-            _dialog.value = GameDialogData.Question(title, question, options, correct)
+            _dialog.value = GameDialogData.Question(
+                title = title, prompt = question, options = options, correctIndex = correct
+            )
         } finally {
             _isLoadingQuestion.value = false
         }
