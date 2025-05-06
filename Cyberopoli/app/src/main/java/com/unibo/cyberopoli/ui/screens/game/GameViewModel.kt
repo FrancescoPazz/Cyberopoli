@@ -13,7 +13,7 @@ import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.data.models.game.Phase
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
-import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import com.unibo.cyberopoli.data.services.HFService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

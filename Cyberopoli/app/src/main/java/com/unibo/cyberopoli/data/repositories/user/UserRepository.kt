@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.repositories.profile
+package com.unibo.cyberopoli.data.repositories.user
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -9,8 +9,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.unibo.cyberopoli.data.repositories.profile.IUserInterface as DomainUserRepository
-
+import com.unibo.cyberopoli.data.repositories.user.IUserInterface as DomainUserRepository
 
 class UserRepository(
     private val supabase: SupabaseClient

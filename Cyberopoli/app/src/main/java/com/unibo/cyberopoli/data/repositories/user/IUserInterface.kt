@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.repositories.profile
+package com.unibo.cyberopoli.data.repositories.user
 
 import com.unibo.cyberopoli.data.models.auth.User
 

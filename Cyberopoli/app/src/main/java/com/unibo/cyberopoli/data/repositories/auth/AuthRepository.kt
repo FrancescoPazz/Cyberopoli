@@ -156,6 +156,29 @@ class AuthRepository(
         }
     }
 
+    override fun changePassword(oldPassword: String, newPassword: String): Flow<AuthResponse> = flow {
+        try {
+            val email = supabase.auth.currentUserOrNull()
+                ?.email
+                ?: throw IllegalStateException("Nessun utente autenticato")
+            supabase.auth.signInWith(Email) {
+                this.email = email
+                this.password = oldPassword
+            }
+            supabase.auth.sessionStatus
+                .filterIsInstance<SessionStatus.Authenticated>()
+                .first()
+            supabase.auth.updateUser {
+                password = newPassword
+            }
+
+            emit(AuthResponse.Success)
+        } catch (e: Exception) {
+            emit(AuthResponse.Failure(e.message ?: "Errore cambio password"))
+        }
+    }
+
+
     override suspend fun currentUser(): User? {
         val session = supabase.auth.currentSessionOrNull() ?: return null
         val data = session.user!!

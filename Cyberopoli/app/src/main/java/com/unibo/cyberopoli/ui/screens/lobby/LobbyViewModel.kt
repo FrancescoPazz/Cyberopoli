@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
-import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
-import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(

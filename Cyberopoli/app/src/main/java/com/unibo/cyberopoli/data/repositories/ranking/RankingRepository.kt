@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.data.repositories.profile
+package com.unibo.cyberopoli.data.repositories.ranking
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -9,13 +9,14 @@ import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.unibo.cyberopoli.data.repositories.ranking.IRankingRepository as DomainUserRepository
 
 class RankingRepository(
     private val supabase: SupabaseClient
-) {
+) : DomainUserRepository {
     val rankingLiveData = MutableLiveData<List<User>>()
 
-    fun loadRanking() {
+    override fun loadRanking() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val users: List<User> = supabase.from("users").select {

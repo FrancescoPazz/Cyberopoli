@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.settings.ThemeState
 import com.unibo.cyberopoli.data.models.theme.Theme
+import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
 import com.unibo.cyberopoli.data.repositories.settings.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     val state = settingsRepository.theme.map { ThemeState(it) }.stateIn(
         scope = viewModelScope,
@@ -26,7 +28,12 @@ class SettingsViewModel(
     fun updatePasswordWithOldPassword(
         oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
     ) = viewModelScope.launch {
-
+        try {
+            authRepository.changePassword(oldPassword, newPassword)
+            onSuccess()
+        } catch (e: Exception) {
+            onError(e.message ?: "Error changing password")
+        }
     }
 
 }

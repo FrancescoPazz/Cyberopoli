@@ -5,8 +5,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
-import com.unibo.cyberopoli.data.repositories.profile.RankingRepository
-import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.data.repositories.ranking.RankingRepository
+import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import com.unibo.cyberopoli.data.repositories.settings.SettingsRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.game.GameViewModel
@@ -25,7 +25,7 @@ val appModule = module {
     viewModel { AuthViewModel(get(), get()) }
     viewModel { ScanViewModel() }
     viewModel { HomeViewModel(get()) }
-    viewModel { SettingsViewModel(get()) }
+    viewModel { SettingsViewModel(get(), get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get(), get()) }
     viewModel { LobbyViewModel(get(), get()) }

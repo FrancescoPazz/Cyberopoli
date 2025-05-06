@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.AuthResponse
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
-import com.unibo.cyberopoli.data.repositories.profile.UserRepository
+import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
