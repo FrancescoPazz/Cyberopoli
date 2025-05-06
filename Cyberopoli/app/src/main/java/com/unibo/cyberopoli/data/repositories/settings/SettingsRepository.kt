@@ -6,10 +6,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.unibo.cyberopoli.data.models.theme.Theme
 import kotlinx.coroutines.flow.map
+import com.unibo.cyberopoli.data.repositories.settings.ISettingsRepository as DomainSettingsRepository
+
 
 class SettingsRepository(
     private val dataStore: DataStore<Preferences>
-) {
+) : DomainSettingsRepository {
     companion object {
         private val THEME_KEY = stringPreferencesKey("theme")
     }
@@ -22,7 +24,7 @@ class SettingsRepository(
         }
     }
 
-    suspend fun setTheme(theme: Theme) {
+    override suspend fun setTheme(theme: Theme) {
         dataStore.edit { preferences ->
             preferences[THEME_KEY] = theme.toString()
         }
