@@ -58,25 +58,58 @@ class AuthRepository(
     }
 
     override fun signUp(
-        name: String?, surname: String?, username: String, email: String, password: String
+        name: String?,
+        surname: String?,
+        username: String,
+        email: String,
+        password: String
     ): Flow<AuthResponse> = flow {
+        if (username.isBlank() || email.isBlank() || password.isBlank()) {
+            emit(AuthResponse.Failure("Username, email and password cannot be empty"))
+            return@flow
+        }
+
+        val takenUsers = supabase
+            .from("users")
+            .select { filter { eq("username", username) } }
+            .decodeList<User>()
+        if (takenUsers.isNotEmpty()) {
+            emit(AuthResponse.Failure("Username already in use"))
+            return@flow
+        }
+
+        val takenEmails = supabase
+            .from("users")
+            .select { filter { eq("email", email) } }
+            .decodeList<User>()
+        if (takenEmails.isNotEmpty()) {
+            emit(AuthResponse.Failure("Already registered email"))
+            return@flow
+        }
+
         try {
             val result = supabase.auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
             }
-            val userId =
-                result?.id ?: throw IllegalStateException("SignUp succeeded but userId is null")
+            val userId = result?.id
+                ?: throw IllegalStateException("Registration successful but userId null")
 
             val user = User(
-                id = userId, name = name, surname = surname, username = username, email = email
+                id = userId,
+                name = name,
+                surname = surname,
+                username = username,
+                email = email
             )
             supabase.from("users").upsert(user)
+
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            emit(AuthResponse.Failure(e.message ?: "Sign up error"))
+            emit(AuthResponse.Failure(e.message ?: "Error during registration"))
         }
     }
+
 
     private fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()

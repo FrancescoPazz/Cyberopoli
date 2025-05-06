@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,8 +34,6 @@ fun SignUpCard(
         name: String?, surname: String?, username: String, email: String, password: String
     ) -> Unit,
 ) {
-    val context = LocalContext.current
-
     val name = remember { mutableStateOf("") }
     val surname = remember { mutableStateOf("") }
     val username = remember { mutableStateOf("") }
@@ -42,7 +41,8 @@ fun SignUpCard(
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
 
-    val warning = stringResource(R.string.password_not_match)
+    val passwordsMatch = password.value.isNotBlank() &&
+            password.value == confirmPassword.value
 
     Column(
         modifier = Modifier
@@ -108,23 +108,17 @@ fun SignUpCard(
         AuthButton(
             text = stringResource(R.string.signup).uppercase(),
             onClick = {
-                if (password.value != confirmPassword.value) {
-                    Toast.makeText(
-                        context, warning, Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    signUp(
-                        name.value, surname.value, username.value, email.value, password.value
-                    )
-                    navController.navigate(CyberopoliRoute.Auth) {
-                        popUpTo(CyberopoliRoute.Auth) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
+                signUp(
+                    name.value, surname.value, username.value, email.value, password.value
+                )
+                navController.navigate(CyberopoliRoute.Auth) {
+                    popUpTo(CyberopoliRoute.Auth) {
+                        inclusive = true
                     }
+                    launchSingleTop = true
                 }
             },
-            enabled = authState.value != AuthState.Loading,
+            enabled = authState.value != AuthState.Loading && passwordsMatch,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
