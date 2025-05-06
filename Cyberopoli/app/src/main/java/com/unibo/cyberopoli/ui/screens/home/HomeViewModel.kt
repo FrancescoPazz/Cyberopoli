@@ -6,11 +6,11 @@ import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 
 class HomeViewModel(
-    private val userRepo: UserRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
-    val user: LiveData<User?> = userRepo.currentUserLiveData
+    val user: LiveData<User?> = userRepository.currentUserLiveData
 
     fun loadUserData() {
-        userRepo.loadUserData()
+        userRepository.loadUserData()
     }
 }

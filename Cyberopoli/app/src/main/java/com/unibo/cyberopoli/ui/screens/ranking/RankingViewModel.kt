@@ -8,9 +8,9 @@ import com.unibo.cyberopoli.data.repositories.profile.RankingRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 
 class RankingViewModel(
-    private val userRepo: UserRepository, rankingRepository: RankingRepository
+    private val userRepository: UserRepository, rankingRepository: RankingRepository
 ) : ViewModel() {
-    private val currentUser: MutableLiveData<User?> = userRepo.currentUserLiveData
+    private val currentUser: MutableLiveData<User?> = userRepository.currentUserLiveData
     val ranking: LiveData<List<User>> = rankingRepository.rankingLiveData
 
     init {
@@ -18,7 +18,7 @@ class RankingViewModel(
     }
 
     fun loadUserData() {
-        userRepo.loadUserData()
+        userRepository.loadUserData()
     }
 
     fun getMyRanking(): User? {

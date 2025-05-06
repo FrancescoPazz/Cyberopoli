@@ -8,14 +8,14 @@ import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val userRepo: UserRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
-    val user: LiveData<User?> = userRepo.currentUserLiveData
+    val user: LiveData<User?> = userRepository.currentUserLiveData
 
     fun changeAvatar() {
         viewModelScope.launch {
-            userRepo.changeAvatar()
+            userRepository.changeAvatar()
         }
     }
 }

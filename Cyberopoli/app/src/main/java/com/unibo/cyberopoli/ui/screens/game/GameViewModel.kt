@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 
 class GameViewModel(
-    private val userRepository: UserRepository, private val repo: GameRepository
+    private val userRepository: UserRepository, private val gameRepository: GameRepository
 ) : ViewModel() {
     private val hfService = HFService("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")
 
@@ -49,14 +49,14 @@ class GameViewModel(
     private var pendingGameEvent: GameEvent? = null
 
     fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) = viewModelScope.launch {
-        val newGame = repo.createGame(lobbyId, lobbyMembers)
+        val newGame = gameRepository.createGame(lobbyId, lobbyMembers)
         _game.value = newGame
         joinGame()
         refreshGameState()
     }
 
     private suspend fun joinGame() {
-        _game.value?.let { repo.joinGame(it, userId) }
+        _game.value?.let { gameRepository.joinGame(it, userId) }
         refreshPlayers()
     }
 
@@ -69,7 +69,7 @@ class GameViewModel(
         _game.value?.let { game ->
             _players.value.firstOrNull { it.userId == userId }?.let { me ->
                 val newPos = computeNewPosition(me.cellPosition, _diceRoll.value ?: 0)
-                repo.updatePlayer(game, me.copy(cellPosition = newPos))
+                gameRepository.updatePlayer(game, me.copy(cellPosition = newPos))
                 refreshGameState()
                 handleLanding(PERIMETER_CELLS[newPos]?.type)
             }
@@ -132,7 +132,7 @@ class GameViewModel(
         (dialog.value as? GameDialogData.Question)?.let { q ->
             val correct = (idx == q.correctIndex)
             val delta = if (correct) q.correctIndex else -q.correctIndex
-            pendingGameEvent?.copy(value = delta)?.also { repo.addGameEvent(it) }
+            pendingGameEvent?.copy(value = delta)?.also { gameRepository.addGameEvent(it) }
             val title = if (correct) "Corretto!" else "Sbagliato!"
             val message =
                 if (correct) "Hai guadagnato $delta punti." else "Hai perso ${-delta} punti."
@@ -155,7 +155,7 @@ class GameViewModel(
         _game.value?.let { game ->
             _players.value.let { players ->
                 val nextIdx = (players.indexOfFirst { it.userId == game.turn } + 1) % players.size
-                repo.setNextTurn(game, players[nextIdx].userId)
+                gameRepository.setNextTurn(game, players[nextIdx].userId)
                 refreshGameState()
             }
         }
@@ -167,11 +167,11 @@ class GameViewModel(
     }
 
     private fun refreshPlayers() = viewModelScope.launch {
-        _game.value?.id?.let { _players.value = repo.getGamePlayers(it) }
+        _game.value?.id?.let { _players.value = gameRepository.getGamePlayers(it) }
     }
 
     private fun refreshEvents() = viewModelScope.launch {
-        _game.value?.let { _events.value = repo.getGameEvents(it.lobbyId, it.id) }
+        _game.value?.let { _events.value = gameRepository.getGameEvents(it.lobbyId, it.id) }
     }
 
     private fun parseStructured(raw: String): Triple<String, List<String>, Int> {

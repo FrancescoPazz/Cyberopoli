@@ -11,20 +11,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val repository: SettingsRepository
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    val state = repository.theme.map { ThemeState(it) }.stateIn(
+    val state = settingsRepository.theme.map { ThemeState(it) }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = ThemeState(Theme.System)
     )
 
     fun changeTheme(newTheme: Theme) = viewModelScope.launch {
-        repository.setTheme(newTheme)
+        settingsRepository.setTheme(newTheme)
     }
 
     fun updatePasswordWithOldPassword(
         oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
-    ) = viewModelScope.launch {}
+    ) = viewModelScope.launch {
+
+    }
 
 }

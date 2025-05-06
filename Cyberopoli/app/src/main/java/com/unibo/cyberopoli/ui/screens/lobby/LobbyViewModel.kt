@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
-    private val userRepository: UserRepository, private val lobbyRepo: LobbyRepository
+    private val userRepository: UserRepository, private val lobbyRepository: LobbyRepository
 ) : ViewModel() {
 
     private val _lobbyId = MutableStateFlow<String?>(null)
@@ -26,9 +26,9 @@ class LobbyViewModel(
         val me = User(
             id = userData.id, username = userData.username, isGuest = userData.isGuest
         )
-        val createdId = lobbyRepo.createOrGetLobby(lobbyId, me)
+        val createdId = lobbyRepository.createOrGetLobby(lobbyId, me)
         _lobbyId.value = createdId
-        lobbyRepo.joinLobby(
+        lobbyRepository.joinLobby(
             createdId, LobbyMember(
                 lobbyId = createdId, userId = me.id, user = me
             )
@@ -38,7 +38,7 @@ class LobbyViewModel(
 
     private fun refreshMembers() = viewModelScope.launch {
         _lobbyId.value?.let { id ->
-            _members.value = lobbyRepo.fetchMembers(id)
+            _members.value = lobbyRepository.fetchMembers(id)
         }
     }
 
@@ -48,7 +48,7 @@ class LobbyViewModel(
         val member = _members.value.firstOrNull { it.userId == meId } ?: return@launch
 
         val newReady = !(member.isReady)
-        lobbyRepo.toggleReady(lobbyId, meId, newReady)
+        lobbyRepository.toggleReady(lobbyId, meId, newReady)
         refreshMembers()
     }
 
@@ -56,12 +56,12 @@ class LobbyViewModel(
         val id = _lobbyId.value ?: return@launch
         val meId = userRepository.currentUserLiveData.value?.id ?: return@launch
         val isHost = _members.value.firstOrNull()?.userId == meId
-        lobbyRepo.leaveLobby(id, meId, isHost)
+        lobbyRepository.leaveLobby(id, meId, isHost)
         _lobbyId.value = null
         _members.value = emptyList()
     }
 
     fun startGame() = viewModelScope.launch {
-        _lobbyId.value?.let { lobbyRepo.startGame(it) }
+        _lobbyId.value?.let { lobbyRepository.startGame(it) }
     }
 }

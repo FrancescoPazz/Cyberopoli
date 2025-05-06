@@ -5,15 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unibo.cyberopoli.data.models.auth.AuthResponse
+import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
 import com.unibo.cyberopoli.data.repositories.profile.UserRepository
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
-import com.unibo.cyberopoli.data.models.auth.AuthResponse
-import com.unibo.cyberopoli.data.models.auth.AuthState
 
 class AuthViewModel(
-    private val authRepo: AuthRepository, private val userRepo: UserRepository
+    private val authRepository: AuthRepository, private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _authState = MutableLiveData<AuthState>(AuthState.Unauthenticated)
@@ -21,10 +21,10 @@ class AuthViewModel(
 
     init {
         viewModelScope.launch {
-            authRepo.authState().collect { state ->
+            authRepository.authState().collect { state ->
                 _authState.postValue(state)
                 if (state is AuthState.Authenticated) {
-                    userRepo.loadUserData()
+                    userRepository.loadUserData()
                 }
             }
         }
@@ -33,10 +33,10 @@ class AuthViewModel(
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepo.signIn(email, password).collect { resp ->
+            authRepository.signIn(email, password).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepo.loadUserData()
+                        userRepository.loadUserData()
                         _authState.value = AuthState.Authenticated
                     }
 
@@ -53,7 +53,7 @@ class AuthViewModel(
     ) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepo.signUp(name, surname, username, email, password).collect { resp ->
+            authRepository.signUp(name, surname, username, email, password).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
                         _authState.value = AuthState.Unauthenticated
@@ -70,10 +70,10 @@ class AuthViewModel(
     fun loginGoogle(context: Context) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepo.signInWithGoogle(context).collect { resp ->
+            authRepository.signInWithGoogle(context).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepo.loadUserData()
+                        userRepository.loadUserData()
                         _authState.value = AuthState.Authenticated
                     }
 
@@ -88,10 +88,10 @@ class AuthViewModel(
     fun loginAnonymously(name: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepo.signInAnonymously(name).collect { resp ->
+            authRepository.signInAnonymously(name).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepo.loadUserData()
+                        userRepository.loadUserData()
                         _authState.value = AuthState.AnonymousAuthenticated
                     }
 
@@ -105,7 +105,7 @@ class AuthViewModel(
 
     fun sendPasswordReset(email: String) {
         viewModelScope.launch {
-            val ok = authRepo.resetPassword(email).single()
+            val ok = authRepository.resetPassword(email).single()
             if (ok is AuthResponse.Success) {
                 _authState.value = AuthState.Unauthenticated
             } else if (ok is AuthResponse.Failure) {
@@ -116,9 +116,9 @@ class AuthViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            val ok = authRepo.signOut().single()
+            val ok = authRepository.signOut().single()
             if (ok is AuthResponse.Success) {
-                userRepo.clearUserData()
+                userRepository.clearUserData()
                 _authState.value = AuthState.Unauthenticated
             } else if (ok is AuthResponse.Failure) {
                 _authState.value = AuthState.Error("Logout error")
