@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.ui.screens.game.composables.GameContent
 import com.unibo.cyberopoli.ui.screens.game.composables.GameDialog

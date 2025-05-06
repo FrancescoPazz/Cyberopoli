@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.ui.screens.game
 
 import androidx.compose.runtime.State
 import com.unibo.cyberopoli.data.models.game.Game
+import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.Phase
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.game.CellType
 import com.unibo.cyberopoli.data.models.game.Game
+import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
@@ -19,14 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
-
-sealed class GameDialogData {
-    data class Question(
-        val title: String, val prompt: String, val options: List<String>, val correctIndex: Int
-    ) : GameDialogData()
-
-    data class Result(val title: String, val message: String) : GameDialogData()
-}
 
 class GameViewModel(
     private val userRepository: UserRepository, private val repo: GameRepository
@@ -46,8 +39,6 @@ class GameViewModel(
 
     private val _diceRoll = MutableStateFlow<Int?>(null)
     val diceRoll: StateFlow<Int?> = _diceRoll.asStateFlow()
-
-    private val _landed = MutableStateFlow(CellType.START)
 
     private val _dialog = MutableStateFlow<GameDialogData?>(null)
     val dialog: StateFlow<GameDialogData?> = _dialog.asStateFlow()
