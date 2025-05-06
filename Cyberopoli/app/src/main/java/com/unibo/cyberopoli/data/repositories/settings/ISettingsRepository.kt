@@ -4,4 +4,6 @@ import com.unibo.cyberopoli.data.models.theme.Theme
 
 interface ISettingsRepository {
     suspend fun setTheme(theme: Theme)
+
+    suspend fun changePassword(oldPassword: String, newPassword: String)
 }

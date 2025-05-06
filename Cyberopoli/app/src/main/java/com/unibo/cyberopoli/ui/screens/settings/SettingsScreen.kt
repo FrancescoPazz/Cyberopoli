@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.settings
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -161,6 +162,7 @@ fun SettingScreen(
                 )
                 Button(
                     onClick = {
+                        Log.d("SettingsRepository", "Change password button clicked, currentPassword: $currentPassword, newPassword: $newPassword, confirmPassword: $confirmPassword")
                         if (newPassword == confirmPassword) {
                             settingsParams.updatePasswordWithOldPassword(currentPassword,
                                 newPassword,

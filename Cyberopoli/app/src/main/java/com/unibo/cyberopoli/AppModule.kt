@@ -25,14 +25,14 @@ val appModule = module {
     viewModel { AuthViewModel(get(), get()) }
     viewModel { ScanViewModel() }
     viewModel { HomeViewModel(get()) }
-    viewModel { SettingsViewModel(get(), get()) }
+    viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get(), get()) }
     viewModel { LobbyViewModel(get(), get()) }
     viewModel { GameViewModel(get(), get()) }
 
     single { AuthRepository(get()) }
-    single { SettingsRepository(get()) }
+    single { SettingsRepository(get(), get()) }
     single { UserRepository(get()) }
     single { RankingRepository(get()) }
     single { LobbyRepository(get()) }
