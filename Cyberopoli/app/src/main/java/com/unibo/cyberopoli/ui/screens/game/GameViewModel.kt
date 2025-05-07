@@ -53,16 +53,20 @@ class GameViewModel(
 
     private var pendingGameEvent: GameEvent? = null
 
-    fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) = viewModelScope.launch {
-        val newGame = gameRepository.createGame(lobbyId, lobbyMembers)
-        _game.value = newGame
-        joinGame()
-        refreshGameState()
+    fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
+        viewModelScope.launch {
+            val newGame = gameRepository.createGame(lobbyId, lobbyMembers)
+            _game.value = newGame
+            joinGame()
+            refreshGameState()
+        }
     }
 
-    private suspend fun joinGame() {
-        _game.value?.let { gameRepository.joinGame(it, userId) }
-        refreshPlayers()
+    private fun joinGame() {
+        viewModelScope.launch {
+            _game.value?.let { gameRepository.joinGame(it, userId) }
+            refreshPlayers()
+        }
     }
 
     fun rollDice() {
@@ -70,13 +74,15 @@ class GameViewModel(
         _phase.value = Phase.MOVE
     }
 
-    fun movePlayer() = viewModelScope.launch {
-        _game.value?.let { game ->
-            _players.value.firstOrNull { it.userId == userId }?.let { me ->
-                val newPos = computeNewPosition(me.cellPosition, _diceRoll.value ?: 0)
-                gameRepository.updatePlayer(game, me.copy(cellPosition = newPos))
-                refreshGameState()
-                handleLanding(PERIMETER_CELLS[newPos]?.type)
+    fun movePlayer() {
+        viewModelScope.launch {
+            _game.value?.let { game ->
+                _players.value.firstOrNull { it.userId == userId }?.let { me ->
+                    val newPos = computeNewPosition(me.cellPosition, _diceRoll.value ?: 0)
+                    gameRepository.updatePlayer(game, me.copy(cellPosition = newPos))
+                    refreshGameState()
+                    handleLanding(PERIMETER_CELLS[newPos]?.type)
+                }
             }
         }
     }
@@ -112,62 +118,66 @@ class GameViewModel(
         description: String,
         points: Int,
         eventType: GameEventType,
-    ) = viewModelScope.launch {
-        _isLoadingQuestion.value = true
-        try {
-            val topApps = usageStatsHelper.getTopUsedApps()
-                .joinToString("; ") { "${it.first}:${it.second / 1000}s" }
-            val totalSec = usageStatsHelper.getTodayUsageTime() / 1000
+    ) {
+        viewModelScope.launch {
+            _isLoadingQuestion.value = true
+            try {
+                val topApps = usageStatsHelper.getTopUsedApps()
+                    .joinToString("; ") { "${it.first}:${it.second / 1000}s" }
+                val totalSec = usageStatsHelper.getTodayUsageTime() / 1000
 
-            val dataStr = """
+                val dataStr = """
                           {
                             "topApps": "$topApps",
                             "totalUsageSec": $totalSec
                           }
                           """.trimIndent()
 
-            val usageDataPrefix = "Sulla base di questi dati registrati su questo dispositivo: $dataStr allora "
+                val usageDataPrefix = "Sulla base di questi dati registrati su questo dispositivo: $dataStr allora "
 
-            val prompt = buildString {
-                append(usageDataPrefix)
-                append("genera $description. ")
-                append("La voglio in questo formato specifico: ")
-                append("DOMANDA==<testo>||OPZIONI==<3 opzioni brevi separate da ';;'>||CORRETTA==<indice che parte da 0>")
+                val prompt = buildString {
+                    append(usageDataPrefix)
+                    append("genera $description. ")
+                    append("La voglio in questo formato specifico: ")
+                    append("DOMANDA==<testo>||OPZIONI==<3 opzioni brevi separate da ';;'>||CORRETTA==<indice che parte da 0>")
+                }
+
+                Log.d("GameViewModel", "Prompt: $prompt")
+
+                val raw = hfService.generateChat(
+                    model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt
+                )
+
+                val (question, options, correct) = parseStructured(raw)
+                pendingGameEvent = GameEvent(
+                    lobbyId = _game.value!!.lobbyId,
+                    gameId = _game.value!!.id,
+                    senderUserId = userId,
+                    recipientUserId = userId,
+                    eventType = eventType,
+                    value = points,
+                    createdAt = Instant.now().toString()
+                )
+                _dialog.value = GameDialogData.Question(
+                    title = title, prompt = question, options = options, correctIndex = correct
+                )
+            } finally {
+                _isLoadingQuestion.value = false
             }
-
-            Log.d("GameViewModel", "Prompt: $prompt")
-
-            val raw = hfService.generateChat(
-                model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt
-            )
-
-            val (question, options, correct) = parseStructured(raw)
-            pendingGameEvent = GameEvent(
-                lobbyId = _game.value!!.lobbyId,
-                gameId = _game.value!!.id,
-                senderUserId = userId,
-                recipientUserId = userId,
-                eventType = eventType,
-                value = points,
-                createdAt = Instant.now().toString()
-            )
-            _dialog.value = GameDialogData.Question(
-                title = title, prompt = question, options = options, correctIndex = correct
-            )
-        } finally {
-            _isLoadingQuestion.value = false
         }
     }
 
-    fun onDialogOptionSelected(idx: Int) = viewModelScope.launch {
-        (dialog.value as? GameDialogData.Question)?.let { q ->
-            val correct = (idx == q.correctIndex)
-            val delta = if (correct) q.correctIndex else -q.correctIndex
-            pendingGameEvent?.copy(value = delta)?.also { gameRepository.addGameEvent(it) }
-            val title = if (correct) "Corretto!" else "Sbagliato!"
-            val message =
-                if (correct) "Hai guadagnato $delta punti." else "Hai perso ${-delta} punti."
-            _dialog.value = GameDialogData.Result(title, message)
+    fun onDialogOptionSelected(idx: Int) {
+        viewModelScope.launch {
+            (dialog.value as? GameDialogData.Question)?.let { q ->
+                val correct = (idx == q.correctIndex)
+                val delta = if (correct) q.correctIndex else -q.correctIndex
+                pendingGameEvent?.copy(value = delta)?.also { gameRepository.addGameEvent(it) }
+                val title = if (correct) "Corretto!" else "Sbagliato!"
+                val message =
+                    if (correct) "Hai guadagnato $delta punti." else "Hai perso ${-delta} punti."
+                _dialog.value = GameDialogData.Result(title, message)
+            }
         }
     }
 
@@ -182,12 +192,14 @@ class GameViewModel(
         nextTurn()
     }
 
-    private fun nextTurn() = viewModelScope.launch {
-        _game.value?.let { game ->
-            _players.value.let { players ->
-                val nextIdx = (players.indexOfFirst { it.userId == game.turn } + 1) % players.size
-                gameRepository.setNextTurn(game, players[nextIdx].userId)
-                refreshGameState()
+    private fun nextTurn() {
+        viewModelScope.launch {
+            _game.value?.let { game ->
+                _players.value.let { players ->
+                    val nextIdx = (players.indexOfFirst { it.userId == game.turn } + 1) % players.size
+                    gameRepository.setNextTurn(game, players[nextIdx].userId)
+                    refreshGameState()
+                }
             }
         }
     }
@@ -197,12 +209,16 @@ class GameViewModel(
         _phase.value = if (userId == _game.value?.turn) Phase.ROLL_DICE else Phase.WAIT
     }
 
-    private fun refreshPlayers() = viewModelScope.launch {
-        _game.value?.id?.let { _players.value = gameRepository.getGamePlayers(it) }
+    private fun refreshPlayers() {
+        viewModelScope.launch {
+            _game.value?.id?.let { _players.value = gameRepository.getGamePlayers(it) }
+        }
     }
 
-    private fun refreshEvents() = viewModelScope.launch {
-        _game.value?.let { _events.value = gameRepository.getGameEvents(it.lobbyId, it.id) }
+    private fun refreshEvents() {
+        viewModelScope.launch {
+            _game.value?.let { _events.value = gameRepository.getGameEvents(it.lobbyId, it.id) }
+        }
     }
 
     private fun parseStructured(raw: String): Triple<String, List<String>, Int> {

@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 class LobbyViewModel(
     private val userRepository: UserRepository, private val lobbyRepository: LobbyRepository
 ) : ViewModel() {
+    private val user = userRepository.currentUserLiveData.value
+        ?: throw IllegalStateException("User not logged in")
 
     private val _lobbyId = MutableStateFlow<String?>(null)
     val lobbyId: StateFlow<String?> = _lobbyId.asStateFlow()
@@ -22,9 +24,8 @@ class LobbyViewModel(
     val members: StateFlow<List<LobbyMember>> = _members.asStateFlow()
 
     fun startLobbyFlow(lobbyId: String) = viewModelScope.launch {
-        val userData = userRepository.currentUserLiveData.value ?: return@launch
         val me = User(
-            id = userData.id, username = userData.username, isGuest = userData.isGuest
+            id = user.id, username = user.username, isGuest = user.isGuest
         )
         val createdId = lobbyRepository.createOrGetLobby(lobbyId, me)
         _lobbyId.value = createdId
@@ -44,19 +45,17 @@ class LobbyViewModel(
 
     fun toggleReady() = viewModelScope.launch {
         val lobbyId = _lobbyId.value ?: return@launch
-        val meId = userRepository.currentUserLiveData.value?.id ?: return@launch
-        val member = _members.value.firstOrNull { it.userId == meId } ?: return@launch
+        val member = _members.value.firstOrNull { it.userId == user.id } ?: return@launch
 
         val newReady = !(member.isReady)
-        lobbyRepository.toggleReady(lobbyId, meId, newReady)
+        lobbyRepository.toggleReady(lobbyId, user.id, newReady)
         refreshMembers()
     }
 
     fun leaveLobby() = viewModelScope.launch {
         val id = _lobbyId.value ?: return@launch
-        val meId = userRepository.currentUserLiveData.value?.id ?: return@launch
-        val isHost = _members.value.firstOrNull()?.userId == meId
-        lobbyRepository.leaveLobby(id, meId, isHost)
+        val isHost = _members.value.firstOrNull()?.userId == user.id
+        lobbyRepository.leaveLobby(id, user.id, isHost)
         _lobbyId.value = null
         _members.value = emptyList()
     }

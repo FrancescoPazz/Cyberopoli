@@ -10,7 +10,6 @@ import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import com.unibo.cyberopoli.data.repositories.settings.SettingsRepository
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.game.GameViewModel
-import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyViewModel
 import com.unibo.cyberopoli.ui.screens.profile.ProfileViewModel
 import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
@@ -25,7 +24,6 @@ val Context.dataStore by preferencesDataStore("settings")
 val appModule = module {
     viewModel { AuthViewModel(get(), get()) }
     viewModel { ScanViewModel() }
-    viewModel { HomeViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get()) }

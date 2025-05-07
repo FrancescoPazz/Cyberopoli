@@ -23,7 +23,6 @@ import com.unibo.cyberopoli.ui.screens.game.GameScreen
 import com.unibo.cyberopoli.ui.screens.game.GameViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeParams
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
-import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
@@ -82,7 +81,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val authViewModel = koinViewModel<AuthViewModel>()
     val scanViewModel = koinViewModel<ScanViewModel>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
-    val homeViewModel = koinViewModel<HomeViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val lobbyViewModel = koinViewModel<LobbyViewModel>()
 
@@ -170,7 +168,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 composable<CyberopoliRoute.Lobby> {
                     val members by lobbyViewModel.members.collectAsStateWithLifecycle()
                     val currentUserId = profileViewModel.user.value?.id
-                    val isGuest = profileViewModel.user.value?.isGuest ?: false
+                    val isGuest = profileViewModel.user.value?.isGuest!!
                     val isHost = members.firstOrNull()?.userId == currentUserId
                     val allReady = members.isNotEmpty() && members.all { it.isReady }
 

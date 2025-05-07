@@ -26,7 +26,6 @@ class AuthViewModel(
             authRepository.authState().collect { state ->
                 _authState.postValue(state)
                 if (state is AuthState.Authenticated) {
-                    Log.d("AuthViewModel", "Authenticated")
                     userRepository.loadUserData()
                 }
             }
@@ -61,7 +60,6 @@ class AuthViewModel(
                     is AuthResponse.Success -> {
                         _authState.value = AuthState.Unauthenticated
                     }
-
                     is AuthResponse.Failure -> {
                         _authState.value = AuthState.Error(resp.message)
                     }
@@ -108,23 +106,23 @@ class AuthViewModel(
 
     fun sendPasswordReset(email: String) {
         viewModelScope.launch {
-            val ok = authRepository.resetPassword(email).single()
-            if (ok is AuthResponse.Success) {
+            val resp = authRepository.resetPassword(email).single()
+            if (resp is AuthResponse.Success) {
                 _authState.value = AuthState.Unauthenticated
-            } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error("Impossible to reset password")
+            } else if (resp is AuthResponse.Failure) {
+                _authState.value = AuthState.Error(resp.message)
             }
         }
     }
 
     fun logout() {
         viewModelScope.launch {
-            val ok = authRepository.signOut().single()
-            if (ok is AuthResponse.Success) {
+            val resp = authRepository.signOut().single()
+            if (resp is AuthResponse.Success) {
                 userRepository.clearUserData()
                 _authState.value = AuthState.Unauthenticated
-            } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error("Logout error")
+            } else if (resp is AuthResponse.Failure) {
+                _authState.value = AuthState.Error(resp.message)
             }
         }
     }
