@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,11 +20,10 @@ class LobbyViewModel(
 
     private var _isHost = MutableLiveData<Boolean?>(null)
     val isHost: LiveData<Boolean?> = _isHost
-    private var _allReady = MutableLiveData<Boolean?>(null)
+    private var _allReady = MutableLiveData(false)
     val allReady: LiveData<Boolean?> = _allReady
 
     fun startLobbyFlow(lobbyId: String) {
-        Log.d("TEST", "Starting lobby flow with ID: $lobbyId")
         viewModelScope.launch {
             if (user.value == null) return@launch
             lobbyRepository.createOrGetLobby(lobbyId, user.value!!)
@@ -60,6 +58,8 @@ class LobbyViewModel(
         viewModelScope.launch {
             if (user.value == null || lobby.value == null) return@launch
             lobbyRepository.leaveLobby(lobby.value!!.id, user.value!!.id, _isHost.value == true)
+            _allReady.value = false
+            refreshMembers()
         }
     }
 

@@ -8,10 +8,10 @@ import com.unibo.cyberopoli.ui.screens.game.GameParams
 fun GameStarterEffect(
     gameParams: GameParams, hasStarted: Boolean, onStarted: () -> Unit
 ) {
-    LaunchedEffect(gameParams.lobbyId, gameParams.lobbyMembers) {
-        if (!hasStarted && gameParams.lobbyId.isNotBlank() && gameParams.lobbyMembers.isNotEmpty()) {
+    LaunchedEffect(gameParams.lobby) {
+        if (!hasStarted && gameParams.lobby.value != null && gameParams.members.value != null) {
             gameParams.startGame(
-                gameParams.lobbyId, gameParams.lobbyMembers
+                gameParams.lobby.value!!.id, gameParams.members.value!!
             )
             onStarted()
         }

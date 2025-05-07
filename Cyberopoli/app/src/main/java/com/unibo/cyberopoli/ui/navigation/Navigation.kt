@@ -184,42 +184,37 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     )
                 }
                 composable<CyberopoliRoute.Game> {
+                    val lobby = lobbyViewModel.lobby.observeAsState()
                     val gameViewModel = koinViewModel<GameViewModel>()
-                    val lobby by lobbyViewModel.lobby.observeAsState()
-                    val members by lobbyViewModel.members.observeAsState()
-                    val phase by gameViewModel.phase.collectAsStateWithLifecycle()
-                    val gameState by gameViewModel.game.collectAsStateWithLifecycle()
-                    val players by gameViewModel.players.collectAsStateWithLifecycle()
-                    val diceRoll by gameViewModel.diceRoll.collectAsStateWithLifecycle()
-                    val dialogData by gameViewModel.dialog.collectAsStateWithLifecycle()
-                    val turnIndex = players.indexOfFirst { p -> p.userId == gameState?.turn }
+                    val members = lobbyViewModel.members.observeAsState()
+                    val phase = gameViewModel.phase.collectAsStateWithLifecycle()
+                    val game = gameViewModel.game.collectAsStateWithLifecycle()
+                    val players = gameViewModel.players.collectAsStateWithLifecycle()
+                    val diceRoll = gameViewModel.diceRoll.collectAsStateWithLifecycle()
+                    val dialogData = gameViewModel.dialog.collectAsStateWithLifecycle()
+                    val turnIndex = players.value.indexOfFirst { p -> p.userId == game.value?.turn }
 
-                    if (lobby == null || members?.isEmpty() == true) {
-                        LoadingScreen()
-                    } else {
-                        GameScreen(
-                            navController = navController, gameParams = GameParams(
-                                lobbyId = lobby?.id
-                                    ?: throw IllegalStateException("Lobby id is null"),
-                                lobbyMembers = members
-                                    ?: throw IllegalStateException("Members is null"),
-                                game = derivedStateOf { gameState },
-                                players = derivedStateOf { players },
-                                currentTurnIndex = derivedStateOf { turnIndex },
-                                phase = derivedStateOf { phase },
-                                diceRoll = derivedStateOf { diceRoll },
-                                dialogData = derivedStateOf { dialogData },
-                                startGame = gameViewModel::startGame,
-                                rollDice = gameViewModel::rollDice,
-                                movePlayer = gameViewModel::movePlayer,
-                                onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
-                                onResultDismiss = gameViewModel::onResultDismiss,
-                                leaveGame = lobbyViewModel::leaveLobby,
-                                endTurn = gameViewModel::endTurn,
-                                isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
-                            )
+                    GameScreen(
+                        navController = navController, gameParams = GameParams(
+                            game = game,
+                            lobby = lobby,
+                            phase = phase,
+                            members = members,
+                            players = players,
+                            diceRoll = diceRoll,
+                            dialogData = dialogData,
+                            endTurn = gameViewModel::endTurn,
+                            rollDice = gameViewModel::rollDice,
+                            startGame = gameViewModel::startGame,
+                            movePlayer = gameViewModel::movePlayer,
+                            leaveGame = lobbyViewModel::leaveLobby,
+                            currentTurnIndex = derivedStateOf { turnIndex },
+                            onResultDismiss = gameViewModel::onResultDismiss,
+                            onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
+                            isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
                         )
-                    }
+                    )
+
                 }
             }
         }

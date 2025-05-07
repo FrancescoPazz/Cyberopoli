@@ -5,11 +5,12 @@ import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.Phase
+import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 data class GameParams(
-    val lobbyId: String,
-    val lobbyMembers: List<LobbyMember>,
+    val lobby: State<Lobby?>,
+    val members: State<List<LobbyMember>?>,
     val game: State<Game?>,
     val players: State<List<GamePlayer>>,
     val currentTurnIndex: State<Int>,
