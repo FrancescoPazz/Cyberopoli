@@ -24,9 +24,8 @@ import com.unibo.cyberopoli.ui.screens.ranking.composables.Top3RankingSection
 fun RankingScreen(
     navController: NavController, rankingParams: RankingParams
 ) {
-    LaunchedEffect(Unit) {
-        rankingParams.loadUserData()
-    }
+    val user = rankingParams.user.value
+    val rankingData = rankingParams.rankingData.value
 
     Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
@@ -36,16 +35,14 @@ fun RankingScreen(
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
             ) {
-                if (rankingParams.rankingData.value == null) {
+                if (rankingData == null) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     Text(text = "Loading...", modifier = Modifier.padding(16.dp))
                 } else {
-                    val top3 = rankingParams.rankingData.value!!.take(3)
-                    val others = rankingParams.rankingData.value!!.drop(3)
+                    val top3 = rankingData.take(3)
+                    val others = rankingData.drop(3)
 
-                    val myPosition = rankingParams.getMyRanking()
-
-                    MyRankingPosition(user = myPosition)
+                    MyRankingPosition(user)
                     Spacer(modifier = Modifier.height(16.dp))
                     Top3RankingSection(users = top3)
                     Spacer(modifier = Modifier.height(16.dp))

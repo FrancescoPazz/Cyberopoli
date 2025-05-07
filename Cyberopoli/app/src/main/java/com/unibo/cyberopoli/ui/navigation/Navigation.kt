@@ -80,12 +80,13 @@ sealed interface CyberopoliRoute {
 @Composable
 fun CyberopoliNavGraph(navController: NavHostController) {
     val authViewModel = koinViewModel<AuthViewModel>()
-    val authState = authViewModel.authState.observeAsState()
     val scanViewModel = koinViewModel<ScanViewModel>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val homeViewModel = koinViewModel<HomeViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val lobbyViewModel = koinViewModel<LobbyViewModel>()
+
+    val authState = authViewModel.authState.observeAsState()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
 
     KoinContext {
@@ -146,7 +147,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     HomeScreen(
                         navController, HomeParams(
                             user = profileViewModel.user.observeAsState(),
-                            loadUserData = homeViewModel::loadUserData
                         )
                     )
                 }
@@ -154,7 +154,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ProfileScreen(
                         navController, ProfileParams(
                             user = profileViewModel.user.observeAsState(),
-                            loadUserData = homeViewModel::loadUserData,
                             changeAvatar = profileViewModel::changeAvatar
                         )
                     )
@@ -163,9 +162,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val rankingVm = koinViewModel<RankingViewModel>()
                     RankingScreen(
                         navController, RankingParams(
-                            rankingData = rankingVm.ranking.observeAsState(),
-                            loadUserData = rankingVm::loadUserData,
-                            getMyRanking = rankingVm::getMyRanking
+                            rankingData = rankingVm.rankingUsers.observeAsState(),
+                            user = profileViewModel.user.observeAsState(),
                         )
                     )
                 }

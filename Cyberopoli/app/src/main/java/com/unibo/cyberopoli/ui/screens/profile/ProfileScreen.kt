@@ -11,7 +11,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,10 +28,7 @@ import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileStatsSection
 fun ProfileScreen(
     navController: NavHostController, profileParams: ProfileParams
 ) {
-
-    LaunchedEffect(Unit) {
-        profileParams.loadUserData()
-    }
+    val user = profileParams.user.value
 
     val gameHistories = listOf(
         GameHistory(
@@ -57,13 +53,13 @@ fun ProfileScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                if (profileParams.user.value == null) {
+                if (user == null) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     Text(
                         text = stringResource(R.string.loading), modifier = Modifier.padding(16.dp)
                     )
                 } else {
-                    ProfileHeader(user = profileParams.user.value!!,
+                    ProfileHeader(user = user,
                         onEditProfileClick = { profileParams.changeAvatar() },
                         onShareClick = { /* TODO */ })
                     Spacer(modifier = Modifier.height(16.dp))

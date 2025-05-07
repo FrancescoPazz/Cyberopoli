@@ -31,29 +31,6 @@ class UserRepository(
         }
     }
 
-    override fun loadUserData(userId: String): User? {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val resp = supabase.from("users").select {
-                    filter {
-                        eq("id", userId)
-                    }
-                }
-
-                val userData = resp.decodeList<User>()
-                if (userData.isNotEmpty()) {
-                    return@launch currentUserLiveData.postValue(userData[0])
-                } else {
-                    currentUserLiveData.postValue(null)
-                }
-
-            } catch (e: Exception) {
-                currentUserLiveData.postValue(null)
-            }
-        }
-        return null
-    }
-
     fun changeAvatar() {
         val userId = supabase.auth.currentUserOrNull()?.id ?: run {
             return

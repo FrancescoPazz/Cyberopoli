@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,7 @@ class AuthViewModel(
             authRepository.authState().collect { state ->
                 _authState.postValue(state)
                 if (state is AuthState.Authenticated) {
+                    Log.d("AuthViewModel", "Authenticated")
                     userRepository.loadUserData()
                 }
             }

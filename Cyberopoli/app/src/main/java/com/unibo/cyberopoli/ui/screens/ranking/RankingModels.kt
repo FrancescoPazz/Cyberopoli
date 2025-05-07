@@ -5,6 +5,5 @@ import com.unibo.cyberopoli.data.models.auth.User
 
 data class RankingParams(
     val rankingData: State<List<User>?>,
-    val loadUserData: () -> Unit,
-    val getMyRanking: () -> User?,
+    val user: State<User?>,
 )

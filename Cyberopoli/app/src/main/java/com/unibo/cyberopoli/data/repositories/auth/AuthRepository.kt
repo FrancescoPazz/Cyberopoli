@@ -40,7 +40,6 @@ class AuthRepository(
                 ) != null
             ) AuthState.Authenticated
             else AuthState.AnonymousAuthenticated
-
             is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
         }
     }
@@ -109,7 +108,6 @@ class AuthRepository(
             emit(AuthResponse.Failure(e.message ?: "Error during registration"))
         }
     }
-
 
     private fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()

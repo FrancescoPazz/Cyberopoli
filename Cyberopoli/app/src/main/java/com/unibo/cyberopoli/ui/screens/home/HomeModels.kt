@@ -5,5 +5,4 @@ import com.unibo.cyberopoli.data.models.auth.User
 
 data class HomeParams(
     val user: State<User?>,
-    val loadUserData: () -> Unit,
 )

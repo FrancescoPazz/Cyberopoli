@@ -28,7 +28,7 @@ val appModule = module {
     viewModel { HomeViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
-    viewModel { RankingViewModel(get(), get()) }
+    viewModel { RankingViewModel(get()) }
     viewModel { LobbyViewModel(get(), get()) }
     viewModel { GameViewModel(get(), get(), get()) }
 

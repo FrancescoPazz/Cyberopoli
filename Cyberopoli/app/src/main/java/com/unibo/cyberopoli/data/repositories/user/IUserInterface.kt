@@ -4,6 +4,4 @@ import com.unibo.cyberopoli.data.models.auth.User
 
 interface IUserInterface {
     suspend fun loadUserData(): User
-
-    fun loadUserData(userId: String): User?
 }
