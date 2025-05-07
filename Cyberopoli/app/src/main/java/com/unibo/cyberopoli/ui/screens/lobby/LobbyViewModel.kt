@@ -1,6 +1,8 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
@@ -8,9 +10,6 @@ import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
 import com.unibo.cyberopoli.data.repositories.user.UserRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
@@ -18,11 +17,15 @@ class LobbyViewModel(
 ) : ViewModel() {
     val user: LiveData<User?> = userRepository.currentUserLiveData
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
+    val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
 
-    private val _members = MutableStateFlow<List<LobbyMember>>(emptyList())
-    val members: StateFlow<List<LobbyMember>> = _members.asStateFlow()
+    private var _isHost = MutableLiveData<Boolean?>(null)
+    val isHost: LiveData<Boolean?> = _isHost
+    private var _allReady = MutableLiveData<Boolean?>(null)
+    val allReady: LiveData<Boolean?> = _allReady
 
     fun startLobbyFlow(lobbyId: String) {
+        Log.d("TEST", "Starting lobby flow with ID: $lobbyId")
         viewModelScope.launch {
             if (user.value == null) return@launch
             lobbyRepository.createOrGetLobby(lobbyId, user.value!!)
@@ -31,22 +34,24 @@ class LobbyViewModel(
                     lobbyId = lobby.value!!.id, userId = user.value!!.id, user = user.value!!
                 )
             )
+            _isHost.value = lobby.value?.hostId == user.value!!.id
             refreshMembers()
         }
     }
 
     private fun refreshMembers() {
         viewModelScope.launch {
-            lobby.value?.id?.let { _members.value = lobbyRepository.fetchMembers(it) }
+            lobby.value?.id?.let { lobbyRepository.fetchMembers(it) }
         }
     }
 
     fun toggleReady() {
         viewModelScope.launch {
             if (user.value == null || lobby.value == null) return@launch
-            val member = _members.value.firstOrNull { it.userId == user.value!!.id } ?: return@launch
+            val member = members.value?.find { it.userId == user.value!!.id } ?: return@launch
             val newReady = !(member.isReady)
             lobbyRepository.toggleReady(lobby.value!!.id, user.value!!.id, newReady)
+            _allReady.value = members.value?.all { it.isReady } ?: false
             refreshMembers()
         }
     }
@@ -54,13 +59,13 @@ class LobbyViewModel(
     fun leaveLobby() {
         viewModelScope.launch {
             if (user.value == null || lobby.value == null) return@launch
-            val isHost = _members.value.firstOrNull()?.userId == user.value!!.id
-            lobbyRepository.leaveLobby(lobby.value!!.id, user.value!!.id, isHost)
-            _members.value = emptyList()
+            lobbyRepository.leaveLobby(lobby.value!!.id, user.value!!.id, _isHost.value == true)
         }
     }
 
-    fun startGame() = viewModelScope.launch {
-        lobby.value?.let { lobbyRepository.startGame(it.id) }
+    fun startGame() {
+        viewModelScope.launch {
+            lobby.value?.let { lobbyRepository.startGame(it.id) }
+        }
     }
 }

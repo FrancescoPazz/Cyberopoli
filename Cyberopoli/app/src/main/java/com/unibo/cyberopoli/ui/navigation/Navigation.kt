@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.navigation
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -74,7 +73,6 @@ sealed interface CyberopoliRoute {
     data object Game : CyberopoliRoute
 }
 
-@SuppressLint("UnrememberedMutableState")
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun CyberopoliNavGraph(navController: NavHostController) {
@@ -99,12 +97,10 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 LoadingScreen()
                 return@CyberopoliTheme
             }
-
             val startRoute = when (authState.value) {
                 is AuthState.Authenticated -> CyberopoliRoute.Home
                 else -> CyberopoliRoute.Auth
             }
-
             NavHost(
                 navController = navController,
                 startDestination = startRoute,
@@ -166,21 +162,18 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     )
                 }
                 composable<CyberopoliRoute.Lobby> {
-                    val members by lobbyViewModel.members.collectAsStateWithLifecycle()
-                    val currentUserId = profileViewModel.user.value?.id
                     val isGuest = profileViewModel.user.value?.isGuest!!
-                    val isHost = members.firstOrNull()?.userId == currentUserId
-                    val allReady = members.isNotEmpty() && members.all { it.isReady }
-
+                    val members by lobbyViewModel.members.observeAsState()
                     LobbyScreen(
                         navController, LobbyParams(
                             lobbyId = UUID.nameUUIDFromBytes(
-                                scanViewModel.scannedValue.value?.toByteArray() ?: throw IllegalStateException("Scanned value is null")
+                                scanViewModel.scannedValue.value?.toByteArray()
+                                    ?: throw IllegalStateException("Scanned value is null")
                             ).toString(),
-                            members = members,
+                            members = members ?: throw IllegalStateException("Members are null"),
                             isGuest = isGuest,
-                            isHost = isHost,
-                            allReady = allReady,
+                            isHost = lobbyViewModel.isHost.value ?: false,
+                            allReady = lobbyViewModel.allReady.value ?: false,
                             startLobbyFlow = lobbyViewModel::startLobbyFlow,
                             toggleReady = lobbyViewModel::toggleReady,
                             leaveLobby = lobbyViewModel::leaveLobby,
@@ -191,7 +184,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 composable<CyberopoliRoute.Game> {
                     val gameViewModel = koinViewModel<GameViewModel>()
                     val lobby by lobbyViewModel.lobby.observeAsState()
-                    val members by lobbyViewModel.members.collectAsStateWithLifecycle()
+                    val members by lobbyViewModel.members.observeAsState()
                     val gameState by gameViewModel.game.collectAsStateWithLifecycle()
                     val players by gameViewModel.players.collectAsStateWithLifecycle()
                     val turnIndex = players.indexOfFirst { p -> p.userId == gameState?.turn }
@@ -199,14 +192,15 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val diceRoll by gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData by gameViewModel.dialog.collectAsStateWithLifecycle()
 
-                    if (lobby == null || members.isEmpty()) {
+                    if (lobby == null || members?.isEmpty() == true) {
                         LoadingScreen()
                     } else {
                         GameScreen(
-                            navController = navController,
-                            gameParams = GameParams(
-                                lobbyId = lobby?.id ?: throw IllegalStateException("Lobby id is null"),
-                                lobbyMembers = members,
+                            navController = navController, gameParams = GameParams(
+                                lobbyId = lobby?.id
+                                    ?: throw IllegalStateException("Lobby id is null"),
+                                lobbyMembers = members
+                                    ?: throw IllegalStateException("Members is null"),
                                 game = derivedStateOf { gameState },
                                 players = derivedStateOf { players },
                                 currentTurnIndex = derivedStateOf { turnIndex },

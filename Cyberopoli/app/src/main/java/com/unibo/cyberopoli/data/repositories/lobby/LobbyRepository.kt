@@ -15,6 +15,7 @@ class LobbyRepository(
     private val supabase: SupabaseClient
 ) : DomainLobbyRepository {
     val currentLobbyLiveData: MutableLiveData<Lobby?> = MutableLiveData()
+    val currentMembersLiveData: MutableLiveData<List<LobbyMember>?> = MutableLiveData(emptyList())
 
     override suspend fun createOrGetLobby(lobbyId: String, host: User) {
         val lobby = Lobby(
@@ -49,7 +50,7 @@ class LobbyRepository(
         val raw: List<LobbyMemberRaw> = supabase.from("lobby_members").select(
             Columns.raw("*, users(*)")
         ).decodeList<LobbyMemberRaw>()
-        raw.map { d ->
+        val members = raw.map { d ->
             LobbyMember(
                 lobbyId = d.lobbyId,
                 userId = d.userId,
@@ -58,6 +59,8 @@ class LobbyRepository(
                 user = d.user
             )
         }
+        currentMembersLiveData.value = members
+        members
     } catch (e: Exception) {
         emptyList()
     }
