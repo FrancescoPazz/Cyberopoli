@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val authRepository: AuthRepository, private val userRepository: UserRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _authState = MutableLiveData<AuthState>(AuthState.Unauthenticated)

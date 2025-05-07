@@ -12,11 +12,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.theme.Theme
 import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
-import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 import com.unibo.cyberopoli.ui.screens.game.GameScreen
@@ -81,7 +81,6 @@ sealed interface CyberopoliRoute {
 fun CyberopoliNavGraph(navController: NavHostController) {
     val authViewModel = koinViewModel<AuthViewModel>()
     val authState = authViewModel.authState.observeAsState()
-
     val scanViewModel = koinViewModel<ScanViewModel>()
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val homeViewModel = koinViewModel<HomeViewModel>()
@@ -208,7 +207,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         LoadingScreen()
                     } else {
                         GameScreen(
-                            navController = navController, gameParams = GameParams(
+                            navController = navController,
+                            gameParams = GameParams(
                                 lobbyId = lobbyId ?: "",
                                 lobbyMembers = members,
                                 game = derivedStateOf { gameState },

@@ -87,52 +87,6 @@ class GameViewModel(
         return path[idx]
     }
 
-    fun askWellbeingQuestion(description: String) = viewModelScope.launch {
-        _isLoadingQuestion.value = true
-        try {
-            val topApps = usageStatsHelper.getTopUsedApps()
-                .joinToString(separator = "; ") { "${it.first}:${it.second / 1000}s" }
-            val total = usageStatsHelper.getTodayUsageTime() / 1000
-            val dataStr = """
-          {
-            "topApps": "$topApps",
-            "totalUsageSec": $total
-          }
-        """.trimIndent()
-
-            val prompt = buildString {
-                append("Sulla base di questi dati registrati su questo dispositivo: ")
-                append(dataStr)
-                append(" allora Genera $description. ")
-                append("La voglio in questo formato specifico: DOMANDA==<testo>||OPZIONI==<3 opzioni separate da ';;'>||CORRETTA==<indice che parte da 0>")
-            }
-
-            val raw = hfService.generateChat(
-                model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt
-            )
-
-            val (question, options, correct) = parseStructured(raw)
-            pendingGameEvent = GameEvent(
-                lobbyId = _game.value!!.lobbyId,
-                gameId = _game.value!!.id,
-                senderUserId = userId,
-                recipientUserId = userId,
-                eventType = GameEventType.CHANCE,
-                value = 0,
-                createdAt = Instant.now().toString()
-            )
-            _dialog.value = GameDialogData.Question(
-                title = "Benessere Digitale",
-                prompt = question,
-                options = options,
-                correctIndex = correct
-            )
-        } finally {
-            _isLoadingQuestion.value = false
-        }
-    }
-
-
     private fun handleLanding(cellType: CellType?) {
         when (cellType) {
             CellType.CHANCE -> askQuestion(

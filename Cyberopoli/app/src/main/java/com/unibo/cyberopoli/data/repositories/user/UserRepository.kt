@@ -16,29 +16,19 @@ class UserRepository(
 ) : DomainUserRepository {
     val currentUserLiveData = MutableLiveData<User?>()
 
-    override fun loadUserData(): User? {
-        val userId = supabase.auth.currentUserOrNull()?.id ?: Log.d(
-            "UserRepository", "loadUserData: no authenticated user"
-        )
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val resp = supabase.from("users").select {
-                    filter {
-                        eq("id", userId)
-                    }
+    override suspend fun loadUserData(): User {
+        val userId = supabase.auth.currentUserOrNull()?.id ?: throw IllegalStateException("User not logged in")
+        try {
+            val user = supabase.from("users").select {
+                filter {
+                    eq("id", userId)
                 }
-                val userData = resp.decodeList<User>()
-                if (userData.isNotEmpty()) {
-                    return@launch currentUserLiveData.postValue(userData[0])
-                } else {
-                    currentUserLiveData.postValue(null)
-                }
-
-            } catch (e: Exception) {
-                currentUserLiveData.postValue(null)
-            }
+            }.decodeSingle<User>()
+            currentUserLiveData.postValue(user)
+            return user
+        } catch (e: Exception) {
+            throw e
         }
-        return null
     }
 
     override fun loadUserData(userId: String): User? {
