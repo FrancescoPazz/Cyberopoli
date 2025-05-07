@@ -4,9 +4,9 @@ import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 interface ILobbyRepository {
-    suspend fun createOrGetLobby(lobbyId: String, host: User): String
+    suspend fun createOrGetLobby(lobbyId: String, host: User)
 
-    suspend fun joinLobby(lobbyId: String, member: LobbyMember)
+    suspend fun joinLobby(member: LobbyMember)
 
     suspend fun fetchMembers(lobbyId: String): List<LobbyMember>
 

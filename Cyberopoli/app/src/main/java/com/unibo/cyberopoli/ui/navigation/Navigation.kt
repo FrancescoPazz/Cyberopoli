@@ -175,7 +175,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     LobbyScreen(
                         navController, LobbyParams(
                             lobbyId = UUID.nameUUIDFromBytes(
-                                scanViewModel.scannedValue.value?.toByteArray() ?: "".toByteArray()
+                                scanViewModel.scannedValue.value?.toByteArray() ?: throw IllegalStateException("Scanned value is null")
                             ).toString(),
                             members = members,
                             isGuest = isGuest,
@@ -190,7 +190,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 }
                 composable<CyberopoliRoute.Game> {
                     val gameViewModel = koinViewModel<GameViewModel>()
-                    val lobbyId by lobbyViewModel.lobbyId.collectAsStateWithLifecycle(null)
+                    val lobby by lobbyViewModel.lobby.observeAsState()
                     val members by lobbyViewModel.members.collectAsStateWithLifecycle()
                     val gameState by gameViewModel.game.collectAsStateWithLifecycle()
                     val players by gameViewModel.players.collectAsStateWithLifecycle()
@@ -199,13 +199,13 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val diceRoll by gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData by gameViewModel.dialog.collectAsStateWithLifecycle()
 
-                    if (lobbyId == null || members.isEmpty()) {
+                    if (lobby == null || members.isEmpty()) {
                         LoadingScreen()
                     } else {
                         GameScreen(
                             navController = navController,
                             gameParams = GameParams(
-                                lobbyId = lobbyId ?: "",
+                                lobbyId = lobby?.id ?: throw IllegalStateException("Lobby id is null"),
                                 lobbyMembers = members,
                                 game = derivedStateOf { gameState },
                                 players = derivedStateOf { players },

@@ -42,10 +42,10 @@ import com.unibo.cyberopoli.ui.screens.lobby.composables.PlayerRow
 fun LobbyScreen(
     navController: NavHostController, params: LobbyParams
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     var hasJoined by remember { mutableStateOf(false) }
     var suppressLeaveOnStop by remember { mutableStateOf(false) }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_STOP && !suppressLeaveOnStop) {
@@ -93,29 +93,22 @@ fun LobbyScreen(
                         )
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(params.members) { member ->
-                            Log.d("LobbyScreen", "Member: $member")
                             PlayerRow(
                                 playerName = member.user?.username ?: member.userId,
                                 isReady = member.isReady,
                             )
                         }
                     }
-
                     Spacer(modifier = Modifier.height(8.dp))
-
                     AuthButton(
                         text = stringResource(R.string.ready), onClick = params.toggleReady
                     )
-
                     Spacer(modifier = Modifier.height(8.dp))
-
                     AuthButton(text = stringResource(R.string.exit), onClick = {
                         navController.popBackStack()
                     })
-
                     if (params.isHost && params.allReady) {
                         Spacer(modifier = Modifier.height(16.dp))
                         AuthButton(text = stringResource(R.string.start), onClick = {

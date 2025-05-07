@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.data.repositories.lobby
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
@@ -13,25 +14,25 @@ import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLo
 class LobbyRepository(
     private val supabase: SupabaseClient
 ) : DomainLobbyRepository {
+    val currentLobbyLiveData: MutableLiveData<Lobby?> = MutableLiveData()
 
-    override suspend fun createOrGetLobby(lobbyId: String, host: User): String {
+    override suspend fun createOrGetLobby(lobbyId: String, host: User) {
         val lobby = Lobby(
             id = lobbyId, hostId = host.id, status = "waiting"
         )
-        return try {
+        try {
             val created: Lobby = supabase.from("lobbies").insert(lobby) {
                 select()
-            }.decodeSingle()
-            created.id
+            }.decodeSingle<Lobby>()
+            currentLobbyLiveData.value = created
         } catch (e: Exception) {
-            Log.e("LobbyRepoImpl", "createOrGetLobby: ${e.message}")
-            lobbyId
+            throw e
         }
     }
 
-    override suspend fun joinLobby(lobbyId: String, member: LobbyMember) {
+    override suspend fun joinLobby(member: LobbyMember) {
         val data = LobbyMember(
-            lobbyId = lobbyId,
+            lobbyId = currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found"),
             userId = member.userId,
             isReady = member.isReady,
             joinedAt = member.joinedAt,
@@ -40,7 +41,7 @@ class LobbyRepository(
         try {
             supabase.from("lobby_members").insert(data) { select() }
         } catch (e: Exception) {
-            Log.e("LobbyRepoImpl", "joinLobby: ${e.message}")
+            throw e
         }
     }
 
@@ -48,7 +49,6 @@ class LobbyRepository(
         val raw: List<LobbyMemberRaw> = supabase.from("lobby_members").select(
             Columns.raw("*, users(*)")
         ).decodeList<LobbyMemberRaw>()
-
         raw.map { d ->
             LobbyMember(
                 lobbyId = d.lobbyId,
@@ -59,7 +59,6 @@ class LobbyRepository(
             )
         }
     } catch (e: Exception) {
-        Log.e("LobbyRepoImpl", "fetchMembers: ${e.message}")
         emptyList()
     }
 

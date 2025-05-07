@@ -133,13 +133,13 @@ class GameViewModel(
                           }
                           """.trimIndent()
 
-                val usageDataPrefix = "Sulla base di questi dati registrati su questo dispositivo: $dataStr allora "
+                val usageDataPrefix = "Sulla base di questi dati registrati su questo dispositivo: $dataStr voglio che "
 
                 val prompt = buildString {
                     append(usageDataPrefix)
-                    append("genera $description. ")
-                    append("La voglio in questo formato specifico: ")
-                    append("DOMANDA==<testo>||OPZIONI==<3 opzioni brevi separate da ';;'>||CORRETTA==<indice che parte da 0>")
+                    append("generi $description. ")
+                    append("La voglio IN QUESTO SPECIFICO FORMATO miraccomando: ")
+                    append("DOMANDA==<testo>||OPZIONI==<3 opzioni BREVI separate da ';;'>||CORRETTA==<indice che parte da 0>")
                 }
 
                 Log.d("GameViewModel", "Prompt: $prompt")
