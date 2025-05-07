@@ -61,7 +61,7 @@ fun ScanScreen(
     }
 
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (scanParams.authState.value === AuthState.Authenticated) BottomBar(navController)
+        if (scanParams.authState === AuthState.Authenticated) BottomBar(navController)
     }) { paddingValues ->
         Box(
             modifier = Modifier

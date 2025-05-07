@@ -108,9 +108,9 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 composable<CyberopoliRoute.Auth> {
                     AuthScreen(
                         navController, AuthParams(
-                            authState = authViewModel.authState,
                             login = authViewModel::login,
                             signUp = authViewModel::signUp,
+                            authState = authViewModel.authState,
                             loginGoogleUser = authViewModel::loginGoogle,
                             resetPassword = authViewModel::sendPasswordReset,
                             loginAnonymously = authViewModel::loginAnonymously
@@ -121,19 +121,21 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ScanScreen(
                         navController, ScanParams(
                             setScannedValue = scanViewModel::setScannedValue,
-                            authState = authViewModel.authState
+                            authState = authState.value ?: AuthState.Unauthenticated
                         )
                     )
                 }
-                composable<CyberopoliRoute.ARScreen> { ARScreen(navController) }
+                composable<CyberopoliRoute.ARScreen> {
+                    ARScreen(navController)
+                }
                 composable<CyberopoliRoute.Settings> {
                     SettingScreen(
                         navController, SettingsParams(
-                            changeTheme = settingsViewModel::changeTheme,
                             themeState = themeState,
-                            updatePasswordWithOldPassword = settingsViewModel::updatePasswordWithOldPassword,
+                            logout = authViewModel::logout,
                             authState = authViewModel.authState,
-                            logout = authViewModel::logout
+                            changeTheme = settingsViewModel::changeTheme,
+                            updatePasswordWithOldPassword = settingsViewModel::updatePasswordWithOldPassword
                         )
                     )
                 }
@@ -170,14 +172,14 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 scanViewModel.scannedValue.value?.toByteArray()
                                     ?: throw IllegalStateException("Scanned value is null")
                             ).toString(),
-                            members = members ?: throw IllegalStateException("Members are null"),
                             isGuest = isGuest,
-                            isHost = lobbyViewModel.isHost.value ?: false,
-                            allReady = lobbyViewModel.allReady.value ?: false,
-                            startLobbyFlow = lobbyViewModel::startLobbyFlow,
-                            toggleReady = lobbyViewModel::toggleReady,
+                            members = members ?: throw IllegalStateException("Members are null"),
+                            startGame = lobbyViewModel::startGame,
                             leaveLobby = lobbyViewModel::leaveLobby,
-                            startGame = lobbyViewModel::startGame
+                            toggleReady = lobbyViewModel::toggleReady,
+                            isHost = lobbyViewModel.isHost.value ?: false,
+                            startLobbyFlow = lobbyViewModel::startLobbyFlow,
+                            allReady = lobbyViewModel.allReady.value ?: false
                         )
                     )
                 }
@@ -185,12 +187,12 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val gameViewModel = koinViewModel<GameViewModel>()
                     val lobby by lobbyViewModel.lobby.observeAsState()
                     val members by lobbyViewModel.members.observeAsState()
+                    val phase by gameViewModel.phase.collectAsStateWithLifecycle()
                     val gameState by gameViewModel.game.collectAsStateWithLifecycle()
                     val players by gameViewModel.players.collectAsStateWithLifecycle()
-                    val turnIndex = players.indexOfFirst { p -> p.userId == gameState?.turn }
-                    val phase by gameViewModel.phase.collectAsStateWithLifecycle()
                     val diceRoll by gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData by gameViewModel.dialog.collectAsStateWithLifecycle()
+                    val turnIndex = players.indexOfFirst { p -> p.userId == gameState?.turn }
 
                     if (lobby == null || members?.isEmpty() == true) {
                         LoadingScreen()
