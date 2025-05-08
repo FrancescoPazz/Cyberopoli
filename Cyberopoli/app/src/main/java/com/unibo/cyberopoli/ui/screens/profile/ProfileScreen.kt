@@ -29,7 +29,6 @@ fun ProfileScreen(
     navController: NavHostController, profileParams: ProfileParams
 ) {
     val user = profileParams.user.value
-
     val gameHistories = listOf(
         GameHistory(
             date = "15 Feb 2024",
@@ -78,5 +77,6 @@ fun ProfileScreen(
                     MatchHistorySection(gameHistory = gameHistories)
                 }
             }
-        })
+        }
+    )
 }

@@ -52,9 +52,7 @@ fun LoginCard(
                 imageVector = Icons.Default.Email,
                 singleLine = true,
             )
-
             Spacer(modifier = Modifier.height(8.dp))
-
             AuthOutlinedTextField(
                 value = password,
                 placeholder = stringResource(R.string.password),
@@ -62,20 +60,17 @@ fun LoginCard(
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
             )
-
             AuthButton(
                 text = stringResource(R.string.login).uppercase(), onClick = {
                     login(email.value, password.value)
                 }, enabled = authState.value != AuthState.Loading
             )
-
             TextButton(
                 onClick = { isResetMode = true },
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
             ) {
                 Text("Forgot password?")
             }
-
             val context = LocalContext.current
             GoogleSignInButton(
                 onClick = { googleLogin(context) },

@@ -59,18 +59,15 @@ fun LobbyScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-
     LaunchedEffect(params.lobbyId) {
         if (!hasJoined && params.lobbyId.isNotBlank()) {
             params.startLobbyFlow(params.lobbyId)
             hasJoined = true
         }
     }
-
     BackHandler {
         navController.popBackStack()
     }
-
     Scaffold(topBar = {
         TopBar(navController) {
             navController.popBackStack()

@@ -40,16 +40,18 @@ import io.github.sceneview.rememberView
 @Composable
 fun ARScreen(navController: NavController) {
     val engine = rememberEngine()
-    val modelLoader = rememberModelLoader(engine = engine)
-    val materialLoader = rememberMaterialLoader(engine = engine)
-    val cameraNode = rememberARCameraNode(engine = engine)
     val childNodes = rememberNodes()
+    val density = LocalDensity.current
     val view = rememberView(engine = engine)
+    val configuration = LocalConfiguration.current
+    val modelLoader = rememberModelLoader(engine = engine)
+    val cameraNode = rememberARCameraNode(engine = engine)
     val collisionSystem = rememberCollisionSystem(view = view)
     val planeRenderer = remember { mutableStateOf(true) }
+    val materialLoader = rememberMaterialLoader(engine = engine)
     val modelInstance = remember { mutableListOf<ModelInstance>() }
-    val trackingFailureReason = remember { mutableStateOf<TrackingFailureReason?>(null) }
     val frameState = remember { mutableStateOf<Frame?>(null) }
+    val trackingFailureReason = remember { mutableStateOf<TrackingFailureReason?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ARScene(
@@ -90,11 +92,7 @@ fun ARScreen(navController: NavController) {
                 }
             })
         )
-
         Reticle(modifier = Modifier.align(Alignment.Center))
-
-        val configuration = LocalConfiguration.current
-        val density = LocalDensity.current
         FloatingActionButton(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

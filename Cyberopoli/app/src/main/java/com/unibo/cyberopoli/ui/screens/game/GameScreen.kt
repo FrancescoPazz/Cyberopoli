@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,22 +24,21 @@ import kotlinx.coroutines.delay
 fun GameScreen(
     navController: NavHostController, gameParams: GameParams
 ) {
-    var hasStarted by remember { mutableStateOf(false) }
-    GameLifecycleHandler(gameParams, navController)
-    GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
-
-    BackHandler { gameParams.leaveGame(); navController.popBackStack() }
-
     val game by gameParams.game
     val players by gameParams.players
-    val turnIdx by gameParams.currentTurnIndex
     val dialogData by gameParams.dialogData
-
-    var stepsToAnimate by remember { mutableStateOf(0) }
-    val animatedPositions = remember { mutableStateMapOf<String, Int>() }
-
+    val turnIdx by gameParams.currentTurnIndex
     val isLoadingQuestion by gameParams.isLoadingQuestion
+    var stepsToAnimate by remember { mutableIntStateOf(0) }
+    var hasStarted by remember { mutableStateOf(false) }
+    val animatedPositions = remember { mutableStateMapOf<String, Int>() }
+    val displayPlayers = players.map { p ->
+        p.copy(cellPosition = animatedPositions[p.userId] ?: p.cellPosition)
+    }
 
+    GameLifecycleHandler(gameParams, navController)
+    GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
+    BackHandler { gameParams.leaveGame(); navController.popBackStack() }
     LaunchedEffect(stepsToAnimate, players, game) {
         if (stepsToAnimate > 0 && game != null) {
             val path = PERIMETER_PATH
@@ -53,11 +53,6 @@ fun GameScreen(
             stepsToAnimate = 0
         }
     }
-
-    val displayPlayers = players.map { p ->
-        p.copy(cellPosition = animatedPositions[p.userId] ?: p.cellPosition)
-    }
-
     if (game == null || players.isEmpty() || players.getOrNull(turnIdx) == null) {
         LoadingScreen()
     } else {
@@ -67,11 +62,9 @@ fun GameScreen(
             players = displayPlayers,
             onMoveAnimated = { stepsToAnimate = it })
     }
-
     if (isLoadingQuestion) {
         LoadingQuestionDialog()
     }
-
     dialogData?.let { data ->
         val (title, message, options) = when (data) {
             is GameDialogData.Question -> Triple(data.title, data.prompt, data.options)

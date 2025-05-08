@@ -55,7 +55,6 @@ fun HomeScreen(
                 ) {
                     Text(text = "Chart Placeholder")
                 }
-
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
                     text = stringResource(R.string.account_statistics),
@@ -94,6 +93,7 @@ fun HomeScreen(
                     )
                 }
             }
-        })
+        }
+    )
 }
 

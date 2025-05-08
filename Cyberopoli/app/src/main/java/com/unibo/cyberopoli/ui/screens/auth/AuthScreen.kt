@@ -38,7 +38,6 @@ import com.unibo.cyberopoli.ui.screens.auth.composables.SignUpCard
 
 @Composable
 fun AuthScreen(navController: NavController, authParams: AuthParams) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
         stringResource(R.string.login),
         stringResource(R.string.signup),
@@ -46,6 +45,7 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
     )
     val context = LocalContext.current
     val authState = authParams.authState.observeAsState()
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(authState.value) {
         if (authState.value is AuthState.Error) {
@@ -54,7 +54,6 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 .show()
         }
     }
-
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
         if (authState.value == AuthState.Authenticated) BottomBar(navController)
     }, content = { paddingValues ->
@@ -67,7 +66,6 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AuthHeader()
-
             TabRow(selectedTabIndex = selectedTabIndex,
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.tertiary,
@@ -83,7 +81,6 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                         text = { Text(title) })
                 }
             }
-
             when (selectedTabIndex) {
                 0 -> LoginCard(
                     authParams.authState.observeAsState(),
@@ -91,11 +88,9 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                     authParams.loginGoogleUser,
                     authParams.resetPassword
                 )
-
                 1 -> SignUpCard(
                     navController, authParams.authState.observeAsState(), authParams.signUp
                 )
-
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }

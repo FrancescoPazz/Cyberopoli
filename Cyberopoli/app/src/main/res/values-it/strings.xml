@@ -60,6 +60,8 @@
     <string name="camera_permission_required">
         È necessario il permesso per usare la fotocamera per scansionare il codice QR.
     </string>
+    <string name="request_camera">Richiedi permesso fotocamera</string>
+    <string name="enter_code">Inserisci codice</string>
 
     <!-- ================================= -->
     <!-- Impostazioni -->

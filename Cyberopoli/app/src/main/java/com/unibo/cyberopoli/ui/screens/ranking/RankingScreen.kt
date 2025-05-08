@@ -48,5 +48,6 @@ fun RankingScreen(
                     RankingListSection(users = others)
                 }
             }
-        })
+        }
+    )
 }

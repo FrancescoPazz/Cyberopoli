@@ -60,6 +60,8 @@
     <string name="camera_permission_required">
         Camera permission is required to scan the QR code.
     </string>
+    <string name="request_camera">Request Camera Permission</string>
+    <string name="enter_code">Enter Code</string>
 
     <!-- ================================= -->
     <!-- Settings -->

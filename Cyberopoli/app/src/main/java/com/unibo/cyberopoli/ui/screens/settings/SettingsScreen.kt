@@ -48,7 +48,6 @@ fun SettingScreen(
     settingsParams: SettingsParams,
 ) {
     val context = LocalContext.current
-
     var notificationsEnabled by remember { mutableStateOf(true) }
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -98,9 +97,7 @@ fun SettingScreen(
                     )
                 }
             }
-
             HorizontalDivider()
-
             Text(
                 text = stringResource(R.string.notifications),
                 style = MaterialTheme.typography.titleMedium
@@ -122,9 +119,7 @@ fun SettingScreen(
                     )
                 )
             }
-
             HorizontalDivider()
-
             if (settingsParams.authState.value == AuthState.Authenticated) {
                 Text(
                     text = stringResource(R.string.change_password),
