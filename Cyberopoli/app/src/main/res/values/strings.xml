@@ -71,6 +71,7 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="system">System</string>
+    <string name="theme">Theme</string>
 
     <!-- ================================= -->
     <!-- Profile & Ranking Details -->
