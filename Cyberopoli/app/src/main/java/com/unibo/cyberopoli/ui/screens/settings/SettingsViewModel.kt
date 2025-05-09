@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
+
     val state = settingsRepository.theme.map { ThemeState(it) }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),

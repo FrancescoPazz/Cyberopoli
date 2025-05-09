@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.createBoard
@@ -25,9 +26,11 @@ fun GameContent(
     players: List<GamePlayer>,
     onMoveAnimated: (Int) -> Unit
 ) {
+    val context = LocalContext.current
+
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = { TopBar(navController) }, bottomBar = {
-        GameBottomBar(phase = gameParams.phase.value,
-            diceRoll = gameParams.diceRoll.value,
+        GameBottomBar(gameState = gameParams.gameState.value!!,
+            diceRoll = gameParams.diceRoll.value ?: 0,
             onRoll = { gameParams.rollDice() },
             onMove = { onMoveAnimated(it) },
             onEndTurn = { gameParams.endTurn() })
@@ -41,7 +44,7 @@ fun GameContent(
             val cells = remember { createBoard() }
 
             GameMap(
-                cells = cells, rows = 5, cols = 5, players = players
+                gameCells = cells, rows = 5, cols = 5, players = players
             )
 
             Spacer(Modifier.weight(1f))

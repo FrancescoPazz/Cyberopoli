@@ -12,12 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.unibo.cyberopoli.data.models.game.Cell
+import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 
 @Composable
 fun GameCell(
-    cell: Cell, isBorder: Boolean, occupants: List<GamePlayer>
+    gameCell: GameCell, isBorder: Boolean, occupants: List<GamePlayer>
 ) {
     Box(
         modifier = Modifier
@@ -25,10 +25,10 @@ fun GameCell(
             .then(if (isBorder) Modifier.border(2.dp, Color.Gray) else Modifier),
         contentAlignment = Alignment.Center
     ) {
-        cell.type.resource?.let { resId ->
+        gameCell.type.resource?.let { resId ->
             Image(
                 painter = painterResource(resId),
-                contentDescription = cell.title,
+                contentDescription = gameCell.title,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.Crop
             )

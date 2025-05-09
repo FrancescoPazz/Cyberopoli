@@ -10,7 +10,7 @@ interface ILobbyRepository {
 
     suspend fun fetchMembers(lobbyId: String): List<LobbyMember>
 
-    suspend fun toggleReady(lobbyId: String, userId: String, isReady: Boolean): LobbyMember
+    suspend fun toggleReady(isReady: Boolean): LobbyMember
 
     suspend fun leaveLobby(lobbyId: String, userId: String, isHost: Boolean)
 

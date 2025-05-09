@@ -6,10 +6,15 @@ import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
+
+const val LOBBY_TABLE = "lobbies"
+const val LOBBY_MEMBERS_TABLE = "lobby_members"
 
 class LobbyRepository(
     private val supabase: SupabaseClient
@@ -19,10 +24,10 @@ class LobbyRepository(
 
     override suspend fun createOrGetLobby(lobbyId: String, host: User) {
         val lobby = Lobby(
-            id = lobbyId, hostId = host.id, status = "waiting"
+            id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value
         )
         try {
-            val created: Lobby = supabase.from("lobbies").insert(lobby) {
+            val created: Lobby = supabase.from(LOBBY_TABLE).insert(lobby) {
                 select()
             }.decodeSingle<Lobby>()
             currentLobbyLiveData.value = created
@@ -40,36 +45,40 @@ class LobbyRepository(
             user = member.user
         )
         try {
-            supabase.from("lobby_members").insert(data) { select() }
+            supabase.from(LOBBY_MEMBERS_TABLE).insert(data) { select() }
         } catch (e: Exception) {
             throw e
         }
     }
 
-    override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> = try {
-        val raw: List<LobbyMemberRaw> = supabase.from("lobby_members").select(
-            Columns.raw("*, users(*)")
-        ).decodeList<LobbyMemberRaw>()
-        val members = raw.map { d ->
-            LobbyMember(
-                lobbyId = d.lobbyId,
-                userId = d.userId,
-                isReady = d.isReady,
-                joinedAt = d.joinedAt,
-                user = d.user
-            )
+    override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> {
+        try {
+            val raw: List<LobbyMemberRaw> = supabase.from(LOBBY_MEMBERS_TABLE).select(
+                Columns.raw("*, users(*)")
+            ).decodeList<LobbyMemberRaw>()
+            val members = raw.map { d ->
+                LobbyMember(
+                    lobbyId = d.lobbyId,
+                    userId = d.userId,
+                    isReady = d.isReady,
+                    joinedAt = d.joinedAt,
+                    user = d.user
+                )
+            }
+            currentMembersLiveData.value = members
+            return members
+        } catch (e: Exception) {
+            return emptyList()
         }
-        currentMembersLiveData.value = members
-        members
-    } catch (e: Exception) {
-        emptyList()
     }
 
     override suspend fun toggleReady(
-        lobbyId: String, userId: String, isReady: Boolean
+        isReady: Boolean
     ): LobbyMember {
+        val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
+        val lobbyId = currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found")
         return try {
-            supabase.from("lobby_members").update(mapOf("ready" to isReady)) {
+            supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("ready" to isReady)) {
                 filter {
                     eq("lobby_id", lobbyId)
                     eq("user_id", userId)
@@ -85,14 +94,14 @@ class LobbyRepository(
 
     override suspend fun leaveLobby(lobbyId: String, userId: String, isHost: Boolean) {
         try {
-            supabase.from("lobby_members").delete {
+            supabase.from(LOBBY_MEMBERS_TABLE).delete {
                 filter {
                     eq("lobby_id", lobbyId)
                     eq("user_id", userId)
                 }
             }
             if (isHost) {
-                supabase.from("lobbies").delete { filter { eq("id", lobbyId) } }
+                supabase.from(LOBBY_TABLE).delete { filter { eq("id", lobbyId) } }
             }
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "leaveLobby: ${e.message}")
@@ -101,7 +110,7 @@ class LobbyRepository(
 
     override suspend fun startGame(lobbyId: String) {
         try {
-            supabase.from("lobbies").update(mapOf("status" to "in_progress")) {
+            supabase.from(LOBBY_TABLE).update(mapOf("status" to LobbyStatus.IN_PROGRESS.value)) {
                 filter { eq("id", lobbyId) }
             }
         } catch (e: Exception) {

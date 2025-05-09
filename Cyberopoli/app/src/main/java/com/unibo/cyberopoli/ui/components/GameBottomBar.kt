@@ -16,12 +16,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.game.Phase
+import com.unibo.cyberopoli.data.models.game.GameState
 
 @Composable
 fun GameBottomBar(
-    phase: Phase,
-    diceRoll: Int?,
+    gameState: GameState,
+    diceRoll: Int,
     onRoll: () -> Unit,
     onMove: (Int) -> Unit,
     onEndTurn: () -> Unit,
@@ -31,8 +31,8 @@ fun GameBottomBar(
         containerColor = Color(0xFF27293D),
         tonalElevation = 8.dp
     ) {
-        when (phase) {
-            Phase.ROLL_DICE -> {
+        when (gameState) {
+            GameState.ROLL_DICE -> {
                 NavigationBarItem(
                     icon = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -48,7 +48,7 @@ fun GameBottomBar(
                 )
             }
 
-            Phase.MOVE -> {
+            GameState.MOVE -> {
                 NavigationBarItem(icon = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -61,10 +61,10 @@ fun GameBottomBar(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("${stringResource(R.string.move_on)} $diceRoll ${stringResource(R.string.cells)}")
                     }
-                }, selected = false, onClick = { onMove(diceRoll ?: 0) })
+                }, selected = false, onClick = { onMove(diceRoll) })
             }
 
-            Phase.CHANCE -> {
+            GameState.CHANCE -> {
                 NavigationBarItem(icon = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -79,7 +79,7 @@ fun GameBottomBar(
                 }, selected = false, onClick = { })
             }
 
-            Phase.HACKER -> {
+            GameState.HACKER -> {
                 NavigationBarItem(icon = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -93,7 +93,7 @@ fun GameBottomBar(
                 }, selected = false, onClick = { })
             }
 
-            Phase.END_TURN -> {
+            GameState.END_TURN -> {
                 NavigationBarItem(
                     icon = {
                         Row(verticalAlignment = Alignment.CenterVertically) {

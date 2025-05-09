@@ -5,10 +5,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
 
-enum class GameEventType(val type: String) {
-    CONTENT("content"), HACKER("hacker"), PROBABILITY("probability"), CHANCE("chance")
-}
-
 @Serializable
 data class GameEventRaw(
     @SerialName("lobby_id") val lobbyId: String,

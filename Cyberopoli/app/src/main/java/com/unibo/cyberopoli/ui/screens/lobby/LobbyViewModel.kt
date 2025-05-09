@@ -14,14 +14,20 @@ import kotlinx.coroutines.launch
 class LobbyViewModel(
     userRepository: UserRepository, private val lobbyRepository: LobbyRepository
 ) : ViewModel() {
+
     val user: LiveData<User?> = userRepository.currentUserLiveData
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
     val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
-
+    private var _allReady = MutableLiveData(false)
     private var _isHost = MutableLiveData<Boolean?>(null)
     val isHost: LiveData<Boolean?> = _isHost
-    private var _allReady = MutableLiveData(false)
     val allReady: LiveData<Boolean?> = _allReady
+
+    private fun refreshMembers() {
+        viewModelScope.launch {
+            lobby.value?.id?.let { lobbyRepository.fetchMembers(it) }
+        }
+    }
 
     fun startLobbyFlow(lobbyId: String) {
         viewModelScope.launch {
@@ -37,18 +43,12 @@ class LobbyViewModel(
         }
     }
 
-    private fun refreshMembers() {
-        viewModelScope.launch {
-            lobby.value?.id?.let { lobbyRepository.fetchMembers(it) }
-        }
-    }
-
     fun toggleReady() {
         viewModelScope.launch {
             if (user.value == null || lobby.value == null) return@launch
             val member = members.value?.find { it.userId == user.value!!.id } ?: return@launch
             val newReady = !(member.isReady)
-            lobbyRepository.toggleReady(lobby.value!!.id, user.value!!.id, newReady)
+            lobbyRepository.toggleReady(newReady)
             _allReady.value = members.value?.all { it.isReady } ?: false
             refreshMembers()
         }

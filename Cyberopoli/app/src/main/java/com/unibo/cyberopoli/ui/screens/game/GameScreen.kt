@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
@@ -26,6 +27,7 @@ fun GameScreen(
 ) {
     val game by gameParams.game
     val players by gameParams.players
+    val context = LocalContext.current
     val dialogData by gameParams.dialogData
     val turnIdx by gameParams.currentTurnIndex
     val isLoadingQuestion by gameParams.isLoadingQuestion
@@ -49,7 +51,7 @@ fun GameScreen(
                 animatedPositions[current.userId] = path[(startIdx + i + 1) % path.size]
                 delay(500L)
             }
-            gameParams.movePlayer()
+            gameParams.movePlayer(context)
             stepsToAnimate = 0
         }
     }

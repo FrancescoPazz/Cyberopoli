@@ -28,7 +28,7 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get()) }
     viewModel { LobbyViewModel(get(), get()) }
-    viewModel { GameViewModel(get(), get(), get()) }
+    viewModel { GameViewModel(get(), get()) }
 
     single { UsageStatsHelper(get()) }
 

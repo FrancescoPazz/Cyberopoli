@@ -11,13 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.unibo.cyberopoli.data.models.game.Cell
+import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 
 @Composable
 fun GameMap(
-    cells: List<Cell>, rows: Int, cols: Int, players: List<GamePlayer>
+    gameCells: List<GameCell>, rows: Int, cols: Int, players: List<GamePlayer>
 ) {
     val posMap = remember(players) {
         players.groupBy { it.cellPosition }
@@ -32,8 +32,8 @@ fun GameMap(
             .background(color = Color(0xFFC1C1C1)),
         userScrollEnabled = false
     ) {
-        items(cells.size) { idx ->
-            val cell = cells[idx]
+        items(gameCells.size) { idx ->
+            val cell = gameCells[idx]
             val isBorder = idx in PERIMETER_PATH
             GameCell(cell, isBorder, posMap[idx].orEmpty().take(4))
         }

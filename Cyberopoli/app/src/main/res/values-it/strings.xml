@@ -117,6 +117,10 @@
     <string name="hacker">Hacker</string>
     <string name="internet_points">Punti Internet</string>
     <string name="wait_your_turn">Aspetta il tuo turno</string>
+    <string name="security_question">Domanda sulla sicurezza</string>
+    <string name="security_description">una domanda a 3 scelte sulla sicurezza informatica</string>
+    <string name="hacker_attack">Attacco hacker</string>
+    <string name="hacker_attack_description">uno scenario di attacco hacker e proponi 3 azioni possibili</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

@@ -2,7 +2,7 @@ package com.unibo.cyberopoli.data.models.game
 
 import com.unibo.cyberopoli.R
 
-enum class CellType(val resource: Int?) {
+enum class GameEventType(val resource: Int?) {
     START(R.drawable.ic_start), YOUTUBE(R.drawable.ic_youtube), WHATSAPP(R.drawable.ic_whatsapp), TIKTOK(
         R.drawable.ic_tiktok
     ),

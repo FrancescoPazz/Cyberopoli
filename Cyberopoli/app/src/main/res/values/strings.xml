@@ -117,6 +117,10 @@
     <string name="hacker">Hacker</string>
     <string name="internet_points">Internet points</string>
     <string name="wait_your_turn">Wait your turn</string>
+    <string name="security_question">Security Question</string>
+    <string name="security_description">a 3 choice question on computer security</string>
+    <string name="hacker_attack">Hacker Attack</string>
+    <string name="hacker_attack_description">a hacker attack scenario and propose 3 possible actions</string>
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>
