@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -46,9 +47,7 @@ fun TopBar(navController: NavController, onBackPressed: (() -> Unit)? = null) {
         if (currentRoute != null) {
             val resId = remember(currentRoute) {
                 context.resources.getIdentifier(
-                    currentRoute,
-                    "string",
-                    context.packageName
+                    currentRoute, "string", context.packageName
                 )
             }
             val titleText = if (resId != 0) {
@@ -160,7 +159,14 @@ fun BottomBar(navController: NavController) {
                             launchSingleTop = true
                         }
                     }
-                })
+                }, colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.tertiary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                    selectedTextColor = MaterialTheme.colorScheme.tertiary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                    indicatorColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                )
+                )
             }
         }
     }

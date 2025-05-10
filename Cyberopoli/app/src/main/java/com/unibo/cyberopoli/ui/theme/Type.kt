@@ -10,8 +10,8 @@ import com.unibo.cyberopoli.R
 
 
 val AppFontFamily = FontFamily(
-    Font(R.font.ic_font4),
-    Font(R.font.ic_font4_bold, FontWeight.Bold),
+    Font(R.font.ic_font),
+    Font(R.font.ic_font_bold, FontWeight.Bold),
 )
 
 // Set of Material typography styles to start with
