@@ -37,7 +37,6 @@ fun LoadingQuestionDialog() {
                 Text(
                     stringResource(R.string.loading),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

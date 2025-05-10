@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +26,7 @@ fun Top3RankingSection(users: List<User>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(16.dp),
     ) {
         users.sortedBy { it.level }.forEach { user ->
             val (avatarSize, offsetY) = when (user.level) {
@@ -63,18 +62,18 @@ fun Top3RankingSection(users: List<User>) {
 
                 if (user.level == 1) {
                     Text(
-                        text = "\uD83D\uDC51", style = MaterialTheme.typography.bodyLarge
+                        text = "\uD83D\uDC51"
                     )
                 }
 
                 Text(
                     text = user.username,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 4.dp),
+                    fontWeight = FontWeight.Bold,
                 )
 
                 Text(
-                    text = "${user.totalScore} pt", style = MaterialTheme.typography.bodySmall
+                    text = "${user.totalScore} pt"
                 )
             }
         }

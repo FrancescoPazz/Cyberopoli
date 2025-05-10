@@ -36,7 +36,7 @@ fun MyRankingPosition(user: User?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -52,11 +52,11 @@ fun MyRankingPosition(user: User?) {
 
         Column {
             Text(
-                text = stringResource(R.string.my_rank), style = MaterialTheme.typography.bodyMedium
+                text = stringResource(R.string.my_rank),
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = "#${user?.level} ${user?.username} ${user?.totalScore} pt",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }

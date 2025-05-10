@@ -33,13 +33,11 @@ fun GameDialog(
                 Text(
                     title,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.headlineSmall
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
                     message,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(24.dp))
 

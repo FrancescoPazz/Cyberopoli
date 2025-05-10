@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import com.unibo.cyberopoli.R
 
 @Composable
@@ -18,7 +19,8 @@ fun NotificationSection(
     enabled: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
-    Text(text = stringResource(R.string.notifications), style = MaterialTheme.typography.titleMedium)
+    Text(text = stringResource(R.string.notifications),
+        fontWeight = FontWeight.Bold,)
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

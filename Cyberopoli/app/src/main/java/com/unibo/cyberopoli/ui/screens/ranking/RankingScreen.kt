@@ -40,7 +40,6 @@ fun RankingScreen(
                 } else {
                     val top3 = rankingData.take(3)
                     val others = rankingData.drop(3)
-
                     MyRankingPosition(user)
                     Spacer(modifier = Modifier.height(16.dp))
                     Top3RankingSection(users = top3)

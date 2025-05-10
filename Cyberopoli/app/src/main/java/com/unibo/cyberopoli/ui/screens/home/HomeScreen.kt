@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
@@ -44,7 +45,7 @@ fun HomeScreen(
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
                     text = stringResource(R.string.score_chart),
-                    style = MaterialTheme.typography.titleMedium
+                    fontWeight = FontWeight.Bold,
                 )
                 Box(
                     modifier = Modifier
@@ -58,7 +59,7 @@ fun HomeScreen(
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
                     text = stringResource(R.string.account_statistics),
-                    style = MaterialTheme.typography.titleMedium
+                    fontWeight = FontWeight.Bold,
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),

@@ -33,7 +33,6 @@ fun RankingListItem(user: User) {
     ) {
         Text(
             text = "${user.level}",
-            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.width(24.dp)
         )
@@ -55,13 +54,11 @@ fun RankingListItem(user: User) {
             Text(
                 color = MaterialTheme.colorScheme.primary,
                 text = user.username,
-                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 color = MaterialTheme.colorScheme.primary,
                 text = "${user.totalScore} pt",
-                style = MaterialTheme.typography.bodySmall
             )
         }
     }

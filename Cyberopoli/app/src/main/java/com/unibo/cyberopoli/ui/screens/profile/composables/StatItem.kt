@@ -15,7 +15,6 @@ fun StatItem(label: String, value: String) {
         Text(
             color = MaterialTheme.colorScheme.primary,
             text = value,
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
         Text(color = MaterialTheme.colorScheme.primary, text = label)
     }

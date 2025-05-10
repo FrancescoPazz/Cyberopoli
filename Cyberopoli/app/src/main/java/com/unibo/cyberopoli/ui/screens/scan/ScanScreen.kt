@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.Button
@@ -62,11 +64,13 @@ fun ScanScreen(
     Scaffold(topBar = { TopBar(navController) }, bottomBar = {
         if (scanParams.authState === AuthState.Authenticated) BottomBar(navController)
     }) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
@@ -101,14 +105,13 @@ fun ScanScreen(
                     } else {
                         Text(
                             text = stringResource(R.string.camera_permission_required),
-                            style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(Modifier.height(16.dp))
                         Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
                             Text(stringResource(R.string.request_camera))
                         }
                     }
-                    Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(48.dp))
                     AuthOutlinedTextField(
                         value = manualCode,
                         placeholder = stringResource(R.string.enter_code),

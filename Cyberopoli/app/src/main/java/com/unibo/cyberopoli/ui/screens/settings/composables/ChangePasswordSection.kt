@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.unibo.cyberopoli.R
 
@@ -23,7 +24,8 @@ fun ChangePasswordSection(
     onConfirmPasswordChange: (String) -> Unit,
     onChangeClick: () -> Unit
 ) {
-    Text(text = stringResource(R.string.change_password), style = MaterialTheme.typography.titleMedium)
+    Text(text = stringResource(R.string.change_password),
+        fontWeight = FontWeight.Bold,)
     OutlinedTextField(
         value = currentPassword,
         onValueChange = onCurrentPasswordChange,

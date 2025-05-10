@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -33,13 +34,11 @@ fun StatCard(scoreTitle: String, scoreValue: String, modifier: Modifier = Modifi
             Text(
                 color = MaterialTheme.colorScheme.primary,
                 text = scoreTitle,
-                style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 color = MaterialTheme.colorScheme.primary,
                 text = scoreValue,
-                style = MaterialTheme.typography.headlineMedium
             )
         }
     }

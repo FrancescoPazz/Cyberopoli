@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.theme.Theme
@@ -24,7 +25,8 @@ fun ThemeSection(
     currentTheme: Theme,
     onThemeSelected: (Theme) -> Unit
 ) {
-    Text(text = stringResource(R.string.theme), style = MaterialTheme.typography.titleMedium)
+    Text(text = stringResource(R.string.theme),
+        fontWeight = FontWeight.Bold,)
     Theme.entries.forEach { theme ->
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -52,7 +54,6 @@ fun ThemeSection(
                     Theme.Dark -> stringResource(R.string.dark)
                     Theme.System -> stringResource(R.string.system)
                 },
-                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(start = 16.dp)
             )
         }

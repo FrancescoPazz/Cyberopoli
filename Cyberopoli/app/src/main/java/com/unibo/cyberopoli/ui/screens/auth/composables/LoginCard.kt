@@ -78,7 +78,6 @@ fun LoginCard(
         } else {
             Text(
                 text = stringResource(R.string.reset_password_title),
-                style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.height(16.dp))
             AuthOutlinedTextField(
