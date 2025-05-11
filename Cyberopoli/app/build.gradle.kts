@@ -83,6 +83,8 @@ dependencies {
 
     // Ktor Client
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

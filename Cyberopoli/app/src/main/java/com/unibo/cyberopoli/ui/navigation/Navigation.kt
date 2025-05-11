@@ -22,6 +22,7 @@ import com.unibo.cyberopoli.ui.screens.game.GameScreen
 import com.unibo.cyberopoli.ui.screens.game.GameViewModel
 import com.unibo.cyberopoli.ui.screens.home.HomeParams
 import com.unibo.cyberopoli.ui.screens.home.HomeScreen
+import com.unibo.cyberopoli.ui.screens.home.HomeViewModel
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.LobbyScreen
@@ -81,6 +82,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val lobbyViewModel = koinViewModel<LobbyViewModel>()
+    val homeViewModel = koinViewModel<HomeViewModel>()
 
     val authState = authViewModel.authState.observeAsState()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()

@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
@@ -17,20 +16,16 @@ import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.data.models.game.GameState
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
-import com.unibo.cyberopoli.data.services.HFService
 import com.unibo.cyberopoli.util.UsageStatsHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.Instant
 
 class GameViewModel(
     private val gameRepository: GameRepository,
     private val usageStatsHelper: UsageStatsHelper
 ) : ViewModel() {
-    private val hfService = HFService("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")
-
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
 
@@ -72,22 +67,17 @@ class GameViewModel(
         return path[idx]
     }
 
-    private fun handleLanding(context: Context, gameEventType: GameEventType?) {
+    private fun handleLanding(gameEventType: GameEventType?) {
+        Log.d("TEST", "handleLanding: $gameEventType")
         viewModelScope.launch {
             when (gameEventType) {
                 GameEventType.START -> {
                     gameRepository.updatePlayerPoints(50)
                 }
                 GameEventType.CHANCE -> askQuestion(
-                    title = context.getString(R.string.security_question),
-                    description = context.getString(R.string.security_description),
-                    points = 5,
                     eventType = GameEventType.CHANCE
                 )
                 GameEventType.HACKER -> askQuestion(
-                    title = context.getString(R.string.hacker_attack),
-                    description = context.getString(R.string.hacker_attack_description),
-                    points = 10,
                     eventType = GameEventType.HACKER
                 )
                 else -> {
@@ -97,63 +87,33 @@ class GameViewModel(
         }
     }
 
-    private fun askQuestion(
-        title: String,
-        description: String,
-        points: Int,
-        eventType: GameEventType,
-    ) {
-        viewModelScope.launch {
-            _isLoadingQuestion.value = true
-            try {
-                val topApps = usageStatsHelper.getTopUsedApps()
-                    .joinToString("; ") { "${it.first}:${it.second / 1000}s" }
-                val totalSec = usageStatsHelper.getTodayUsageTime() / 1000
-                val dataStr = """
-                          {
-                            "topApps": "$topApps",
-                            "totalUsageSec": $totalSec
-                          }
-                          """.trimIndent()
-                val usageDataPrefix = "Sulla base di questi dati registrati su questo dispositivo: $dataStr voglio che "
-                val prompt = buildString {
-                    append(usageDataPrefix)
-                    append("generi $description. ")
-                    append("La voglio IN QUESTO SPECIFICO FORMATO miraccomando: ")
-                    append("DOMANDA==<testo>||OPZIONI==<3 opzioni BREVI separate da ';;'>||CORRETTA==<indice che parte da 0>")
-                }
+    private fun askQuestion(eventType: GameEventType) {
+        Log.d("TEST", "askQuestion: $eventType")
+        val questions = when (eventType) {
+            GameEventType.CHANCE -> gameRepository.chanceQuestions.value.orEmpty()
+            GameEventType.HACKER -> gameRepository.hackerQuestions.value.orEmpty()
+            else -> emptyList()
+        }
 
-                Log.d("GameViewModel", "Prompt: $prompt")
+        Log.d("TEST", "askQuestion: ${questions.size} questions available")
 
-                val raw = hfService.generateChat(
-                    model = "deepseek/deepseek-prover-v2-671b", userPrompt = prompt
-                )
+        val question = questions.firstOrNull()
+            ?: throw IllegalStateException("No questions available for event type: $eventType")
 
-                val (question, options, correct) = parseStructured(raw)
-                pendingGameEvent = GameEvent(
-                    lobbyId = game.value!!.lobbyId,
-                    gameId = game.value!!.id,
-                    senderUserId = player.value!!.userId,
-                    recipientUserId = null,
-                    eventType = eventType,
-                    value = points,
-                    createdAt = Instant.now().toString()
-                )
-                _dialog.value = GameDialogData.Question(
-                    title = title, prompt = question, options = options, correctIndex = correct
-                )
-            } finally {
-                _isLoadingQuestion.value = false
+        when (eventType) {
+            GameEventType.CHANCE -> {
+                val updated = questions.drop(1)
+                gameRepository.chanceQuestions.postValue(updated)
+            }
+            GameEventType.HACKER -> {
+                val updated = questions.drop(1)
+                gameRepository.hackerQuestions.postValue(updated)
+            }
+            else -> {
+                throw IllegalStateException("Invalid event type: $eventType")
             }
         }
-    }
-
-    private fun parseStructured(raw: String): Triple<String, List<String>, Int> {
-        val parts = raw.split("||").map { it.trim() }
-        val question = parts[0].substringAfter("DOMANDA==").trim()
-        val options = parts[1].substringAfter("OPZIONI==").split(";;").map { it.trim() }
-        val correct = parts[2].substringAfter("CORRETTA==").toIntOrNull() ?: 0
-        return Triple(question, options, correct)
+        _dialog.value = question
     }
 
     fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
@@ -197,7 +157,7 @@ class GameViewModel(
                 _players.value = _players.value.map {
                     if (it.userId == me.userId) it.copy(cellPosition = newPos) else it
                 }
-                handleLanding(context, PERIMETER_CELLS[newPos]?.type)
+                handleLanding(PERIMETER_CELLS[newPos]?.type)
             }
             gameState.value = GameState.END_TURN
         }
