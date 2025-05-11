@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
-import com.unibo.cyberopoli.data.models.game.GameEventType
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GamePlayerRaw
 import com.unibo.cyberopoli.data.models.game.QuestionPayload
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.services.LLMService
+import com.unibo.cyberopoli.util.FallbackQuestions
 import com.unibo.cyberopoli.util.UsageStatsHelper
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
@@ -31,7 +31,7 @@ class GameRepository(
 ) : DomainGameRepository {
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
-    val questions = MutableLiveData<List<GameDialogData.Question>>()
+    private val questions = MutableLiveData<List<GameDialogData.Question>>()
     val chanceQuestions = MutableLiveData<List<GameDialogData.Question>>()
     val hackerQuestions = MutableLiveData<List<GameDialogData.Question>>()
 
@@ -119,6 +119,17 @@ class GameRepository(
 
         Log.d("TEST", "Decoded $payloads")
 
+        if (payloads.isEmpty()) {
+            Log.e("TEST", "No questions found")
+            return FallbackQuestions.map {
+                GameDialogData.Question(
+                    title = it.title,
+                    prompt = it.prompt,
+                    options = it.options,
+                    correctIndex = it.correctIndex
+                )
+            }
+        }
         return payloads.map {
             GameDialogData.Question(
                 title = it.title,

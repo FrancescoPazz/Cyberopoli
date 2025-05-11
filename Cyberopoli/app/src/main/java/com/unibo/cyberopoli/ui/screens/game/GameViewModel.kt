@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val gameRepository: GameRepository,
-    private val usageStatsHelper: UsageStatsHelper
 ) : ViewModel() {
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
