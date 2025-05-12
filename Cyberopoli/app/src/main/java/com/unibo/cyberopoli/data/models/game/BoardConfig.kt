@@ -14,20 +14,20 @@ val PERIMETER_PATH: List<Int> = buildList {
 val PERIMETER_CELLS: Map<Int, GameCell> = listOf(
     0 to GameCell("0", GameEventType.START, "Start", "Ogni volta che passi di qua guadagni 50 punti", 50),
     1 to GameCell("1", GameEventType.TIKTOK, "TikTok", "Salto +2", 0),
-    2 to GameCell("2", GameEventType.DISCORD, "Discord", "Bonus 7", 7),
+    2 to GameCell("2", GameEventType.VPN, "VPN", "", 0),
     3 to GameCell("3", GameEventType.WHATSAPP, "WhatsApp", "Perdi 5", -5),
-    4 to GameCell("4", GameEventType.HACKER, "Hacker", "Ruba 5", 0),
+    4 to GameCell("4", GameEventType.HACKER, "Hacker", "", 0),
     5 to GameCell("5", GameEventType.INSTAGRAM, "Instagram", "Guadagni +5", 0),
-    9 to GameCell("9", GameEventType.CHANCE, "Chance", "Pesca carta", 0),
-    10 to GameCell("10", GameEventType.SNAPCHAT, "Snapchat", "Perdi 3", -3),
-    14 to GameCell("14", GameEventType.TWITCH, "Twitch", "Guadagni +7", 7),
-    15 to GameCell("15", GameEventType.CHANCE, "Chance", "Pesca carta", 0),
+    9 to GameCell("9", GameEventType.TWITCH, "Twitch", "Guadagni +7", 7),
+    10 to GameCell("10", GameEventType.CHANCE, "Chance", "", 0),
+    14 to GameCell("14", GameEventType.CHANCE, "Chance", "", 0),
+    15 to GameCell("15", GameEventType.YOUTUBE, "YouTube", "Guadagni +10", 10),
     19 to GameCell("19", GameEventType.TELEGRAM, "Telegram", "Salto indietro", 0),
-    20 to GameCell("20", GameEventType.YOUTUBE, "YouTube", "Guadagni +10", 10),
+    20 to GameCell("20", GameEventType.HACKER, "Hacker", "", 0),
     21 to GameCell("21", GameEventType.FACEBOOK, "Facebook", "Perdi 2", -2),
-    22 to GameCell("22", GameEventType.REDDIT, "Reddit", "Salto +1", 0),
-    23 to GameCell("23", GameEventType.LINKEDIN, "Linkedin", "Perdi 6", -6),
-    24 to GameCell("24", GameEventType.HACKER, "Hacker", "Ruba 5", 0)
+    22 to GameCell("22", GameEventType.BLOCK, "BLOCK", "", 0),
+    23 to GameCell("23", GameEventType.DISCORD, "Discord", "Bonus 7", 7),
+    24 to GameCell("24", GameEventType.BROKEN_ROUTER, "", "", 0),
 ).toMap()
 
 fun createBoard(): List<GameCell> = List(BOARD_SIZE) { idx ->
