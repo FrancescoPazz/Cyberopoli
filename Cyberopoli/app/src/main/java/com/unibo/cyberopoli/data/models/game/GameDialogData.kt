@@ -2,23 +2,23 @@ package com.unibo.cyberopoli.data.models.game
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class QuestionPayload(
-    val title: String,
-    val prompt: String,
-    val options: List<String>,
-    val correctIndex: Int,
-    val eventType: String
-)
-
 sealed class GameDialogData {
-    data class Question(
+    @Serializable
+    data class ChanceQuestion(
         val title: String,
         val prompt: String,
         val options: List<String>,
-        val correctIndex: Int
+        val correctIndex: Int,
     ) : GameDialogData()
 
+    @Serializable
+    data class HackerQuestion(
+        val title: String,
+        val content: String,
+        val points: Int,
+    ) : GameDialogData()
+
+    @Serializable
     data class Result(
         val title: String,
         val message: String

@@ -7,10 +7,10 @@ import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GamePlayerRaw
-import com.unibo.cyberopoli.data.models.game.QuestionPayload
+import com.unibo.cyberopoli.data.models.game.questions.ChanceQuestions
+import com.unibo.cyberopoli.data.models.game.questions.HackerStatements
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.services.LLMService
-import com.unibo.cyberopoli.util.FallbackQuestions
 import com.unibo.cyberopoli.util.UsageStatsHelper
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
@@ -31,34 +31,27 @@ class GameRepository(
 ) : DomainGameRepository {
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
-    private val questions = MutableLiveData<List<GameDialogData.Question>>()
-    val chanceQuestions = MutableLiveData<List<GameDialogData.Question>>()
-    val hackerQuestions = MutableLiveData<List<GameDialogData.Question>>()
-
-    suspend fun preloadQuestionsForUser(totalPerType: Int = 10) {
-        questions.value = fetchQuestions()
-        val allQuestions = questions.value ?: emptyList()
-        val evenQuestions = if (allQuestions.size % 2 == 0) allQuestions else allQuestions.dropLast(1)
-        val halfSize = evenQuestions.size / 2
-        chanceQuestions.value = evenQuestions.take(halfSize)
-        hackerQuestions.value = evenQuestions.drop(halfSize)
-    }
+    val chanceQuestions = MutableLiveData<List<GameDialogData.ChanceQuestion>>(ChanceQuestions)
+    val hackerStatements = MutableLiveData<List<GameDialogData.HackerQuestion>>(HackerStatements)
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
     }
 
+    suspend fun preloadQuestionsForUser() {
+        val newQuestions = fetchQuestions()
+        hackerStatements.value = hackerStatements.value?.plus(newQuestions) ?: hackerStatements.value
+    }
+
     private suspend fun fetchQuestions(
-    ): List<GameDialogData.Question> {
+    ): List<GameDialogData.HackerQuestion> {
         val topApps = usageStatsHelper.getTopUsedApps()
-            .joinToString("; ") { "${it.first}:${it.second / 1000}s" }
-        val totalSec = usageStatsHelper.getTodayUsageTime() / 1000
+            .joinToString("; ") { "${it.first}:${it.second} h" }
+        val totalSec = usageStatsHelper.getWeeklyUsageTime()
         val sessionStats = usageStatsHelper.getSessionStats()
         val sessionCount = sessionStats.sessionCount
         val avgSessionSec = sessionStats.averageSessionDuration / 1000
         val unlockCount = sessionStats.unlockCount
-        val dndEnabled = usageStatsHelper.isDoNotDisturbEnabled()
-        val interruptionFilter = usageStatsHelper.getInterruptionFilter()
         val dataJson =
             """
                 {
@@ -67,36 +60,20 @@ class GameRepository(
                   "sessionCount": $sessionCount,
                   "averageSessionSec": $avgSessionSec,
                   "unlockCount": $unlockCount,
-                  "doNotDisturb": $dndEnabled,
-                  "interruptionFilter": $interruptionFilter
                 }
             """.trimIndent()
         Log.d("TEST", "Data JSON: $dataJson")
 
         val systemPrompt =
             """
-                Genera 2 domande (in ITALIANO) di gioco per l'evento "CHANCE" e 2 domande per l'evento "HACKER" utilizzando questi dati utente:
+                Genera 5 domande di gioco (in ITALIANO) basandoti su questi dati utente:
                 $dataJson
-                Cerca di diversificare il più possibile il contenuto delle domande,
-                proponendo anche quesiti di cultura generale legati alla cybersecurity.
-                Escludi domande sulle applicazioni di sistema (es. com.sec.android.app.launcher).
-                Output DEVE ESSERE un JSON valido ESATTAMENTE in questo formato:
-                [
-                  {
-                    "title": "Titolo domanda",
-                    "prompt": "Il testo della domanda",
-                    "options": ["o1","o2","o3"],
-                    "correctIndex": 0,
-                    "eventType": "CHANCE"
-                  },
-                  {
-                    "title": "Titolo domanda 2",
-                    "prompt": "Il testo della domanda 2",
-                    "options": ["o1","o2","o3"],
-                    "correctIndex": 1,
-                    "eventType": "HACKER"
-                  }
-                ]
+                Cerca di diversificare il più possibile il contenuto delle domande.
+                Devono sembrare gli imprevisti di Monopoli ma in chiave informatica.
+                Ad esempio: 
+                Hai usato per troppo tempo il telefono questa settimana, perdi 5 punti.
+                
+                Ovviamente devi fare tu le domande basandoti sui dati che ti ho dato.
             """.trimIndent()
 
         val raw = llmService.generate(
@@ -110,7 +87,7 @@ class GameRepository(
             .removePrefix("```json").removeSuffix("```")
             .trim()
 
-        val payloads: List<QuestionPayload> = try {
+        val payloads: List<GameDialogData.HackerQuestion> = try {
             jsonParser.decodeFromString(cleaned)
         } catch (e: Exception) {
             Log.e("TEST", "Failed to decode questions JSON: ${e.message}")
@@ -119,23 +96,11 @@ class GameRepository(
 
         Log.d("TEST", "Decoded $payloads")
 
-        if (payloads.isEmpty()) {
-            Log.e("TEST", "No questions found")
-            return FallbackQuestions.map {
-                GameDialogData.Question(
-                    title = it.title,
-                    prompt = it.prompt,
-                    options = it.options,
-                    correctIndex = it.correctIndex
-                )
-            }
-        }
         return payloads.map {
-            GameDialogData.Question(
+            GameDialogData.HackerQuestion(
                 title = it.title,
-                prompt = it.prompt,
-                options = it.options,
-                correctIndex = it.correctIndex
+                content = it.content,
+                points = it.points
             )
         }
     }

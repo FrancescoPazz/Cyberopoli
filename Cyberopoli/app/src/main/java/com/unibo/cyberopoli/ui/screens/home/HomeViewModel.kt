@@ -13,7 +13,7 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             Log.d("TEST", "HomeViewModel init")
-            gameRepository.preloadQuestionsForUser(totalPerType = 10)
+            gameRepository.preloadQuestionsForUser()
         }
     }
 }

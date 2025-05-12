@@ -69,11 +69,12 @@ fun GameScreen(
     }
     dialogData?.let { data ->
         val (title, message, options) = when (data) {
-            is GameDialogData.Question -> Triple(data.title, data.prompt, data.options)
+            is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
+            is GameDialogData.HackerQuestion -> Triple(data.title, data.content, listOf("OK"))
             is GameDialogData.Result -> Triple(data.title, data.message, listOf("OK"))
         }
         GameDialog(title = title, message = message, options = options, onOptionSelected = { idx ->
-            if (data is GameDialogData.Question) {
+            if (data is GameDialogData.ChanceQuestion) {
                 gameParams.onDialogOptionSelected(idx)
             } else {
                 gameParams.onResultDismiss()

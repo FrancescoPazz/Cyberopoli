@@ -16,7 +16,6 @@ import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.data.models.game.GameState
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
-import com.unibo.cyberopoli.util.UsageStatsHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -88,31 +87,32 @@ class GameViewModel(
 
     private fun askQuestion(eventType: GameEventType) {
         Log.d("TEST", "askQuestion: $eventType")
-        val questions = when (eventType) {
-            GameEventType.CHANCE -> gameRepository.chanceQuestions.value.orEmpty()
-            GameEventType.HACKER -> gameRepository.hackerQuestions.value.orEmpty()
-            else -> emptyList()
-        }
-
-        Log.d("TEST", "askQuestion: ${questions.size} questions available")
-
-        val question = questions.firstOrNull()
-            ?: throw IllegalStateException("No questions available for event type: $eventType")
 
         when (eventType) {
             GameEventType.CHANCE -> {
-                val updated = questions.drop(1)
-                gameRepository.chanceQuestions.postValue(updated)
+                val questions = gameRepository.chanceQuestions.value.orEmpty()
+                Log.d("TEST", "askQuestion: ${questions.size} questions available")
+
+                val question = questions.firstOrNull()
+                    ?: throw IllegalStateException("No questions available for event type: $eventType")
+
+                gameRepository.chanceQuestions.postValue(questions.drop(1))
+                _dialog.value = question
             }
             GameEventType.HACKER -> {
-                val updated = questions.drop(1)
-                gameRepository.hackerQuestions.postValue(updated)
+                val questions = gameRepository.hackerStatements.value.orEmpty()
+                Log.d("TEST", "askQuestion: ${questions.size} questions available")
+
+                val question = questions.firstOrNull()
+                    ?: throw IllegalStateException("No questions available for event type: $eventType")
+
+                gameRepository.hackerStatements.postValue(questions.drop(1))
+                _dialog.value = question
             }
             else -> {
                 throw IllegalStateException("Invalid event type: $eventType")
             }
         }
-        _dialog.value = question
     }
 
     fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
@@ -164,7 +164,7 @@ class GameViewModel(
 
     fun onDialogOptionSelected(idx: Int) {
         viewModelScope.launch {
-            (dialog.value as? GameDialogData.Question)?.let { q ->
+            (dialog.value as? GameDialogData.ChanceQuestion)?.let { q ->
                 val correct = (idx == q.correctIndex)
                 val delta = if (correct) q.correctIndex else -q.correctIndex
                 pendingGameEvent?.copy(value = delta)?.also { gameRepository.addGameEvent(it) }
