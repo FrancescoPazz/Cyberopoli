@@ -28,9 +28,9 @@ data class GamePlayer(
 
     @SerialName("user_id") val userId: String,
 
-    @SerialName("score") var score: Int = 50,
+    @SerialName("score") var score: Int,
 
-    @SerialName("cell_position") val cellPosition: Int = 0,
+    @SerialName("cell_position") val cellPosition: Int,
 
     @Transient val user: User? = null
 )

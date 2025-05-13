@@ -127,7 +127,8 @@ class GameRepository(
                 lobbyId = currentGameLiveData.value!!.lobbyId,
                 gameId = currentGameLiveData.value!!.id,
                 userId = userId,
-                score = 50
+                score = 50,
+                cellPosition = 8
             )
             val raw: GamePlayerRaw = supabase.from(GAME_PLAYERS_TABLE).insert(toInsert) {
                 select(

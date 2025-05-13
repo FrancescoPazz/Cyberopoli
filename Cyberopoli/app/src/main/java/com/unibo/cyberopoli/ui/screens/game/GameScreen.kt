@@ -27,7 +27,6 @@ fun GameScreen(
 ) {
     val game by gameParams.game
     val players by gameParams.players
-    val context = LocalContext.current
     val dialogData by gameParams.dialogData
     val turnIdx by gameParams.currentTurnIndex
     val isLoadingQuestion by gameParams.isLoadingQuestion
@@ -51,7 +50,7 @@ fun GameScreen(
                 animatedPositions[current.userId] = path[(startIdx + i + 1) % path.size]
                 delay(500L)
             }
-            gameParams.movePlayer(context)
+            gameParams.movePlayer()
             stepsToAnimate = 0
         }
     }

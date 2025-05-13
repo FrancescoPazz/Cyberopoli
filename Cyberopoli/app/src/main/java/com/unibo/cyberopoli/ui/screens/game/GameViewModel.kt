@@ -47,7 +47,6 @@ class GameViewModel(
 
     private fun nextTurn() {
         if (game.value == null) return
-
         viewModelScope.launch {
             _players.value.let { players ->
                 val nextIdx = (players.indexOfFirst { it.userId == game.value!!.turn } + 1) % players.size
@@ -146,7 +145,7 @@ class GameViewModel(
         gameState.value = GameState.MOVE
     }
 
-    fun movePlayer(context: Context) {
+    fun movePlayer() {
         viewModelScope.launch {
             if (game.value == null || player.value == null) return@launch
             _players.value.firstOrNull { it.userId == player.value!!.userId }?.let { me ->

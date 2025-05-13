@@ -20,7 +20,7 @@ data class GameParams(
     val dialogData: State<GameDialogData?>,
     val startGame: (lobbyId: String, members: List<LobbyMember>) -> Unit,
     val rollDice: () -> Unit,
-    val movePlayer: (context: Context) -> Unit,
+    val movePlayer: () -> Unit,
     val onDialogOptionSelected: (idx: Int) -> Unit,
     val onResultDismiss: () -> Unit,
     val leaveGame: () -> Unit,

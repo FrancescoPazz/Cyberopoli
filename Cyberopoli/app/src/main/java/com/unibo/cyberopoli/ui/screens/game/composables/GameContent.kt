@@ -12,7 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.data.models.game.BOARD_COLS
+import com.unibo.cyberopoli.data.models.game.BOARD_ROWS
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.data.models.game.createBoard
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
@@ -26,15 +29,19 @@ fun GameContent(
     players: List<GamePlayer>,
     onMoveAnimated: (Int) -> Unit
 ) {
-    val context = LocalContext.current
-
-    Scaffold(modifier = Modifier.fillMaxSize(), topBar = { TopBar(navController) }, bottomBar = {
-        GameBottomBar(gameState = gameParams.gameState.value!!,
-            diceRoll = gameParams.diceRoll.value ?: 0,
-            onRoll = { gameParams.rollDice() },
-            onMove = { onMoveAnimated(it) },
-            onEndTurn = { gameParams.endTurn() })
-    }) { padding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { TopBar(navController) },
+        bottomBar = {
+            GameBottomBar(
+                gameState = gameParams.gameState.value!!,
+                diceRoll = gameParams.diceRoll.value ?: 0,
+                onRoll = { gameParams.rollDice() },
+                onMove = { onMoveAnimated(it) },
+                onEndTurn = { gameParams.endTurn() }
+            )
+        }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -44,13 +51,19 @@ fun GameContent(
             val cells = remember { createBoard() }
 
             GameMap(
-                gameCells = cells, rows = 5, cols = 5, players = players
+                gameCells = cells,
+                rows = BOARD_ROWS,
+                cols = BOARD_COLS,
+                borderPath = PERIMETER_PATH,
+                players = players
             )
 
             Spacer(Modifier.weight(1f))
 
-            ScoreAndManageRow(score = currentPlayer.score,
-                onManageClick = { /* TODO: manage player */ })
+            ScoreAndManageRow(
+                score = currentPlayer.score,
+                onManageClick = { /* TODO */ }
+            )
         }
     }
 }
