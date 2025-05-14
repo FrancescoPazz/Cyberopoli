@@ -29,25 +29,52 @@ class LobbyRepository(
     val currentLobbyLiveData: MutableLiveData<Lobby?> = MutableLiveData()
     val currentMembersLiveData: MutableLiveData<List<LobbyMember>?> = MutableLiveData(emptyList())
 
+    private val userCache = mutableMapOf<String, User>()
+
     override suspend fun createOrGetLobby(lobbyId: String, host: User) {
-        val lobby = Lobby(
-            id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value
-        )
+        val lobby = Lobby(id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value)
         try {
-            val created: Lobby = supabase.from(LOBBY_TABLE).upsert(lobby) {
-                select()
-                onConflict = "id"
-            }.decodeSingle<Lobby>()
+            val created = supabase.from(LOBBY_TABLE)
+                .upsert(lobby) {
+                    select()
+                    onConflict = "id"
+                }
+                .decodeSingle<Lobby>()
             currentLobbyLiveData.value = created
 
-            val lobbyMembersFlow: Flow<List<LobbyMember>> = supabase.from(LOBBY_MEMBERS_TABLE).selectAsFlow(LobbyMember::userId,
-                filter = FilterOperation("lobby_id", FilterOperator.EQ, created.id),
-            )
+            val lobbyMembersFlow: Flow<List<LobbyMember>> =
+                supabase.from(LOBBY_MEMBERS_TABLE)
+                    .selectAsFlow(
+                        primaryKey = LobbyMember::userId,
+                        filter     = FilterOperation("lobby_id", FilterOperator.EQ, created.id)
+                    )
             kotlinx.coroutines.MainScope().launch {
-                lobbyMembersFlow.collect {
-                    for (member in it) {
-                        Log.d("LobbyRepoImpl", "Lobby member: ${member.userId}")
+                lobbyMembersFlow.collect { rawMembers ->
+                    val allIds = rawMembers.map { it.userId }.distinct()
+                    val missingIds = allIds.filterNot { userCache.containsKey(it) }
+
+                    if (missingIds.isNotEmpty()) {
+                        val fetchedUsers: List<User> = supabase.from("users")
+                            .select {
+                                filter { isIn("id", missingIds) }
+                            }
+                            .decodeList<User>()
+
+                        fetchedUsers.forEach { user ->
+                            userCache[user.id] = user
+                        }
                     }
+
+                    val members = rawMembers.map { raw ->
+                        LobbyMember(
+                            lobbyId = raw.lobbyId,
+                            userId  = raw.userId,
+                            isReady = raw.isReady,
+                            joinedAt= raw.joinedAt,
+                            user    = userCache[raw.userId]!!
+                        )
+                    }
+                    currentMembersLiveData.value = members
                 }
             }
         } catch (e: Exception) {
