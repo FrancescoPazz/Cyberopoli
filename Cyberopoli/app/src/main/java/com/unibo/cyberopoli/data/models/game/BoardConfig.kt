@@ -8,7 +8,7 @@ val PERIMETER_PATH: List<Int> = buildList {
     for (c in 1 until BOARD_COLS - 1) {
         add(1 * BOARD_COLS + c)
     }
-    for (r in 2 until BOARD_ROWS - 1) {
+    for (r in 2 until BOARD_ROWS - 2) {
         add(r * BOARD_COLS + (BOARD_COLS - 2))
     }
     for (c in BOARD_COLS - 2 downTo 1) {
@@ -18,6 +18,7 @@ val PERIMETER_PATH: List<Int> = buildList {
         add(r * BOARD_COLS + 1)
     }
 }
+
 
 val PERIMETER_CELLS: Map<Int, GameCell> = listOf(
     8 to GameCell("8", GameTypeCell.START, "Start", "Ogni volta che passi di qua guadagni 50 punti", 50),

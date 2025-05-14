@@ -27,8 +27,9 @@ class LobbyRepository(
             id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value
         )
         try {
-            val created: Lobby = supabase.from(LOBBY_TABLE).insert(lobby) {
+            val created: Lobby = supabase.from(LOBBY_TABLE).upsert(lobby) {
                 select()
+                onConflict = "id"
             }.decodeSingle<Lobby>()
             currentLobbyLiveData.value = created
         } catch (e: Exception) {

@@ -20,7 +20,7 @@ sealed class GameDialogData {
     ) : GameDialogData()
 
     @Serializable
-    data class Result(
+    data class Alert(
         val title: String,
         val message: String
     ) : GameDialogData()

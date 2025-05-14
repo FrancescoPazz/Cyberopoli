@@ -9,13 +9,11 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.ui.screens.game.composables.GameContent
 import com.unibo.cyberopoli.ui.screens.game.composables.GameDialog
-import com.unibo.cyberopoli.ui.screens.game.composables.GameLifecycleHandler
 import com.unibo.cyberopoli.ui.screens.game.composables.GameStarterEffect
 import com.unibo.cyberopoli.ui.screens.game.composables.LoadingQuestionDialog
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
@@ -37,7 +35,7 @@ fun GameScreen(
         p.copy(cellPosition = animatedPositions[p.userId] ?: p.cellPosition)
     }
 
-    GameLifecycleHandler(gameParams, navController)
+    // GameLifecycleHandler(gameParams, navController) commentato perché quando giravi lo schermo si rompeva
     GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
     BackHandler { gameParams.leaveGame(); navController.popBackStack() }
     LaunchedEffect(stepsToAnimate, players, game) {
@@ -70,7 +68,7 @@ fun GameScreen(
         val (title, message, options) = when (data) {
             is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
             is GameDialogData.HackerQuestion -> Triple(data.title, data.content, listOf("OK"))
-            is GameDialogData.Result -> Triple(data.title, data.message, listOf("OK"))
+            is GameDialogData.Alert -> Triple(data.title, data.message, listOf("OK"))
         }
         GameDialog(title = title, message = message, options = options, onOptionSelected = { idx ->
             if (data is GameDialogData.ChanceQuestion) {

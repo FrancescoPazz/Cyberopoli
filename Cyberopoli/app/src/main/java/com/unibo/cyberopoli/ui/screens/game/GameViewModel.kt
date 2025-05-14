@@ -204,7 +204,7 @@ class GameViewModel(
                     "Hai guadagnato ${q.points} punti."
                 else
                     "Hai perso ${q.points} punti."
-                _dialog.value = GameDialogData.Result(title, message)
+                _dialog.value = GameDialogData.Alert(title, message)
             }
         }
     }

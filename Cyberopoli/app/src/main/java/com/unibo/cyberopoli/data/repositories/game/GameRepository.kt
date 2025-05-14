@@ -200,6 +200,8 @@ class GameRepository(
                     eq("user_id", updatedPlayer.userId)
                 }
             }
+
+            currentPlayerLiveData.postValue(updatedPlayer)
         } catch (e: Exception) {
             throw e
         }
