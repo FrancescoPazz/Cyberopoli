@@ -8,14 +8,21 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
 import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.filter.FilterOperation
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
+import io.github.jan.supabase.realtime.selectAsFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
 
 const val LOBBY_TABLE = "lobbies"
 const val LOBBY_MEMBERS_TABLE = "lobby_members"
 
+@OptIn(SupabaseExperimental::class)
 class LobbyRepository(
     private val supabase: SupabaseClient
 ) : DomainLobbyRepository {
@@ -32,6 +39,17 @@ class LobbyRepository(
                 onConflict = "id"
             }.decodeSingle<Lobby>()
             currentLobbyLiveData.value = created
+
+            val lobbyMembersFlow: Flow<List<LobbyMember>> = supabase.from(LOBBY_MEMBERS_TABLE).selectAsFlow(LobbyMember::userId,
+                filter = FilterOperation("lobby_id", FilterOperator.EQ, created.id),
+            )
+            kotlinx.coroutines.MainScope().launch {
+                lobbyMembersFlow.collect {
+                    for (member in it) {
+                        Log.d("LobbyRepoImpl", "Lobby member: ${member.userId}")
+                    }
+                }
+            }
         } catch (e: Exception) {
             throw e
         }
@@ -56,7 +74,11 @@ class LobbyRepository(
         try {
             val raw: List<LobbyMemberRaw> = supabase.from(LOBBY_MEMBERS_TABLE).select(
                 Columns.raw("*, users(*)")
-            ).decodeList<LobbyMemberRaw>()
+            ){
+                filter {
+                    eq("lobby_id", lobbyId)
+                }
+            }.decodeList<LobbyMemberRaw>()
             val members = raw.map { d ->
                 LobbyMember(
                     lobbyId = d.lobbyId,
