@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.game
 
-import android.content.Context
 import androidx.compose.runtime.State
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
@@ -10,20 +9,21 @@ import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 data class GameParams(
-    val lobby: State<Lobby?>,
-    val members: State<List<LobbyMember>?>,
     val game: State<Game?>,
-    val players: State<List<GamePlayer>>,
+    val endTurn: () -> Unit,
+    val lobby: State<Lobby?>,
+    val rollDice: () -> Unit,
+    val leaveGame: () -> Unit,
+    val diceRoll: State<Int?>,
+    val movePlayer: () -> Unit,
+    val onResultDismiss: () -> Unit,
     val currentTurnIndex: State<Int>,
     val gameState: State<GameState?>,
-    val diceRoll: State<Int?>,
-    val dialogData: State<GameDialogData?>,
-    val startGame: (lobbyId: String, members: List<LobbyMember>) -> Unit,
-    val rollDice: () -> Unit,
-    val movePlayer: () -> Unit,
-    val onDialogOptionSelected: (idx: Int) -> Unit,
-    val onResultDismiss: () -> Unit,
-    val leaveGame: () -> Unit,
-    val endTurn: () -> Unit,
+    val players: State<List<GamePlayer>>,
     val isLoadingQuestion: State<Boolean>,
+    val members: State<List<LobbyMember>?>,
+    val dialogData: State<GameDialogData?>,
+    val updatePlayerPoints: (value: Int) -> Unit,
+    val onDialogOptionSelected: (idx: Int) -> Unit,
+    val startGame: (lobbyId: String, members: List<LobbyMember>) -> Unit,
 )

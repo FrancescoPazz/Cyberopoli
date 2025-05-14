@@ -9,13 +9,14 @@ sealed class GameDialogData {
         val prompt: String,
         val options: List<String>,
         val correctIndex: Int,
+        val points: Int
     ) : GameDialogData()
 
     @Serializable
     data class HackerQuestion(
         val title: String,
         val content: String,
-        val points: Int,
+        val points: Int
     ) : GameDialogData()
 
     @Serializable

@@ -13,6 +13,7 @@ val ChanceQuestions = listOf(
             "Aggiornare la password ogni 2 anni"
         ),
         correctIndex = 1,
+        points = 1
     ),
     GameDialogData.ChanceQuestion(
         title = "Phishing: cos’è?",
@@ -24,6 +25,7 @@ val ChanceQuestions = listOf(
             "Intercettazione di comunicazioni via satellite"
         ),
         correctIndex = 0,
+        points = 2
     ),
     GameDialogData.ChanceQuestion(
         title = "Brute Force",
@@ -35,6 +37,7 @@ val ChanceQuestions = listOf(
             "Utilizza un virus per criptare i file"
         ),
         correctIndex = 1,
+        points = 3
     ),
     GameDialogData.ChanceQuestion(
         title = "Wi-Fi pubblico",
@@ -46,6 +49,7 @@ val ChanceQuestions = listOf(
             "Aggiornamenti automatici forzati"
         ),
         correctIndex = 1,
+        points = 4
     ),
     GameDialogData.ChanceQuestion(
         title = "Autenticazione a due fattori",
@@ -57,6 +61,7 @@ val ChanceQuestions = listOf(
             "Aumenta la velocità di connessione"
         ),
         correctIndex = 1,
+        points = 5
     ),
     GameDialogData.ChanceQuestion(
         title = "Backup dei dati",
@@ -68,5 +73,54 @@ val ChanceQuestions = listOf(
             "Usare solo USB pubbliche"
         ),
         correctIndex = 1,
+        points = 6
+    ),
+    GameDialogData.ChanceQuestion(
+        title = "Social engineering",
+        prompt = "Qual è la tecnica principale utilizzata nel social engineering?",
+        options = listOf(
+            "Sfruttare vulnerabilità di rete",
+            "Manipolare psicologicamente la vittima",
+            "Criptare i dati con ransomware",
+            "Intercettare pacchetti di rete"
+        ),
+        correctIndex = 1,
+        points = 2
+    ),
+    GameDialogData.ChanceQuestion(
+        title = "Patch di sicurezza",
+        prompt = "Perché è importante installare tempestivamente le patch di sicurezza?",
+        options = listOf(
+            "Per migliorare le prestazioni del sistema",
+            "Per correggere vulnerabilità note prima che diventino exploit",
+            "Per aumentare lo spazio libero su disco",
+            "Per cambiare l'interfaccia grafica"
+        ),
+        correctIndex = 1,
+        points = 3
+    ),
+    GameDialogData.ChanceQuestion(
+        title = "Attacco DDoS",
+        prompt = "Cosa caratterizza un attacco di tipo DDoS?",
+        options = listOf(
+            "Compromissione di un singolo host",
+            "Diffusione di spyware tramite email",
+            "Saturazione di banda tramite numerose richieste",
+            "Criptazione dei file dell'utente"
+        ),
+        correctIndex = 2,
+        points = 4
+    ),
+    GameDialogData.ChanceQuestion(
+        title = "VPN e privacy",
+        prompt = "Una VPN (Virtual Private Network) serve principalmente a:",
+        options = listOf(
+            "Velocizzare la connessione internet",
+            "Creare un tunnel cifrato per proteggere il traffico",
+            "Bloccare automaticamente ogni pubblicità",
+            "Aumentare la memoria RAM del dispositivo"
+        ),
+        correctIndex = 1,
+        points = 5
     )
 )

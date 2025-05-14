@@ -16,7 +16,7 @@ data class GameEvent(
 
     @SerialName("recipient_user_id") val recipientUserId: String?,
 
-    @SerialName("event_type") val eventType: GameEventType,
+    @SerialName("event_type") val eventType: GameTypeCell,
 
     @SerialName("value") val value: Int? = null,
 

@@ -20,24 +20,24 @@ val PERIMETER_PATH: List<Int> = buildList {
 }
 
 val PERIMETER_CELLS: Map<Int, GameCell> = listOf(
-    8 to GameCell("8", GameEventType.START, "Start", "Ogni volta che passi di qua guadagni 50 punti", 50),
-    9 to GameCell("9", GameEventType.TIKTOK, "TikTok", "Salto +2", 0),
-    10 to GameCell("10", GameEventType.VPN, "VPN", "", 0),
-    11 to GameCell("11", GameEventType.WHATSAPP, "WhatsApp", "Perdi 5", -5),
-    12 to GameCell("12", GameEventType.HACKER, "Hacker", "", 0),
-    15 to GameCell("15", GameEventType.INSTAGRAM, "Instagram", "Guadagni +5", 0),
-    19 to GameCell("19", GameEventType.TWITCH, "Twitch", "Guadagni +7", 7),
-    26 to GameCell("26", GameEventType.CHANCE, "Chance", "", 0),
-    22 to GameCell("22", GameEventType.CHANCE, "Chance", "", 0),
-    29 to GameCell("29", GameEventType.YOUTUBE, "YouTube", "Guadagni +10", 10),
-    33 to GameCell("33", GameEventType.TELEGRAM, "Telegram", "Salto indietro", 0),
-    36 to GameCell("36", GameEventType.HACKER, "Hacker", "", 0),
-    37 to GameCell("37", GameEventType.FACEBOOK, "Facebook", "Perdi 2", -2),
-    38 to GameCell("38", GameEventType.BLOCK, "BLOCK", "", 0),
-    39 to GameCell("39", GameEventType.DISCORD, "Discord", "Bonus 7", 7),
-    40 to GameCell("40", GameEventType.BROKEN_ROUTER, "", "", 0),
+    8 to GameCell("8", GameTypeCell.START, "Start", "Ogni volta che passi di qua guadagni 50 punti", 50),
+    9 to GameCell("9", GameTypeCell.TIKTOK, "TikTok", "Salto +2", 0),
+    10 to GameCell("10", GameTypeCell.VPN, "VPN", "", 0),
+    11 to GameCell("11", GameTypeCell.WHATSAPP, "WhatsApp", "Perdi 5", -5),
+    12 to GameCell("12", GameTypeCell.HACKER, "Hacker", "", 0),
+    15 to GameCell("15", GameTypeCell.INSTAGRAM, "Instagram", "Guadagni +5", 0),
+    19 to GameCell("19", GameTypeCell.TWITCH, "Twitch", "Guadagni +7", 7),
+    26 to GameCell("26", GameTypeCell.CHANCE, "Chance", "", 0),
+    22 to GameCell("22", GameTypeCell.CHANCE, "Chance", "", 0),
+    29 to GameCell("29", GameTypeCell.YOUTUBE, "YouTube", "Guadagni +10", 10),
+    33 to GameCell("33", GameTypeCell.TELEGRAM, "Telegram", "Salto indietro", 0),
+    36 to GameCell("36", GameTypeCell.HACKER, "Hacker", "", 0),
+    37 to GameCell("37", GameTypeCell.FACEBOOK, "Facebook", "Perdi 2", -2),
+    38 to GameCell("38", GameTypeCell.BLOCK, "BLOCK", "", 0),
+    39 to GameCell("39", GameTypeCell.DISCORD, "Discord", "Bonus 7", 7),
+    40 to GameCell("40", GameTypeCell.BROKEN_ROUTER, "", "", 0),
 ).toMap()
 
 fun createBoard(): List<GameCell> = List(BOARD_SIZE) { idx ->
-    PERIMETER_CELLS[idx] ?: GameCell(idx.toString(), GameEventType.COMMON, "", "", 0)
+    PERIMETER_CELLS[idx] ?: GameCell(idx.toString(), GameTypeCell.COMMON, "", "", 0)
 }

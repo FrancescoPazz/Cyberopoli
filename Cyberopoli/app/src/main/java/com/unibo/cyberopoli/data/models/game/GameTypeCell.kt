@@ -2,7 +2,7 @@ package com.unibo.cyberopoli.data.models.game
 
 import com.unibo.cyberopoli.R
 
-enum class GameEventType(val resource: Int?) {
+enum class GameTypeCell(val resource: Int?) {
     START(R.drawable.ic_start),
 
     YOUTUBE(R.drawable.ic_youtube),

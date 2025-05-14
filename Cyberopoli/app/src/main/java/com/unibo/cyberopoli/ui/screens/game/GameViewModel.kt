@@ -1,12 +1,11 @@
 package com.unibo.cyberopoli.ui.screens.game
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unibo.cyberopoli.data.models.game.GameEventType
+import com.unibo.cyberopoli.data.models.game.GameTypeCell
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
@@ -43,7 +42,14 @@ class GameViewModel(
     private val _isLoadingQuestion = MutableStateFlow(false)
     val isLoadingQuestion: StateFlow<Boolean> = _isLoadingQuestion.asStateFlow()
 
-    private var pendingGameEvent: GameEvent? = null
+    private val _skipNext = MutableStateFlow(false)
+    val skipNext: StateFlow<Boolean> = _skipNext.asStateFlow()
+
+    private val _hasVpn = MutableStateFlow(false)
+    val hasVpn: StateFlow<Boolean> = _hasVpn.asStateFlow()
+
+    private val _blocks = MutableStateFlow<Set<GamePlayer>>(emptySet())
+    val blocks: StateFlow<Set<GamePlayer>> = _blocks.asStateFlow()
 
     private fun nextTurn() {
         if (game.value == null) return
@@ -52,7 +58,12 @@ class GameViewModel(
                 val nextIdx = (players.indexOfFirst { it.userId == game.value!!.turn } + 1) % players.size
                 gameRepository.setNextTurn(players[nextIdx].userId) // TODO: Avvisare tutti con realtime
                 if (players[nextIdx].userId == player.value!!.userId) {
-                    gameState.value = GameState.ROLL_DICE
+                    if (_skipNext.value) {
+                        _skipNext.value = false
+                        nextTurn()
+                    } else {
+                        gameState.value = GameState.ROLL_DICE
+                    }
                 }
             }
         }
@@ -64,54 +75,60 @@ class GameViewModel(
         return path[idx]
     }
 
-    private fun handleLanding(gameEventType: GameEventType?) {
-        Log.d("TEST", "handleLanding: $gameEventType")
+    private fun handleLanding(gameTypeCell: GameTypeCell?) {
         viewModelScope.launch {
-            when (gameEventType) {
-                GameEventType.START -> {
-                    gameRepository.updatePlayerPoints(50)
+            val me = player.value ?: return@launch
+            when (gameTypeCell) {
+                GameTypeCell.START -> {
+                    updatePlayerPoints(+50)
                 }
-                GameEventType.CHANCE -> askQuestion(
-                    eventType = GameEventType.CHANCE
-                )
-                GameEventType.HACKER -> askQuestion(
-                    eventType = GameEventType.HACKER
-                )
-                else -> {
-
+                GameTypeCell.CHANCE -> {
+                    askQuestion(GameTypeCell.CHANCE)
                 }
+                GameTypeCell.HACKER -> {
+                    askQuestion(GameTypeCell.HACKER)
+                }
+                else -> {}
             }
         }
     }
 
-    private fun askQuestion(eventType: GameEventType) {
-        Log.d("TEST", "askQuestion: $eventType")
-
+    private fun askQuestion(eventType: GameTypeCell) {
+        _isLoadingQuestion.value = true
         when (eventType) {
-            GameEventType.CHANCE -> {
+            GameTypeCell.CHANCE -> {
                 val questions = gameRepository.chanceQuestions.value.orEmpty()
-                Log.d("TEST", "askQuestion: ${questions.size} questions available")
-
-                val question = questions.firstOrNull()
-                    ?: throw IllegalStateException("No questions available for event type: $eventType")
-
-                gameRepository.chanceQuestions.postValue(questions.drop(1))
+                if (questions.isEmpty()) {
+                    throw IllegalStateException("No questions available for event type: $eventType")
+                }
+                val randomIndex = questions.indices.random()
+                val question = questions[randomIndex]
+                val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
+                gameRepository.chanceQuestions.postValue(updatedQuestions)
                 _dialog.value = question
+                gameState.value = GameState.CHANCE
             }
-            GameEventType.HACKER -> {
+            GameTypeCell.HACKER -> {
                 val questions = gameRepository.hackerStatements.value.orEmpty()
-                Log.d("TEST", "askQuestion: ${questions.size} questions available")
-
-                val question = questions.firstOrNull()
-                    ?: throw IllegalStateException("No questions available for event type: $eventType")
-
-                gameRepository.hackerStatements.postValue(questions.drop(1))
+                if (questions.isEmpty()) {
+                    throw IllegalStateException("No questions available for event type: $eventType")
+                }
+                val randomIndex = questions.indices.random()
+                val question = questions[randomIndex]
+                val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
+                gameRepository.hackerStatements.postValue(updatedQuestions)
                 _dialog.value = question
+                updatePlayerPoints(-question.points)
+                gameState.value = GameState.HACKER
+            }
+            GameTypeCell.BLOCK -> {
+                // TODO CONTINUARE DA QUI
             }
             else -> {
                 throw IllegalStateException("Invalid event type: $eventType")
             }
         }
+        _isLoadingQuestion.value = false
     }
 
     fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
@@ -161,15 +178,32 @@ class GameViewModel(
         }
     }
 
+    fun updatePlayerPoints(value: Int) {
+        viewModelScope.launch {
+            gameRepository.updatePlayerPoints(value)
+            val updated = player.value?.copy(
+                score = (player.value?.score ?: 0) + value
+            )
+            if (updated != null) {
+                gameRepository.currentPlayerLiveData.postValue(updated)
+                _players.value = _players.value.map {
+                    if (it.userId == updated.userId) updated else it
+                }
+            }
+        }
+    }
+
     fun onDialogOptionSelected(idx: Int) {
         viewModelScope.launch {
             (dialog.value as? GameDialogData.ChanceQuestion)?.let { q ->
                 val correct = (idx == q.correctIndex)
-                val delta = if (correct) q.correctIndex else -q.correctIndex
-                pendingGameEvent?.copy(value = delta)?.also { gameRepository.addGameEvent(it) }
+                val delta = if (correct) q.points else -q.points
+                updatePlayerPoints(delta)
                 val title = if (correct) "Corretto!" else "Sbagliato!"
-                val message =
-                    if (correct) "Hai guadagnato $delta punti." else "Hai perso ${-delta} punti."
+                val message = if (correct)
+                    "Hai guadagnato ${q.points} punti."
+                else
+                    "Hai perso ${q.points} punti."
                 _dialog.value = GameDialogData.Result(title, message)
             }
         }

@@ -212,11 +212,11 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             leaveGame = lobbyViewModel::leaveLobby,
                             currentTurnIndex = derivedStateOf { turnIndex },
                             onResultDismiss = gameViewModel::onResultDismiss,
+                            updatePlayerPoints = gameViewModel::updatePlayerPoints,
                             onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
                             isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
                         )
                     )
-
                 }
             }
         }
