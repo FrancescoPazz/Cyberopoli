@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GamePlayer
-import com.unibo.cyberopoli.data.models.game.GameState
+import com.unibo.cyberopoli.data.models.game.GameAction
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
@@ -18,7 +18,7 @@ data class GameParams(
     val movePlayer: () -> Unit,
     val onResultDismiss: () -> Unit,
     val currentTurnIndex: State<Int>,
-    val gameState: State<GameState?>,
+    val gameAction: State<List<GameAction>?>,
     val players: State<List<GamePlayer>>,
     val isLoadingQuestion: State<Boolean>,
     val members: State<List<LobbyMember>?>,

@@ -122,6 +122,8 @@
     <string name="security_description">a 3 choice question on computer security</string>
     <string name="hacker_attack">Hacker Attack</string>
     <string name="hacker_attack_description">a hacker attack scenario and propose 3 possible actions</string>
+    <string name="subscribe_cell">Subscribe to the social</string>
+    <string name="make_content">Place a content in the social</string>
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>

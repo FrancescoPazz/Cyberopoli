@@ -35,7 +35,6 @@ fun GameScreen(
         p.copy(cellPosition = animatedPositions[p.userId] ?: p.cellPosition)
     }
 
-    // GameLifecycleHandler(gameParams, navController) commentato perché quando giravi lo schermo si rompeva
     GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
     BackHandler { gameParams.leaveGame(); navController.popBackStack() }
     LaunchedEffect(stepsToAnimate, players, game) {
@@ -68,6 +67,7 @@ fun GameScreen(
         val (title, message, options) = when (data) {
             is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
             is GameDialogData.HackerQuestion -> Triple(data.title, data.content, listOf("OK"))
+            is GameDialogData.BlockChoice -> Triple(data.title, "", data.players.map { it.user?.username ?: it.userId })
             is GameDialogData.Alert -> Triple(data.title, data.message, listOf("OK"))
         }
         GameDialog(title = title, message = message, options = options, onOptionSelected = { idx ->

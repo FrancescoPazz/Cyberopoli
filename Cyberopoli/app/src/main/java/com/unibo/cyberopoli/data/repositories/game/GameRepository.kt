@@ -100,7 +100,7 @@ class GameRepository(
             GameDialogData.HackerQuestion(
                 title = it.title,
                 content = it.content,
-                points = it.points
+                cost = it.cost
             )
         }
     }
@@ -128,17 +128,14 @@ class GameRepository(
                 gameId = currentGameLiveData.value!!.id,
                 userId = userId,
                 score = 50,
-                cellPosition = 8
+                cellPosition = 8,
+                round = 1
             )
             val raw: GamePlayerRaw = supabase.from(GAME_PLAYERS_TABLE).insert(toInsert) {
                 select(
                     Columns.raw(
                         """
-                        lobby_id,
-                        game_id,
-                        user_id,
-                        score,
-                        cell_position,
+                        *,
                         users (
                           id,
                           username,
@@ -156,11 +153,33 @@ class GameRepository(
                 userId = raw.userId,
                 score = raw.score,
                 cellPosition = raw.cellPosition,
+                round = raw.round,
                 user = raw.user
             )
             currentPlayerLiveData.value = created
             return created
         } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun increasePlayerRound() {
+        if (currentPlayerLiveData.value == null) throw Exception("No player found")
+        try {
+            val updatedPlayer = currentPlayerLiveData.value!!.copy(
+                round = currentPlayerLiveData.value!!.round + 1
+            )
+            supabase.from(GAME_PLAYERS_TABLE).update(updatedPlayer) {
+                filter {
+                    eq("lobby_id", currentGameLiveData.value!!.lobbyId)
+                    eq("game_id", currentGameLiveData.value!!.id)
+                    eq("user_id", updatedPlayer.userId)
+                }
+            }
+            currentPlayerLiveData.postValue(updatedPlayer)
+        } catch (
+            e: Exception
+        ) {
             throw e
         }
     }
@@ -180,6 +199,7 @@ class GameRepository(
                     eq("user_id", updatedPlayer.userId)
                 }
             }
+            currentPlayerLiveData.postValue(updatedPlayer)
         } catch (e: Exception) {
             throw e
         }
@@ -214,11 +234,7 @@ class GameRepository(
             val raw: List<GamePlayerRaw> = supabase.from(GAME_PLAYERS_TABLE).select(
                 Columns.raw(
                     """
-                    lobby_id,
-                    game_id,
-                    user_id,
-                    score,
-                    cell_position,
+                    *,
                     users (
                       id,
                       username,
@@ -242,6 +258,7 @@ class GameRepository(
                     userId = r.userId,
                     score = r.score,
                     cellPosition = r.cellPosition,
+                    round = r.round,
                     user = u
                 )
             }

@@ -122,6 +122,8 @@
     <string name="security_description">una domanda a 3 scelte sulla sicurezza informatica</string>
     <string name="hacker_attack">Attacco hacker</string>
     <string name="hacker_attack_description">uno scenario di attacco hacker e proponi 3 azioni possibili</string>
+    <string name="subscribe_cell">Iscriviti al social</string>
+    <string name="make_content">Piazza un contenuto nel sociale</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>
