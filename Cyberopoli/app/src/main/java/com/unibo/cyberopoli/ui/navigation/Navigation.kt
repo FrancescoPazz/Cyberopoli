@@ -195,7 +195,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val diceRoll = gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData = gameViewModel.dialog.collectAsStateWithLifecycle()
                     val turnIndex = players.value.indexOfFirst { p -> p.userId == game.value?.turn }
-
                     GameScreen(
                         navController = navController, gameParams = GameParams(
                             game = game,

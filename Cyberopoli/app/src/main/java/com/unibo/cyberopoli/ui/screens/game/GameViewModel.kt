@@ -94,7 +94,6 @@ class GameViewModel(
         return path[idx]
     }
 
-
     fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
         viewModelScope.launch {
             gameRepository.createGame(lobbyId, lobbyMembers)
@@ -144,6 +143,15 @@ class GameViewModel(
         val gameTypeCell = gameCell.type
 
         viewModelScope.launch {
+            _actionsPermitted.value = listOf(
+                GameAction(
+                    id = "turn_pass",
+                    iconRes = R.drawable.ic_skip,
+                    action = {
+                        endTurn()
+                    },
+                ),
+            )
             when (gameTypeCell) {
                 GameTypeCell.START -> {
                     increasePlayerRound()
@@ -162,35 +170,26 @@ class GameViewModel(
                     askQuestion(GameTypeCell.VPN)
                 }
                 GameTypeCell.BROKEN_ROUTER -> {
-
+                    // TODO
                 }
                 else -> {
-                    _actionsPermitted.value = listOf(
-                        GameAction(
-                            id = "turn_pass",
-                            iconRes = R.drawable.ic_skip,
-                            action = {
-                                endTurn()
-                            },
-                        ),
-                    )
                     if (gameCell.contentOwner.isNullOrEmpty()) {
-                        _actionsPermitted.value += GameAction(
+                        _actionsPermitted.value += listOf(GameAction(
                             id = "subscribe_cell",
                             iconRes = R.drawable.ic_subscribe,
                             action = {
                                 updatePlayerPoints(-gameCell.value!!)
                             },
-                        )
-                    }else if (gameCell.contentOwner == player.value?.userId){
-                        _actionsPermitted.value += GameAction(
+                        ))
+                    } else if (gameCell.contentOwner == player.value?.userId){
+                        _actionsPermitted.value += listOf(GameAction(
                             id = "make_content",
                             iconRes = R.drawable.ic_made_content,
                             action = {
                                 gameCell.contentOwner = player.value?.userId
                                 updatePlayerPoints(-gameCell.value!!)
                             },
-                        )
+                        ))
                     } else {
                         gameCell.value?.let { updatePlayerPoints(-it) }
                     }
@@ -232,7 +231,7 @@ class GameViewModel(
             GameTypeCell.VPN -> {
                 _dialog.value = GameDialogData.Alert(
                     title = "VPN",
-                    message = "Hai trovato una VPN! Puoi usarla per evitare di essere bloccato.",
+                    message = "Hai trovato una VPN! Puoi usarla per evitare di essere bloccato per un turno intero.",
                 )
             }
             else -> {
