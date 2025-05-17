@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.game
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -23,7 +24,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GameViewModel(
-    private val gameRepository: GameRepository,
+    private val app: Application,
+    private val gameRepository: GameRepository
 ) : ViewModel() {
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     private val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
@@ -33,8 +35,14 @@ class GameViewModel(
 
     private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
 
+    private val _animatedPositions = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val animatedPositions: StateFlow<Map<String, Int>> = _animatedPositions.asStateFlow()
+
     private val _diceRoll = MutableStateFlow<Int?>(null)
     val diceRoll: StateFlow<Int?> = _diceRoll.asStateFlow()
+
+    private val _startAnimation = MutableStateFlow(false)
+    val startAnimation: StateFlow<Boolean> = _startAnimation.asStateFlow()
 
     private val _dialog = MutableStateFlow<GameDialogData?>(null)
     val dialog: StateFlow<GameDialogData?> = _dialog.asStateFlow()
@@ -124,18 +132,47 @@ class GameViewModel(
         viewModelScope.launch {
             _diceRoll.value = (1..6).random()
             _dialog.value = GameDialogData.Alert(
-                title = "Tiro il dado",
-                message = "Hai tirato un dado e hai ottenuto ${_diceRoll.value}",
+                title = app.getString(R.string.roll_dice),
+                message = "${app.getString(R.string.roll_dice_desc)} ${_diceRoll.value}",
             )
             _actionsPermitted.value = listOf(
                 GameAction(
                     id = "move_on",
                     iconRes = R.drawable.ic_move_on,
                     action = {
-                        movePlayer()
+                        startMovementAnimation()
                     },
                 ),
             )
+        }
+    }
+
+    fun movePlayer() {
+        viewModelScope.launch {
+            if (game.value == null || player.value == null) return@launch
+            _players.value.firstOrNull { it.userId == player.value!!.userId }?.let { me ->
+                val oldCellPosition = me.cellPosition
+                val diceRolled = _diceRoll.value ?: 0
+
+                if (diceRolled <= 0) return@let
+
+                val newPos = computeNewPosition(oldCellPosition, diceRolled)
+                val path = PERIMETER_PATH
+                val oldPathIndex = path.indexOf(oldCellPosition)
+
+                if (oldPathIndex != -1 && (oldPathIndex + diceRolled) >= path.size) {
+                    increasePlayerRound()
+                }
+
+                Log.d("GameViewModel", "Player ${me.userId} moved from $oldCellPosition to $newPos. Dice: $diceRolled")
+                gameRepository.updatePlayerPosition(newPos)
+                _players.value = _players.value.map {
+                    if (it.userId == me.userId) it.copy(cellPosition = newPos) else it
+                }
+                PERIMETER_CELLS[newPos]?.let { landedCell ->
+                    handleLanding(landedCell)
+                } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: $newPos")
+            }
         }
     }
 
@@ -152,9 +189,10 @@ class GameViewModel(
                     },
                 ),
             )
+
             when (gameTypeCell) {
                 GameTypeCell.START -> {
-                    increasePlayerRound()
+                    Log.d("GameViewModel", "Landed on START cell. Lap bonus (if any) handled by movePlayer.")
                 }
                 GameTypeCell.CHANCE -> {
                     askQuestion(GameTypeCell.CHANCE)
@@ -171,6 +209,7 @@ class GameViewModel(
                 }
                 GameTypeCell.BROKEN_ROUTER -> {
                     // TODO
+                    Log.d("GameViewModel", "Landed on BROKEN_ROUTER.")
                 }
                 else -> {
                     if (gameCell.contentOwner.isNullOrEmpty()) {
@@ -178,20 +217,28 @@ class GameViewModel(
                             id = "subscribe_cell",
                             iconRes = R.drawable.ic_subscribe,
                             action = {
-                                updatePlayerPoints(-gameCell.value!!)
+                                // TODO: gameRepository.updateCellOwner(gameCell.id, player.value!!.userId)
+                                updatePlayerPoints(-(gameCell.value ?: 0))
+                                refreshPlayers()
                             },
                         ))
-                    } else if (gameCell.contentOwner == player.value?.userId){
+                    } else if (gameCell.contentOwner == player.value?.userId) {
                         _actionsPermitted.value += listOf(GameAction(
                             id = "make_content",
                             iconRes = R.drawable.ic_made_content,
                             action = {
-                                gameCell.contentOwner = player.value?.userId
-                                updatePlayerPoints(-gameCell.value!!)
+                                // updatePlayerPoints(-(gameCell.value ?: 0))
+                                // gameCell.contentOwner = player.value?.userId
+                                endTurn()
                             },
                         ))
                     } else {
-                        gameCell.value?.let { updatePlayerPoints(-it) }
+                        gameCell.value?.let {
+                            Log.d("GameViewModel", "Paying rent: $it to ${gameCell.contentOwner}")
+                            updatePlayerPoints(-it)
+                            // TODO: Aggiungere i punti al proprietario della casella
+                            updatePlayerPoints(it, gameCell.contentOwner!!)
+                        }
                     }
                 }
             }
@@ -230,8 +277,8 @@ class GameViewModel(
             }
             GameTypeCell.VPN -> {
                 _dialog.value = GameDialogData.Alert(
-                    title = "VPN",
-                    message = "Hai trovato una VPN! Puoi usarla per evitare di essere bloccato per un turno intero.",
+                    title = app.getString(R.string.vpn),
+                    message = app.getString(R.string.vpn_desc),
                 )
             }
             else -> {
@@ -241,18 +288,53 @@ class GameViewModel(
         _isLoadingQuestion.value = false
     }
 
-    fun movePlayer() {
+    private fun startMovementAnimation() {
         viewModelScope.launch {
-            if (game.value == null || player.value == null) return@launch
-            _players.value.firstOrNull { it.userId == player.value!!.userId }?.let { me ->
-                val newPos = computeNewPosition(me.cellPosition, _diceRoll.value ?: 0)
-                Log.d("GameViewModel", "New position: $newPos")
-                gameRepository.updatePlayerPosition(newPos)
-                _players.value = _players.value.map {
-                    if (it.userId == me.userId) it.copy(cellPosition = newPos) else it
+            val steps = _diceRoll.value ?: 0
+            val currentPlayerModel = player.value
+            val currentPlayerId = currentPlayerModel?.userId ?: return@launch
+
+            if (steps <= 0 || game.value == null) {
+                _players.value.firstOrNull { it.userId == currentPlayerId }?.let { me ->
+                    PERIMETER_CELLS[me.cellPosition]?.let { landedCell ->
+                        handleLanding(landedCell)
+                    }
                 }
-                handleLanding(PERIMETER_CELLS[newPos]!!)
+                return@launch
             }
+
+            val path = PERIMETER_PATH
+            val playerToAnimate = _players.value.firstOrNull { it.userId == currentPlayerId } ?: return@launch
+            val originalCellPosition = playerToAnimate.cellPosition
+            val startPathIndex = path.indexOf(originalCellPosition).coerceAtLeast(0)
+
+            for (i in 1..steps) {
+                val nextAnimatedPosOnPath = path[(startPathIndex + i) % path.size]
+                _animatedPositions.value = mapOf(currentPlayerId to nextAnimatedPosOnPath)
+                delay(400L)
+            }
+
+            val finalNewPos = computeNewPosition(originalCellPosition, steps)
+
+            _players.value = _players.value.map { p ->
+                if (p.userId == currentPlayerId) {
+                    p.copy(cellPosition = finalNewPos)
+                } else {
+                    p
+                }
+            }
+
+            _animatedPositions.value -= currentPlayerId
+            gameRepository.updatePlayerPosition(finalNewPos)
+
+            val oldPathIndex = path.indexOf(originalCellPosition)
+            if (oldPathIndex != -1 && (oldPathIndex + steps) >= path.size) {
+                increasePlayerRound()
+            }
+
+            PERIMETER_CELLS[finalNewPos]?.let { landedCell ->
+                handleLanding(landedCell)
+            } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: $finalNewPos")
         }
     }
 
@@ -263,9 +345,23 @@ class GameViewModel(
         }
     }
 
-    fun updatePlayerPoints(value: Int) {
+    fun updatePlayerPoints(pointsToAdd: Int) {
         viewModelScope.launch {
-            gameRepository.updatePlayerPoints(value)
+            val currentPlayerId = player.value?.userId ?: return@launch
+            gameRepository.updatePlayerPoints(pointsToAdd)
+            _players.value = _players.value.map { p ->
+                if (p.userId == currentPlayerId) {
+                    p.copy(score = p.score + pointsToAdd)
+                } else {
+                    p
+                }
+            }
+        }
+    }
+
+    fun updatePlayerPoints(value: Int, ownerId: String) {
+        viewModelScope.launch {
+            gameRepository.updatePlayerPoints(value, ownerId)
             val updated = player.value?.copy(
                 score = (player.value?.score ?: 0) + value
             )
@@ -295,31 +391,38 @@ class GameViewModel(
         viewModelScope.launch {
             when (val dlg = _dialog.value) {
                 is GameDialogData.BlockChoice -> {
-                    val target = _players.value.firstOrNull { it.userId == dlg.players[idx].userId }
-                    if (target != null) {
-                        confirmBlock(target)
+                    if (idx >= 0 && idx < dlg.players.size) {
+                        val target = dlg.players[idx]
+                        val actualTarget = _players.value.firstOrNull { it.userId == target.userId }
+                        if (actualTarget != null) {
+                            confirmBlock(actualTarget)
+                        } else {
+                            _dialog.value = null
+                        }
+                    } else {
+                        _dialog.value = null
                     }
                 }
                 is GameDialogData.HackerQuestion -> {
                     updatePlayerPoints(-dlg.cost)
                     _dialog.value = null
                 }
-
                 is GameDialogData.ChanceQuestion -> {
                     val correct = (idx == dlg.correctIndex)
                     val delta = if (correct) dlg.points else -dlg.points
                     updatePlayerPoints(delta)
-                    val title = if (correct) "Corretto!" else "Sbagliato!"
-                    val message = if (correct)
-                        "Hai guadagnato ${dlg.points} punti."
-                    else
-                        "Hai perso ${dlg.points} punti."
-                    _dialog.value = GameDialogData.Alert(title, message)
+                    val resultTitle = if (correct) app.getString(R.string.correct_answer) else app.getString(R.string.wrong_answer)
+                    val resultMessage = if (correct) {
+                        "${app.getString(R.string.points_earned)} ${dlg.points} ${app.getString(R.string.internet_points)}"
+                    } else {
+                        "${app.getString(R.string.points_lost)} ${dlg.points} ${app.getString(R.string.internet_points)}"
+                    }
+                    _dialog.value = GameDialogData.Alert(title = resultTitle, message = resultMessage)
                 }
-
-                else -> {
+                is GameDialogData.Alert -> {
                     _dialog.value = null
                 }
+                else -> _dialog.value = null
             }
         }
     }

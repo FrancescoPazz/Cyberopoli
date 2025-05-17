@@ -112,6 +112,7 @@
     <string name="turn_pass">Pass turn</string>
     <string name="manage">Manage</string>
     <string name="roll_dice">Roll Dice</string>
+    <string name="roll_dice_desc">You rolled a die and came up with the number:</string>
     <string name="move_on">Move forward</string>
     <string name="cells">Cells</string>
     <string name="chance">Chance</string>
@@ -123,7 +124,13 @@
     <string name="hacker_attack">Hacker Attack</string>
     <string name="hacker_attack_description">a hacker attack scenario and propose 3 possible actions</string>
     <string name="subscribe_cell">Subscribe to the social</string>
-    <string name="make_content">Place a content in the social</string>
+    <string name="made_content">Place a content in the social</string>
+    <string name="vpn">VPN</string>
+    <string name="vpn_desc">You have found a VPN! You can use it to avoid being blocked for a whole shift</string>
+    <string name="correct_answer">Correct answer!</string>
+    <string name="wrong_answer">Wrong answer!</string>
+    <string name="points_earned">You earned </string>
+    <string name="points_lost">You lost </string>
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>

@@ -18,6 +18,7 @@ import com.unibo.cyberopoli.ui.screens.ranking.RankingViewModel
 import com.unibo.cyberopoli.ui.screens.scan.ScanViewModel
 import com.unibo.cyberopoli.ui.screens.settings.SettingsViewModel
 import com.unibo.cyberopoli.util.UsageStatsHelper
+import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -31,7 +32,7 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { RankingViewModel(get()) }
     viewModel { LobbyViewModel(get(), get()) }
-    viewModel { GameViewModel(get()) }
+    viewModel { GameViewModel(androidApplication(), get()) }
 
     single { UsageStatsHelper(get()) }
     single { LLMService() }

@@ -12,6 +12,8 @@ interface IGameRepository {
 
     suspend fun updatePlayerPoints(value: Int)
 
+    suspend fun updatePlayerPoints(value: Int, ownerId: String)
+
     suspend fun updatePlayerPosition(pos: Int)
 
     suspend fun getGamePlayers(): List<GamePlayer>

@@ -25,8 +25,7 @@ fun GameContent(
     navController: NavHostController,
     gameParams: GameParams,
     currentPlayer: GamePlayer,
-    players: List<GamePlayer>,
-    onMoveAnimated: (Int) -> Unit
+    players: List<GamePlayer>
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),

@@ -112,6 +112,7 @@
     <string name="turn_pass">Passa il turno</string>
     <string name="manage">Gestisci</string>
     <string name="roll_dice">Lancia il dado</string>
+    <string name="roll_dice_desc">Hai tirato un dado ed è uscito il numero:</string>
     <string name="move_on">Spostati di</string>
     <string name="cells">Caselle</string>
     <string name="chance">Probabilità</string>
@@ -123,7 +124,13 @@
     <string name="hacker_attack">Attacco hacker</string>
     <string name="hacker_attack_description">uno scenario di attacco hacker e proponi 3 azioni possibili</string>
     <string name="subscribe_cell">Iscriviti al social</string>
-    <string name="make_content">Piazza un contenuto nel sociale</string>
+    <string name="made_content">Piazza un contenuto nel sociale</string>
+    <string name="vpn">VPN</string>
+    <string name="vpn_desc">Hai trovato una VPN! Puoi usarla per evitare di essere bloccato per un turno intero</string>
+    <string name="correct_answer">Risposta Corretta!</string>
+    <string name="wrong_answer">Risposta Sbagliata!</string>
+    <string name="points_earned">Hai guadagnato </string>
+    <string name="points_lost">Hai perso </string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

@@ -30,5 +30,6 @@ sealed class GameDialogData {
         val title: String,
         val message: String,
         val options: List<String>? = null,
+        val onDismiss: (() -> Unit)? = null
     ) : GameDialogData()
 }
