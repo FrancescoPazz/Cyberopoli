@@ -21,8 +21,15 @@ sealed class GameDialogData {
 
     @Serializable
     data class BlockChoice(
-        val title: String = "Scegli un giocatore da bloccare",
+        val title: String,
         val players: List<GamePlayer>
+    ) : GameDialogData()
+
+    @Serializable
+    data class SubscribeChoice(
+        val title: String,
+        val options: List<String>,
+        val cost: Int,
     ) : GameDialogData()
 
     @Serializable

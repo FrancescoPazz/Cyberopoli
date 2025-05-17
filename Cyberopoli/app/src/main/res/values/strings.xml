@@ -131,6 +131,9 @@
     <string name="wrong_answer">Wrong answer!</string>
     <string name="points_earned">You earned </string>
     <string name="points_lost">You lost </string>
+    <string name="block_player_choice">Choose a player to block</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>

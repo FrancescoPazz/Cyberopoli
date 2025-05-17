@@ -131,6 +131,9 @@
     <string name="wrong_answer">Risposta Sbagliata!</string>
     <string name="points_earned">Hai guadagnato </string>
     <string name="points_lost">Hai perso </string>
+    <string name="block_player_choice">Scegli un giocatore da bloccare</string>
+    <string name="accept">Accetta</string>
+    <string name="decline">Rifiuta</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

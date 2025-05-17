@@ -57,6 +57,11 @@ fun GameScreen(
                 "",
                 data.players.map { it.user?.username ?: it.userId }
             )
+            is GameDialogData.SubscribeChoice -> Triple(
+                data.title,
+                "Cost: ${data.cost} points",
+                data.options
+            )
             is GameDialogData.Alert -> Triple(
                 data.title,
                 data.message,

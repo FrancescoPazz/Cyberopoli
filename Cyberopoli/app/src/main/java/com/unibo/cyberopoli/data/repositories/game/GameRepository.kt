@@ -185,6 +185,10 @@ class GameRepository(
     }
 
     override suspend fun updatePlayerPoints(value: Int) {
+        updatePlayerPoints(value, currentPlayerLiveData.value!!.userId)
+    }
+
+    override suspend fun updatePlayerPoints(value: Int, ownerId: String) {
         if (currentGameLiveData.value == null) throw Exception("No game found")
         if (currentPlayerLiveData.value == null) throw Exception("No player found")
 
