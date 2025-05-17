@@ -1,14 +1,12 @@
 package com.unibo.cyberopoli.ui.screens.ranking.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,42 +22,68 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
 
 @Composable
-fun RankingListItem(user: User) {
-    Row(
+fun RankingListItem(user: User, rank: Int, isCurrentUser: Boolean = false) {
+    val avatarRes = when (user.avatarUrl) {
+        "avatar_male_1" -> R.drawable.avatar_male_1
+        "avatar_male_2" -> R.drawable.avatar_male_2
+        "avatar_female_1" -> R.drawable.avatar_female_1
+        "avatar_female_2" -> R.drawable.avatar_female_2
+        else -> R.drawable.avatar_male_1
+    }
+    val backgroundColor = if (isCurrentUser) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
+    else MaterialTheme.colorScheme.surfaceContainer
+    val contentColor = if (isCurrentUser) MaterialTheme.colorScheme.onPrimaryContainer
+    else MaterialTheme.colorScheme.onSurface
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isCurrentUser) 4.dp else 2.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Text(
-            text = "${user.level}",
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.width(24.dp)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = stringResource(R.string.avatar),
+        Row(
             modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column {
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                color = MaterialTheme.colorScheme.primary,
-                text = user.username,
-                fontWeight = FontWeight.Bold
+                text = "$rank.",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (isCurrentUser) contentColor else MaterialTheme.colorScheme.primary,
+                modifier = Modifier.width(38.dp)
             )
-            Text(
-                color = MaterialTheme.colorScheme.primary,
-                text = "${user.totalScore} pt",
+
+            Image(
+                painter = painterResource(id = avatarRes),
+                contentDescription = stringResource(R.string.avatar),
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.inverseOnSurface, CircleShape)
+                    .padding(2.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = user.username,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = contentColor
+                )
+                Text(
+                    text = "${user.totalScore} pt",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = contentColor.copy(alpha = 0.8f)
+                )
+            }
         }
     }
 }
