@@ -41,7 +41,7 @@ fun AuthHeader() {
 
             Text3D(
                 text = toUpperCase(stringResource(R.string.app_name)),
-                fontSize = 50,
+                fontSize = 48,
                 fontWeight = FontWeight.ExtraBold,
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 shadowColor = MaterialTheme.colorScheme.primary,
