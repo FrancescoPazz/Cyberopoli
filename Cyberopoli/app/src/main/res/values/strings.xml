@@ -135,6 +135,18 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
 
+    <!-- ================================= -->
+    <!-- Home -->
+    <!-- ================================= -->
+    <string name="your_game_stats">Your game stats</string>
+    <string name="win_rate">Win Rate</string>
+    <string name="welcome_guest">Welcome Guest</string>
+    <string name="welcome_back_user">Welcome back, %1$s!</string>
+    <string name="log_in_to_play_and_see_stats">Log in to play and see stats</string>
+    <string name="play_now_title">Play Now</string>
+    <string name="new_game_button">New Game</string>
+    <string name="join_game_button">Join Game</string>
+
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>
     <string name="account_statistics">Account Statistics</string>

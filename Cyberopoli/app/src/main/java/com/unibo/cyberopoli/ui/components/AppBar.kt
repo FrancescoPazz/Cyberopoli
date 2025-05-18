@@ -42,27 +42,29 @@ import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 fun TopBar(navController: NavController, onBackPressed: (() -> Unit)? = null) {
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
+    val currentRoute = navBackStackEntry?.destination?.route
+
     CenterAlignedTopAppBar(title = {
         if (currentRoute != null) {
-            val resId = remember(currentRoute) {
+            val routeName = currentRoute.substringAfterLast(".")
+            val resId = remember(routeName) {
                 context.resources.getIdentifier(
-                    currentRoute, "string", context.packageName
+                    routeName, "string", context.packageName
                 )
             }
             val titleText = if (resId != 0) {
                 stringResource(resId)
             } else {
-                currentRoute.replaceFirstChar { it.uppercase() }
+                routeName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             }
             Text(
                 titleText, fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = if (currentRoute == CyberopoliRoute.Auth.toString()) MaterialTheme.colorScheme.background
-        else MaterialTheme.colorScheme.onSurface
+        else MaterialTheme.colorScheme.surfaceContainerHighest
     ), navigationIcon = {
         if (navController.previousBackStackEntry != null) {
             IconButton(onClick = {
@@ -75,7 +77,7 @@ fun TopBar(navController: NavController, onBackPressed: (() -> Unit)? = null) {
                 Icon(
                     Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = stringResource(R.string.back),
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -87,7 +89,7 @@ fun TopBar(navController: NavController, onBackPressed: (() -> Unit)? = null) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = stringResource(R.string.settings),
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -125,13 +127,12 @@ fun BottomBar(navController: NavController) {
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
+    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.onSurface,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 0.dp,
-        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

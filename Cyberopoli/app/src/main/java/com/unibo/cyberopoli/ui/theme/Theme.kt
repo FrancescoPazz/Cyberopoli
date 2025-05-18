@@ -12,42 +12,87 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+// Utilizziamo i nuovi colori definiti nel file Colors.kt
 private val DarkColorScheme = darkColorScheme(
-    primary = DarkPrimary,
-    onPrimary = DarkOnPrimary,
-    secondary = DarkSecondary,
-    onSecondary = DarkOnSecondary,
-    tertiary = DarkTertiary,
-    onTertiary = DarkOnTertiary,
-    surface = DarkSurface,
-    onSurface = DarkOnSurface,
+    primary = CyberDark_Primary,
+    onPrimary = CyberDark_OnPrimary,
+    primaryContainer = CyberDark_PrimaryContainer,
+    onPrimaryContainer = CyberDark_OnPrimaryContainer,
 
-    background = DarkBackGround,
-    onBackground = DarkOnBackGround,
+    secondary = CyberDark_Secondary,
+    onSecondary = CyberDark_OnSecondary,
+    secondaryContainer = CyberDark_SecondaryContainer,
+    onSecondaryContainer = CyberDark_OnSecondaryContainer,
 
-    onError = onError,
+    tertiary = CyberDark_Tertiary,
+    onTertiary = CyberDark_OnTertiary,
+    tertiaryContainer = CyberDark_TertiaryContainer,
+    onTertiaryContainer = CyberDark_OnTertiaryContainer,
+
+    error = CyberDark_Error,
+    onError = CyberDark_OnError,
+    errorContainer = CyberDark_ErrorContainer,
+    onErrorContainer = CyberDark_OnErrorContainer,
+
+    background = CyberDark_Background,
+    onBackground = CyberDark_OnBackground,
+
+    surface = CyberDark_Surface,
+    onSurface = CyberDark_OnSurface,
+    surfaceVariant = CyberDark_SurfaceVariant,
+    onSurfaceVariant = CyberDark_OnSurfaceVariant,
+    inverseSurface = CyberDark_InverseSurface,
+    inverseOnSurface = CyberDark_InverseOnSurface,
+
+    outline = CyberDark_Outline,
+    outlineVariant = CyberDark_OutlineVariant,
+
+    scrim = CyberDark_Scrim,
+    inversePrimary = CyberDark_InversePrimary,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = LightPrimary,
-    onPrimary = LightOnPrimary,
-    secondary = LightSecondary,
-    onSecondary = LightOnSecondary,
-    tertiary = LightTertiary,
-    onTertiary = LightOnTertiary,
-    surface = LightSurface,
-    onSurface = LightOnSurface,
+    primary = CyberLight_Primary,
+    onPrimary = CyberLight_OnPrimary,
+    primaryContainer = CyberLight_PrimaryContainer,
+    onPrimaryContainer = CyberLight_OnPrimaryContainer,
 
-    background = LightBackGround,
-    onBackground = LightOnBackGround,
+    secondary = CyberLight_Secondary,
+    onSecondary = CyberLight_OnSecondary,
+    secondaryContainer = CyberLight_SecondaryContainer,
+    onSecondaryContainer = CyberLight_OnSecondaryContainer,
 
-    onError = onError,
+    tertiary = CyberLight_Tertiary,
+    onTertiary = CyberLight_OnTertiary,
+    tertiaryContainer = CyberLight_TertiaryContainer,
+    onTertiaryContainer = CyberLight_OnTertiaryContainer,
+
+    error = CyberLight_Error,
+    onError = CyberLight_OnError,
+    errorContainer = CyberLight_ErrorContainer,
+    onErrorContainer = CyberLight_OnErrorContainer,
+
+    background = CyberLight_Background,
+    onBackground = CyberLight_OnBackground,
+
+    surface = CyberLight_Surface,
+    onSurface = CyberLight_OnSurface,
+    surfaceVariant = CyberLight_SurfaceVariant,
+    onSurfaceVariant = CyberLight_OnSurfaceVariant,
+    inverseSurface = CyberLight_InverseSurface,
+    inverseOnSurface = CyberLight_InverseOnSurface,
+
+    outline = CyberLight_Outline,
+    outlineVariant = CyberLight_OutlineVariant,
+
+    scrim = CyberLight_Scrim,
+    inversePrimary = CyberLight_InversePrimary,
 )
 
 @Composable
 fun CyberopoliTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -69,6 +114,8 @@ fun CyberopoliTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme, typography = Typography, content = content
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
     )
 }
