@@ -8,12 +8,16 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -75,8 +79,11 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
     }
 
     AndroidView(
-        factory = { previewView }, modifier = Modifier
+        factory = { previewView },
+        modifier = Modifier
             .size(300.dp)
-            .padding(16.dp)
+            .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .padding(4.dp)
     )
 }

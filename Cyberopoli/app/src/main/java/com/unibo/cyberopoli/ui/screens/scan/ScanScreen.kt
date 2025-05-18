@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -54,80 +55,94 @@ fun ScanScreen(
     var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
         hasCameraPermission = granted
-        if (!granted) Toast.makeText(activity, "Camera permission denied", Toast.LENGTH_SHORT)
+        if (!granted) Toast.makeText(activity, activity.getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT) // Usa string resource
             .show()
     }
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) launcher.launch(Manifest.permission.CAMERA)
     }
-    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (scanParams.authState === AuthState.Authenticated) BottomBar(navController)
-    }) { paddingValues ->
+    Scaffold(
+        topBar = { TopBar(navController) },
+        bottomBar = {
+            if (scanParams.authState === AuthState.Authenticated) {
+                BottomBar(navController)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Text3D(
-                    text = stringResource(R.string.scan)
-                )
+                Text3D(text = stringResource(R.string.scan))
             }
-            Spacer(Modifier.height(26.dp))
+
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (hasCameraPermission) {
-                        QRCodeScanner { value ->
-                            if (value.contains(appName)) {
-                                scanParams.setScannedValue(value)
-                                navController.navigate(CyberopoliRoute.Lobby)
-                            } else {
-                                Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
-                            }
+                if (hasCameraPermission) {
+                    QRCodeScanner(onQRCodeScanned = { value ->
+                        if (value.contains(appName)) {
+                            scanParams.setScannedValue(value)
+                            navController.navigate(CyberopoliRoute.Lobby)
+                        } else {
+                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
                         }
-                    } else {
+                    })
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         Text(
                             text = stringResource(R.string.camera_permission_required),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(Modifier.height(16.dp))
-                        Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
+                        Button(
+                            onClick = { launcher.launch(Manifest.permission.CAMERA) },
+                        ) {
                             Text(stringResource(R.string.request_camera))
                         }
                     }
-                    Spacer(Modifier.height(48.dp))
-                    AuthOutlinedTextField(
-                        value = manualCode,
-                        placeholder = stringResource(R.string.enter_code),
-                        imageVector = Icons.Default.QrCode,
-                        singleLine = true,
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Button(
-                        enabled = manualCode.value.length >= 4,
-                        onClick = {
-                            scanParams.setScannedValue(manualCode.value)
-                            navController.navigate(CyberopoliRoute.Lobby)
-                        }
-                    ) {
-                        Text(stringResource(R.string.enter))
-                    }
                 }
             }
+
+            Spacer(Modifier.height(24.dp))
+
+            AuthOutlinedTextField(
+                value = manualCode,
+                placeholder = stringResource(R.string.enter_code),
+                imageVector = Icons.Default.QrCode,
+                singleLine = true,
+            )
+            Spacer(Modifier.height(16.dp))
+            Button(
+                enabled = manualCode.value.length >= 4,
+                onClick = {
+                    scanParams.setScannedValue(manualCode.value)
+                    navController.navigate(CyberopoliRoute.Lobby)
+                }
+            ) {
+                Text(stringResource(R.string.enter))
+            }
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
