@@ -24,8 +24,8 @@ fun ProfileStatsSection(
             .padding(horizontal = 16.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSurface,
-            contentColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
         Row(
@@ -35,11 +35,9 @@ fun ProfileStatsSection(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StatItem(label = stringResource(R.string.games), value = totalGames.toString())
-            StatItem(label = stringResource(R.string.games), value = totalWins.toString())
+            StatItem(label = stringResource(R.string.games_played), value = totalGames.toString())
+            StatItem(label = stringResource(R.string.wins), value = totalWins.toString())
             StatItem(label = stringResource(R.string.badges), value = totalMedals.toString())
         }
     }
 }
-
-

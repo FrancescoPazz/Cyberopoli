@@ -30,5 +30,3 @@ fun MatchHistorySection(gameHistory: List<GameHistory>) {
         }
     }
 }
-
-

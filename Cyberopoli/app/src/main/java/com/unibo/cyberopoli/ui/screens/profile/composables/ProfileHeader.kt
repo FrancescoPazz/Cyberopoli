@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.profile.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,8 +53,8 @@ fun ProfileHeader(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSurface,
-            contentColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
     ) {
         Box(
@@ -61,6 +62,7 @@ fun ProfileHeader(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp)
             ) {
                 Image(
                     painter = painterResource(avatarRes),
@@ -77,17 +79,19 @@ fun ProfileHeader(
                     color = MaterialTheme.colorScheme.primary,
                     text = user.username,
                     fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 Text(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     text = "${stringResource(R.string.level)}: ${user.level}",
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row {
+                Row(horizontalArrangement = Arrangement.Center) {
                     ProfileButton(
                         text = stringResource(R.string.edit), icon = {
                             Icon(

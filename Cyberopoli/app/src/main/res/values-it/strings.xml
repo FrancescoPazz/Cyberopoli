@@ -146,6 +146,8 @@
     <string name="play_now_title">Gioca Ora</string>
     <string name="new_game_button">Nuova Partita</string>
     <string name="join_game_button">Unisciti Partita</string>
+    <string name="win">Vinta</string>
+    <string name="loss">Persa</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>

@@ -84,6 +84,8 @@
     <string name="monthly">Monthly</string>
     <string name="filters">Filters</string>
     <string name="my_rank">My rank</string>
+    <string name="win">Win</string>
+    <string name="loss">Loss</string>
 
     <!-- ================================= -->
     <!-- Lobby -->

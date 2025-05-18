@@ -15,7 +15,12 @@ fun StatItem(label: String, value: String) {
         Text(
             color = MaterialTheme.colorScheme.primary,
             text = value,
+            fontWeight = FontWeight.Bold
         )
-        Text(color = MaterialTheme.colorScheme.primary, text = label)
+        Text(
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            text = label,
+            style = MaterialTheme.typography.labelMedium
+        )
     }
 }

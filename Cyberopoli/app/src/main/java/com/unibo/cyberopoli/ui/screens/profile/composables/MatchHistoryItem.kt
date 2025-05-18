@@ -29,8 +29,8 @@ fun MatchHistoryItem(match: GameHistory) {
             .fillMaxWidth()
             .padding(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSurface,
-            contentColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
     ) {
         Column(
@@ -42,15 +42,29 @@ fun MatchHistoryItem(match: GameHistory) {
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(color = MaterialTheme.colorScheme.primary, text = match.date)
+            Text(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                text = match.date,
+                style = MaterialTheme.typography.labelSmall
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
+                val resultColor = when (match.result) {
+                    stringResource(R.string.win) -> MaterialTheme.colorScheme.primary
+                    stringResource(R.string.loss) -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.onSurface
+                }
                 Text(
-                    color = MaterialTheme.colorScheme.primary,
-                    text = "${stringResource(R.string.result)}: ${match.result}"
+                    color = resultColor,
+                    text = "${stringResource(R.string.result)}: ${match.result}",
+                    fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(color = MaterialTheme.colorScheme.primary, text = match.points)
+                Text(
+                    color = MaterialTheme.colorScheme.secondary,
+                    text = match.points,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }

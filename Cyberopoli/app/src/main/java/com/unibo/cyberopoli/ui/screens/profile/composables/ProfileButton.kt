@@ -24,7 +24,7 @@ fun ProfileButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(horizontal = 4.dp, vertical = 8.dp),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 8.dp, pressedElevation = 4.dp
         ),
