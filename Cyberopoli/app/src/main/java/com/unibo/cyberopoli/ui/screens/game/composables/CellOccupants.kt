@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +23,15 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 fun CellOccupants(
     occupants: List<GamePlayer>
 ) {
+    @Composable
+    fun getPlayerColor(index: Int) = when (index) {
+        0 -> MaterialTheme.colorScheme.primary
+        1 -> MaterialTheme.colorScheme.secondary
+        2 -> MaterialTheme.colorScheme.tertiary
+        3 -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Box(Modifier.fillMaxSize()) {
         occupants.forEachIndexed { index, player ->
             val alignment = when (index) {
@@ -37,8 +46,8 @@ fun CellOccupants(
                 modifier = Modifier
                     .size(24.dp)
                     .align(alignment)
-                    .padding(2.dp)
-                    .background(Color.Cyan, shape = CircleShape),
+                    .padding(1.dp)
+                    .background(getPlayerColor(index), shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 val avatarRes = when (player.user?.avatarUrl) {

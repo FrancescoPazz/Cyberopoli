@@ -33,14 +33,15 @@ fun GameDialog(
                 Text(
                     title,
                     color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
                     message,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(24.dp))
-
                 if (options.isNotEmpty()) {
                     options.forEachIndexed { idx, label ->
                         Button(
@@ -54,7 +55,8 @@ fun GameDialog(
                     }
                 } else {
                     Button(
-                        onClick = onDismiss, modifier = Modifier.fillMaxWidth()
+                        onClick = onDismiss,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("OK")
                     }

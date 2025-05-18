@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.BOARD_COLS
 import com.unibo.cyberopoli.data.models.game.BOARD_ROWS
@@ -32,15 +32,16 @@ fun GameContent(
         topBar = { TopBar(navController) },
         bottomBar = {
             GameBottomBar(
-                actions = gameParams.gameAction.value!!,
+                actions = gameParams.gameAction.value!!
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFF1E1E2F))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             val cells = remember { createBoard() }
 
@@ -56,7 +57,7 @@ fun GameContent(
 
             ScoreAndManageRow(
                 score = currentPlayer.score,
-                onManageClick = { /* TODO */ }
+                onManageClick = { }
             )
         }
     }

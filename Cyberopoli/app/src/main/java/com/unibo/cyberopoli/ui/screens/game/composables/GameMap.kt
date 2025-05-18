@@ -1,9 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.game.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -35,18 +33,15 @@ fun GameMap(
             .fillMaxWidth()
             .aspectRatio(cols / rows.toFloat())
             .padding(12.dp)
-            .background(color = Color(0xFFC1C1C1)),
+            .background(MaterialTheme.colorScheme.secondaryContainer),
         userScrollEnabled = false
     ) {
         items(gameCells.size) { idx ->
-            val cell = gameCells[idx]
-            val isBorder = idx in borderPath
             GameCell(
-                gameCell = cell,
-                isBorder = isBorder,
+                gameCell = gameCells[idx],
+                isBorder = idx in borderPath,
                 occupants = posMap[idx].orEmpty().take(4)
             )
         }
     }
 }
-
