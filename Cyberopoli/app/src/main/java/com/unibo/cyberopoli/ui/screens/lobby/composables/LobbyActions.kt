@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,8 +15,8 @@ import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 
 @Composable
 fun LobbyActions(
-    isHost: Boolean,
-    allReady: Boolean,
+    isHost: State<Boolean?>,
+    allReady: State<Boolean?>,
     onToggleReadyClick: () -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,
@@ -36,7 +37,7 @@ fun LobbyActions(
             onClick = onExitClick,
             modifier = Modifier.fillMaxWidth(0.8f)
         )
-        if (isHost && allReady) {
+        if (isHost.value == true && allReady.value == true) {
             Spacer(modifier = Modifier.height(16.dp))
             AuthButton(
                 text = stringResource(R.string.start),

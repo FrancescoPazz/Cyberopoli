@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,8 +24,8 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 @Composable
 fun LobbyContent(
     members: List<LobbyMember>,
-    isHost: Boolean,
-    allReady: Boolean,
+    isHost: State<Boolean?>,
+    allReady: State<Boolean?>,
     onToggleReadyClick: () -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,

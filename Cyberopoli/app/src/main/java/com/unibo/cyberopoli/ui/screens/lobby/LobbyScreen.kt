@@ -73,7 +73,7 @@ fun LobbyScreen(
             }
         },
         bottomBar = {
-            if (!params.isGuest) BottomBar(navController)
+            if (params.isGuest) BottomBar(navController)
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
