@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asFlow
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameAction
@@ -21,6 +22,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
 class GameViewModel(
@@ -58,41 +63,76 @@ class GameViewModel(
     private val _blocks = MutableStateFlow<Set<GamePlayer>>(emptySet())
     val blocks: StateFlow<Set<GamePlayer>> = _blocks.asStateFlow()
 
-    private val _actionsPermitted = MutableStateFlow<List<GameAction>>(
-        listOf(
-            GameAction(
-                // TODO: da cambiare
-                id = "roll_dice",
-                iconRes = R.drawable.ic_dice,
-                action = {
-                    rollDice()
-                },
-            ),
-        )
+    private val rollDiceAction = GameAction(
+        id = "roll_dice",
+        iconRes = R.drawable.ic_dice,
+        action = { rollDice() },
     )
+
+    private val waitTurnAction = GameAction(
+        id = "wait_your_turn",
+        iconRes = R.drawable.ic_stop_hand,
+        action = { },
+    )
+
+    private val _actionsPermitted = MutableStateFlow<List<GameAction>>(emptyList())
     val actionsPermitted: StateFlow<List<GameAction>> = _actionsPermitted.asStateFlow()
 
+    init {
+        combine(
+            game.asFlow(),
+            player.asFlow()
+        ) { currentGame, currentPlayingPlayer ->
+            if (currentGame != null && currentPlayingPlayer != null) {
+                currentGame.turn == currentPlayingPlayer.userId
+            } else {
+                false
+            }
+        }
+            .onEach { isMyTurn ->
+                val currentActionId = _actionsPermitted.value.firstOrNull()?.id
+                Log.d("GameViewModel", "Turn check - isMyTurn: $isMyTurn, Current Action: $currentActionId")
+
+                if (isMyTurn) {
+                    if (currentActionId == null || currentActionId == waitTurnAction.id) {
+                        Log.d("GameViewModel", "Setting roll_dice action.")
+                        _actionsPermitted.value = listOf(rollDiceAction)
+                    } else {
+                        Log.d("GameViewModel", "Keeping current action ($currentActionId) as it's my turn.")
+                    }
+                } else {
+                    if (currentActionId == null || currentActionId != waitTurnAction.id) {
+                        Log.d("GameViewModel", "Setting wait_your_turn action.")
+                        _actionsPermitted.value = listOf(waitTurnAction)
+                    } else {
+                        Log.d("GameViewModel", "Wait action already set.")
+                    }
+                }
+            }
+            .catch { e ->
+                Log.e("GameViewModel", "Error in turn observation flow", e)
+                _actionsPermitted.value = emptyList()
+            }
+            .launchIn(viewModelScope)
+    }
+
     private fun nextTurn() {
-        if (game.value == null) return
+        if (game.value == null || _players.value.isEmpty()) {
+            Log.w("GameViewModel", "nextTurn: Game or players data not available")
+            return
+        }
         viewModelScope.launch {
             _players.value.let { players ->
-                val nextIdx =
-                    (players.indexOfFirst { it.userId == game.value!!.turn } + 1) % players.size
-                gameRepository.setNextTurn(players[nextIdx].userId)
-                if (players[nextIdx].userId == player.value!!.userId) {
-                    if (_skipNext.value) {
-                        _skipNext.value = false
-                        nextTurn()
-                    } else {
-                        _actionsPermitted.value = listOf(
-                            GameAction(
-                                id = "roll_dice",
-                                iconRes = R.drawable.ic_dice,
-                                action = {
-                                    rollDice()
-                                },
-                            ),
-                        )
+                val currentTurnUserId = game.value!!.turn
+                val currentTurnIndex = players.indexOfFirst { it.userId == currentTurnUserId }.coerceAtLeast(0)
+                val nextIdx = (currentTurnIndex + 1) % players.size
+                val nextPlayerId = players[nextIdx].userId
+                Log.d("GameViewModel", "Changing turn from $currentTurnUserId to $nextPlayerId")
+                gameRepository.setNextTurn(nextPlayerId)
+                if (players.size == 1 && nextPlayerId == currentTurnUserId && nextPlayerId == player.value?.userId) {
+                    Log.d("GameViewModel", "Single player detected, manually ensuring roll_dice action.")
+                    if (_actionsPermitted.value.firstOrNull()?.id == waitTurnAction.id) {
+                        _actionsPermitted.value = listOf(rollDiceAction)
                     }
                 }
             }
@@ -222,7 +262,6 @@ class GameViewModel(
                 }
 
                 GameTypeCell.BROKEN_ROUTER -> {
-                    // TODO
                     Log.d("GameViewModel", "Landed on BROKEN_ROUTER.")
                 }
 
@@ -250,8 +289,6 @@ class GameViewModel(
                                 id = "make_content",
                                 iconRes = R.drawable.ic_made_content,
                                 action = {
-                                    // updatePlayerPoints(-(gameCell.value ?: 0))
-                                    // gameCell.contentOwner = player.value?.userId
                                     endTurn()
                                 },
                             )
@@ -260,7 +297,6 @@ class GameViewModel(
                         gameCell.value?.let {
                             Log.d("GameViewModel", "Paying rent: $it to ${gameCell.contentOwner}")
                             updatePlayerPoints(-it)
-                            // TODO: Aggiungere i punti al proprietario della casella
                             updatePlayerPoints(it, gameCell.contentOwner!!)
                         }
                     }
@@ -482,13 +518,8 @@ class GameViewModel(
     }
 
     fun endTurn() {
-        _actionsPermitted.value = listOf(
-            GameAction(
-                id = "wait_your_turn",
-                iconRes = R.drawable.ic_stop_hand,
-                action = { },
-            ),
-        )
+        Log.d("GameViewModel", "Ending turn.")
+        _actionsPermitted.value = listOf(waitTurnAction)
         _diceRoll.value = null
         nextTurn()
     }
