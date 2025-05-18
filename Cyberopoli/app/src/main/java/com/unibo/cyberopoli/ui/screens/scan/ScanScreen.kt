@@ -79,9 +79,7 @@ fun ScanScreen(
                 contentAlignment = Alignment.TopCenter
             ) {
                 Text3D(
-                    text = stringResource(R.string.scan),
-                    textColor = MaterialTheme.colorScheme.tertiary,
-                    shadowColor = MaterialTheme.colorScheme.secondary
+                    text = stringResource(R.string.scan)
                 )
             }
             Spacer(Modifier.height(26.dp))

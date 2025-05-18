@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-// Utilizziamo i nuovi colori definiti nel file Colors.kt
 private val DarkColorScheme = darkColorScheme(
     primary = CyberDark_Primary,
     onPrimary = CyberDark_OnPrimary,

@@ -17,8 +17,8 @@ fun Text3D(
     modifier: Modifier = Modifier,
     fontSize: Int = 48,
     fontWeight: FontWeight = FontWeight.Bold,
-    textColor: Color = MaterialTheme.colorScheme.surface,
-    shadowColor: Color = MaterialTheme.colorScheme.background,
+    textColor: Color = MaterialTheme.colorScheme.primary,
+    shadowColor: Color = MaterialTheme.colorScheme.tertiary,
     offsetX: Int = 3,
     offsetY: Int = 3
 ) {

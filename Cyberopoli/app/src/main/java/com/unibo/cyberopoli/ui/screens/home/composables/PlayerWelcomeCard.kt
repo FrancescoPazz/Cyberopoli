@@ -129,7 +129,7 @@ fun PlayerWelcomeCard(user: User?, modifier: Modifier = Modifier) {
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "${stringResource(R.string.internet_points)} C$${user.totalScore.toCyberopoliCurrency()}",
+                                text = "${stringResource(R.string.internet_points)} $${user.totalScore.toCyberopoliCurrency()}",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
                             )

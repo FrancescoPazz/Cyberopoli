@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
-import com.unibo.cyberopoli.ui.components.BottomBar
-import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.components.BottomBar // Assicurati che queste usino il tema
+import com.unibo.cyberopoli.ui.components.TopBar // Assicurati che queste usino il tema
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthHeader
 import com.unibo.cyberopoli.ui.screens.auth.composables.GuestCard
 import com.unibo.cyberopoli.ui.screens.auth.composables.LoginCard
@@ -53,10 +53,26 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 .makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_LONG)
                 .show()
         }
+        // Puoi aggiungere qui una logica per navigare automaticamente
+        // se lo stato diventa AuthState.Authenticated
+        // if (authState.value is AuthState.Authenticated) {
+        //     navController.navigate(CyberopoliRoute.Home) {
+        //         popUpTo(navController.graph.startDestinationId) { inclusive = true }
+        //         launchSingleTop = true
+        //     }
+        // }
     }
-    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (authState.value == AuthState.Authenticated) BottomBar(navController)
-    }, content = { paddingValues ->
+    Scaffold(
+        topBar = { TopBar(navController) },
+        // Mostra la BottomBar solo se autenticato
+        bottomBar = {
+            if (authState.value == AuthState.Authenticated) {
+                BottomBar(navController)
+            }
+        },
+        // Il colore dello Scaffold (sfondo della schermata)
+        containerColor = MaterialTheme.colorScheme.background // Usa background per lo sfondo principale
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,20 +81,31 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // AuthHeader userà i colori del tema internamente
             AuthHeader()
+
             TabRow(selectedTabIndex = selectedTabIndex,
+                // Colore di sfondo della TabRow (trasparente va bene sullo sfondo)
                 containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.tertiary,
+                // contentColor qui imposta il colore DEFAULT per gli item NON selezionati.
+                // Tuttavia, possiamo sovrascriverlo esplicitamente nei singoli Tab.
+                // Lo impostiamo su onSurfaceVariant per un colore non selezionato meno prominente.
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant, // *** MODIFICATO: Usa onSurfaceVariant ***
                 indicator = { tabPositions ->
                     SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = MaterialTheme.colorScheme.tertiary
+                        // Il colore dell'indicatore dovrebbe corrispondere al colore del tab selezionato.
+                        color = MaterialTheme.colorScheme.primary // *** MODIFICATO: Usa primary per l'indicatore ***
                     )
                 }) {
                 tabs.forEachIndexed { index, title ->
                     Tab(selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = { Text(title) })
+                        // Definisci esplicitamente i colori di testo per i tab selezionati/non selezionati
+                        selectedContentColor = MaterialTheme.colorScheme.primary, // *** AGGIUNTO: Usa primary per il testo selezionato ***
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // *** AGGIUNTO: Usa onSurfaceVariant per il testo non selezionato ***
+                        text = { Text(title) }
+                    )
                 }
             }
             when (selectedTabIndex) {
@@ -94,5 +121,5 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }
-    })
+    }
 }

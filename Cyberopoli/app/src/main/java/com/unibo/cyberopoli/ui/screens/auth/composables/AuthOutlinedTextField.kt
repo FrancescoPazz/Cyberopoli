@@ -33,11 +33,11 @@ fun AuthOutlinedTextField(
             imageVector?.let {
                 Icon(
                     imageVector = it,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary
+                    contentDescription = null
                 )
             }
         },
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
             .border(2.dp, MaterialTheme.colorScheme.onSecondary, RoundedCornerShape(20.dp))
@@ -46,8 +46,23 @@ fun AuthOutlinedTextField(
         singleLine = singleLine,
         visualTransformation = visualTransformation,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.primary,
-            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+            focusedTextColor = MaterialTheme.colorScheme.primary, // Testo digitato focused
+            unfocusedTextColor = MaterialTheme.colorScheme.primary, // Testo digitato unfocused
+            focusedBorderColor = MaterialTheme.colorScheme.primary, // Bordo focused
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline, // *** MODIFICATO: Usa outline ***
+            errorBorderColor = MaterialTheme.colorScheme.error, // Bordo in stato di errore
+            cursorColor = MaterialTheme.colorScheme.primary, // Cursore focused
+            errorCursorColor = MaterialTheme.colorScheme.error, // Cursore in stato di errore
+            focusedLabelColor = MaterialTheme.colorScheme.primary, // Label/Placeholder focused
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant, // *** MODIFICATO: Usa onSurfaceVariant ***
+            errorLabelColor = MaterialTheme.colorScheme.error, // Label/Placeholder in stato di errore
+            focusedLeadingIconColor = MaterialTheme.colorScheme.primary, // Icona leading focused
+            unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant, // *** MODIFICATO: Usa onSurfaceVariant ***
+            errorLeadingIconColor = MaterialTheme.colorScheme.error, // Icona leading in stato di errore
+            disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f), // Colore testo disabilitato standard
+            disabledBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.38f), // Colore bordo disabilitato standard
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f), // Colore icona disabilitata standard
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f) // Colore placeholder disabilitato standard
         )
     )
 }
