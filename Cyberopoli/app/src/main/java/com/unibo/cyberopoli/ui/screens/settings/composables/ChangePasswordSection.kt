@@ -1,10 +1,10 @@
 package com.unibo.cyberopoli.ui.screens.settings.composables
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,50 +22,41 @@ fun ChangePasswordSection(
     onNewPasswordChange: (String) -> Unit,
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    onChangeClick: () -> Unit
+    onChangeClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Text(text = stringResource(R.string.change_password),
-        fontWeight = FontWeight.Bold,)
-    OutlinedTextField(
-        value = currentPassword,
-        onValueChange = onCurrentPasswordChange,
-        label = { Text(stringResource(R.string.old_password)) },
-        visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.primary,
-            unfocusedTextColor = MaterialTheme.colorScheme.primary
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.change_password),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
         )
-    )
-    OutlinedTextField(
-        value = newPassword,
-        onValueChange = onNewPasswordChange,
-        label = { Text(stringResource(R.string.password)) },
-        visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.primary,
-            unfocusedTextColor = MaterialTheme.colorScheme.primary
+        SettingsOutlinedTextField(
+            value = currentPassword,
+            onValueChange = onCurrentPasswordChange,
+            label = stringResource(R.string.old_password),
+            visualTransformation = PasswordVisualTransformation()
         )
-    )
-    OutlinedTextField(
-        value = confirmPassword,
-        onValueChange = onConfirmPasswordChange,
-        label = { Text(stringResource(R.string.password_confirm)) },
-        visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.primary,
-            unfocusedTextColor = MaterialTheme.colorScheme.primary
+        SettingsOutlinedTextField(
+            value = newPassword,
+            onValueChange = onNewPasswordChange,
+            label = stringResource(R.string.password),
+            visualTransformation = PasswordVisualTransformation()
         )
-    )
-    Button(
-        onClick = onChangeClick,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.tertiary,
-            containerColor = MaterialTheme.colorScheme.onTertiary
+        SettingsOutlinedTextField(
+            value = confirmPassword,
+            onValueChange = onConfirmPasswordChange,
+            label = stringResource(R.string.password_confirm),
+            visualTransformation = PasswordVisualTransformation()
         )
-    ) {
-        Text(stringResource(R.string.change_password))
+        Button(
+            onClick = onChangeClick,
+            colors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.onTertiary
+            )
+        ) {
+            Text(stringResource(R.string.change_password))
+        }
     }
 }

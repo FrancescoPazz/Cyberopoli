@@ -1,15 +1,15 @@
 package com.unibo.cyberopoli.ui.screens.settings.composables
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +25,11 @@ fun ThemeSection(
     currentTheme: Theme,
     onThemeSelected: (Theme) -> Unit
 ) {
-    Text(text = stringResource(R.string.theme),
-        fontWeight = FontWeight.Bold,)
+    Text(
+        text = stringResource(R.string.theme),
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary
+    )
     Theme.entries.forEach { theme ->
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -45,7 +48,7 @@ fun ThemeSection(
                 selected = theme == currentTheme,
                 onClick = null,
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = MaterialTheme.colorScheme.tertiary
+                    selectedColor = MaterialTheme.colorScheme.tertiary,
                 )
             )
             Text(
@@ -54,7 +57,8 @@ fun ThemeSection(
                     Theme.Dark -> stringResource(R.string.dark)
                     Theme.System -> stringResource(R.string.system)
                 },
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 16.dp),
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

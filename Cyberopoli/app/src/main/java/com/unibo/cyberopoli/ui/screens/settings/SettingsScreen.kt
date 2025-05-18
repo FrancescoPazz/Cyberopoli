@@ -3,17 +3,21 @@ package com.unibo.cyberopoli.ui.screens.settings
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -29,7 +33,8 @@ import com.unibo.cyberopoli.ui.screens.settings.composables.ThemeSection
 
 @Composable
 fun SettingScreen(
-    navController: NavController, settingsParams: SettingsParams
+    navController: NavController,
+    settingsParams: SettingsParams
 ) {
     val context = LocalContext.current
     var notificationsEnabled by remember { mutableStateOf(true) }
@@ -37,11 +42,15 @@ fun SettingScreen(
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    Scaffold(topBar = { TopBar(navController) }, bottomBar = {
-        if (settingsParams.authState.value == AuthState.Authenticated) {
-            BottomBar(navController)
-        }
-    }) { paddingValues ->
+    Scaffold(
+        topBar = { TopBar(navController) },
+        bottomBar = {
+            if (settingsParams.authState.value == AuthState.Authenticated) {
+                BottomBar(navController)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -50,18 +59,23 @@ fun SettingScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            ThemeSection(currentTheme = settingsParams.themeState.theme,
-                onThemeSelected = { settingsParams.changeTheme(it) })
+            ThemeSection(
+                currentTheme = settingsParams.themeState.theme,
+                onThemeSelected = { settingsParams.changeTheme(it) }
+            )
 
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
-            NotificationSection(enabled = notificationsEnabled,
-                onToggle = { notificationsEnabled = it })
+            NotificationSection(
+                enabled = notificationsEnabled,
+                onToggle = { notificationsEnabled = it }
+            )
 
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             if (settingsParams.authState.value == AuthState.Authenticated) {
-                ChangePasswordSection(currentPassword = currentPassword,
+                ChangePasswordSection(
+                    currentPassword = currentPassword,
                     onCurrentPasswordChange = { currentPassword = it },
                     newPassword = newPassword,
                     onNewPasswordChange = { newPassword = it },
@@ -69,7 +83,8 @@ fun SettingScreen(
                     onConfirmPasswordChange = { confirmPassword = it },
                     onChangeClick = {
                         if (newPassword == confirmPassword) {
-                            settingsParams.updatePasswordWithOldPassword(currentPassword,
+                            settingsParams.updatePasswordWithOldPassword(
+                                currentPassword,
                                 newPassword,
                                 {
                                     Toast.makeText(
@@ -84,7 +99,8 @@ fun SettingScreen(
                                         context.getString(R.string.password_change_fail),
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                })
+                                }
+                            )
                         } else {
                             Toast.makeText(
                                 context,
@@ -92,9 +108,16 @@ fun SettingScreen(
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                    })
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
 
-                LogoutButton(onLogout = { settingsParams.logout() })
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LogoutButton(
+                    onLogout = { settingsParams.logout() },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         }
     }

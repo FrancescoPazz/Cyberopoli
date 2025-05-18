@@ -19,22 +19,28 @@ fun NotificationSection(
     enabled: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
-    Text(text = stringResource(R.string.notifications),
-        fontWeight = FontWeight.Bold,)
+    Text(
+        text = stringResource(R.string.notifications),
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary
+    )
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(R.string.enable_notifications))
+        Text(
+            text = stringResource(R.string.enable_notifications),
+            color = MaterialTheme.colorScheme.onSurface
+        )
         Switch(
             checked = enabled,
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.tertiary,
-                uncheckedThumbColor = MaterialTheme.colorScheme.onTertiary,
-                checkedTrackColor = MaterialTheme.colorScheme.onBackground,
-                uncheckedTrackColor = MaterialTheme.colorScheme.onBackground
+                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                checkedTrackColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f),
+                uncheckedTrackColor = MaterialTheme.colorScheme.outline,
             )
         )
     }
