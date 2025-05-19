@@ -22,20 +22,20 @@ val PERIMETER_PATH: List<Int> = buildList {
 
 val PERIMETER_CELLS: Map<Int, GameCell> = listOf(
     8 to GameCell("8", GameTypeCell.START, "Start", 50),
-    9 to GameCell("9", GameTypeCell.TIKTOK, "TikTok", 6),
+    9 to GameCell("9", GameTypeCell.TIKTOK, "TikTok", 12),
     10 to GameCell("10", GameTypeCell.VPN, "VPN"),
-    11 to GameCell("11", GameTypeCell.WHATSAPP, "WhatsApp", 5),
+    11 to GameCell("11", GameTypeCell.WHATSAPP, "WhatsApp", 15),
     12 to GameCell("12", GameTypeCell.HACKER, "Hacker"),
-    15 to GameCell("15", GameTypeCell.INSTAGRAM, "Instagram", 0),
-    19 to GameCell("19", GameTypeCell.TWITCH, "Twitch",  7),
+    15 to GameCell("15", GameTypeCell.INSTAGRAM, "Instagram", 11),
+    19 to GameCell("19", GameTypeCell.TWITCH, "Twitch",  17),
     26 to GameCell("26", GameTypeCell.CHANCE, "Chance"),
     22 to GameCell("22", GameTypeCell.CHANCE, "Chance"),
     29 to GameCell("29", GameTypeCell.YOUTUBE, "YouTube", 10),
-    33 to GameCell("33", GameTypeCell.TELEGRAM, "Telegram",  4),
+    33 to GameCell("33", GameTypeCell.TELEGRAM, "Telegram",  14),
     36 to GameCell("36", GameTypeCell.HACKER, "Hacker"),
-    37 to GameCell("37", GameTypeCell.FACEBOOK, "Facebook", 3),
+    37 to GameCell("37", GameTypeCell.FACEBOOK, "Facebook", 13),
     38 to GameCell("38", GameTypeCell.BLOCK, "Block"),
-    39 to GameCell("39", GameTypeCell.DISCORD, "Discord", 7),
+    39 to GameCell("39", GameTypeCell.DISCORD, "Discord", 17),
     40 to GameCell("40", GameTypeCell.BROKEN_ROUTER, "Broken Router"),
 ).toMap()
 

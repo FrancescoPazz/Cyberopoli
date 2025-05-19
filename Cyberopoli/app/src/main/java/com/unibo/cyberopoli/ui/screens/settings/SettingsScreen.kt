@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.settings
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
@@ -36,7 +34,6 @@ fun SettingScreen(
     navController: NavController,
     settingsParams: SettingsParams
 ) {
-    val context = LocalContext.current
     var notificationsEnabled by remember { mutableStateOf(true) }
 
     Scaffold(

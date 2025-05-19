@@ -79,6 +79,10 @@ class GameViewModel(
     val actionsPermitted: StateFlow<List<GameAction>> = _actionsPermitted.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            gameRepository.preloadQuestionsForUser()
+        }
+
         combine(
             game.asFlow(),
             player.asFlow()
