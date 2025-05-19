@@ -2,7 +2,9 @@ package com.unibo.cyberopoli.ui.screens.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
-import com.unibo.cyberopoli.ui.components.BottomBar // Assicurati che queste usino il tema
-import com.unibo.cyberopoli.ui.components.TopBar // Assicurati che queste usino il tema
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.auth.composables.AuthHeader
 import com.unibo.cyberopoli.ui.screens.auth.composables.GuestCard
 import com.unibo.cyberopoli.ui.screens.auth.composables.LoginCard
@@ -44,7 +45,7 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
         stringResource(R.string.guest)
     )
     val context = LocalContext.current
-    val authState = authParams.authState.observeAsState()
+    val authState = authParams.authState
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(authState.value) {
@@ -53,25 +54,15 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 .makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_LONG)
                 .show()
         }
-        // Puoi aggiungere qui una logica per navigare automaticamente
-        // se lo stato diventa AuthState.Authenticated
-        // if (authState.value is AuthState.Authenticated) {
-        //     navController.navigate(CyberopoliRoute.Home) {
-        //         popUpTo(navController.graph.startDestinationId) { inclusive = true }
-        //         launchSingleTop = true
-        //     }
-        // }
     }
     Scaffold(
         topBar = { TopBar(navController) },
-        // Mostra la BottomBar solo se autenticato
         bottomBar = {
             if (authState.value == AuthState.Authenticated) {
                 BottomBar(navController)
             }
         },
-        // Il colore dello Scaffold (sfondo della schermata)
-        containerColor = MaterialTheme.colorScheme.background // Usa background per lo sfondo principale
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -81,42 +72,37 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // AuthHeader userà i colori del tema internamente
             AuthHeader()
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             TabRow(selectedTabIndex = selectedTabIndex,
-                // Colore di sfondo della TabRow (trasparente va bene sullo sfondo)
                 containerColor = Color.Transparent,
-                // contentColor qui imposta il colore DEFAULT per gli item NON selezionati.
-                // Tuttavia, possiamo sovrascriverlo esplicitamente nei singoli Tab.
-                // Lo impostiamo su onSurfaceVariant per un colore non selezionato meno prominente.
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant, // *** MODIFICATO: Usa onSurfaceVariant ***
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 indicator = { tabPositions ->
                     SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        // Il colore dell'indicatore dovrebbe corrispondere al colore del tab selezionato.
-                        color = MaterialTheme.colorScheme.primary // *** MODIFICATO: Usa primary per l'indicatore ***
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }) {
                 tabs.forEachIndexed { index, title ->
                     Tab(selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        // Definisci esplicitamente i colori di testo per i tab selezionati/non selezionati
-                        selectedContentColor = MaterialTheme.colorScheme.primary, // *** AGGIUNTO: Usa primary per il testo selezionato ***
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant, // *** AGGIUNTO: Usa onSurfaceVariant per il testo non selezionato ***
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         text = { Text(title) }
                     )
                 }
             }
             when (selectedTabIndex) {
                 0 -> LoginCard(
-                    authParams.authState.observeAsState(),
+                    authParams.authState,
                     authParams.login,
                     authParams.loginGoogleUser,
                     authParams.resetPassword
                 )
                 1 -> SignUpCard(
-                    navController, authParams.authState.observeAsState(), authParams.signUp
+                    navController, authParams.authState, authParams.signUp
                 )
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }

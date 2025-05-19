@@ -64,13 +64,17 @@ fun GameStatItem(
                     modifier = Modifier.size(22.dp)
                 )
             }
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Column {
+
                 Text(
                     text = title,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
                 )
+
                 Text(
                     text = value,
                     style = MaterialTheme.typography.bodyLarge,

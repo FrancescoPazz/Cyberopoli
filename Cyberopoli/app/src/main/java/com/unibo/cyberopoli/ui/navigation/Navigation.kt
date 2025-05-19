@@ -112,7 +112,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         navController, AuthParams(
                             login = authViewModel::login,
                             signUp = authViewModel::signUp,
-                            authState = authViewModel.authState,
+                            authState = authViewModel.authState.observeAsState(),
                             loginGoogleUser = authViewModel::loginGoogle,
                             resetPassword = authViewModel::sendPasswordReset,
                             loginAnonymously = authViewModel::loginAnonymously

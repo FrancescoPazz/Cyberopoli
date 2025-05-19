@@ -35,6 +35,7 @@ fun LoginCard(
     googleLogin: (context: Context) -> Unit,
     resetPassword: (email: String) -> Unit
 ) {
+    val context = LocalContext.current
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     var isResetMode by remember { mutableStateOf(false) }
@@ -52,7 +53,9 @@ fun LoginCard(
                 imageVector = Icons.Default.Email,
                 singleLine = true,
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             AuthOutlinedTextField(
                 value = password,
                 placeholder = stringResource(R.string.password),
@@ -60,18 +63,20 @@ fun LoginCard(
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
             )
+
             AuthButton(
                 text = stringResource(R.string.login).uppercase(), onClick = {
                     login(email.value, password.value)
                 }, enabled = authState.value != AuthState.Loading
             )
+
             TextButton(
                 onClick = { isResetMode = true },
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
             ) {
                 Text("Forgot password?")
             }
-            val context = LocalContext.current
+
             GoogleSignInButton(
                 onClick = { googleLogin(context) },
             )
@@ -79,20 +84,26 @@ fun LoginCard(
             Text(
                 text = stringResource(R.string.reset_password_title),
             )
+
             Spacer(Modifier.height(16.dp))
+
             AuthOutlinedTextField(
                 value = email,
                 placeholder = stringResource(R.string.email),
                 imageVector = Icons.Default.Email,
                 singleLine = true
             )
+
             Spacer(Modifier.height(16.dp))
+
             AuthButton(
                 text = stringResource(R.string.send_reset_email), onClick = {
                     resetPassword(email.value.trim())
                 }, enabled = email.value.isNotBlank() && authState.value != AuthState.Loading
             )
+
             Spacer(Modifier.height(8.dp))
+
             TextButton(
                 onClick = { isResetMode = false }, colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.tertiary
