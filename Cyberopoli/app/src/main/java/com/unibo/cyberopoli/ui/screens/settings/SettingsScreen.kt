@@ -38,9 +38,6 @@ fun SettingScreen(
 ) {
     val context = LocalContext.current
     var notificationsEnabled by remember { mutableStateOf(true) }
-    var currentPassword by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = { TopBar(navController) },
@@ -75,44 +72,11 @@ fun SettingScreen(
 
             if (settingsParams.authState.value == AuthState.Authenticated) {
                 ChangePasswordSection(
-                    currentPassword = currentPassword,
-                    onCurrentPasswordChange = { currentPassword = it },
-                    newPassword = newPassword,
-                    onNewPasswordChange = { newPassword = it },
-                    confirmPassword = confirmPassword,
-                    onConfirmPasswordChange = { confirmPassword = it },
-                    onChangeClick = {
-                        if (newPassword == confirmPassword) {
-                            settingsParams.updatePasswordWithOldPassword(
-                                currentPassword,
-                                newPassword,
-                                {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.password_change_success),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                },
-                                {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.password_change_fail),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            )
-                        } else {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.password_not_match),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    },
+                    updatePasswordWithOldPassword = settingsParams.updatePasswordWithOldPassword,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 LogoutButton(
                     onLogout = { settingsParams.logout() },

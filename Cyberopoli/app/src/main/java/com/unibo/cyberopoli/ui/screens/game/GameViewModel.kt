@@ -330,7 +330,7 @@ class GameViewModel(
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
                 gameRepository.hackerStatements.postValue(updatedQuestions)
                 _dialog.value = question
-                updatePlayerPoints(question.cost)
+                updatePlayerPoints(question.points)
             }
 
             GameTypeCell.BLOCK -> {
@@ -485,7 +485,7 @@ class GameViewModel(
                 }
 
                 is GameDialogData.HackerQuestion -> {
-                    updatePlayerPoints(-dlg.cost)
+                    updatePlayerPoints(-dlg.points)
                     _dialog.value = null
                 }
 

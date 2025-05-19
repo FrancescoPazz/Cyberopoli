@@ -45,7 +45,7 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
                 cameraProviderFuture.get()
             } catch (e: Exception) {
                 Log.e("QRCodeScanner", "Error getting camera provider", e)
-                return@addListener
+                throw e
             }
 
             val previewUseCase = Preview.Builder().build().also {
@@ -70,6 +70,7 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
                 )
             } catch (e: Exception) {
                 Log.e("QRCodeScanner", "Error bind camera", e)
+                throw e
             }
         }, executor)
 

@@ -16,7 +16,7 @@ sealed class GameDialogData {
     data class HackerQuestion(
         val title: String,
         val content: String,
-        val cost: Int
+        val points: Int
     ) : GameDialogData()
 
     @Serializable

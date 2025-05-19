@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
+import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 
 @Composable
 fun LoginCard(
@@ -47,7 +48,7 @@ fun LoginCard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!isResetMode) {
-            AuthOutlinedTextField(
+            CyberOutlinedTextField(
                 value = email,
                 placeholder = stringResource(R.string.email),
                 imageVector = Icons.Default.Email,
@@ -56,7 +57,7 @@ fun LoginCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            AuthOutlinedTextField(
+            CyberOutlinedTextField(
                 value = password,
                 placeholder = stringResource(R.string.password),
                 imageVector = Icons.Default.Lock,
@@ -87,7 +88,7 @@ fun LoginCard(
 
             Spacer(Modifier.height(16.dp))
 
-            AuthOutlinedTextField(
+            CyberOutlinedTextField(
                 value = email,
                 placeholder = stringResource(R.string.email),
                 imageVector = Icons.Default.Email,

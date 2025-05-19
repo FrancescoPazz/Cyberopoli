@@ -37,7 +37,6 @@ val CyberDark_OutlineVariant = Color(0xFF303030)
 val CyberDark_Scrim = Color(0x80000000)
 
 val CyberDark_InverseSurface = Color(0xFFF5F5F5)
-val CyberDark_InverseOnSurface = Color(0xFF0A0A0A)
 val CyberDark_InversePrimary = Color(0xFF008000)
 
 val CyberDark_SurfaceDim = Color(0xFF0A0A0A)

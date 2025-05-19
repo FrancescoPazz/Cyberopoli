@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.data.models.auth.AuthState
+import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 
 @Composable
 fun SignUpCard(
@@ -47,7 +50,7 @@ fun SignUpCard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = name,
             placeholder = stringResource(R.string.name),
             imageVector = Icons.Default.Person,
@@ -56,25 +59,25 @@ fun SignUpCard(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = surname,
             placeholder = stringResource(R.string.last_name),
-            imageVector = Icons.Default.Person,
+            imageVector = Icons.Default.AccountCircle,
             singleLine = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = username,
             placeholder = stringResource(R.string.username),
-            imageVector = Icons.Default.Person,
+            imageVector = Icons.Default.Face,
             singleLine = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = email,
             placeholder = stringResource(R.string.email),
             imageVector = Icons.Default.Email,
@@ -83,7 +86,7 @@ fun SignUpCard(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = password,
             placeholder = stringResource(R.string.password),
             imageVector = Icons.Default.Lock,
@@ -93,7 +96,7 @@ fun SignUpCard(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = confirmPassword,
             placeholder = stringResource(R.string.password_confirm),
             imageVector = Icons.Default.Lock,

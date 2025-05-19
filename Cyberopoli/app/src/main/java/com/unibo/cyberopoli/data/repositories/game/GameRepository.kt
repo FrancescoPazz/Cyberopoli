@@ -100,7 +100,7 @@ class GameRepository(
             GameDialogData.HackerQuestion(
                 title = it.title,
                 content = it.content,
-                cost = it.cost
+                points = it.points
             )
         }
     }

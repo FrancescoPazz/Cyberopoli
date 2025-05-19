@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 
 @Composable
@@ -28,7 +29,7 @@ fun GuestCard(
             .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AuthOutlinedTextField(
+        CyberOutlinedTextField(
             value = guestName,
             placeholder = stringResource(R.string.name),
             imageVector = Icons.Default.Person,

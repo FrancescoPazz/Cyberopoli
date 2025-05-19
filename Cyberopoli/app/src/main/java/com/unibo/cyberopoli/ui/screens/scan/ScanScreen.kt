@@ -38,7 +38,7 @@ import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.data.models.auth.AuthState
-import com.unibo.cyberopoli.ui.screens.auth.composables.AuthOutlinedTextField
+import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 import com.unibo.cyberopoli.ui.screens.auth.composables.Text3D
 import com.unibo.cyberopoli.ui.screens.scan.composables.QRCodeScanner
 import com.unibo.cyberopoli.util.PermissionHandler
@@ -114,7 +114,9 @@ fun ScanScreen(
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.bodyLarge
                         )
+
                         Spacer(Modifier.height(16.dp))
+
                         Button(
                             onClick = { launcher.launch(Manifest.permission.CAMERA) },
                         ) {
@@ -126,13 +128,15 @@ fun ScanScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            AuthOutlinedTextField(
+            CyberOutlinedTextField(
                 value = manualCode,
                 placeholder = stringResource(R.string.enter_code),
                 imageVector = Icons.Default.QrCode,
                 singleLine = true,
             )
+
             Spacer(Modifier.height(16.dp))
+
             Button(
                 enabled = manualCode.value.length >= 4,
                 onClick = {
@@ -142,7 +146,6 @@ fun ScanScreen(
             ) {
                 Text(stringResource(R.string.enter))
             }
-            Spacer(Modifier.height(16.dp))
         }
     }
 }
