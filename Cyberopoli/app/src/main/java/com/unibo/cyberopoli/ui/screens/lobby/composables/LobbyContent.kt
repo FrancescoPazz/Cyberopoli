@@ -31,17 +31,9 @@ fun LobbyContent(
     onExitClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val gradientBackground = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.background,
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
-    )
-
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(gradientBackground),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

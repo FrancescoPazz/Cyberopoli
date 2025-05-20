@@ -51,7 +51,7 @@ fun GameScreen(
     dialogData?.let { data ->
         val (title, message, options) = when (data) {
             is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
-            is GameDialogData.HackerQuestion -> Triple(data.title, data.content, listOf("OK"))
+            is GameDialogData.HackerStatement -> Triple(data.title, data.content, listOf("OK"))
             is GameDialogData.BlockChoice -> Triple(
                 data.title,
                 "",

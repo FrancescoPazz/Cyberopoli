@@ -121,7 +121,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ScanScreen(
                         navController, ScanParams(
                             setScannedValue = scanViewModel::setScannedValue,
-                            authState = authState.value ?: AuthState.Unauthenticated
+                            authState = authState
                         )
                     )
                 }

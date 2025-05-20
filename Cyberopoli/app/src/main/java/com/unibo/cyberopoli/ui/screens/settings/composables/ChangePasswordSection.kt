@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -49,6 +50,8 @@ fun ChangePasswordSection(
             visualTransformation = PasswordVisualTransformation()
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         CyberOutlinedTextField(
             value = newPassword,
             imageVector = Icons.Default.Lock,
@@ -56,12 +59,16 @@ fun ChangePasswordSection(
             visualTransformation = PasswordVisualTransformation()
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         CyberOutlinedTextField(
             value = confirmPassword,
             imageVector = Icons.Default.Lock,
             placeholder = stringResource(R.string.password_confirm),
             visualTransformation = PasswordVisualTransformation()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
@@ -95,7 +102,8 @@ fun ChangePasswordSection(
             colors = ButtonDefaults.buttonColors(
                 contentColor = MaterialTheme.colorScheme.tertiary,
                 containerColor = MaterialTheme.colorScheme.onTertiary
-            )
+            ),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(stringResource(R.string.change_password))
         }

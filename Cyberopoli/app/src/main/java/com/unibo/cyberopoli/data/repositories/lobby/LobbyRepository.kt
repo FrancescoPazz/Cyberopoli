@@ -153,6 +153,8 @@ class LobbyRepository(
             if (isHost) {
                 supabase.from(LOBBY_TABLE).delete { filter { eq("id", lobbyId) } }
             }
+            currentLobbyLiveData.value = null
+            currentMembersLiveData.value = emptyList()
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "leaveLobby: ${e.message}")
         }

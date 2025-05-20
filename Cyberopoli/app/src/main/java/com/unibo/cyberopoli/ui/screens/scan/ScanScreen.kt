@@ -65,7 +65,7 @@ fun ScanScreen(
     Scaffold(
         topBar = { TopBar(navController) },
         bottomBar = {
-            if (scanParams.authState === AuthState.Authenticated) {
+            if (scanParams.authState.value === AuthState.Authenticated) {
                 BottomBar(navController)
             }
         },

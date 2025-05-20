@@ -18,7 +18,6 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
-import io.github.jan.supabase.postgrest.rpc
 import kotlinx.serialization.json.Json
 import java.util.UUID
 import com.unibo.cyberopoli.data.repositories.game.IGameRepository as DomainGameRepository
@@ -35,7 +34,7 @@ class GameRepository(
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
     val chanceQuestions = MutableLiveData<List<GameDialogData.ChanceQuestion>>(ChanceQuestions)
-    val hackerStatements = MutableLiveData<List<GameDialogData.HackerQuestion>>(HackerStatements)
+    val hackerStatements = MutableLiveData<List<GameDialogData.HackerStatement>>(HackerStatements)
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
@@ -47,7 +46,7 @@ class GameRepository(
     }
 
     private suspend fun fetchQuestions(
-    ): List<GameDialogData.HackerQuestion> {
+    ): List<GameDialogData.HackerStatement> {
         val topApps = usageStatsHelper.getTopUsedApps()
             .joinToString("; ") { "${it.first}:${it.second} h" }
         val totalSec = usageStatsHelper.getWeeklyUsageTime()
@@ -90,7 +89,7 @@ class GameRepository(
             .removePrefix("```json").removeSuffix("```")
             .trim()
 
-        val payloads: List<GameDialogData.HackerQuestion> = try {
+        val payloads: List<GameDialogData.HackerStatement> = try {
             jsonParser.decodeFromString(cleaned)
         } catch (e: Exception) {
             Log.e("TEST", "Failed to decode questions JSON: ${e.message}")
@@ -100,7 +99,7 @@ class GameRepository(
         Log.d("TEST", "Decoded $payloads")
 
         return payloads.map {
-            GameDialogData.HackerQuestion(
+            GameDialogData.HackerStatement(
                 title = it.title,
                 content = it.content,
                 points = it.points

@@ -488,7 +488,7 @@ class GameViewModel(
                     }
                 }
 
-                is GameDialogData.HackerQuestion -> {
+                is GameDialogData.HackerStatement -> {
                     updatePlayerPoints(-dlg.points)
                     _dialog.value = null
                 }

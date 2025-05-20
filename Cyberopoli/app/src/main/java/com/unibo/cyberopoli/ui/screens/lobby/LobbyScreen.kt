@@ -39,7 +39,7 @@ fun LobbyScreen(
     var hasJoined by remember { mutableStateOf(false) }
     var suppressLeaveOnStop by remember { mutableStateOf(false) }
 
-    DisposableEffect(lifecycleOwner) {
+    /*DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_STOP && !suppressLeaveOnStop) {
                 Log.d("LobbyScreen", "ON_STOP: leaving lobby")
@@ -51,7 +51,7 @@ fun LobbyScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
-    }
+    }*/
 
     LaunchedEffect(params.lobbyId) {
         if (!hasJoined && params.lobbyId.isNotBlank()) {
@@ -73,7 +73,7 @@ fun LobbyScreen(
             }
         },
         bottomBar = {
-            if (params.isGuest) BottomBar(navController)
+            if (!params.isGuest) BottomBar(navController)
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
