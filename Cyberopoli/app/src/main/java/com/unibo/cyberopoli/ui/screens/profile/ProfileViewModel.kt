@@ -26,6 +26,28 @@ class ProfileViewModel(
         }
     }
 
+    fun updateUserInfo(newName: String?, newSurname: String?, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateUserInfo(newName, newSurname)
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Error updating user info")
+            }
+        }
+    }
+
+    fun updatePasswordWithOldPassword(
+        oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
+    ) = viewModelScope.launch {
+        try {
+            userRepository.changePassword(oldPassword, newPassword)
+            onSuccess()
+        } catch (e: Exception) {
+            onError(e.message ?: "Error changing password")
+        }
+    }
+
     fun getGameHistory() {
         viewModelScope.launch {
             gameRepository.getGamesHistory()

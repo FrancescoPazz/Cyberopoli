@@ -23,15 +23,4 @@ class SettingsViewModel(
     fun changeTheme(newTheme: Theme) = viewModelScope.launch {
         settingsRepository.setTheme(newTheme)
     }
-
-    fun updatePasswordWithOldPassword(
-        oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
-    ) = viewModelScope.launch {
-        try {
-            settingsRepository.changePassword(oldPassword, newPassword)
-            onSuccess()
-        } catch (e: Exception) {
-            onError(e.message ?: "Error changing password")
-        }
-    }
 }

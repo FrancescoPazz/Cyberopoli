@@ -48,18 +48,21 @@ fun ChangePasswordSection(
             placeholder = stringResource(R.string.old_password),
             visualTransformation = PasswordVisualTransformation()
         )
+
         CyberOutlinedTextField(
             value = newPassword,
             imageVector = Icons.Default.Lock,
             placeholder = stringResource(R.string.password),
             visualTransformation = PasswordVisualTransformation()
         )
+
         CyberOutlinedTextField(
             value = confirmPassword,
             imageVector = Icons.Default.Lock,
             placeholder = stringResource(R.string.password_confirm),
             visualTransformation = PasswordVisualTransformation()
         )
+
         Button(
             onClick = {
                 if (newPassword == confirmPassword) {
@@ -69,14 +72,14 @@ fun ChangePasswordSection(
                         {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.password_change_success),
+                                context.getString(R.string.change_success),
                                 Toast.LENGTH_SHORT
                             ).show()
                         },
                         {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.password_change_fail),
+                                context.getString(R.string.change_fail),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

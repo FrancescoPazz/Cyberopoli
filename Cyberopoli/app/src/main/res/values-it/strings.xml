@@ -32,10 +32,14 @@
     <string name="user_unauthenticated">Utente non autenticato</string>
 
     <!-- Reimposta/Cambio password -->
+    <string name="save_changes">Salva Modifiche</string>
     <string name="change_password">Cambia Password</string>
+    <string name="hide">Nascondi</string>
     <string name="old_password">Vecchia Password</string>
-    <string name="password_change_success">Cambio password avvenuto con successo</string>
-    <string name="password_change_fail">Cambio password fallito</string>
+    <string name="change_success">Modifica avvenuta con successo</string>
+    <string name="change_fail">Modifica fallita</string>
+    <string name="change_password_success">Cambio password avvenuto con successo</string>"
+    <string name="change_password_failed">Cambio password fallito</string>
     <string name="reset_password_title">Reimposta Password</string>
     <string name="send_reset_email">Invia email</string>
     <string name="back_to_login">Torna al login</string>
@@ -86,6 +90,9 @@
     <string name="filters">Filtri</string>
     <string name="my_rank">La mia posizione</string>
     <string name="no_games_played">Nessuna partita giocata</string>
+    <string name="edit_profile">Modifica Profilo</string>
+    <string name="change_profile_success">Modifica profilo avvenuta con successo</string>
+    <string name="change_profile_failed">Modifica profilo fallita</string>
 
     <!-- ================================= -->
     <!-- Lobby -->

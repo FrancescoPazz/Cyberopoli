@@ -135,7 +135,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             logout = authViewModel::logout,
                             authState = authViewModel.authState,
                             changeTheme = settingsViewModel::changeTheme,
-                            updatePasswordWithOldPassword = settingsViewModel::updatePasswordWithOldPassword
                         )
                     )
                 }
@@ -143,6 +142,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     HomeScreen(
                         navController, HomeParams(
                             user = profileViewModel.user.observeAsState(),
+                            gameHistories = profileViewModel.gameHistories.observeAsState(),
                         )
                     )
                 }
@@ -151,7 +151,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         navController, ProfileParams(
                             user = profileViewModel.user.observeAsState(),
                             changeAvatar = profileViewModel::changeAvatar,
-                            gameHistories = profileViewModel.gameHistories.observeAsState(),
+                            updateUserInfo = profileViewModel::updateUserInfo,
+                            updatePasswordWithOldPassword = profileViewModel::updatePasswordWithOldPassword
                         )
                     )
                 }

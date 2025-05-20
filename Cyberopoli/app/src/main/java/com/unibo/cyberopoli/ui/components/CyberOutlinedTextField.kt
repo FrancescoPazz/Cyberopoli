@@ -28,6 +28,7 @@ fun CyberOutlinedTextField(
     OutlinedTextField(
         value = value.value,
         onValueChange = { value.value = it },
+        label = { Text(placeholder) },
         placeholder = { Text(placeholder) },
         leadingIcon = {
             imageVector?.let {
@@ -40,29 +41,8 @@ fun CyberOutlinedTextField(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .border(2.dp, MaterialTheme.colorScheme.onSecondary, RoundedCornerShape(20.dp))
-            .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.secondary),
+            .clip(RoundedCornerShape(20.dp)),
         singleLine = singleLine,
         visualTransformation = visualTransformation,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedTextColor = MaterialTheme.colorScheme.outline,
-            focusedBorderColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-            errorBorderColor = MaterialTheme.colorScheme.error,
-            cursorColor = MaterialTheme.colorScheme.tertiary,
-            errorCursorColor = MaterialTheme.colorScheme.error,
-            focusedLabelColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-            errorLabelColor = MaterialTheme.colorScheme.error,
-            focusedLeadingIconColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.outline,
-            errorLeadingIconColor = MaterialTheme.colorScheme.error,
-            disabledTextColor = MaterialTheme.colorScheme.outline,
-            disabledBorderColor = MaterialTheme.colorScheme.outlineVariant,
-            disabledLeadingIconColor = MaterialTheme.colorScheme.outline,
-            disabledPlaceholderColor = MaterialTheme.colorScheme.outline
-        )
     )
 }

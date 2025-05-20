@@ -20,6 +20,7 @@ import com.unibo.cyberopoli.ui.screens.home.composables.GameStatisticsSection
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayActionsCard
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayerWelcomeCard
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
+import com.unibo.cyberopoli.ui.screens.profile.composables.MatchHistorySection
 
 
 @Composable
@@ -27,6 +28,7 @@ fun HomeScreen(
     navController: NavController, homeParams: HomeParams
 ) {
     val currentUserState = homeParams.user
+    val gameHistories = homeParams.gameHistories.value
 
     Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
@@ -50,9 +52,9 @@ fun HomeScreen(
                 PlayActionsCard(onNewGameClick = { /* TODO: Naviga a Nuova Partita */ },
                             onJoinGameClick = { /* TODO: Naviga a Unisciti Partita */ })
 
-                currentUserState.value?.let { user ->
-                    GameStatisticsSection(user = user)
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+
+                MatchHistorySection(gameHistory = gameHistories)
             }
         }
     }

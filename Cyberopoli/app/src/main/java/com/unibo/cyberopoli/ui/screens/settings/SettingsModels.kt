@@ -8,7 +8,6 @@ import com.unibo.cyberopoli.data.models.theme.Theme
 data class SettingsParams(
     val changeTheme: (Theme) -> Unit,
     val themeState: ThemeState,
-    val updatePasswordWithOldPassword: (oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit,
     val authState: LiveData<AuthState>,
     val logout: () -> Unit,
 )

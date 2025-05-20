@@ -140,9 +140,10 @@ class AuthRepository(
             val info = session.user!!
             val fullName = info.userMetadata?.get("full_name").toString().trim('"')
             val (fn, ln) = fullName.split(" ", limit = 2).let { it[0] to it.getOrElse(1) { "" } }
+            val username = info.email!!.split("@")[0]
 
             val user = User(
-                id = info.id, name = fn, surname = ln, username = fullName, email = info.email
+                id = info.id, name = fn, surname = ln, username = username, email = info.email
             )
             supabase.from("users").upsert(user)
             emit(AuthResponse.Success)

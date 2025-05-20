@@ -7,5 +7,6 @@ import com.unibo.cyberopoli.data.models.game.GameHistory
 data class ProfileParams(
     val user: State<User?>,
     val changeAvatar: () -> Unit,
-    val gameHistories: State<List<GameHistory>?>,
+    val updateUserInfo: (String?, String?, () -> Unit, (String) -> Unit) -> Unit,
+    val updatePasswordWithOldPassword: (oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit,
 )

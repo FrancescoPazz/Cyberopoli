@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.auth.User
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.unibo.cyberopoli.data.repositories.user.IUserInterface as DomainUserRepository
+import com.unibo.cyberopoli.data.repositories.user.IUserRepository as DomainUserRepository
 
 class UserRepository(
     private val supabase: SupabaseClient
@@ -51,10 +52,39 @@ class UserRepository(
                     }
                 }
 
-                loadUserData()
+                currentUserLiveData.postValue(currentUserLiveData.value?.copy(avatarUrl = newAvatar))
             } catch (e: Exception) {
                 Log.e("UserRepository", "Error updating avatar", e)
             }
+        }
+    }
+
+    override suspend fun updateUserInfo(newName: String?, newSurname: String?) {
+        val userId = supabase.auth.currentUserOrNull()?.id ?: return
+        try {
+            val user = supabase.from("users").update(mapOf("name" to newName, "surname" to newSurname)) {
+                filter {
+                    eq("id", userId)
+                }
+                select()
+            }.decodeSingle<User>()
+
+            currentUserLiveData.postValue(user)
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error loading user data", e)
+        }
+
+        loadUserData()
+    }
+
+    override suspend fun changePassword(oldPassword: String, newPassword: String) {
+        val email = supabase.auth.currentUserOrNull()?.email ?: return
+        supabase.auth.signInWith(Email) {
+            this.email = email
+            this.password = oldPassword
+        }
+        supabase.auth.updateUser {
+            password = newPassword
         }
     }
 

@@ -67,13 +67,6 @@ fun SettingScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             if (settingsParams.authState.value == AuthState.Authenticated) {
-                ChangePasswordSection(
-                    updatePasswordWithOldPassword = settingsParams.updatePasswordWithOldPassword,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 LogoutButton(
                     onLogout = { settingsParams.logout() },
                     modifier = Modifier.align(Alignment.CenterHorizontally)

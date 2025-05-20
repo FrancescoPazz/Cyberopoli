@@ -32,10 +32,14 @@
     <string name="user_unauthenticated">User Unauthenticated</string>
 
     <!-- Password Reset & Change -->
+    <string name="save_changes">Save Changes</string>
     <string name="change_password">Change Password</string>
+    <string name="hide">Hide</string>
     <string name="old_password">Old Password</string>
-    <string name="password_change_success">Change password successful</string>
-    <string name="password_change_fail">Change password failed</string>
+    <string name="change_success">Successful change</string>
+    <string name="change_fail">Change failed</string>
+    <string name="change_password_success">Password changed successfully</string>
+    <string name="change_password_failed">Change password failed</string>
     <string name="reset_password_title">Reset Password</string>
     <string name="send_reset_email">Send email</string>
     <string name="back_to_login">Back to login</string>
@@ -88,6 +92,9 @@
     <string name="win">Win</string>
     <string name="loss">Loss</string>
     <string name="no_games_played">No games played</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_profile_success">Change profile successful</string>
+    <string name="change_profile_failed">Change profile failed</string>
 
     <!-- ================================= -->
     <!-- Lobby -->
