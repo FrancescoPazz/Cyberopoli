@@ -16,7 +16,7 @@ import com.unibo.cyberopoli.R
 
 @Composable
 fun ProfileStatsSection(
-    totalGames: Int, totalWins: Int, totalMedals: Int
+    totalGames: Int, totalWins: Int
 ) {
     Card(
         modifier = Modifier
@@ -37,7 +37,6 @@ fun ProfileStatsSection(
         ) {
             StatItem(label = stringResource(R.string.games_played), value = totalGames.toString())
             StatItem(label = stringResource(R.string.wins), value = totalWins.toString())
-            StatItem(label = stringResource(R.string.badges), value = totalMedals.toString())
         }
     }
 }

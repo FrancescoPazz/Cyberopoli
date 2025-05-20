@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.profile.composables.MatchHistorySection
@@ -31,20 +30,7 @@ fun ProfileScreen(
     navController: NavHostController, profileParams: ProfileParams
 ) {
     val user = profileParams.user.value
-    val gameHistories = listOf(
-        GameHistory(
-            date = "15 Feb 2024",
-            title = "Torneo Settimanale",
-            result = stringResource(R.string.win),
-            points = "+25 punti"
-        ), GameHistory(
-            date = "14 Feb 2024",
-            title = "Partita Amichevole",
-            result = stringResource(R.string.loss),
-            points = "-10 punti"
-        )
-    )
-
+    val gameHistories = profileParams.gameHistories.value
 
     Scaffold(topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
@@ -75,7 +61,6 @@ fun ProfileScreen(
                     ProfileStatsSection(
                         totalGames = user.totalGames,
                         totalWins = user.totalWins,
-                        totalMedals = user.totalMedals
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     MatchHistorySection(gameHistory = gameHistories)

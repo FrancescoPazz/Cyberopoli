@@ -38,31 +38,24 @@ fun MatchHistoryItem(match: GameHistory) {
         ) {
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = match.title,
+                text = "${R.string.games} - ${match.dateCreated}",
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                text = match.date,
-                style = MaterialTheme.typography.labelSmall
+                color = MaterialTheme.colorScheme.secondary,
+                text = "${R.string.internet_points}: ${match.score}",
+                fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val resultColor = when (match.result) {
-                    stringResource(R.string.win) -> MaterialTheme.colorScheme.primary
-                    stringResource(R.string.loss) -> MaterialTheme.colorScheme.error
-                    else -> MaterialTheme.colorScheme.onSurface
+                val resultColor = when (match.winner) {
+                    true -> MaterialTheme.colorScheme.primary
+                    false -> MaterialTheme.colorScheme.error
                 }
                 Text(
                     color = resultColor,
-                    text = "${stringResource(R.string.result)}: ${match.result}",
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    color = MaterialTheme.colorScheme.secondary,
-                    text = match.points,
+                    text = "${stringResource(R.string.result)}: ${if (match.winner) stringResource(R.string.win) else stringResource(R.string.loss)}",
                     fontWeight = FontWeight.SemiBold
                 )
             }

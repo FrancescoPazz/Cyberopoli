@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.data.repositories.game
 
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameEvent
+import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
@@ -23,4 +24,6 @@ interface IGameRepository {
     suspend fun addGameEvent(event: GameEvent): GameEvent?
 
     suspend fun getGameEvents(): List<GameEvent>
+
+    suspend fun getGamesHistory(): List<GameHistory>
 }

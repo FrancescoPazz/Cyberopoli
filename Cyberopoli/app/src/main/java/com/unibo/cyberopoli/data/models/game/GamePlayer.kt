@@ -19,6 +19,8 @@ data class GamePlayerRaw(
 
     @SerialName("round") val round: Int,
 
+    @SerialName("winner") val winner: Boolean,
+
     @SerialName("users") val user: User
 )
 
@@ -35,6 +37,8 @@ data class GamePlayer(
     @SerialName("cell_position") val cellPosition: Int,
 
     @SerialName("round") val round: Int,
+
+    @SerialName("winner") val winner: Boolean,
 
     @Transient val user: User? = null
 )

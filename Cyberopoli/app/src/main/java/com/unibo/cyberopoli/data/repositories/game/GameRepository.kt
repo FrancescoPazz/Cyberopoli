@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
+import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GamePlayerRaw
 import com.unibo.cyberopoli.data.models.game.questions.ChanceQuestions
@@ -15,7 +16,9 @@ import com.unibo.cyberopoli.util.UsageStatsHelper
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.rpc
 import kotlinx.serialization.json.Json
 import java.util.UUID
 import com.unibo.cyberopoli.data.repositories.game.IGameRepository as DomainGameRepository
@@ -129,7 +132,8 @@ class GameRepository(
                 userId = userId,
                 score = 50,
                 cellPosition = 8,
-                round = 1
+                round = 1,
+                winner = false
             )
             val raw: GamePlayerRaw = supabase.from(GAME_PLAYERS_TABLE).insert(toInsert) {
                 select(
@@ -154,6 +158,7 @@ class GameRepository(
                 score = raw.score,
                 cellPosition = raw.cellPosition,
                 round = raw.round,
+                winner = raw.winner,
                 user = raw.user
             )
             currentPlayerLiveData.value = created
@@ -263,6 +268,7 @@ class GameRepository(
                     score = r.score,
                     cellPosition = r.cellPosition,
                     round = r.round,
+                    winner = r.winner,
                     user = u
                 )
             }
@@ -341,6 +347,17 @@ class GameRepository(
                 }
             }.decodeList()
             return raw
+        } catch (e: Exception) {
+            return emptyList()
+        }
+    }
+
+    override suspend fun getGamesHistory(): List<GameHistory> {
+        try {
+            val historyItems: List<GameHistory> = supabase.postgrest.rpc(
+                function = "get_games_history"
+            ).decodeList()
+            return historyItems
         } catch (e: Exception) {
             return emptyList()
         }

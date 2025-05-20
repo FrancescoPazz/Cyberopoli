@@ -150,7 +150,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ProfileScreen(
                         navController, ProfileParams(
                             user = profileViewModel.user.observeAsState(),
-                            changeAvatar = profileViewModel::changeAvatar
+                            changeAvatar = profileViewModel::changeAvatar,
+                            gameHistories = profileViewModel.gameHistories.observeAsState(),
                         )
                     )
                 }

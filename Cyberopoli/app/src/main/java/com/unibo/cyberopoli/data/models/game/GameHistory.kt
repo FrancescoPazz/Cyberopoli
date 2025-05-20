@@ -1,8 +1,14 @@
 package com.unibo.cyberopoli.data.models.game
 
+import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class GameHistory(
-    val date: String,
-    val title: String,
-    val result: String,
-    val points: String
+    @SerialName("created_at") val dateCreated: Instant,
+
+    @SerialName("score") val score: Int,
+
+    @SerialName("winner") val winner: Boolean,
 )

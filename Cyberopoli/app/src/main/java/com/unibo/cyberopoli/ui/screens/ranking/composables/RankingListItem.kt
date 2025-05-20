@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.ranking.composables
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun RankingListItem(user: User, rank: Int, isCurrentUser: Boolean = false) {
     val context = LocalContext.current

@@ -87,6 +87,7 @@
     <string name="my_rank">My rank</string>
     <string name="win">Win</string>
     <string name="loss">Loss</string>
+    <string name="no_games_played">No games played</string>
 
     <!-- ================================= -->
     <!-- Lobby -->

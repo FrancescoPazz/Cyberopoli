@@ -15,7 +15,7 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameHistory
 
 @Composable
-fun MatchHistorySection(gameHistory: List<GameHistory>) {
+fun MatchHistorySection(gameHistory: List<GameHistory>?) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             color = MaterialTheme.colorScheme.primary,
@@ -24,9 +24,17 @@ fun MatchHistorySection(gameHistory: List<GameHistory>) {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        gameHistory.forEach { match ->
-            MatchHistoryItem(match)
-            Spacer(modifier = Modifier.height(8.dp))
+        if (gameHistory.isNullOrEmpty()) {
+            Text(
+                text = stringResource(R.string.no_games_played),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            return
+        } else {
+            gameHistory.forEach { match ->
+                MatchHistoryItem(match)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
     }
 }

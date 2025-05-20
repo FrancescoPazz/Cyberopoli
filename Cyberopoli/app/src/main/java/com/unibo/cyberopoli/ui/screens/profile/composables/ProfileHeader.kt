@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.profile.composables
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun ProfileHeader(
     user: User, onEditProfileClick: () -> Unit, onShareClick: () -> Unit

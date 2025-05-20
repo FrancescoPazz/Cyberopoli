@@ -85,6 +85,7 @@
     <string name="monthly">Mensile</string>
     <string name="filters">Filtri</string>
     <string name="my_rank">La mia posizione</string>
+    <string name="no_games_played">Nessuna partita giocata</string>
 
     <!-- ================================= -->
     <!-- Lobby -->
