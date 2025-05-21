@@ -9,6 +9,7 @@ import androidx.lifecycle.asFlow
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameAction
+import com.unibo.cyberopoli.data.models.game.GameAsset
 import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
@@ -16,6 +17,7 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameTypeCell
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import kotlinx.coroutines.delay
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
@@ -32,21 +35,22 @@ class GameViewModel(
     private val app: Application, private val gameRepository: GameRepository
 ) : ViewModel() {
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
+    val turn: LiveData<String?> = gameRepository.currentTurnLiveData
+
+    // Mine variables
     private val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
 
-    private val _players = MutableStateFlow<List<GamePlayer>>(emptyList())
-    val players: StateFlow<List<GamePlayer>> = _players.asStateFlow()
-
-    private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
+    private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
+    val subscriptions: StateFlow<List<GameTypeCell>> = _subscriptions.asStateFlow()
 
     private val _animatedPositions = MutableStateFlow<Map<String, Int>>(emptyMap())
     val animatedPositions: StateFlow<Map<String, Int>> = _animatedPositions.asStateFlow()
 
-    private val _diceRoll = MutableStateFlow<Int?>(null)
-    val diceRoll: StateFlow<Int?> = _diceRoll.asStateFlow()
-
     private val _startAnimation = MutableStateFlow(false)
     val startAnimation: StateFlow<Boolean> = _startAnimation.asStateFlow()
+
+    private val _diceRoll = MutableStateFlow<Int?>(null)
+    val diceRoll: StateFlow<Int?> = _diceRoll.asStateFlow()
 
     private val _dialog = MutableStateFlow<GameDialogData?>(null)
     val dialog: StateFlow<GameDialogData?> = _dialog.asStateFlow()
@@ -62,6 +66,14 @@ class GameViewModel(
 
     private val _blocks = MutableStateFlow<Set<GamePlayer>>(emptySet())
     val blocks: StateFlow<Set<GamePlayer>> = _blocks.asStateFlow()
+
+    private val _gameAssets = MutableStateFlow<List<GameAsset>>(emptyList())
+    val gameAssets: StateFlow<List<GameAsset>> = _gameAssets.asStateFlow()
+
+    private val _players = MutableStateFlow<List<GamePlayer>>(emptyList())
+    val players: StateFlow<List<GamePlayer>> = _players.asStateFlow()
+
+    private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
 
     private val rollDiceAction = GameAction(
         id = "roll_dice",
@@ -82,62 +94,47 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.preloadQuestionsForUser()
         }
+        // Initial turn logic
+        turn.asFlow()
+            .filterNotNull()
+            .onEach { currentTurnId ->
+                val currentPlayingPlayer = player.value
+                Log.d("TEST GameViewModel", "Turn changed: $currentTurnId, Current player: ${currentPlayingPlayer?.userId}")
 
-        combine(
-            game.asFlow(),
-            player.asFlow()
-        ) { currentGame, currentPlayingPlayer ->
-            if (currentGame != null && currentPlayingPlayer != null) {
-                currentGame.turn == currentPlayingPlayer.userId
-            } else {
-                false
-            }
-        }
-            .onEach { isMyTurn ->
+                val isMyTurn = if (currentPlayingPlayer != null) {
+                    currentTurnId == currentPlayingPlayer.userId
+                } else {
+                    false
+                }
+
                 val currentActionId = _actionsPermitted.value.firstOrNull()?.id
-                Log.d("GameViewModel", "Turn check - isMyTurn: $isMyTurn, Current Action: $currentActionId")
-
                 if (isMyTurn) {
                     if (currentActionId == null || currentActionId == waitTurnAction.id) {
-                        Log.d("GameViewModel", "Setting roll_dice action.")
                         _actionsPermitted.value = listOf(rollDiceAction)
-                    } else {
-                        Log.d("GameViewModel", "Keeping current action ($currentActionId) as it's my turn.")
                     }
                 } else {
                     if (currentActionId == null || currentActionId != waitTurnAction.id) {
-                        Log.d("GameViewModel", "Setting wait_your_turn action.")
                         _actionsPermitted.value = listOf(waitTurnAction)
-                    } else {
-                        Log.d("GameViewModel", "Wait action already set.")
                     }
                 }
-            }
-            .catch { e ->
-                Log.e("GameViewModel", "Error in turn observation flow", e)
+            }.catch { e ->
+                Log.e("GameViewModel", "Error observing turn changes: ${e.message}", e)
                 _actionsPermitted.value = emptyList()
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     private fun nextTurn() {
-        if (game.value == null || _players.value.isEmpty()) {
-            Log.w("GameViewModel", "nextTurn: Game or players data not available")
-            return
-        }
+        if (game.value == null || _players.value.isEmpty()) return
+
         viewModelScope.launch {
             _players.value.let { players ->
                 val currentTurnUserId = game.value!!.turn
-                val currentTurnIndex = players.indexOfFirst { it.userId == currentTurnUserId }.coerceAtLeast(0)
-                val nextIdx = (currentTurnIndex + 1) % players.size
+                val currentTurnIndex = players.indexOfFirst { it.userId == currentTurnUserId }
+                val nextIdx = (currentTurnIndex + 1) % players.size // Get the next turn index
                 val nextPlayerId = players[nextIdx].userId
-                Log.d("GameViewModel", "Changing turn from $currentTurnUserId to $nextPlayerId")
                 gameRepository.setNextTurn(nextPlayerId)
-                if (players.size == 1 && nextPlayerId == currentTurnUserId && nextPlayerId == player.value?.userId) {
-                    Log.d("GameViewModel", "Single player detected, manually ensuring roll_dice action.")
-                    if (_actionsPermitted.value.firstOrNull()?.id == waitTurnAction.id) {
-                        _actionsPermitted.value = listOf(rollDiceAction)
-                    }
+                if (nextPlayerId == player.value?.userId) {
+                    _actionsPermitted.value = listOf(rollDiceAction)
                 }
             }
         }
@@ -151,7 +148,7 @@ class GameViewModel(
 
     fun startGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
         viewModelScope.launch {
-            gameRepository.createGame(lobbyId, lobbyMembers)
+            gameRepository.createOrGetGame(lobbyId, lobbyMembers)
             joinGame()
         }
     }
@@ -228,6 +225,9 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
+
+        val assetPos = getAssetPositionFromPerimeterPosition(player.value?.cellPosition ?: gameCell.id.toInt())
+        Log.d("GameViewModel", "Asset position: $assetPos, player position: ${player.value?.cellPosition}")
 
         viewModelScope.launch {
             _actionsPermitted.value = listOf(
@@ -430,7 +430,7 @@ class GameViewModel(
         }
     }
 
-    fun updatePlayerPoints(value: Int, ownerId: String) {
+    private fun updatePlayerPoints(value: Int, ownerId: String) {
         viewModelScope.launch {
             gameRepository.updatePlayerPoints(value, ownerId)
             val updated = player.value?.copy(
@@ -467,11 +467,10 @@ class GameViewModel(
                     if (idx == 0) {
                         updatePlayerPoints(-dlg.cost)
                         _actionsPermitted.value = _actionsPermitted.value.dropLast(1)
-                        refreshPlayers()
-                        onResultDismiss()
-                    } else {
-                        onResultDismiss()
+                        _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
+                        Log.d("GameViewModel", "Subscribed to ${_subscriptions.value}")
                     }
+                    onResultDismiss()
                 }
 
                 is GameDialogData.BlockChoice -> {
@@ -480,12 +479,9 @@ class GameViewModel(
                         val actualTarget = _players.value.firstOrNull { it.userId == target.userId }
                         if (actualTarget != null) {
                             confirmBlock(actualTarget)
-                        } else {
-                            _dialog.value = null
                         }
-                    } else {
-                        _dialog.value = null
                     }
+                    onResultDismiss()
                 }
 
                 is GameDialogData.HackerStatement -> {
@@ -509,10 +505,10 @@ class GameViewModel(
                 }
 
                 is GameDialogData.Alert -> {
-                    _dialog.value = null
+                    onResultDismiss()
                 }
 
-                else -> _dialog.value = null
+                else -> onResultDismiss()
             }
         }
     }

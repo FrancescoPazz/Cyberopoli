@@ -15,6 +15,7 @@ import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
@@ -34,31 +35,26 @@ class LobbyRepository(
     override suspend fun createOrGetLobby(lobbyId: String, host: User) {
         val lobby = Lobby(id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value)
         try {
-            val created = supabase.from(LOBBY_TABLE)
-                .upsert(lobby) {
+            val created = supabase.from(LOBBY_TABLE).upsert(lobby) {
                     select()
                     onConflict = "id"
-                }
-                .decodeSingle<Lobby>()
+                }.decodeSingle<Lobby>()
             currentLobbyLiveData.value = created
 
             val lobbyMembersFlow: Flow<List<LobbyMember>> =
-                supabase.from(LOBBY_MEMBERS_TABLE)
-                    .selectAsFlow(
+                supabase.from(LOBBY_MEMBERS_TABLE).selectAsFlow(
                         primaryKey = LobbyMember::userId,
-                        filter     = FilterOperation("lobby_id", FilterOperator.EQ, created.id)
+                        filter = FilterOperation("lobby_id", FilterOperator.EQ, created.id)
                     )
-            kotlinx.coroutines.MainScope().launch {
+            MainScope().launch {
                 lobbyMembersFlow.collect { rawMembers ->
                     val allIds = rawMembers.map { it.userId }.distinct()
                     val missingIds = allIds.filterNot { userCache.containsKey(it) }
 
                     if (missingIds.isNotEmpty()) {
-                        val fetchedUsers: List<User> = supabase.from("users")
-                            .select {
+                        val fetchedUsers: List<User> = supabase.from("users").select {
                                 filter { isIn("id", missingIds) }
-                            }
-                            .decodeList<User>()
+                            }.decodeList<User>()
 
                         fetchedUsers.forEach { user ->
                             userCache[user.id] = user
@@ -68,10 +64,10 @@ class LobbyRepository(
                     val members = rawMembers.map { raw ->
                         LobbyMember(
                             lobbyId = raw.lobbyId,
-                            userId  = raw.userId,
+                            userId = raw.userId,
                             isReady = raw.isReady,
-                            joinedAt= raw.joinedAt,
-                            user    = userCache[raw.userId]!!
+                            joinedAt = raw.joinedAt,
+                            user = userCache[raw.userId]!!
                         )
                     }
                     currentMembersLiveData.value = members
@@ -84,7 +80,8 @@ class LobbyRepository(
 
     override suspend fun joinLobby(member: LobbyMember) {
         val data = LobbyMember(
-            lobbyId = currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found"),
+            lobbyId = currentLobbyLiveData.value?.id
+                ?: throw IllegalStateException("Lobby not found"),
             userId = member.userId,
             isReady = member.isReady,
             joinedAt = member.joinedAt,
@@ -101,7 +98,7 @@ class LobbyRepository(
         try {
             val raw: List<LobbyMemberRaw> = supabase.from(LOBBY_MEMBERS_TABLE).select(
                 Columns.raw("*, users(*)")
-            ){
+            ) {
                 filter {
                     eq("lobby_id", lobbyId)
                 }
@@ -126,7 +123,8 @@ class LobbyRepository(
         isReady: Boolean
     ): LobbyMember {
         val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
-        val lobbyId = currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found")
+        val lobbyId =
+            currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found")
         return try {
             supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("ready" to isReady)) {
                 filter {

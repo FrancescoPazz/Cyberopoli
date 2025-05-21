@@ -19,8 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.ui.components.BottomBar
@@ -35,23 +33,8 @@ fun LobbyScreen(
     navController: NavHostController,
     params: LobbyParams
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     var hasJoined by remember { mutableStateOf(false) }
     var suppressLeaveOnStop by remember { mutableStateOf(false) }
-
-    /*DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP && !suppressLeaveOnStop) {
-                Log.d("LobbyScreen", "ON_STOP: leaving lobby")
-                params.leaveLobby()
-                navController.popBackStack()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }*/
 
     LaunchedEffect(params.lobbyId) {
         if (!hasJoined && params.lobbyId.isNotBlank()) {

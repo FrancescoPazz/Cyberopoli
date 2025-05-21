@@ -14,11 +14,17 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.services.LLMService
 import com.unibo.cyberopoli.util.UsageStatsHelper
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import java.util.Locale
 import java.util.UUID
 import com.unibo.cyberopoli.data.repositories.game.IGameRepository as DomainGameRepository
 
@@ -32,9 +38,10 @@ class GameRepository(
     private val usageStatsHelper: UsageStatsHelper
 ) : DomainGameRepository {
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
+    val currentTurnLiveData: MutableLiveData<String?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
-    val chanceQuestions = MutableLiveData<List<GameDialogData.ChanceQuestion>>(ChanceQuestions)
-    val hackerStatements = MutableLiveData<List<GameDialogData.HackerStatement>>(HackerStatements)
+    val chanceQuestions = MutableLiveData(ChanceQuestions)
+    val hackerStatements = MutableLiveData(HackerStatements)
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
@@ -42,20 +49,20 @@ class GameRepository(
 
     suspend fun preloadQuestionsForUser() {
         val newQuestions = fetchQuestions()
-        hackerStatements.value = hackerStatements.value?.plus(newQuestions) ?: hackerStatements.value
+        hackerStatements.value =
+            hackerStatements.value?.plus(newQuestions) ?: hackerStatements.value
     }
 
     private suspend fun fetchQuestions(
     ): List<GameDialogData.HackerStatement> {
-        val topApps = usageStatsHelper.getTopUsedApps()
-            .joinToString("; ") { "${it.first}:${it.second} h" }
+        val topApps =
+            usageStatsHelper.getTopUsedApps().joinToString("; ") { "${it.first}:${it.second} h" }
         val totalSec = usageStatsHelper.getWeeklyUsageTime()
         val sessionStats = usageStatsHelper.getSessionStats()
         val sessionCount = sessionStats.sessionCount
         val avgSessionSec = sessionStats.averageSessionDuration / 1000
         val unlockCount = sessionStats.unlockCount
-        val dataJson =
-            """
+        val dataJson = """
                 {
                   "topApps": "$topApps",
                   "totalUsageSec": $totalSec,
@@ -66,9 +73,13 @@ class GameRepository(
             """.trimIndent()
         Log.d("TEST", "Data JSON: $dataJson")
 
-        val systemPrompt =
-            """
-                Genera 5 domande di gioco (in ITALIANO) basandoti su questi dati utente:
+        val currentLanguage = if (Locale.getDefault().language == "it") {
+            "ITALIANO"
+        } else {
+            "INGLESE"
+        }
+        val systemPrompt = """
+                Genera 5 domande di gioco (in ${currentLanguage}) basandoti su questi dati utente:
                 $dataJson
                 Cerca di diversificare il più possibile il contenuto delle domande.
                 Devono sembrare gli imprevisti di Monopoli ma in chiave informatica.
@@ -79,15 +90,10 @@ class GameRepository(
             """.trimIndent()
 
         val raw = llmService.generate(
-            model = "cyberopoli_model",
-            prompt = systemPrompt,
-            stream = false
+            model = "cyberopoli_model", prompt = systemPrompt, stream = false
         )
 
-        val cleaned = raw
-            .trim()
-            .removePrefix("```json").removeSuffix("```")
-            .trim()
+        val cleaned = raw.trim().removePrefix("```json").removeSuffix("```").trim()
 
         val payloads: List<GameDialogData.HackerStatement> = try {
             jsonParser.decodeFromString(cleaned)
@@ -100,21 +106,43 @@ class GameRepository(
 
         return payloads.map {
             GameDialogData.HackerStatement(
-                title = it.title,
-                content = it.content,
-                points = it.points
+                title = it.title, content = it.content, points = it.points
             )
         }
     }
 
-    override suspend fun createGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
+    @OptIn(SupabaseExperimental::class)
+    override suspend fun createOrGetGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
         val newGame = Game(
             lobbyId = lobbyId, id = UUID.randomUUID().toString(), turn = lobbyMembers[0].userId
         )
         try {
-            val created: Game =
-                supabase.from(GAME_TABLE).insert(newGame) { select() }.decodeSingle()
-            currentGameLiveData.value = created
+            val existGame = supabase.from(GAME_TABLE).select {
+                filter {
+                    eq("lobby_id", lobbyId)
+                }
+            }.decodeSingleOrNull<Game>()
+            Log.d("TEST", "Existing game: $existGame")
+            if (existGame == null) {
+                val created = supabase.from(GAME_TABLE).upsert(newGame) {
+                    select()
+                }.decodeSingle<Game>()
+                currentGameLiveData.value = created
+            } else {
+                currentGameLiveData.value = existGame
+            }
+            Log.d("TEST", "Current game: ${currentGameLiveData.value}")
+
+            val turnFlow: Flow<Game> = supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::turn) {
+                eq("lobby_id", currentGameLiveData.value!!.lobbyId)
+                eq("id", currentGameLiveData.value!!.id)
+            }
+            MainScope().launch {
+                turnFlow.collect { game ->
+                    Log.d("TEST", "Turn changed: ${game.turn}")
+                    currentTurnLiveData.postValue(game.turn)
+                }
+            }
         } catch (e: Exception) {
             throw e
         }

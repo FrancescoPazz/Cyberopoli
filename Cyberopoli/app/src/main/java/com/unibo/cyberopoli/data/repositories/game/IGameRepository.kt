@@ -1,13 +1,12 @@
 package com.unibo.cyberopoli.data.repositories.game
 
-import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 interface IGameRepository {
-    suspend fun createGame(lobbyId: String, lobbyMembers: List<LobbyMember>)
+    suspend fun createOrGetGame(lobbyId: String, lobbyMembers: List<LobbyMember>)
 
     suspend fun joinGame(): GamePlayer
 
