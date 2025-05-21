@@ -17,14 +17,12 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameTypeCell
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
-import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
@@ -59,16 +57,9 @@ class GameViewModel(
     val isLoadingQuestion: StateFlow<Boolean> = _isLoadingQuestion.asStateFlow()
 
     private val _skipNext = MutableStateFlow(false)
-    val skipNext: StateFlow<Boolean> = _skipNext.asStateFlow()
-
     private val _hasVpn = MutableStateFlow(false)
-    val hasVpn: StateFlow<Boolean> = _hasVpn.asStateFlow()
-
-    private val _blocks = MutableStateFlow<Set<GamePlayer>>(emptySet())
-    val blocks: StateFlow<Set<GamePlayer>> = _blocks.asStateFlow()
-
+    private val _playersBlocked = MutableStateFlow<Set<GamePlayer>>(emptySet())
     private val _gameAssets = MutableStateFlow<List<GameAsset>>(emptyList())
-    val gameAssets: StateFlow<List<GameAsset>> = _gameAssets.asStateFlow()
 
     private val _players = MutableStateFlow<List<GamePlayer>>(emptyList())
     val players: StateFlow<List<GamePlayer>> = _players.asStateFlow()
@@ -110,6 +101,27 @@ class GameViewModel(
                 val currentActionId = _actionsPermitted.value.firstOrNull()?.id
                 if (isMyTurn) {
                     if (currentActionId == null || currentActionId == waitTurnAction.id) {
+                        if (_skipNext.value) {
+                            _skipNext.value = false
+                            _actionsPermitted.value = listOf(waitTurnAction)
+                            _dialog.value = GameDialogData.Alert(
+                                title = app.getString(R.string.broken_router),
+                                message = app.getString(R.string.broken_router_desc),
+                            )
+                        } else {
+                            _actionsPermitted.value = listOf(rollDiceAction)
+                            if (_hasVpn.value) {
+                                _hasVpn.value = false
+                                gameRepository.removeGameEvent(
+                                    GameEvent(
+                                        lobbyId = game.value!!.lobbyId,
+                                        gameId = game.value!!.id,
+                                        senderUserId = player.value!!.userId,
+                                        eventType = GameTypeCell.VPN
+                                    )
+                                )
+                            }
+                        }
                         _actionsPermitted.value = listOf(rollDiceAction)
                     }
                 } else {
@@ -197,7 +209,6 @@ class GameViewModel(
             _players.value.firstOrNull { it.userId == player.value!!.userId }?.let { me ->
                 val oldCellPosition = me.cellPosition
                 val diceRolled = _diceRoll.value ?: 0
-
                 if (diceRolled <= 0) return@let
 
                 val newPos = computeNewPosition(oldCellPosition, diceRolled)
@@ -208,10 +219,7 @@ class GameViewModel(
                     increasePlayerRound()
                 }
 
-                Log.d(
-                    "GameViewModel",
-                    "Player ${me.userId} moved from $oldCellPosition to $newPos. Dice: $diceRolled"
-                )
+                Log.d("GameViewModel", "Player ${me.userId} moved from $oldCellPosition to $newPos. Dice: $diceRolled")
                 gameRepository.updatePlayerPosition(newPos)
                 _players.value = _players.value.map {
                     if (it.userId == me.userId) it.copy(cellPosition = newPos) else it
@@ -225,9 +233,9 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
-
-        val assetPos = getAssetPositionFromPerimeterPosition(player.value?.cellPosition ?: gameCell.id.toInt())
-        Log.d("GameViewModel", "Asset position: $assetPos, player position: ${player.value?.cellPosition}")
+        val isCellOwned = _gameAssets.value.any { it.cellId == gameCell.id }
+        val amISubscribe = _subscriptions.value.contains(gameTypeCell)
+        val amIOwner = _gameAssets.value.any { it.ownerId == player.value?.userId }
 
         viewModelScope.launch {
             _actionsPermitted.value = listOf(
@@ -249,59 +257,83 @@ class GameViewModel(
                 }
 
                 GameTypeCell.CHANCE -> {
-                    askQuestion(GameTypeCell.CHANCE)
+                    showDialogPerType(GameTypeCell.CHANCE)
                 }
 
                 GameTypeCell.HACKER -> {
-                    askQuestion(GameTypeCell.HACKER)
+                    showDialogPerType(GameTypeCell.HACKER)
                 }
 
                 GameTypeCell.BLOCK -> {
-                    askQuestion(GameTypeCell.BLOCK)
+                    showDialogPerType(GameTypeCell.BLOCK)
                 }
 
                 GameTypeCell.VPN -> {
                     _hasVpn.value = true
-                    askQuestion(GameTypeCell.VPN)
+                    gameRepository.addGameEvent(
+                        GameEvent(
+                            lobbyId = game.value!!.lobbyId,
+                            gameId = game.value!!.id,
+                            senderUserId = player.value!!.userId,
+                            eventType = GameTypeCell.VPN
+                        )
+                    )
+                    showDialogPerType(GameTypeCell.VPN)
                 }
 
                 GameTypeCell.BROKEN_ROUTER -> {
-                    Log.d("GameViewModel", "Landed on BROKEN_ROUTER.")
+                    showDialogPerType(GameTypeCell.BROKEN_ROUTER)
                 }
 
                 else -> {
-                    if (gameCell.contentOwner.isNullOrEmpty()) {
-                        _actionsPermitted.value += listOf(
-                            GameAction(
-                                id = "subscribe_cell",
-                                iconRes = R.drawable.ic_subscribe,
-                                action = {
-                                    _dialog.value = GameDialogData.SubscribeChoice(
-                                        title = app.getString(R.string.block_player_choice),
-                                        options = listOf(
-                                            app.getString(R.string.accept), app.getString(R.string.decline)
-                                        ),
-                                        cost = gameCell.value ?: 0
-                                    )
+                    if (!isCellOwned) {
+                        if (!amISubscribe) {
+                            _actionsPermitted.value += listOf(
+                                GameAction(
+                                    id = "subscribe_cell",
+                                    iconRes = R.drawable.ic_subscribe,
+                                    action = {
+                                        _dialog.value = GameDialogData.SubscribeChoice(
+                                            title = app.getString(R.string.block_player_choice),
+                                            options = listOf(
+                                                app.getString(R.string.accept), app.getString(R.string.decline)
+                                            ),
+                                            cost = gameCell.value ?: 0
+                                        )
 
-                                },
+                                    },
+                                )
                             )
-                        )
-                    } else if (gameCell.contentOwner == player.value?.userId) {
-                        _actionsPermitted.value += listOf(
-                            GameAction(
-                                id = "make_content",
-                                iconRes = R.drawable.ic_made_content,
-                                action = {
-                                    endTurn()
-                                },
+                        } else {
+                            _actionsPermitted.value += listOf(
+                                GameAction(
+                                    id = "make_content",
+                                    iconRes = R.drawable.ic_make_content,
+                                    action = {
+                                        endTurn()
+                                    },
+                                )
                             )
-                        )
-                    } else {
-                        gameCell.value?.let {
-                            Log.d("GameViewModel", "Paying rent: $it to ${gameCell.contentOwner}")
-                            updatePlayerPoints(-it)
-                            updatePlayerPoints(it, gameCell.contentOwner!!)
+                        }
+                    } else if (!amIOwner) {
+                        if (_hasVpn.value) {
+                            _dialog.value = GameDialogData.Alert(
+                                title = app.getString(R.string.get_vpn),
+                                message = app.getString(R.string.vpn_avoid_pay),
+                            )
+                        } else {
+                            val cellOwner = _gameAssets.value.firstOrNull { asset ->
+                                asset.cellId == gameCell.id
+                            }?.ownerId!!
+                            _dialog.value = GameDialogData.Alert(
+                                title = app.getString(R.string.pay_content),
+                                message = "${app.getString(R.string.pay_content_desc)} ${gameCell.value} ${app.getString(R.string.internet_points)}",
+                            )
+                            gameCell.value?.let {
+                                Log.d("GameViewModel", "Paying rent: $it to $cellOwner")
+                                updatePlayerPoints(-it)
+                                updatePlayerPoints(it, cellOwner)
+                            }
                         }
                     }
                 }
@@ -309,7 +341,7 @@ class GameViewModel(
         }
     }
 
-    private fun askQuestion(eventType: GameTypeCell) {
+    private fun showDialogPerType(eventType: GameTypeCell) {
         _isLoadingQuestion.value = true
         when (eventType) {
             GameTypeCell.CHANCE -> {
@@ -346,9 +378,17 @@ class GameViewModel(
 
             GameTypeCell.VPN -> {
                 _dialog.value = GameDialogData.Alert(
-                    title = app.getString(R.string.vpn),
-                    message = app.getString(R.string.vpn_desc),
+                    title = app.getString(R.string.get_vpn),
+                    message = app.getString(R.string.get_vpn_desc),
                 )
+            }
+
+            GameTypeCell.BROKEN_ROUTER -> {
+                _dialog.value = GameDialogData.Alert(
+                    title = app.getString(R.string.broken_router),
+                    message = app.getString(R.string.broken_router_desc),
+                )
+                _skipNext.value = true
             }
 
             else -> {
@@ -361,8 +401,9 @@ class GameViewModel(
     private fun startMovementAnimation() {
         viewModelScope.launch {
             val steps = _diceRoll.value ?: 0
-            val currentPlayerModel = player.value
-            val currentPlayerId = currentPlayerModel?.userId ?: return@launch
+
+            if (player.value?.userId == null) return@launch
+            val currentPlayerId = player.value!!.userId
 
             if (steps <= 0 || game.value == null) {
                 _players.value.firstOrNull { it.userId == currentPlayerId }?.let { me ->
@@ -416,13 +457,13 @@ class GameViewModel(
         }
     }
 
-    fun updatePlayerPoints(pointsToAdd: Int) {
+    fun updatePlayerPoints(points: Int) {
         viewModelScope.launch {
             val currentPlayerId = player.value?.userId ?: return@launch
-            gameRepository.updatePlayerPoints(pointsToAdd)
+            gameRepository.updatePlayerPoints(points)
             _players.value = _players.value.map { p ->
                 if (p.userId == currentPlayerId) {
-                    p.copy(score = p.score + pointsToAdd)
+                    p.copy(score = p.score + points)
                 } else {
                     p
                 }
@@ -430,11 +471,13 @@ class GameViewModel(
         }
     }
 
-    private fun updatePlayerPoints(value: Int, ownerId: String) {
+    private fun updatePlayerPoints(points: Int, ownerId: String) {
         viewModelScope.launch {
-            gameRepository.updatePlayerPoints(value, ownerId)
-            val updated = player.value?.copy(
-                score = (player.value?.score ?: 0) + value
+            gameRepository.updatePlayerPoints(points, ownerId)
+            val ownerPlayer = _players.value.firstOrNull { it.userId == ownerId }
+
+            val updated = ownerPlayer?.copy(
+                score = ownerPlayer.score + points
             )
             if (updated != null) {
                 _players.value = _players.value.map {
@@ -455,7 +498,7 @@ class GameViewModel(
                     eventType = GameTypeCell.BLOCK,
                 )
             )
-            _blocks.value += target
+            _playersBlocked.value += target
             endTurn()
         }
     }

@@ -135,9 +135,10 @@
     <string name="hacker_attack">Hacker Attack</string>
     <string name="hacker_attack_description">a hacker attack scenario and propose 3 possible actions</string>
     <string name="subscribe_cell">Subscribe to the social</string>
-    <string name="made_content">Place a content in the social</string>
-    <string name="vpn">VPN</string>
-    <string name="vpn_desc">You have found a VPN! You can use it to avoid being blocked for a whole shift</string>
+    <string name="make_content">Place a content in the social</string>
+    <string name="get_vpn">VPN activated</string>
+    <string name="get_vpn_desc">Having the VPN avoids paying to view content </string>Con la VPN hai bloccato il pagamento del contenuto
+    <string name="vpn_avoid_pay">With the VPN you blocked the payment of the content</string>
     <string name="correct_answer">Correct answer!</string>
     <string name="wrong_answer">Wrong answer!</string>
     <string name="points_earned">You earned </string>
@@ -145,6 +146,12 @@
     <string name="block_player_choice">Choose a player to block</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <string name="pay_content">Pay for the content</string>
+    <string name="pay_content_desc">You have to pay for the content you want to see in this Social</string>
+    <string name="broken_router">Broken Router</string>
+    <string name="broken_router_desc">You broke your router! You can\'t move for a turn</string>
+    <string name="skip_turn">Skip turn</string>
+    <string name="skip_turn_desc">You have to skip one turn</string>
 
     <!-- ================================= -->
     <!-- Home -->

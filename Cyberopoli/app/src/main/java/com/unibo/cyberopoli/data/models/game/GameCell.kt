@@ -5,5 +5,4 @@ data class GameCell(
     val type: GameTypeCell,
     val title: String,
     val value: Int? = 0,
-    var contentOwner: String? = null,
 )

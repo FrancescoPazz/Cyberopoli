@@ -344,6 +344,21 @@ class GameRepository(
         }
     }
 
+    override suspend fun removeGameEvent(event: GameEvent) {
+        try {
+            supabase.from(GAME_EVENTS_TABLE).delete {
+                filter {
+                    eq("lobby_id", event.lobbyId)
+                    eq("game_id", event.gameId)
+                    eq("sender_user_id", event.senderUserId)
+                    eq("event_type", event.eventType)
+                }
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     override suspend fun getGameEvents(): List<GameEvent> {
         if (currentGameLiveData.value == null) throw Exception("No game found")
 

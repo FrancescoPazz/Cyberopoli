@@ -22,6 +22,8 @@ interface IGameRepository {
 
     suspend fun addGameEvent(event: GameEvent): GameEvent?
 
+    suspend fun removeGameEvent(event: GameEvent)
+
     suspend fun getGameEvents(): List<GameEvent>
 
     suspend fun getGamesHistory(): List<GameHistory>
