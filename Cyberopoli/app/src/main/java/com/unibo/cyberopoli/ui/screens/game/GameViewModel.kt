@@ -3,6 +3,7 @@ package com.unibo.cyberopoli.ui.screens.game
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.asFlow
@@ -17,6 +18,8 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameTypeCell
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
+import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import kotlinx.coroutines.delay
@@ -34,6 +37,8 @@ class GameViewModel(
 ) : ViewModel() {
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val turn: LiveData<String?> = gameRepository.currentTurnLiveData
+    val chanceQuestions = MutableLiveData(chanceQuestions(app))
+    val hackerStatements = MutableLiveData(hackerStatements(app))
 
     // Mine variables
     private val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
@@ -83,7 +88,9 @@ class GameViewModel(
 
     init {
         viewModelScope.launch {
-            gameRepository.preloadQuestionsForUser()
+            val generatedHackerStatement = gameRepository.generateDigitalWellBeingStatements()
+            hackerStatements.value =
+                hackerStatements.value?.plus(generatedHackerStatement) ?: hackerStatements.value
         }
         // Initial turn logic
         turn.asFlow()
@@ -252,7 +259,7 @@ class GameViewModel(
                 GameTypeCell.START -> {
                     Log.d(
                         "GameViewModel",
-                        "Landed on START cell. Lap bonus (if any) handled by movePlayer."
+                        "Landed on START cell."
                     )
                 }
 
@@ -290,11 +297,12 @@ class GameViewModel(
                         if (!amISubscribe) {
                             _actionsPermitted.value += listOf(
                                 GameAction(
-                                    id = "subscribe_cell",
+                                    id = "subscribe",
                                     iconRes = R.drawable.ic_subscribe,
                                     action = {
                                         _dialog.value = GameDialogData.SubscribeChoice(
-                                            title = app.getString(R.string.block_player_choice),
+                                            title = app.getString(R.string.subscribe),
+                                            message = app.getString(R.string.subscribe_desc, gameCell.value),
                                             options = listOf(
                                                 app.getString(R.string.accept), app.getString(R.string.decline)
                                             ),
@@ -310,6 +318,14 @@ class GameViewModel(
                                     id = "make_content",
                                     iconRes = R.drawable.ic_make_content,
                                     action = {
+                                        _dialog.value = GameDialogData.MakeContentChoice(
+                                            title = app.getString(R.string.make_content),
+                                            message = app.getString(R.string.make_content_desc, gameCell.value),
+                                            options = listOf(
+                                                app.getString(R.string.accept), app.getString(R.string.decline)
+                                            ),
+                                            cost = (gameCell.value?.times(2)) ?: 0,
+                                        )
                                         endTurn()
                                     },
                                 )
@@ -345,26 +361,26 @@ class GameViewModel(
         _isLoadingQuestion.value = true
         when (eventType) {
             GameTypeCell.CHANCE -> {
-                val questions = gameRepository.chanceQuestions.value.orEmpty()
+                val questions = chanceQuestions.value.orEmpty()
                 if (questions.isEmpty()) {
                     throw IllegalStateException("No questions available for event type: $eventType")
                 }
                 val randomIndex = questions.indices.random()
                 val question = questions[randomIndex]
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
-                gameRepository.chanceQuestions.postValue(updatedQuestions)
+                chanceQuestions.postValue(updatedQuestions)
                 _dialog.value = question
             }
 
             GameTypeCell.HACKER -> {
-                val questions = gameRepository.hackerStatements.value.orEmpty()
+                val questions = hackerStatements.value.orEmpty()
                 if (questions.isEmpty()) {
                     throw IllegalStateException("No questions available for event type: $eventType")
                 }
                 val randomIndex = questions.indices.random()
                 val question = questions[randomIndex]
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
-                gameRepository.hackerStatements.postValue(updatedQuestions)
+                hackerStatements.postValue(updatedQuestions)
                 _dialog.value = question
                 updatePlayerPoints(question.points)
             }

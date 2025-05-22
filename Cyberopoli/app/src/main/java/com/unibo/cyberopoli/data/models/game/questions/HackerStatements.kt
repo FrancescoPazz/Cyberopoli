@@ -1,41 +1,43 @@
 package com.unibo.cyberopoli.data.models.game.questions
 
+import android.app.Application
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 
-val HackerStatements = listOf(
+fun hackerStatements(app: Application) = listOf(
     GameDialogData.HackerStatement(
-        title = "Password debole",
-        content = "Hanno scoperto la tua password '123456'. Perdi 4 punti di sicurezza.",
-        points = 4
+        title   = app.getString(R.string.hacker_statement_title_1),
+        content = app.getString(R.string.hacker_statement_content_1),
+        points  = 4
     ),
     GameDialogData.HackerStatement(
-        title = "Wi-Fi pubblico non sicuro",
-        content = "Un hacker ha iniettato malware mentre eri connesso ad una rete Wi-Fi pubblica senza VPN. Perdi 5 punti.",
-        points = 5
+        title   = app.getString(R.string.hacker_statement_title_2),
+        content = app.getString(R.string.hacker_statement_content_2),
+        points  = 5
     ),
     GameDialogData.HackerStatement(
-        title = "Phishing riuscito",
-        content = "Hai cliccato su un link sospetto in una email. I tuoi dati bancari sono stati rubati! Perdi 7 punti.",
-        points = 7
+        title   = app.getString(R.string.hacker_statement_title_3),
+        content = app.getString(R.string.hacker_statement_content_3),
+        points  = 7
     ),
     GameDialogData.HackerStatement(
-        title = "Ransomware",
-        content = "I tuoi file sono stati criptati da un ransomware. Paghi il riscatto di 5 punti per recuperarli.",
-        points = 5
+        title   = app.getString(R.string.hacker_statement_title_4),
+        content = app.getString(R.string.hacker_statement_content_4),
+        points  = 5
     ),
     GameDialogData.HackerStatement(
-        title = "Social Engineering",
-        content = "Hai risposto a una telefonata di un falso tecnico e hai condiviso le tue credenziali. Perdi 3 punti.",
-        points = 3
+        title   = app.getString(R.string.hacker_statement_title_5),
+        content = app.getString(R.string.hacker_statement_content_5),
+        points  = 3
     ),
     GameDialogData.HackerStatement(
-        title = "Account compromesso",
-        content = "Il tuo account social è stato hackerato e usato per truffe. Perdi 5 punti e il tuo profilo.",
-        points = 5
+        title   = app.getString(R.string.hacker_statement_title_6),
+        content = app.getString(R.string.hacker_statement_content_6),
+        points  = 5
     ),
     GameDialogData.HackerStatement(
-        title = "Malware",
-        content = "Un malware ha infettato il tuo computer. Perdi 6 punti e devi reinstallare il sistema.",
-        points = 6
-    ),
+        title   = app.getString(R.string.hacker_statement_title_7),
+        content = app.getString(R.string.hacker_statement_content_7),
+        points  = 6
+    )
 )

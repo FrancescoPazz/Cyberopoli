@@ -8,8 +8,6 @@ import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GamePlayerRaw
-import com.unibo.cyberopoli.data.models.game.questions.ChanceQuestions
-import com.unibo.cyberopoli.data.models.game.questions.HackerStatements
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.services.LLMService
 import com.unibo.cyberopoli.util.UsageStatsHelper
@@ -40,20 +38,12 @@ class GameRepository(
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentTurnLiveData: MutableLiveData<String?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
-    val chanceQuestions = MutableLiveData(ChanceQuestions)
-    val hackerStatements = MutableLiveData(HackerStatements)
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
     }
 
-    suspend fun preloadQuestionsForUser() {
-        val newQuestions = fetchQuestions()
-        hackerStatements.value =
-            hackerStatements.value?.plus(newQuestions) ?: hackerStatements.value
-    }
-
-    private suspend fun fetchQuestions(
+    suspend fun generateDigitalWellBeingStatements(
     ): List<GameDialogData.HackerStatement> {
         val topApps =
             usageStatsHelper.getTopUsedApps().joinToString("; ") { "${it.first}:${it.second} h" }

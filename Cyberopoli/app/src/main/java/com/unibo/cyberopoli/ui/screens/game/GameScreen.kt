@@ -59,7 +59,12 @@ fun GameScreen(
             )
             is GameDialogData.SubscribeChoice -> Triple(
                 data.title,
-                "Cost: ${data.cost} points",
+                data.message,
+                data.options
+            )
+            is GameDialogData.MakeContentChoice -> Triple(
+                data.title,
+                data.message,
                 data.options
             )
             is GameDialogData.Alert -> Triple(
@@ -67,6 +72,7 @@ fun GameScreen(
                 data.message,
                 data.options ?: listOf("OK")
             )
+
         }
 
         GameDialog(

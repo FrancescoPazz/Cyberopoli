@@ -28,6 +28,15 @@ sealed class GameDialogData {
     @Serializable
     data class SubscribeChoice(
         val title: String,
+        val message: String,
+        val options: List<String>,
+        val cost: Int,
+    ) : GameDialogData()
+
+    @Serializable
+    data class MakeContentChoice(
+        val title: String,
+        val message: String,
         val options: List<String>,
         val cost: Int,
     ) : GameDialogData()

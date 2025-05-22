@@ -1,126 +1,128 @@
 package com.unibo.cyberopoli.data.models.game.questions
 
+import android.app.Application
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 
-val ChanceQuestions = listOf(
+fun chanceQuestions(app: Application) = listOf(
     GameDialogData.ChanceQuestion(
-        title = "Password sicura",
-        prompt = "Quale tra queste è la migliore pratica per creare una password sicura?",
-        options = listOf(
-            "Usare parole comuni separate da trattini",
-            "Usare una lunga stringa casuale con lettere, numeri e simboli",
-            "Utilizzare sempre la stessa password per ogni account",
-            "Aggiornare la password ogni 2 anni"
+        title        = app.getString(R.string.chance_question_title_1),
+        prompt       = app.getString(R.string.chance_question_prompt_1),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_1_1),
+            app.getString(R.string.chance_question_option_1_2),
+            app.getString(R.string.chance_question_option_1_3),
+            app.getString(R.string.chance_question_option_1_4)
         ),
         correctIndex = 1,
-        points = 1
+        points       = 7
     ),
     GameDialogData.ChanceQuestion(
-        title = "Phishing: cos’è?",
-        prompt = "Qual è la definizione corretta di phishing?",
-        options = listOf(
-            "Invio di email fraudolente per ottenere dati sensibili",
-            "Attacco fisico a un server aziendale",
-            "Utilizzo di ransomware per criptare file",
-            "Intercettazione di comunicazioni via satellite"
+        title        = app.getString(R.string.chance_question_title_2),
+        prompt       = app.getString(R.string.chance_question_prompt_2),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_2_1),
+            app.getString(R.string.chance_question_option_2_2),
+            app.getString(R.string.chance_question_option_2_3),
+            app.getString(R.string.chance_question_option_2_4)
         ),
         correctIndex = 0,
-        points = 2
+        points       = 6
     ),
     GameDialogData.ChanceQuestion(
-        title = "Brute Force",
-        prompt = "In un attacco brute-force, cosa fa l’aggressore?",
-        options = listOf(
-            "Intercetta le email",
-            "Prova sistematicamente tutte le combinazioni di password",
-            "Installa un keylogger hardware",
-            "Utilizza un virus per criptare i file"
+        title        = app.getString(R.string.chance_question_title_3),
+        prompt       = app.getString(R.string.chance_question_prompt_3),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_3_1),
+            app.getString(R.string.chance_question_option_3_2),
+            app.getString(R.string.chance_question_option_3_3),
+            app.getString(R.string.chance_question_option_3_4)
         ),
         correctIndex = 1,
-        points = 3
+        points       = 6
     ),
     GameDialogData.ChanceQuestion(
-        title = "Wi-Fi pubblico",
-        prompt = "Qual è il rischio principale quando ci si connette a una rete Wi-Fi pubblica non protetta?",
-        options = listOf(
-            "Consumo eccessivo di batteria",
-            "Intercettazione del traffico da parte di malintenzionati",
-            "Velocità di connessione troppo alta",
-            "Aggiornamenti automatici forzati"
+        title        = app.getString(R.string.chance_question_title_4),
+        prompt       = app.getString(R.string.chance_question_prompt_4),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_4_1),
+            app.getString(R.string.chance_question_option_4_2),
+            app.getString(R.string.chance_question_option_4_3),
+            app.getString(R.string.chance_question_option_4_4)
         ),
         correctIndex = 1,
-        points = 4
+        points       = 6
     ),
     GameDialogData.ChanceQuestion(
-        title = "Autenticazione a due fattori",
-        prompt = "Quale vantaggio principale offre l’autenticazione a due fattori (2FA)?",
-        options = listOf(
-            "Accesso più rapido ai servizi",
-            "Maggiore sicurezza richiedendo due credenziali diverse",
-            "Riduce lo spazio occupato dalle password",
-            "Aumenta la velocità di connessione"
+        title        = app.getString(R.string.chance_question_title_5),
+        prompt       = app.getString(R.string.chance_question_prompt_5),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_5_1),
+            app.getString(R.string.chance_question_option_5_2),
+            app.getString(R.string.chance_question_option_5_3),
+            app.getString(R.string.chance_question_option_5_4)
         ),
         correctIndex = 1,
-        points = 5
+        points       = 5
     ),
     GameDialogData.ChanceQuestion(
-        title = "Backup dei dati",
-        prompt = "Qual è il metodo più affidabile per proteggere i dati da perdita accidentale?",
-        options = listOf(
-            "Salvare tutto sul desktop",
-            "Eseguire backup regolari su un dispositivo esterno e in cloud",
-            "Lasciare i dati sul dispositivo originale",
-            "Usare solo USB pubbliche"
+        title        = app.getString(R.string.chance_question_title_6),
+        prompt       = app.getString(R.string.chance_question_prompt_6),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_6_1),
+            app.getString(R.string.chance_question_option_6_2),
+            app.getString(R.string.chance_question_option_6_3),
+            app.getString(R.string.chance_question_option_6_4)
         ),
         correctIndex = 1,
-        points = 6
+        points       = 6
     ),
     GameDialogData.ChanceQuestion(
-        title = "Social engineering",
-        prompt = "Qual è la tecnica principale utilizzata nel social engineering?",
-        options = listOf(
-            "Sfruttare vulnerabilità di rete",
-            "Manipolare psicologicamente la vittima",
-            "Criptare i dati con ransomware",
-            "Intercettare pacchetti di rete"
+        title        = app.getString(R.string.chance_question_title_7),
+        prompt       = app.getString(R.string.chance_question_prompt_7),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_7_1),
+            app.getString(R.string.chance_question_option_7_2),
+            app.getString(R.string.chance_question_option_7_3),
+            app.getString(R.string.chance_question_option_7_4)
         ),
         correctIndex = 1,
-        points = 2
+        points       = 4
     ),
     GameDialogData.ChanceQuestion(
-        title = "Patch di sicurezza",
-        prompt = "Perché è importante installare tempestivamente le patch di sicurezza?",
-        options = listOf(
-            "Per migliorare le prestazioni del sistema",
-            "Per correggere vulnerabilità note prima che diventino exploit",
-            "Per aumentare lo spazio libero su disco",
-            "Per cambiare l'interfaccia grafica"
+        title        = app.getString(R.string.chance_question_title_8),
+        prompt       = app.getString(R.string.chance_question_prompt_8),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_8_1),
+            app.getString(R.string.chance_question_option_8_2),
+            app.getString(R.string.chance_question_option_8_3),
+            app.getString(R.string.chance_question_option_8_4)
         ),
         correctIndex = 1,
-        points = 3
+        points       = 3
     ),
     GameDialogData.ChanceQuestion(
-        title = "Attacco DDoS",
-        prompt = "Cosa caratterizza un attacco di tipo DDoS?",
-        options = listOf(
-            "Compromissione di un singolo host",
-            "Diffusione di spyware tramite email",
-            "Saturazione di banda tramite numerose richieste",
-            "Criptazione dei file dell'utente"
+        title        = app.getString(R.string.chance_question_title_9),
+        prompt       = app.getString(R.string.chance_question_prompt_9),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_9_1),
+            app.getString(R.string.chance_question_option_9_2),
+            app.getString(R.string.chance_question_option_9_3),
+            app.getString(R.string.chance_question_option_9_4)
         ),
         correctIndex = 2,
-        points = 4
+        points       = 4
     ),
     GameDialogData.ChanceQuestion(
-        title = "VPN e privacy",
-        prompt = "Una VPN (Virtual Private Network) serve principalmente a:",
-        options = listOf(
-            "Velocizzare la connessione internet",
-            "Creare un tunnel cifrato per proteggere il traffico",
-            "Bloccare automaticamente ogni pubblicità",
-            "Aumentare la memoria RAM del dispositivo"
+        title        = app.getString(R.string.chance_question_title_10),
+        prompt       = app.getString(R.string.chance_question_prompt_10),
+        options      = listOf(
+            app.getString(R.string.chance_question_option_10_1),
+            app.getString(R.string.chance_question_option_10_2),
+            app.getString(R.string.chance_question_option_10_3),
+            app.getString(R.string.chance_question_option_10_4)
         ),
         correctIndex = 1,
-        points = 5
+        points       = 8
     )
 )
