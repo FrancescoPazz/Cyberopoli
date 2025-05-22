@@ -154,6 +154,10 @@
     <string name="broken_router_desc">You broke your router! You can\'t move for a turn</string>
     <string name="skip_turn">Skip turn</string>
     <string name="skip_turn_desc">You have to skip one turn</string>
+    <string name="error">Error</string>
+    <string name="no_players_to_block">No players to block</string>
+    <string name="points_earned_message">You earned %1$d Internet points</string>
+    <string name="points_lost_message">You lost %1$d Internet points</string>
 
     <!-- ================================= -->
     <!-- Home -->

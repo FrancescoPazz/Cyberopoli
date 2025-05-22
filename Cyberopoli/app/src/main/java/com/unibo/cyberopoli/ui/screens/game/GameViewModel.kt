@@ -18,6 +18,8 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameTypeCell
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.createBoard
+import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
 import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
 import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
@@ -36,6 +38,7 @@ class GameViewModel(
     private val app: Application, private val gameRepository: GameRepository
 ) : ViewModel() {
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
+    val cells: MutableLiveData<List<GameCell>> = MutableLiveData(createBoard())
     val turn: LiveData<String?> = gameRepository.currentTurnLiveData
     val chanceQuestions = MutableLiveData(chanceQuestions(app))
     val hackerStatements = MutableLiveData(hackerStatements(app))
@@ -326,6 +329,7 @@ class GameViewModel(
                                             ),
                                             cost = (gameCell.value?.times(2)) ?: 0,
                                         )
+
                                         endTurn()
                                     },
                                 )
@@ -522,6 +526,23 @@ class GameViewModel(
     fun onDialogOptionSelected(idx: Int) {
         viewModelScope.launch {
             when (val dlg = _dialog.value) {
+                is GameDialogData.MakeContentChoice -> {
+                    cells.value = cells.value?.toMutableList()?.apply {
+                        val position = getAssetPositionFromPerimeterPosition(player.value!!.cellPosition)
+                        if (position != null) {
+                            this[position] = GameCell(player.value!!.cellPosition.toString(), GameTypeCell.OCCUPIED, "Occupied")
+                            _gameAssets.value += GameAsset(
+                                lobbyId = game.value!!.lobbyId,
+                                gameId = game.value!!.id,
+                                cellId = player.value!!.cellPosition.toString(),
+                                ownerId = player.value!!.userId,
+                                placedAtRound = player.value!!.round,
+                                expiresAtRound = player.value!!.round + 1,
+                            )
+                        }
+                    }
+                }
+
                 is GameDialogData.SubscribeChoice -> {
                     if (idx == 0) {
                         updatePlayerPoints(-dlg.cost)

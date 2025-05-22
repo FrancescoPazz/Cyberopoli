@@ -5,6 +5,7 @@ import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameAction
+import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
@@ -18,6 +19,7 @@ data class GameParams(
     val movePlayer: () -> Unit,
     val onResultDismiss: () -> Unit,
     val currentTurnIndex: State<Int>,
+    val cells: State<List<GameCell>?>,
     val startAnimation: State<Boolean>,
     val players: State<List<GamePlayer>>,
     val isLoadingQuestion: State<Boolean>,

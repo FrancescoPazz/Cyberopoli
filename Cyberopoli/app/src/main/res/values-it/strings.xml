@@ -152,6 +152,10 @@
     <string name="broken_router_desc">Hai rotto il tuo router! Non puoi muoverti per un turno</string>
     <string name="skip_turn">Salti il turno</string>
     <string name="skip_turn_desc">Devi saltare questo turno</string>
+    <string name="error">Errore</string>
+    <string name="no_players_to_block">Nessun giocatore da bloccare</string>
+    <string name="points_earned_message">Hai guadagnato %1$d punti Internet</string>
+    <string name="points_lost_message">Hai perso %1$d punti Internet</string>
 
     <!-- ================================= -->
     <!-- Home -->

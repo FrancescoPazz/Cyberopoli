@@ -15,7 +15,6 @@ import com.unibo.cyberopoli.data.models.game.BOARD_COLS
 import com.unibo.cyberopoli.data.models.game.BOARD_ROWS
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
-import com.unibo.cyberopoli.data.models.game.createBoard
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.game.GameParams
@@ -43,10 +42,8 @@ fun GameContent(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            val cells = remember { createBoard() }
-
             GameMap(
-                gameCells = cells,
+                gameCells = gameParams.cells.value!!,
                 rows = BOARD_ROWS,
                 cols = BOARD_COLS,
                 borderPath = PERIMETER_PATH,
