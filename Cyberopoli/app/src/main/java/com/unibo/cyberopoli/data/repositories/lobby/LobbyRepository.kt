@@ -15,6 +15,7 @@ import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -35,46 +36,76 @@ class LobbyRepository(
     override suspend fun createOrGetLobby(lobbyId: String, host: User) {
         val lobby = Lobby(id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value)
         try {
-            val created = supabase.from(LOBBY_TABLE).upsert(lobby) {
+            var currentLobby = supabase.from(LOBBY_TABLE).select {
+                filter { eq("id", lobbyId) }
+            }.decodeSingleOrNull<Lobby>()
+
+            if (currentLobby == null) {
+                currentLobby = supabase.from(LOBBY_TABLE).insert(lobby) {
                     select()
-                    onConflict = "id"
                 }.decodeSingle<Lobby>()
-            currentLobbyLiveData.value = created
-
-            val lobbyMembersFlow: Flow<List<LobbyMember>> =
-                supabase.from(LOBBY_MEMBERS_TABLE).selectAsFlow(
-                        primaryKey = LobbyMember::userId,
-                        filter = FilterOperation("lobby_id", FilterOperator.EQ, created.id)
-                    )
-            MainScope().launch {
-                lobbyMembersFlow.collect { rawMembers ->
-                    val allIds = rawMembers.map { it.userId }.distinct()
-                    val missingIds = allIds.filterNot { userCache.containsKey(it) }
-
-                    if (missingIds.isNotEmpty()) {
-                        val fetchedUsers: List<User> = supabase.from("users").select {
-                                filter { isIn("id", missingIds) }
-                            }.decodeList<User>()
-
-                        fetchedUsers.forEach { user ->
-                            userCache[user.id] = user
-                        }
-                    }
-
-                    val members = rawMembers.map { raw ->
-                        LobbyMember(
-                            lobbyId = raw.lobbyId,
-                            userId = raw.userId,
-                            isReady = raw.isReady,
-                            joinedAt = raw.joinedAt,
-                            user = userCache[raw.userId]!!
-                        )
-                    }
-                    currentMembersLiveData.value = members
-                }
             }
+            currentLobbyLiveData.value = currentLobby
+
+            observeLobby()
+            observeLobbyMembers()
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeLobby() {
+        val lobbyFlow: Flow<Lobby?> =
+            supabase.from(LOBBY_TABLE).selectSingleValueAsFlow(Lobby::id) {
+                eq("id", currentLobbyLiveData.value!!.id)
+            }
+        MainScope().launch {
+            lobbyFlow.collect { rawLobby ->
+                if (rawLobby != null) {
+                    Log.d("TEST LobbyRepository", "observeLobby: $rawLobby")
+                    currentLobbyLiveData.value = rawLobby
+                } else {
+                    currentLobbyLiveData.value = null
+                }
+            }
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeLobbyMembers() {
+        val lobbyMembersFlow: Flow<List<LobbyMember>> =
+            supabase.from(LOBBY_MEMBERS_TABLE).selectAsFlow(
+                primaryKey = LobbyMember::userId,
+                filter = FilterOperation("lobby_id", FilterOperator.EQ, currentLobbyLiveData.value!!.id)
+            )
+        MainScope().launch {
+            lobbyMembersFlow.collect { rawMembers ->
+                val allIds = rawMembers.map { it.userId }.distinct()
+                val missingIds = allIds.filterNot { userCache.containsKey(it) }
+
+                if (missingIds.isNotEmpty()) {
+                    Log.d("TEST LobbyRepository", "ObserveLobbyMembers Fetching missing users: $missingIds")
+                    val fetchedUsers: List<User> = supabase.from("users").select {
+                        filter { isIn("id", missingIds) }
+                    }.decodeList<User>()
+
+                    fetchedUsers.forEach { user ->
+                        userCache[user.id] = user
+                    }
+                }
+
+                val members = rawMembers.map { raw ->
+                    LobbyMember(
+                        lobbyId = raw.lobbyId,
+                        userId = raw.userId,
+                        isReady = raw.isReady,
+                        joinedAt = raw.joinedAt,
+                        user = userCache[raw.userId]!!
+                    )
+                }
+                currentMembersLiveData.value = members
+            }
         }
     }
 

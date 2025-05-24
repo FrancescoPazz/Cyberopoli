@@ -174,6 +174,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 scanViewModel.scannedValue.value?.toByteArray()
                                     ?: throw IllegalStateException("Scanned value is null")
                             ).toString(),
+                            lobby = lobbyViewModel.lobby.observeAsState(),
                             isGuest = isGuest,
                             members = members ?: throw IllegalStateException("Members are null"),
                             startGame = lobbyViewModel::startGame,

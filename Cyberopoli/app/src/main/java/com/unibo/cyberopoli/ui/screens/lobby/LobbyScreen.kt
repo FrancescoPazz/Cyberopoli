@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
@@ -35,6 +36,17 @@ fun LobbyScreen(
 ) {
     var hasJoined by remember { mutableStateOf(false) }
     var suppressLeaveOnStop by remember { mutableStateOf(false) }
+
+    LaunchedEffect(params.lobby) {
+        if (params.lobby.value != null && params.lobby.value!!.status == LobbyStatus.IN_PROGRESS.value) {
+            Log.d("TEST LobbyScreen", "Lobby is already in progress, navigating to Game screen")
+            navController.navigate(CyberopoliRoute.Game) {
+                launchSingleTop = true
+                restoreState = true
+            }
+
+        }
+    }
 
     LaunchedEffect(params.lobbyId) {
         if (!hasJoined && params.lobbyId.isNotBlank()) {

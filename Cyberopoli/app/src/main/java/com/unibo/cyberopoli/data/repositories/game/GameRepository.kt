@@ -101,7 +101,6 @@ class GameRepository(
         }
     }
 
-    @OptIn(SupabaseExperimental::class)
     override suspend fun createOrGetGame(lobbyId: String, lobbyMembers: List<LobbyMember>) {
         val newGame = Game(
             lobbyId = lobbyId, id = UUID.randomUUID().toString(), turn = lobbyMembers[0].userId
@@ -123,18 +122,43 @@ class GameRepository(
             }
             Log.d("TEST", "Current game: ${currentGameLiveData.value}")
 
-            val turnFlow: Flow<Game> = supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::turn) {
+            observeGame()
+            observeTurn()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeGame() {
+        val gameFlow: Flow<Game?> =
+            supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::id) {
                 eq("lobby_id", currentGameLiveData.value!!.lobbyId)
                 eq("id", currentGameLiveData.value!!.id)
             }
-            MainScope().launch {
-                turnFlow.collect { game ->
-                    Log.d("TEST", "Turn changed: ${game.turn}")
-                    currentTurnLiveData.postValue(game.turn)
+        MainScope().launch {
+            gameFlow.collect { rawGame ->
+                if (rawGame != null) {
+                    Log.d("TEST GameRepository", "Observe Game updated: $rawGame")
+                    currentGameLiveData.value = rawGame
+                } else {
+                    currentGameLiveData.value = null
                 }
             }
-        } catch (e: Exception) {
-            throw e
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeTurn() {
+        val turnFlow: Flow<Game> = supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::turn) {
+            eq("lobby_id", currentGameLiveData.value!!.lobbyId)
+            eq("id", currentGameLiveData.value!!.id)
+        }
+        MainScope().launch {
+            turnFlow.collect { game ->
+                Log.d("TEST GameRepositoy", "Observe Turn changed: ${game.turn}")
+                currentTurnLiveData.postValue(game.turn)
+            }
         }
     }
 
