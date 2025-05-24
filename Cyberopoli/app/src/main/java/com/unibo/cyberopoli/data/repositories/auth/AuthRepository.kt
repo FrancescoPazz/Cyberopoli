@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -9,6 +10,7 @@ import com.unibo.cyberopoli.data.models.auth.AuthResponse
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.auth.User
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.OtpType
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -185,6 +187,35 @@ class AuthRepository(
             emit(AuthResponse.Success)
         } catch (e: Exception) {
             emit(AuthResponse.Failure(e.message ?: "Reset password error"))
+        }
+    }
+
+    fun sendOtp(email: String, otp: String): Flow<AuthResponse> = flow {
+        try {
+            supabase.auth.verifyEmailOtp(type = OtpType.Email.EMAIL, email = email, token = otp)
+            emit(AuthResponse.Success)
+        } catch (e: Exception) {
+            Log.d("AuthRepository", "Send OTP error: ${e.message}")
+            emit(AuthResponse.Failure(e.message ?: "Send OTP error"))
+        }
+    }
+
+    fun changeForgottenPassword(email: String, newPassword: String) = flow  {
+        try {
+            val user = supabase.from("users")
+                .select {
+                    filter {
+                        eq("email", email)
+                    }
+                }.decodeSingle<User>()
+
+            supabase.auth.admin.updateUserById(user.id) {
+                password = newPassword
+            }
+            emit (AuthResponse.Success)
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Error changing password: ${e.message}")
+            emit (AuthResponse.Failure(e.message ?: "Error changing password"))
         }
     }
 

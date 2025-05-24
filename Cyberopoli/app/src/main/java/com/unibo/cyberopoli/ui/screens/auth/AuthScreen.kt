@@ -99,7 +99,8 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                     authParams.authState,
                     authParams.login,
                     authParams.loginGoogleUser,
-                    authParams.resetPassword
+                    authParams.sendPasswordReset,
+                    authParams.changeForgottenPassword,
                 )
                 1 -> SignUpCard(
                     navController, authParams.authState, authParams.signUp

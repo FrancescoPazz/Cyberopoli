@@ -40,7 +40,11 @@
     <string name="change_fail">Modifica fallita</string>
     <string name="change_password_success">Cambio password avvenuto con successo</string>"
     <string name="change_password_failed">Cambio password fallito</string>
+    <string name="new_password">Nuova Password</string>
     <string name="reset_password_title">Reimposta Password</string>
+    <string name="forgot_password">Password dimenticata?</string>
+    <string name="enter_otp">Inserisci il codice OTP</string>
+    <string name="verify_otp">Verifica Codice OTP</string>
     <string name="send_reset_email">Invia email</string>
     <string name="back_to_login">Torna al login</string>
     <string name="reset_password_failed">Invio email di reset fallito</string>

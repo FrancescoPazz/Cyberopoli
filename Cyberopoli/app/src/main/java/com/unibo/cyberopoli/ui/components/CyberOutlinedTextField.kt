@@ -23,11 +23,12 @@ fun CyberOutlinedTextField(
     placeholder: String,
     singleLine: Boolean = false,
     imageVector: ImageVector? = null,
+    onValueChange: (String) -> Unit = { value.value = it },
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     OutlinedTextField(
         value = value.value,
-        onValueChange = { value.value = it },
+        onValueChange = onValueChange,
         label = { Text(placeholder) },
         placeholder = { Text(placeholder) },
         leadingIcon = {

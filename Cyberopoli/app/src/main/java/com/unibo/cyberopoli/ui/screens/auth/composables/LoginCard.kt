@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.auth.composables
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,12 +35,17 @@ fun LoginCard(
     authState: State<AuthState?>,
     login: (email: String, password: String) -> Unit,
     googleLogin: (context: Context) -> Unit,
-    resetPassword: (email: String) -> Unit
+    sendResetEmail: (email: String) -> Unit,
+    changeForgottenPassword: (email: String, password: String, otp: String) -> Unit,
 ) {
     val context = LocalContext.current
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     var isResetMode by remember { mutableStateOf(false) }
+    var showOtpFields by remember { mutableStateOf(false) }
+    val otp = remember { mutableStateOf("") }
+    val newPassword = remember { mutableStateOf("") }
+    val confirmPassword = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -50,68 +56,65 @@ fun LoginCard(
         if (!isResetMode) {
             CyberOutlinedTextField(
                 value = email,
+                onValueChange = { email.value = it },
                 placeholder = stringResource(R.string.email),
                 imageVector = Icons.Default.Email,
-                singleLine = true,
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             CyberOutlinedTextField(
                 value = password,
+                onValueChange = { password.value = it },
                 placeholder = stringResource(R.string.password),
                 imageVector = Icons.Default.Lock,
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = PasswordVisualTransformation()
             )
 
             AuthButton(
-                text = stringResource(R.string.login).uppercase(), onClick = {
-                    login(email.value, password.value)
-                }, enabled = authState.value != AuthState.Loading
+                text = stringResource(R.string.login).uppercase(),
+                onClick = { login(email.value.trim(), password.value) },
+                enabled = authState.value != AuthState.Loading
             )
 
             TextButton(
-                onClick = { isResetMode = true },
-                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
-            ) {
-                Text("Forgot password?")
-            }
-
-            GoogleSignInButton(
-                onClick = { googleLogin(context) },
-            )
-        } else {
-            Text(
-                text = stringResource(R.string.reset_password_title),
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            CyberOutlinedTextField(
-                value = email,
-                placeholder = stringResource(R.string.email),
-                imageVector = Icons.Default.Email,
-                singleLine = true
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            AuthButton(
-                text = stringResource(R.string.send_reset_email), onClick = {
-                    resetPassword(email.value.trim())
-                }, enabled = email.value.isNotBlank() && authState.value != AuthState.Loading
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            TextButton(
-                onClick = { isResetMode = false }, colors = ButtonDefaults.textButtonColors(
+                onClick = { isResetMode = true }, colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
-                Text(stringResource(R.string.back_to_login))
+                Text(stringResource(R.string.forgot_password))
             }
+
+            GoogleSignInButton(onClick = { googleLogin(context) })
+        } else {
+            ResetPasswordForm(email = email,
+                onEmailChange = { email.value = it },
+                showOtpFields = showOtpFields,
+                otp = otp,
+                onOtpChange = { otp.value = it
+                               Log.d("test otp", otp.value)},
+                newPassword = newPassword,
+                onNewPasswordChange = { newPassword.value = it
+                                      Log.d("test newPassword", newPassword.value)},
+                confirmPassword = confirmPassword,
+                onConfirmPasswordChange = { confirmPassword.value = it
+                                          Log.d("test confirmPassword", confirmPassword.value)},
+                isLoading = authState.value == AuthState.Loading,
+                onSendResetEmail = {
+                    sendResetEmail(email.value.trim())
+                    showOtpFields = true
+                },
+                changeForgottenPassword = {
+                    changeForgottenPassword(
+                        email.value.trim(),
+                        newPassword.value.trim(),
+                        otp.value.trim()
+                    )
+                },
+                onBack = { isResetMode = false }
+            )
         }
     }
 }

@@ -20,6 +20,8 @@ class AuthViewModel(
     private val _authState = MutableLiveData<AuthState>(AuthState.Unauthenticated)
     val authState: LiveData<AuthState> = _authState
 
+    private val emailForgotPassword = MutableLiveData("")
+
     init {
         viewModelScope.launch {
             authRepository.authState().collect { state ->
@@ -110,6 +112,18 @@ class AuthViewModel(
                 _authState.value = AuthState.Unauthenticated
             } else if (resp is AuthResponse.Failure) {
                 _authState.value = AuthState.Error(resp.message)
+            }
+        }
+    }
+
+    fun changeForgottenPassword(email: String, newPassword: String, otp: String) {
+        viewModelScope.launch {
+            val ok = authRepository.sendOtp(email, otp).single()
+            if (ok is AuthResponse.Success) {
+                emailForgotPassword.value = email
+                authRepository.changeForgottenPassword(emailForgotPassword.value!!, newPassword)
+            } else if (ok is AuthResponse.Failure) {
+                _authState.value = AuthState.Error("Impossible to send OTP code")
             }
         }
     }

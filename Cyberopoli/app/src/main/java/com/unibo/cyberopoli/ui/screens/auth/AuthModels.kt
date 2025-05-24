@@ -11,7 +11,8 @@ data class AuthParams(
     val signUp: (
         name: String?, surname: String?, username: String, email: String, password: String
     ) -> Unit,
-    val resetPassword: (email: String) -> Unit,
-    val loginAnonymously: (String) -> Unit
+    val loginAnonymously: (String) -> Unit,
+    val sendPasswordReset: (email: String) -> Unit,
+    val changeForgottenPassword: (email: String, password: String, otp: String) -> Unit,
 )
 
