@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.home.composables.GameStatisticsSection
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayActionsCard
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayerWelcomeCard
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
@@ -49,8 +49,7 @@ fun HomeScreen(
 
                 PlayerWelcomeCard(user = currentUserState.value!!)
 
-                PlayActionsCard(onNewGameClick = { /* TODO: Naviga a Nuova Partita */ },
-                            onJoinGameClick = { /* TODO: Naviga a Unisciti Partita */ })
+                PlayActionsCard(onNewGameClick = { navController.navigate(CyberopoliRoute.Scan) })
 
                 Spacer(modifier = Modifier.height(4.dp))
 

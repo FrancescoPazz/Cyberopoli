@@ -2,7 +2,9 @@ package com.unibo.cyberopoli.data.models.game
 
 import com.unibo.cyberopoli.R
 
-enum class GameTypeCell(val resource: Int?) {
+sealed interface GameEventType
+
+enum class GameTypeCell(val resource: Int? = null) : GameEventType {
     START(R.drawable.ic_start),
 
     YOUTUBE(R.drawable.ic_youtube),
@@ -20,5 +22,10 @@ enum class GameTypeCell(val resource: Int?) {
     BROKEN_ROUTER(R.drawable.ic_broken_router),
     VPN(R.drawable.ic_vpn),
     OCCUPIED(R.drawable.ic_content),
-    COMMON(null)
+    COMMON()
+}
+
+enum class GameLogicEvent : GameEventType {
+    FIFTH_ROUND_REACHED,
+    GAME_OVER
 }

@@ -1,8 +1,8 @@
 package com.unibo.cyberopoli.data.models.lobby
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
 
 @Serializable
 data class Lobby(
@@ -12,5 +12,5 @@ data class Lobby(
 
     @SerialName("status") var status: String,
 
-    @SerialName("created_at") val createdAt: String = Instant.now().toString(),
+    @SerialName("created_at") val createdAt: String = Clock.System.now().toString(),
 )

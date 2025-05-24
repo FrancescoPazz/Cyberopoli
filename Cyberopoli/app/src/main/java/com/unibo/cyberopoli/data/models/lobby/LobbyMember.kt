@@ -1,10 +1,10 @@
 package com.unibo.cyberopoli.data.models.lobby
 
 import com.unibo.cyberopoli.data.models.auth.User
+import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import java.time.Instant
 
 @Serializable
 data class LobbyMemberRaw(
@@ -15,7 +15,7 @@ data class LobbyMemberRaw(
 
     @SerialName("ready") var isReady: Boolean = false,
 
-    @SerialName("joined_at") val joinedAt: String = Instant.now().toString(),
+    @SerialName("joined_at") val joinedAt: String = Clock.System.now().toString(),
 
     @SerialName("users") val user: User,
 )
@@ -28,7 +28,7 @@ data class LobbyMember(
 
     @SerialName("ready") var isReady: Boolean = false,
 
-    @SerialName("joined_at") val joinedAt: String = Instant.now().toString(),
+    @SerialName("joined_at") val joinedAt: String = Clock.System.now().toString(),
 
     @Transient val user: User? = null,
 )

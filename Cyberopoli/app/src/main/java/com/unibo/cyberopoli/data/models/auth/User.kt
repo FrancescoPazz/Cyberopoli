@@ -1,8 +1,8 @@
 package com.unibo.cyberopoli.data.models.auth
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
 
 @Serializable
 data class User(
@@ -18,5 +18,5 @@ data class User(
     @SerialName("total_games") val totalGames: Int = 0,
     @SerialName("total_wins") val totalWins: Int = 0,
     @SerialName("total_medals") val totalMedals: Int = 0,
-    @SerialName("created_at") val createdAt: String = Instant.now().toString(),
+    @SerialName("created_at") val createdAt: String = Clock.System.now().toString(),
 )

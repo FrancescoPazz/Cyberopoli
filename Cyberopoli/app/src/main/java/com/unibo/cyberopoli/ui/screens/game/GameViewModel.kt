@@ -110,30 +110,15 @@ class GameViewModel(
 
                 val currentActionId = _actionsPermitted.value.firstOrNull()?.id
                 if (isMyTurn) {
-                    if (currentActionId == null || currentActionId == waitTurnAction.id) {
-                        if (_skipNext.value) {
-                            _skipNext.value = false
-                            _actionsPermitted.value = listOf(waitTurnAction)
-                            _dialog.value = GameDialogData.Alert(
-                                title = app.getString(R.string.broken_router),
-                                message = app.getString(R.string.broken_router_desc),
-                            )
-                        } else {
-                            _actionsPermitted.value = listOf(rollDiceAction)
-                            if (_hasVpn.value) {
-                                _hasVpn.value = false
-                                gameRepository.removeGameEvent(
-                                    GameEvent(
-                                        lobbyId = game.value!!.lobbyId,
-                                        gameId = game.value!!.id,
-                                        senderUserId = player.value!!.userId,
-                                        eventType = GameTypeCell.VPN
-                                    )
-                                )
-                            }
-                        }
-                        _actionsPermitted.value = listOf(rollDiceAction)
+                    if (_skipNext.value) {
+                        _skipNext.value = false
+                        _actionsPermitted.value = listOf(waitTurnAction)
+                        _dialog.value = GameDialogData.Alert(
+                            title = app.getString(R.string.broken_router),
+                            message = app.getString(R.string.broken_router_desc),
+                        )
                     }
+                    _actionsPermitted.value = listOf(rollDiceAction)
                 } else {
                     if (currentActionId == null || currentActionId != waitTurnAction.id) {
                         _actionsPermitted.value = listOf(waitTurnAction)
@@ -279,16 +264,28 @@ class GameViewModel(
                 }
 
                 GameTypeCell.VPN -> {
-                    _hasVpn.value = true
-                    gameRepository.addGameEvent(
-                        GameEvent(
-                            lobbyId = game.value!!.lobbyId,
-                            gameId = game.value!!.id,
-                            senderUserId = player.value!!.userId,
-                            eventType = GameTypeCell.VPN
+                    if (_hasVpn.value) {
+                        _hasVpn.value = false
+                        gameRepository.removeGameEvent(
+                            GameEvent(
+                                lobbyId = game.value!!.lobbyId,
+                                gameId = game.value!!.id,
+                                senderUserId = player.value!!.userId,
+                                eventType = GameTypeCell.VPN
+                            )
                         )
-                    )
-                    showDialogPerType(GameTypeCell.VPN)
+                        showDialogPerType(GameTypeCell.VPN)
+                    } else {
+                        _hasVpn.value = true
+                        gameRepository.addGameEvent(
+                            GameEvent(
+                                lobbyId = game.value!!.lobbyId,
+                                gameId = game.value!!.id,
+                                senderUserId = player.value!!.userId,
+                                eventType = GameTypeCell.VPN
+                            )
+                        )
+                    }
                 }
 
                 GameTypeCell.BROKEN_ROUTER -> {

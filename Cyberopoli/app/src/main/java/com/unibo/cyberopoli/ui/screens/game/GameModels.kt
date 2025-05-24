@@ -2,12 +2,12 @@ package com.unibo.cyberopoli.ui.screens.game
 
 import androidx.compose.runtime.State
 import com.unibo.cyberopoli.data.models.game.Game
-import com.unibo.cyberopoli.data.models.game.GameDialogData
+import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameAction
 import com.unibo.cyberopoli.data.models.game.GameCell
-import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.game.GameDialogData
 
 data class GameParams(
     val game: State<Game?>,

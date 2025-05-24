@@ -1,9 +1,9 @@
 package com.unibo.cyberopoli.data.models.game
 
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
 
 @Serializable
 data class GameEvent(
@@ -16,9 +16,9 @@ data class GameEvent(
 
     @SerialName("recipient_user_id") val recipientUserId: String? = null,
 
-    @SerialName("event_type") val eventType: GameTypeCell,
+    @SerialName("event_type") val eventType: GameEventType,
 
     @SerialName("value") val value: Int? = null,
 
-    @SerialName("created_at") val createdAt: String = Instant.now().toString(),
+    @SerialName("created_at") val createdAt: String = Clock.System.now().toString(),
 )

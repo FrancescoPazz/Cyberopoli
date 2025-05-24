@@ -37,7 +37,6 @@ fun getAssetPositionFromPerimeterPosition(perimeterPosition: Int): Int? {
     }
 }
 
-
 val PERIMETER_CELLS: Map<Int, GameCell> = listOf(
     // First line
     8 to GameCell("8", GameTypeCell.START, "Start", 50),

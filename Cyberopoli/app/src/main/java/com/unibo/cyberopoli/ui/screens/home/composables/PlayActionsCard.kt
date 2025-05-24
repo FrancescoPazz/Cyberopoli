@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Input
 import androidx.compose.material.icons.filled.PlayCircleFilled
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,8 +23,8 @@ import com.unibo.cyberopoli.R
 @Composable
 fun PlayActionsCard(
     modifier: Modifier = Modifier,
-    onNewGameClick: () -> Unit,
-    onJoinGameClick: () -> Unit,
+    onNewGameClick: () -> Unit = {},
+    onJoinGameClick: () -> Unit = {},
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -52,11 +51,13 @@ fun PlayActionsCard(
                 isPrimary = true
             )
 
-            GameActionButton(
-                text = stringResource(R.string.join_game_button),
-                icon = Icons.AutoMirrored.Filled.Input,
-                onClick = onJoinGameClick
-            )
+            /*
+               GameActionButton(
+                   text = stringResource(R.string.join_game_button),
+                   icon = Icons.AutoMirrored.Filled.Input,
+                   onClick = onJoinGameClick
+               )
+            */
         }
     }
 }

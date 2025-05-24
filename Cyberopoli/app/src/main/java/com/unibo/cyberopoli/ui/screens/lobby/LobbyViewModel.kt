@@ -2,7 +2,6 @@ package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -22,7 +21,8 @@ class LobbyViewModel(
     val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
 
     val isHost: LiveData<Boolean> = lobby.map { currentLobby ->
-        currentLobby?.hostId == user.value?.id
+        val currentUser = user.value
+        currentLobby?.hostId == currentUser?.id
     }
 
     val allReady: LiveData<Boolean> = members.map { currentMembers ->
