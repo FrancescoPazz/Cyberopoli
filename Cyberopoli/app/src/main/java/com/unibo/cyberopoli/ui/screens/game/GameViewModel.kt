@@ -182,28 +182,42 @@ class GameViewModel(
 
     fun movePlayer() {
         viewModelScope.launch {
-            if (game.value == null || player.value == null) return@launch
-            players.value?.firstOrNull { it.userId == player.value!!.userId }?.let { me ->
-                val oldCellPosition = me.cellPosition
-                val diceRolled = _diceRoll.value ?: 0
-                if (diceRolled <= 0) return@let
+            val currentGame = game.value ?: return@launch
+            val currentPlayer = player.value ?: return@launch
+            val me = players.value
+                ?.firstOrNull { it.userId == currentPlayer.userId }
+                ?: return@launch
 
-                val newPos = computeNewPosition(oldCellPosition, diceRolled)
-                val path = PERIMETER_PATH
-                val oldPathIndex = path.indexOf(oldCellPosition)
+            val oldCellPosition = me.cellPosition
+            val diceRolled = _diceRoll.value ?: 0
+            if (diceRolled <= 0) return@launch
 
-                if (oldPathIndex != -1 && (oldPathIndex + diceRolled) >= path.size) {
-                    increasePlayerRound()
-                }
+            val path = PERIMETER_PATH
+            val oldPathIndex = path.indexOf(oldCellPosition)
+            if (oldPathIndex == -1) return@launch
 
-                Log.d("GameViewModel", "Player ${me.userId} moved from $oldCellPosition to $newPos. Dice: $diceRolled")
-                gameRepository.updatePlayerPosition(newPos)
-                PERIMETER_CELLS[newPos]?.let { landedCell ->
-                    handleLanding(landedCell)
-                } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: $newPos")
+            val steps = (1..diceRolled).map { step ->
+                path[(oldPathIndex + step) % path.size]
             }
+
+            val animationDelayMs = 200L
+            for (newPos in steps) {
+                Log.d("GameViewModel", "Animating move to $newPos")
+                gameRepository.updatePlayerPosition(newPos)
+                delay(animationDelayMs)
+            }
+
+            if (oldPathIndex + diceRolled >= path.size) {
+                increasePlayerRound()
+            }
+
+            Log.d("GameViewModel", "Player ${me.userId} landed on ${steps.last()}")
+            PERIMETER_CELLS[steps.last()]?.let { landedCell ->
+                handleLanding(landedCell)
+            } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: ${steps.last()}")
         }
     }
+
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
