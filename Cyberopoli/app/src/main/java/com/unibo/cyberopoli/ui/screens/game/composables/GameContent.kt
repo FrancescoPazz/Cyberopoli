@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.BOARD_COLS
 import com.unibo.cyberopoli.data.models.game.BOARD_ROWS
-import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
@@ -22,9 +22,10 @@ import com.unibo.cyberopoli.ui.screens.game.GameParams
 fun GameContent(
     navController: NavHostController,
     gameParams: GameParams,
-    currentPlayer: GamePlayer,
-    players: List<GamePlayer>
 ) {
+    val player by gameParams.player
+    val players by gameParams.players
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { TopBar(navController) },
@@ -41,20 +42,24 @@ fun GameContent(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            GameMap(
-                gameCells = gameParams.cells.value!!,
-                rows = BOARD_ROWS,
-                cols = BOARD_COLS,
-                borderPath = PERIMETER_PATH,
-                players = players
-            )
+            players?.let {
+                GameMap(
+                    gameCells = gameParams.cells.value!!,
+                    rows = BOARD_ROWS,
+                    cols = BOARD_COLS,
+                    borderPath = PERIMETER_PATH,
+                    players = it
+                )
+            }
 
             Spacer(Modifier.weight(1f))
 
-            ScoreAndManageRow(
-                score = currentPlayer.score,
-                onManageClick = { }
-            )
+            player?.let {
+                ScoreAndManageRow(
+                    score = it.score,
+                    onManageClick = { }
+                )
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ data class GameParams(
     val leaveGame: () -> Unit,
     val diceRoll: State<Int?>,
     val movePlayer: () -> Unit,
+    val player: State<GamePlayer?>,
     val onResultDismiss: () -> Unit,
     val currentTurnIndex: State<Int>,
     val cells: State<List<GameCell>?>,
@@ -28,6 +29,5 @@ data class GameParams(
     val gameAction: State<List<GameAction>?>,
     val updatePlayerPoints: (value: Int) -> Unit,
     val onDialogOptionSelected: (idx: Int) -> Unit,
-    val animatedPositions: State<Map<String, Int>>,
     val startGame: (lobbyId: String, members: List<LobbyMember>) -> Unit,
 )

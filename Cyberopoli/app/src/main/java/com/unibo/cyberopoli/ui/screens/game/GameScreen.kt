@@ -19,31 +19,22 @@ fun GameScreen(
     navController: NavHostController, gameParams: GameParams
 ) {
     val game by gameParams.game
+    val player by gameParams.player
     val players by gameParams.players
     val dialogData by gameParams.dialogData
-    val turnIdx by gameParams.currentTurnIndex
     val isLoadingQuestion by gameParams.isLoadingQuestion
     var hasStarted by remember { mutableStateOf(false) }
-
-    val animatedPositions by gameParams.animatedPositions
-    val displayPlayers = players?.map { p ->
-        p.copy(cellPosition = animatedPositions[p.userId] ?: p.cellPosition)
-    }
 
     GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
     BackHandler { gameParams.leaveGame(); navController.popBackStack() }
 
-    if (game == null || players == null || players?.getOrNull(turnIdx) == null) {
+    if (game == null || players == null || player == null) {
         LoadingScreen()
     } else {
-        if (displayPlayers != null) {
-            GameContent(
-                navController = navController,
-                gameParams = gameParams,
-                currentPlayer = players!![turnIdx],
-                players = displayPlayers
-            )
-        }
+        GameContent(
+            navController = navController,
+            gameParams = gameParams
+        )
     }
 
     if (isLoadingQuestion) {

@@ -44,14 +44,11 @@ class GameViewModel(
     val hackerStatements = MutableLiveData(hackerStatements(app))
 
     // Mine variables
-    private val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
+    val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
     val players: LiveData<List<GamePlayer>> = gameRepository.currentPlayersLiveData
 
     private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
     val subscriptions: StateFlow<List<GameTypeCell>> = _subscriptions.asStateFlow()
-
-    private val _animatedPositions = MutableStateFlow<Map<String, Int>>(emptyMap())
-    val animatedPositions: StateFlow<Map<String, Int>> = _animatedPositions.asStateFlow()
 
     private val _startAnimation = MutableStateFlow(false)
     val startAnimation: StateFlow<Boolean> = _startAnimation.asStateFlow()
@@ -176,7 +173,7 @@ class GameViewModel(
                     id = "move_on",
                     iconRes = R.drawable.ic_move_on,
                     action = {
-                        startMovementAnimation()
+                        movePlayer()
                     },
                 ),
             )
@@ -397,49 +394,6 @@ class GameViewModel(
             }
         }
         _isLoadingQuestion.value = false
-    }
-
-    private fun startMovementAnimation() {
-        viewModelScope.launch {
-            val steps = _diceRoll.value ?: 0
-
-            if (player.value?.userId == null) return@launch
-            val currentPlayerId = player.value!!.userId
-
-            if (steps <= 0 || game.value == null) {
-                players.value?.firstOrNull { it.userId == currentPlayerId }?.let { me ->
-                    PERIMETER_CELLS[me.cellPosition]?.let { landedCell ->
-                        handleLanding(landedCell)
-                    }
-                }
-                return@launch
-            }
-
-            val path = PERIMETER_PATH
-            val playerToAnimate =
-                players.value?.firstOrNull { it.userId == currentPlayerId } ?: return@launch
-            val originalCellPosition = playerToAnimate.cellPosition
-            val startPathIndex = path.indexOf(originalCellPosition).coerceAtLeast(0)
-
-            for (i in 1..steps) {
-                val nextAnimatedPosOnPath = path[(startPathIndex + i) % path.size]
-                _animatedPositions.value = mapOf(currentPlayerId to nextAnimatedPosOnPath)
-                delay(400L)
-            }
-
-            val finalNewPos = computeNewPosition(originalCellPosition, steps)
-            _animatedPositions.value -= currentPlayerId
-            gameRepository.updatePlayerPosition(finalNewPos)
-
-            val oldPathIndex = path.indexOf(originalCellPosition)
-            if (oldPathIndex != -1 && (oldPathIndex + steps) >= path.size) {
-                increasePlayerRound()
-            }
-
-            PERIMETER_CELLS[finalNewPos]?.let { landedCell ->
-                handleLanding(landedCell)
-            } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: $finalNewPos")
-        }
     }
 
     private fun increasePlayerRound() {

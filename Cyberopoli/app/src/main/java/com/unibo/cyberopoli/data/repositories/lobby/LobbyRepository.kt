@@ -80,10 +80,16 @@ class LobbyRepository(
                 filter = FilterOperation("lobby_id", FilterOperator.EQ, currentLobbyLiveData.value!!.id)
             )
         MainScope().launch {
-            lobbyMembersFlow.collect { rawMembers ->
-                val allIds = rawMembers.map { it.userId }.distinct()
-                val missingIds = allIds.filterNot { userCache.containsKey(it) }
+            var lastValid: List<LobbyMember> = emptyList()
 
+            lobbyMembersFlow.collect { rawMembers ->
+
+                if (rawMembers.isNotEmpty()) {
+                    lastValid = rawMembers
+                }
+
+                val allIds = lastValid.map { it.userId }.distinct()
+                val missingIds = allIds.filterNot { userCache.containsKey(it) }
                 if (missingIds.isNotEmpty()) {
                     Log.d("TEST LobbyRepository", "ObserveLobbyMembers Fetching missing users: $missingIds")
                     val fetchedUsers: List<User> = supabase.from("users").select {
@@ -95,7 +101,7 @@ class LobbyRepository(
                     }
                 }
 
-                val members = rawMembers.map { raw ->
+                val members = lastValid.map { raw ->
                     LobbyMember(
                         lobbyId = raw.lobbyId,
                         userId = raw.userId,

@@ -193,6 +193,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val members = lobbyViewModel.members.observeAsState()
                     val game = gameViewModel.game.observeAsState()
                     val gameAction = gameViewModel.actionsPermitted.collectAsStateWithLifecycle()
+                    val player = gameViewModel.player.observeAsState()
                     val players = gameViewModel.players.observeAsState()
                     val diceRoll = gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData = gameViewModel.dialog.collectAsStateWithLifecycle()
@@ -204,6 +205,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             lobby = lobby,
                             gameAction = gameAction,
                             members = members,
+                            player = player,
                             players = players,
                             diceRoll = diceRoll,
                             dialogData = dialogData,
@@ -218,7 +220,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             updatePlayerPoints = gameViewModel::updatePlayerPoints,
                             onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
                             startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
-                            animatedPositions = gameViewModel.animatedPositions.collectAsStateWithLifecycle(),
                             isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
                         )
                     )

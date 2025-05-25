@@ -23,6 +23,7 @@ import io.github.jan.supabase.realtime.selectAsFlow
 import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.util.Locale
@@ -162,7 +163,17 @@ class GameRepository(
                 filter = FilterOperation("game_id", FilterOperator.EQ, currentGameLiveData.value!!.id)
             )
         MainScope().launch {
-            gamePlayersFlow.collect { rawPlayers ->
+            var seenOnce = false
+            gamePlayersFlow
+                .filter { rawPlayers ->
+                    if (!seenOnce) {
+                        seenOnce = rawPlayers.isNotEmpty()
+                        return@filter true
+                    } else {
+                        rawPlayers.isNotEmpty()
+                    }
+                }
+                .collect { rawPlayers ->
                 Log.d("TEST GameRepository", "Observe Game Players updated: $rawPlayers")
                 val players = rawPlayers.map { r ->
                     GamePlayer(
