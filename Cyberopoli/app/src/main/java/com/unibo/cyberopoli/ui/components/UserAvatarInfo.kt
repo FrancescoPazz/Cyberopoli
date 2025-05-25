@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
@@ -36,8 +37,8 @@ import com.unibo.cyberopoli.data.models.auth.User
 fun UserAvatarInfo(
     user: User,
     showWelcomeMessage: Boolean = false,
-    textStyleHeadline: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.headlineMedium,
-    textStyleBody: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyLarge
+    textStyleHeadline: TextStyle = MaterialTheme.typography.headlineMedium,
+    textStyleBody: TextStyle = MaterialTheme.typography.bodyLarge
 ) {
     val context = LocalContext.current
     val resId = remember(user.avatarUrl) {

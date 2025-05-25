@@ -17,6 +17,9 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.filter.FilterOperation
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
+import io.github.jan.supabase.realtime.selectAsFlow
 import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +41,7 @@ class GameRepository(
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentTurnLiveData: MutableLiveData<String?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
+    val curretPlayersLiveData: MutableLiveData<List<GamePlayer>> = MutableLiveData(emptyList())
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
@@ -144,6 +148,33 @@ class GameRepository(
                 } else {
                     currentGameLiveData.value = null
                 }
+            }
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeGamePlayers() {
+        val gamePlayersFlow: Flow<List<GamePlayer>> =
+            supabase.from(GAME_PLAYERS_TABLE).selectAsFlow(
+                primaryKey = GamePlayer::userId,
+                filter = FilterOperation("game_id", FilterOperator.EQ, currentGameLiveData.value!!.id)
+            )
+        MainScope().launch {
+            gamePlayersFlow.collect { rawPlayers ->
+                Log.d("TEST GameRepository", "Observe Game Players updated: $rawPlayers")
+                val players = rawPlayers.map { r ->
+                    GamePlayer(
+                        lobbyId = r.lobbyId,
+                        gameId = r.gameId,
+                        userId = r.userId,
+                        score = r.score,
+                        cellPosition = r.cellPosition,
+                        round = r.round,
+                        winner = r.winner,
+                        user = r.user,
+                    )
+                }
+                curretPlayersLiveData.postValue(players)
             }
         }
     }
