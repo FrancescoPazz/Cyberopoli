@@ -45,6 +45,7 @@ class GameViewModel(
 
     // Mine variables
     private val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
+    val players: LiveData<List<GamePlayer>> = gameRepository.currentPlayersLiveData
 
     private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
     val subscriptions: StateFlow<List<GameTypeCell>> = _subscriptions.asStateFlow()
@@ -68,9 +69,6 @@ class GameViewModel(
     private val _hasVpn = MutableStateFlow(false)
     private val _playersBlocked = MutableStateFlow<Set<GamePlayer>>(emptySet())
     private val _gameAssets = MutableStateFlow<List<GameAsset>>(emptyList())
-
-    private val _players = MutableStateFlow<List<GamePlayer>>(emptyList())
-    val players: StateFlow<List<GamePlayer>> = _players.asStateFlow()
 
     private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
 
@@ -131,13 +129,13 @@ class GameViewModel(
     }
 
     private fun nextTurn() {
-        if (game.value == null || _players.value.isEmpty()) return
+        if (game.value == null || players.value == null || players.value!!.isEmpty()) return
 
         viewModelScope.launch {
-            _players.value.let { players ->
+            players.value.let { players ->
                 val currentTurnUserId = game.value!!.turn
-                val currentTurnIndex = players.indexOfFirst { it.userId == currentTurnUserId }
-                val nextIdx = (currentTurnIndex + 1) % players.size // Get the next turn index
+                val currentTurnIndex = players!!.indexOfFirst { it.userId == currentTurnUserId }
+                val nextIdx = (currentTurnIndex + 1) % players.size
                 val nextPlayerId = players[nextIdx].userId
                 gameRepository.setNextTurn(nextPlayerId)
                 if (nextPlayerId == player.value?.userId) {
@@ -163,19 +161,6 @@ class GameViewModel(
     private fun joinGame() {
         viewModelScope.launch {
             gameRepository.joinGame()
-            refreshPlayers()
-        }
-    }
-
-    private fun refreshPlayers() {
-        viewModelScope.launch {
-            _players.value = gameRepository.getGamePlayers()
-        }
-    }
-
-    private fun refreshEvents() {
-        viewModelScope.launch {
-            _events.value = gameRepository.getGameEvents()
         }
     }
 
@@ -201,7 +186,7 @@ class GameViewModel(
     fun movePlayer() {
         viewModelScope.launch {
             if (game.value == null || player.value == null) return@launch
-            _players.value.firstOrNull { it.userId == player.value!!.userId }?.let { me ->
+            players.value?.firstOrNull { it.userId == player.value!!.userId }?.let { me ->
                 val oldCellPosition = me.cellPosition
                 val diceRolled = _diceRoll.value ?: 0
                 if (diceRolled <= 0) return@let
@@ -216,9 +201,6 @@ class GameViewModel(
 
                 Log.d("GameViewModel", "Player ${me.userId} moved from $oldCellPosition to $newPos. Dice: $diceRolled")
                 gameRepository.updatePlayerPosition(newPos)
-                _players.value = _players.value.map {
-                    if (it.userId == me.userId) it.copy(cellPosition = newPos) else it
-                }
                 PERIMETER_CELLS[newPos]?.let { landedCell ->
                     handleLanding(landedCell)
                 } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: $newPos")
@@ -387,10 +369,12 @@ class GameViewModel(
             }
 
             GameTypeCell.BLOCK -> {
-                val others = _players.value.filter { it.userId != player.value?.userId }
-                _dialog.value = GameDialogData.BlockChoice(
-                    title = app.getString(R.string.block_player_choice), players = others
-                )
+                val others = players.value?.filter { it.userId != player.value?.userId }
+                _dialog.value = others?.let {
+                    GameDialogData.BlockChoice(
+                        title = app.getString(R.string.block_player_choice), players = it
+                    )
+                }
             }
 
             GameTypeCell.VPN -> {
@@ -423,7 +407,7 @@ class GameViewModel(
             val currentPlayerId = player.value!!.userId
 
             if (steps <= 0 || game.value == null) {
-                _players.value.firstOrNull { it.userId == currentPlayerId }?.let { me ->
+                players.value?.firstOrNull { it.userId == currentPlayerId }?.let { me ->
                     PERIMETER_CELLS[me.cellPosition]?.let { landedCell ->
                         handleLanding(landedCell)
                     }
@@ -433,7 +417,7 @@ class GameViewModel(
 
             val path = PERIMETER_PATH
             val playerToAnimate =
-                _players.value.firstOrNull { it.userId == currentPlayerId } ?: return@launch
+                players.value?.firstOrNull { it.userId == currentPlayerId } ?: return@launch
             val originalCellPosition = playerToAnimate.cellPosition
             val startPathIndex = path.indexOf(originalCellPosition).coerceAtLeast(0)
 
@@ -444,15 +428,6 @@ class GameViewModel(
             }
 
             val finalNewPos = computeNewPosition(originalCellPosition, steps)
-
-            _players.value = _players.value.map { p ->
-                if (p.userId == currentPlayerId) {
-                    p.copy(cellPosition = finalNewPos)
-                } else {
-                    p
-                }
-            }
-
             _animatedPositions.value -= currentPlayerId
             gameRepository.updatePlayerPosition(finalNewPos)
 
@@ -476,31 +451,13 @@ class GameViewModel(
 
     fun updatePlayerPoints(points: Int) {
         viewModelScope.launch {
-            val currentPlayerId = player.value?.userId ?: return@launch
             gameRepository.updatePlayerPoints(points)
-            _players.value = _players.value.map { p ->
-                if (p.userId == currentPlayerId) {
-                    p.copy(score = p.score + points)
-                } else {
-                    p
-                }
-            }
         }
     }
 
     private fun updatePlayerPoints(points: Int, ownerId: String) {
         viewModelScope.launch {
             gameRepository.updatePlayerPoints(points, ownerId)
-            val ownerPlayer = _players.value.firstOrNull { it.userId == ownerId }
-
-            val updated = ownerPlayer?.copy(
-                score = ownerPlayer.score + points
-            )
-            if (updated != null) {
-                _players.value = _players.value.map {
-                    if (it.userId == updated.userId) updated else it
-                }
-            }
         }
     }
 
@@ -553,7 +510,7 @@ class GameViewModel(
                 is GameDialogData.BlockChoice -> {
                     if (idx >= 0 && idx < dlg.players.size) {
                         val target = dlg.players[idx]
-                        val actualTarget = _players.value.firstOrNull { it.userId == target.userId }
+                        val actualTarget = players.value?.firstOrNull { it.userId == target.userId }
                         if (actualTarget != null) {
                             confirmBlock(actualTarget)
                         }

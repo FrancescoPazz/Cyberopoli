@@ -41,7 +41,7 @@ class GameRepository(
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentTurnLiveData: MutableLiveData<String?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
-    val curretPlayersLiveData: MutableLiveData<List<GamePlayer>> = MutableLiveData(emptyList())
+    val currentPlayersLiveData: MutableLiveData<List<GamePlayer>> = MutableLiveData(emptyList())
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
@@ -72,7 +72,8 @@ class GameRepository(
         } else {
             "INGLESE"
         }
-        val systemPrompt = """
+        val systemPrompt =
+            """
                 Genera 5 domande di gioco (in ${currentLanguage}) basandoti su questi dati utente:
                 $dataJson
                 Cerca di diversificare il più possibile il contenuto delle domande.
@@ -127,6 +128,7 @@ class GameRepository(
             Log.d("TEST", "Current game: ${currentGameLiveData.value}")
 
             observeGame()
+            observeGamePlayers()
             observeTurn()
         } catch (e: Exception) {
             throw e
@@ -174,7 +176,7 @@ class GameRepository(
                         user = r.user,
                     )
                 }
-                curretPlayersLiveData.postValue(players)
+                currentPlayersLiveData.postValue(players)
             }
         }
     }

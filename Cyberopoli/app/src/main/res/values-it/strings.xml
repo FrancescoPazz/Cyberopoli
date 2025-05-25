@@ -126,7 +126,7 @@
     <string name="manage">Gestisci</string>
     <string name="roll_dice">Lancia il dado</string>
     <string name="roll_dice_desc">Hai tirato un dado ed è uscito il numero:</string>
-    <string name="move_on">Spostati di</string>
+    <string name="move_on">Spostati</string>
     <string name="cells">Caselle</string>
     <string name="chance">Probabilità</string>
     <string name="hacker">Hacker</string>

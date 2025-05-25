@@ -37,9 +37,10 @@ fun LobbyScreen(
     var hasJoined by remember { mutableStateOf(false) }
     var suppressLeaveOnStop by remember { mutableStateOf(false) }
 
-    LaunchedEffect(params.lobby) {
+    LaunchedEffect(params.lobby.value?.status) {
+        Log.d("TEST LobbyScreen", "Lobby is already in progress, navigating to Game screen")
         if (params.lobby.value != null && params.lobby.value!!.status == LobbyStatus.IN_PROGRESS.value) {
-            Log.d("TEST LobbyScreen", "Lobby is already in progress, navigating to Game screen")
+            Log.d("TEST LobbyScreen", "Lobby is already in pssssrogress, navigating to Game screen")
             navController.navigate(CyberopoliRoute.Game) {
                 launchSingleTop = true
                 restoreState = true

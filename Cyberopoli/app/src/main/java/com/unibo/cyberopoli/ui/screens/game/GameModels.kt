@@ -21,7 +21,7 @@ data class GameParams(
     val currentTurnIndex: State<Int>,
     val cells: State<List<GameCell>?>,
     val startAnimation: State<Boolean>,
-    val players: State<List<GamePlayer>>,
+    val players: State<List<GamePlayer>?>,
     val isLoadingQuestion: State<Boolean>,
     val members: State<List<LobbyMember>?>,
     val dialogData: State<GameDialogData?>,
