@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
@@ -91,38 +93,40 @@ class GameViewModel(
                 hackerStatements.value?.plus(generatedHackerStatement) ?: hackerStatements.value
         }
         // Initial turn logic
-        turn.asFlow()
-            .filterNotNull()
-            .onEach { currentTurnId ->
-                val currentPlayingPlayer = player.value
-                Log.d("TEST GameViewModel", "Turn changed: $currentTurnId, Current player: ${currentPlayingPlayer?.userId}")
-
-                val isMyTurn = if (currentPlayingPlayer != null) {
-                    currentTurnId == currentPlayingPlayer.userId
-                } else {
-                    false
+        viewModelScope.launch {
+            player.asFlow()
+                .combine(turn.asFlow()) { playerValue, turnValue ->
+                    Pair(playerValue, turnValue)
                 }
+                .filterNotNull()
+                .filter { (p, t) -> p != null && t != null }
+                .onEach { (currentPlayer, currentTurnId) ->
+                    Log.d("TEST GameViewModel", "Combined Flow: Turn changed: $currentTurnId, Current player: ${currentPlayer!!.userId}")
 
-                val currentActionId = _actionsPermitted.value.firstOrNull()?.id
-                if (isMyTurn) {
-                    if (_skipNext.value) {
-                        _skipNext.value = false
-                        _actionsPermitted.value = listOf(waitTurnAction)
-                        _dialog.value = GameDialogData.Alert(
-                            title = app.getString(R.string.broken_router),
-                            message = app.getString(R.string.broken_router_desc),
-                        )
+                    val isMyTurn = currentTurnId == currentPlayer.userId
+                    val currentActionId = _actionsPermitted.value.firstOrNull()?.id
+
+                    if (isMyTurn) {
+                        if (_skipNext.value) {
+                            _skipNext.value = false
+                            _actionsPermitted.value = listOf(waitTurnAction)
+                            _dialog.value = GameDialogData.Alert(
+                                title = app.getString(R.string.broken_router),
+                                message = app.getString(R.string.broken_router_desc),
+                            )
+                        } else {
+                            _actionsPermitted.value = listOf(rollDiceAction)
+                        }
+                    } else {
+                        if (currentActionId == null || currentActionId != waitTurnAction.id) {
+                            _actionsPermitted.value = listOf(waitTurnAction)
+                        }
                     }
-                    _actionsPermitted.value = listOf(rollDiceAction)
-                } else {
-                    if (currentActionId == null || currentActionId != waitTurnAction.id) {
-                        _actionsPermitted.value = listOf(waitTurnAction)
-                    }
-                }
-            }.catch { e ->
-                Log.e("GameViewModel", "Error observing turn changes: ${e.message}", e)
-                _actionsPermitted.value = emptyList()
-            }.launchIn(viewModelScope)
+                }.catch { e ->
+                    Log.e("GameViewModel", "Error observing combined turn/player changes: ${e.message}", e)
+                    _actionsPermitted.value = emptyList()
+                }.launchIn(viewModelScope)
+        }
     }
 
     private fun nextTurn() {

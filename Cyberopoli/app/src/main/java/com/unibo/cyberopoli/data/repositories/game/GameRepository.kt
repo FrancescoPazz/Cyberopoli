@@ -194,15 +194,23 @@ class GameRepository(
 
     @OptIn(SupabaseExperimental::class)
     private fun observeTurn() {
+        Log.d("GameRepository", "observeTurn called. Current game ID: ${currentGameLiveData.value?.id}, Lobby ID: ${currentGameLiveData.value?.lobbyId}")
+        if (currentGameLiveData.value?.id == null || currentGameLiveData.value?.lobbyId == null) {
+            Log.e("GameRepository", "Cannot observe turn, game ID or lobby ID is null.")
+            return
+        }
+
         val turnFlow: Flow<Game> = supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::turn) {
             eq("lobby_id", currentGameLiveData.value!!.lobbyId)
             eq("id", currentGameLiveData.value!!.id)
         }
         MainScope().launch {
-            turnFlow.collect { game ->
-                Log.d("TEST GameRepositoy", "Observe Turn changed: ${game.turn}")
-                currentTurnLiveData.postValue(game.turn)
-            }
+            Log.d("GameRepository", "Starting to collect turnFlow for game ${currentGameLiveData.value!!.id} in observeTurn")
+            turnFlow
+                .collect { game ->
+                    Log.d("TEST GameRepositoy", "Observe Turn changed in repo: ${game.turn} for game ${game.id}")
+                    currentTurnLiveData.postValue(game.turn)
+                }
         }
     }
 
@@ -293,6 +301,7 @@ class GameRepository(
                     eq("user_id", updatedPlayer.userId)
                 }
             }
+
             currentPlayerLiveData.postValue(updatedPlayer)
         } catch (e: Exception) {
             throw e
@@ -344,7 +353,7 @@ class GameRepository(
                     eq("game_id", currentGameLiveData.value!!.id)
                 }
             }.decodeList()
-            return raw.map { r ->
+            val gamePlayers = raw.map { r ->
                 val u = r.user
                 GamePlayer(
                     lobbyId = r.lobbyId,
@@ -357,6 +366,10 @@ class GameRepository(
                     user = u
                 )
             }
+
+            currentPlayersLiveData.postValue(gamePlayers)
+
+            return gamePlayers
         } catch (e: Exception) {
             return emptyList()
         }
@@ -373,6 +386,9 @@ class GameRepository(
                     eq("id", currentGameLiveData.value!!.id)
                 }
             }
+
+            currentGameLiveData.postValue(updatedGame)
+            currentTurnLiveData.postValue(nextTurnPlayer)
         } catch (e: Exception) {
             throw e
         }
