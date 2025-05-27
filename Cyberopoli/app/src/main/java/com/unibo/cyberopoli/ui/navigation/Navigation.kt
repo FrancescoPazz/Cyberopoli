@@ -144,6 +144,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         navController, HomeParams(
                             user = profileViewModel.user.observeAsState(),
                             gameHistories = profileViewModel.gameHistories.observeAsState(),
+                            topAppsUsage = profileViewModel.topAppsUsage.observeAsState()
                         )
                     )
                 }

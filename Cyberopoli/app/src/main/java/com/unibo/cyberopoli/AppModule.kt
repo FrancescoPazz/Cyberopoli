@@ -27,7 +27,7 @@ val appModule = module {
     viewModel { AuthViewModel(get(), get()) }
     viewModel { ScanViewModel() }
     viewModel { SettingsViewModel(get()) }
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { RankingViewModel(get()) }
     viewModel { LobbyViewModel(get(), get()) }
     viewModel { GameViewModel(androidApplication(), get()) }

@@ -186,6 +186,7 @@
     <string name="play_now_title">Play Now</string>
     <string name="new_game_button">New Game</string>
     <string name="join_game_button">Join Game</string>
+    <string name="most_used_apps_week">Most used apps this week</string>
 
     <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>

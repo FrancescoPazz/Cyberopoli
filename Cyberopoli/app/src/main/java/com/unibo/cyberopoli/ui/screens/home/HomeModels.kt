@@ -6,5 +6,6 @@ import com.unibo.cyberopoli.data.models.game.GameHistory
 
 data class HomeParams(
     val user: State<User?>,
+    val topAppsUsage: State<List<Pair<String, Double>>?>,
     val gameHistories: State<List<GameHistory>?>,
 )

@@ -186,6 +186,7 @@
     <string name="join_game_button">Unisciti Partita</string>
     <string name="win">Vinta</string>
     <string name="loss">Persa</string>
+    <string name="most_used_apps_week">App più usate settimanali</string>
 
     <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>
