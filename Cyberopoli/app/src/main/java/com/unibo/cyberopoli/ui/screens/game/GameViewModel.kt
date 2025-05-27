@@ -186,7 +186,6 @@ class GameViewModel(
 
     fun movePlayer() {
         viewModelScope.launch {
-            val currentGame = game.value ?: return@launch
             val currentPlayer = player.value ?: return@launch
             val me = players.value
                 ?.firstOrNull { it.userId == currentPlayer.userId }
@@ -299,7 +298,7 @@ class GameViewModel(
                                     action = {
                                         _dialog.value = GameDialogData.SubscribeChoice(
                                             title = app.getString(R.string.subscribe),
-                                            message = app.getString(R.string.subscribe_desc, gameCell.value),
+                                            message = app.resources.getQuantityString(R.plurals.subscribe_desc, gameCell.value!!),
                                             options = listOf(
                                                 app.getString(R.string.accept), app.getString(R.string.decline)
                                             ),
@@ -317,11 +316,11 @@ class GameViewModel(
                                     action = {
                                         _dialog.value = GameDialogData.MakeContentChoice(
                                             title = app.getString(R.string.make_content),
-                                            message = app.getString(R.string.make_content_desc, gameCell.value),
+                                            message = app.resources.getQuantityString(R.plurals.make_content_desc, gameCell.value!!),
                                             options = listOf(
                                                 app.getString(R.string.accept), app.getString(R.string.decline)
                                             ),
-                                            cost = (gameCell.value?.times(2)) ?: 0,
+                                            cost = (gameCell.value.times(2)),
                                         )
 
                                         endTurn()

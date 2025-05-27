@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ProfileButton(
     text: String,
+    modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
     Button(

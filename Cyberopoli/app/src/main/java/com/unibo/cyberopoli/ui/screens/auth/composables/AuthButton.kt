@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AuthButton(
     text: String,
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     enabled: Boolean = true,
 ) {
     Button(
