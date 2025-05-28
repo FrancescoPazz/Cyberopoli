@@ -184,7 +184,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             isHost = lobbyViewModel.isHost.observeAsState(),
                             toggleReady = lobbyViewModel::toggleReady,
                             startLobbyFlow = lobbyViewModel::startLobbyFlow,
-                            allReady = lobbyViewModel.allReady.observeAsState()
+                            allReady = lobbyViewModel.allReady.observeAsState(),
+                            setInApp = lobbyViewModel::setInApp,
                         )
                     )
                 }
@@ -212,6 +213,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             dialogData = dialogData,
                             endTurn = gameViewModel::endTurn,
                             rollDice = gameViewModel::rollDice,
+                            setInApp = lobbyViewModel::setInApp,
                             startGame = gameViewModel::startGame,
                             movePlayer = gameViewModel::movePlayer,
                             leaveGame = lobbyViewModel::leaveLobby,

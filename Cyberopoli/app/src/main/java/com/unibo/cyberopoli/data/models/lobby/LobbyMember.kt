@@ -17,6 +17,8 @@ data class LobbyMemberRaw(
 
     @SerialName("joined_at") val joinedAt: String = Clock.System.now().toString(),
 
+    @SerialName("in_app") val inApp: Boolean = true,
+
     @SerialName("users") val user: User,
 )
 
@@ -29,6 +31,8 @@ data class LobbyMember(
     @SerialName("ready") var isReady: Boolean = false,
 
     @SerialName("joined_at") val joinedAt: String = Clock.System.now().toString(),
+
+    @SerialName("in_app") val inApp: Boolean = true,
 
     @Transient val user: User? = null,
 )

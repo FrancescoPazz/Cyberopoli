@@ -66,6 +66,20 @@ class LobbyViewModel(
         }
     }
 
+    fun setInApp(inApp: Boolean) {
+        viewModelScope.launch {
+            if (user.value == null || lobby.value == null) {
+                Log.w("LobbyViewModel", "setInApp: User or Lobby is null")
+                return@launch
+            }
+            try {
+                lobbyRepository.setInApp(inApp)
+            } catch (e: Exception) {
+                Log.e("LobbyViewModel", "Error setting in-app status", e)
+            }
+        }
+    }
+
     fun leaveLobby() {
         viewModelScope.launch {
             if (user.value == null || lobby.value == null) {

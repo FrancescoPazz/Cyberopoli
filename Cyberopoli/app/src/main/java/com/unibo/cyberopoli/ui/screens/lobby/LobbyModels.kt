@@ -6,13 +6,14 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 data class LobbyParams(
     val lobbyId: String,
-    val members: List<LobbyMember>,
-    val lobby: State<Lobby?>,
     val isGuest: Boolean,
-    val isHost: State<Boolean?>,
-    val allReady: State<Boolean?>,
-    val startLobbyFlow: (lobbyId: String) -> Unit,
-    val toggleReady: () -> Unit,
+    val lobby: State<Lobby?>,
+    val startGame: () -> Unit,
     val leaveLobby: () -> Unit,
-    val startGame: () -> Unit
+    val isHost: State<Boolean?>,
+    val toggleReady: () -> Unit,
+    val allReady: State<Boolean?>,
+    val members: List<LobbyMember>,
+    val setInApp: (inApp: Boolean) -> Unit,
+    val startLobbyFlow: (lobbyId: String) -> Unit,
 )

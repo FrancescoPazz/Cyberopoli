@@ -24,6 +24,7 @@ data class GameParams(
     val startAnimation: State<Boolean>,
     val players: State<List<GamePlayer>?>,
     val isLoadingQuestion: State<Boolean>,
+    val setInApp: (inApp: Boolean) -> Unit,
     val members: State<List<LobbyMember>?>,
     val dialogData: State<GameDialogData?>,
     val gameAction: State<List<GameAction>?>,

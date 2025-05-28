@@ -131,6 +131,24 @@ class LobbyRepository(
         }
     }
 
+    suspend fun setInApp(
+        inApp : Boolean
+    ) {
+        val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
+        val lobbyId = currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found")
+        try {
+            supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("in_app" to inApp)) {
+                filter {
+                    eq("lobby_id", lobbyId)
+                    eq("user_id", userId)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("LobbyRepoImpl", "setInApp: ${e.message}")
+            throw e
+        }
+    }
+
     override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> {
         try {
             val raw: List<LobbyMemberRaw> = supabase.from(LOBBY_MEMBERS_TABLE).select(

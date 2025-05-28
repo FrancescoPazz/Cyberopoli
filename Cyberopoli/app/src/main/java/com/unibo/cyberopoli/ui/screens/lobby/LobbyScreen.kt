@@ -2,31 +2,31 @@ package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
 import android.util.Log
-import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavHostController
-import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
-import com.unibo.cyberopoli.ui.components.BottomBar
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.MaterialTheme
+import androidx.activity.compose.BackHandler
 import com.unibo.cyberopoli.ui.components.TopBar
+import androidx.compose.foundation.layout.padding
+import com.unibo.cyberopoli.ui.components.BottomBar
+import androidx.compose.foundation.layout.fillMaxSize
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.ui.components.AppLifecycleTracker
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.composables.LobbyContent
+import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -37,6 +37,15 @@ fun LobbyScreen(
     var hasJoined by remember { mutableStateOf(false) }
     var suppressLeaveOnStop by remember { mutableStateOf(false) }
 
+    AppLifecycleTracker(AppLifecycleTrackerScreenContext.LOBBY, params.setInApp
+    ) {
+        navController.navigate(CyberopoliRoute.Home) {
+            launchSingleTop = true
+            restoreState = true
+        }
+        params.leaveLobby()
+    }
+
     LaunchedEffect(params.lobby.value?.status) {
         Log.d("TEST LobbyScreen", "Lobby is already in progress, navigating to Game screen")
         if (params.lobby.value != null && params.lobby.value!!.status == LobbyStatus.IN_PROGRESS.value) {
@@ -45,7 +54,6 @@ fun LobbyScreen(
                 launchSingleTop = true
                 restoreState = true
             }
-
         }
     }
 
