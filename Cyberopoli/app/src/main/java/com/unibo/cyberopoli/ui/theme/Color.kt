@@ -43,9 +43,9 @@ val CyberDark_SurfaceDim = Color(0xFF0A0A0A)
 val CyberDark_SurfaceBright = Color(0xFF333333)
 val CyberDark_SurfaceContainerLowest = Color(0xFF050505)
 val CyberDark_SurfaceContainerLow = Color(0xFF121212)
-val CyberDark_SurfaceContainer = Color(0xFF1A1A1A)
+val CyberDark_SurfaceContainer = Color(0xFF232323)
 val CyberDark_SurfaceContainerHigh = Color(0xFF2C2C2C)
-val CyberDark_SurfaceContainerHighest = Color(0xFF383838)
+val CyberDark_SurfaceContainerHighest = Color(0xFF2C2C2C)
 
 // Light Theme Base
 val CyberLight_Primary = Color(0xFF008000)
