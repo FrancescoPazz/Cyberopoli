@@ -19,7 +19,6 @@ import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.home.composables.GameStatisticsSection
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.profile.composables.EditProfileSection
-import com.unibo.cyberopoli.ui.screens.profile.composables.MatchHistorySection
 import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileHeader
 
 @Composable

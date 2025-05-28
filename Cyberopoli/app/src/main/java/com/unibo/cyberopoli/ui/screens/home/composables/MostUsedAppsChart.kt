@@ -1,30 +1,39 @@
 package com.unibo.cyberopoli.ui.screens.home.composables
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.unibo.cyberopoli.R
 
 @SuppressLint("DefaultLocale")
 @Composable
 fun MostUsedAppsChart(
-    appsUsage: List<Pair<String, Double>>,
-    modifier: Modifier = Modifier
+    appsUsage: List<Pair<String, Double>>, modifier: Modifier = Modifier
 ) {
     if (appsUsage.isEmpty()) {
-        Text("Nessuna statistica disponibile", style = MaterialTheme.typography.bodyMedium)
+        Text(
+            stringResource(R.string.no_stats_available),
+            style = MaterialTheme.typography.bodyMedium
+        )
         return
     }
     val maxHours = appsUsage.maxOf { it.second }
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         appsUsage.forEach { (packageName, hours) ->
