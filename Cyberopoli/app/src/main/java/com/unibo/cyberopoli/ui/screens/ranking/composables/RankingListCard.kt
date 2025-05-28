@@ -1,7 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.ranking.composables
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -13,15 +12,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.ui.components.CyberopoliCard
 
 @Composable
-fun RankingListSection(
+fun RankingListCard(
     users: List<User>,
     currentUser: User?,
     rankOffset: Int
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    CyberopoliCard(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        contentPadding = 0.dp,
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = stringResource(R.string.ranking),
@@ -41,7 +43,7 @@ fun RankingListSection(
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
                     thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
             }
         }

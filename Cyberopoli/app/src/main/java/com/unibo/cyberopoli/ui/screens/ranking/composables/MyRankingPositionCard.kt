@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -22,30 +21,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.ui.components.CyberopoliGradientCard
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun MyRankingPosition(user: User, myRank: Int, modifier: Modifier = Modifier) {
+fun MyRankingPositionCard(user: User, myRank: Int, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
-                        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f)
-                    )
-                ),
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+    CyberopoliGradientCard(
+        modifier = modifier.padding(horizontal = 16.dp), gradientColors = listOf(
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
+            MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f)
+        ), shape = RoundedCornerShape(12.dp), contentPadding = 12.dp
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "${myRank}#",

@@ -21,8 +21,8 @@ import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.ranking.composables.MyRankingPosition
-import com.unibo.cyberopoli.ui.screens.ranking.composables.RankingListSection
+import com.unibo.cyberopoli.ui.screens.ranking.composables.MyRankingPositionCard
+import com.unibo.cyberopoli.ui.screens.ranking.composables.RankingListCard
 import com.unibo.cyberopoli.ui.screens.ranking.composables.Top3RankingSection
 
 @Composable
@@ -64,7 +64,7 @@ fun RankingScreen(
                         .verticalScroll(rememberScrollState())
                 ) {
                     currentUser?.let {
-                        MyRankingPosition(user = it, myRank = rankingData.indexOf(it) + 1, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+                        MyRankingPositionCard(user = it, myRank = rankingData.indexOf(it) + 1, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
                     }
 
                     if (top3.isNotEmpty()) {
@@ -73,7 +73,7 @@ fun RankingScreen(
                     }
 
                     if (others.isNotEmpty()) {
-                        RankingListSection(
+                        RankingListCard(
                             users = others,
                             currentUser = currentUser,
                             rankOffset = 3
