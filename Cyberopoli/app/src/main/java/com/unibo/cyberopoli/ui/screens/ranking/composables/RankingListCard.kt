@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.ui.screens.ranking.composables
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,8 @@ fun RankingListCard(
                     thickness = 0.5.dp,
                     color = MaterialTheme.colorScheme.outlineVariant
                 )
+            } else {
+                Spacer(modifier = Modifier.padding(vertical = 8.dp))
             }
         }
     }

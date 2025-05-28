@@ -3,11 +3,16 @@ package com.unibo.cyberopoli.ui.screens.ranking.composables
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,29 +28,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.ui.components.CyberopoliCard
 
 @SuppressLint("DiscouragedApi")
 @Composable
 fun RankingListItem(user: User, rank: Int, isCurrentUser: Boolean = false) {
     val context = LocalContext.current
-    val backgroundColor = if (isCurrentUser) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
-    else MaterialTheme.colorScheme.surfaceContainer
+    val backgroundColor =
+        if (isCurrentUser) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surfaceContainer
     val contentColor = if (isCurrentUser) MaterialTheme.colorScheme.onPrimaryContainer
-    else MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface
 
-    Card(
+    CyberopoliCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 5.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isCurrentUser) 4.dp else 2.dp),
+        elevation = if (isCurrentUser) 4.dp else 2.dp,
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+        containerColor = backgroundColor,
+        contentPadding = 12.dp,
+        verticalArrangement = Arrangement.Center
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "$rank.",

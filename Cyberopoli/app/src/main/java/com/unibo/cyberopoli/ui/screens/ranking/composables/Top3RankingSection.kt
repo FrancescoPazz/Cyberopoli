@@ -28,7 +28,7 @@ fun Top3RankingSection(users: List<User>) {
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Text(
-            text = stringResource(R.string.ranking),
+            text = "Top 3",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
