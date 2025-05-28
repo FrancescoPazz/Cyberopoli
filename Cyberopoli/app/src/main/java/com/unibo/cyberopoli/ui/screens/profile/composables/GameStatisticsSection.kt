@@ -1,4 +1,4 @@
-package com.unibo.cyberopoli.ui.screens.home.composables
+package com.unibo.cyberopoli.ui.screens.profile.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

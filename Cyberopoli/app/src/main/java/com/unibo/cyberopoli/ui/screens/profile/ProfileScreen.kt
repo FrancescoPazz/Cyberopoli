@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.home.composables.GameStatisticsSection
+import com.unibo.cyberopoli.ui.screens.profile.composables.GameStatisticsSection
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.profile.composables.EditProfileSection
 import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileHeader
@@ -58,6 +58,8 @@ fun ProfileScreen(
                         updateUserInfo = profileParams.updateUserInfo,
                         updatePasswordWithOldPassword = profileParams.updatePasswordWithOldPassword
                     )
+
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }

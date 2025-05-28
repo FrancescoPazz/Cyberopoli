@@ -1,10 +1,12 @@
 package com.unibo.cyberopoli.ui.screens.profile.composables
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
@@ -12,12 +14,27 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
+import com.unibo.cyberopoli.ui.components.CyberopoliCard
 import com.unibo.cyberopoli.ui.screens.settings.composables.ChangePasswordSection
 
 @Composable
@@ -40,8 +57,7 @@ fun EditProfileSection(
 
 
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
+        AlertDialog(onDismissRequest = { showDialog = false },
             title = { Text(text = dialogTitle) },
             text = { Text(text = dialogMessage) },
             confirmButton = {
@@ -53,16 +69,17 @@ fun EditProfileSection(
                 { Icon(Icons.Filled.Error, contentDescription = "Error Icon") }
             } else {
                 { Icon(Icons.Filled.CheckCircle, contentDescription = "Success Icon") }
-            }
-        )
+            })
     }
 
-    Card(
+    CyberopoliCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        elevation = 4.dp,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        contentPadding = 16.dp,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Column(
             modifier = Modifier
@@ -94,24 +111,18 @@ fun EditProfileSection(
 
             Button(
                 onClick = {
-                    updateUserInfo(
-                        newName.value,
-                        newSurname.value,
-                        {
-                            dialogTitle = context.getString(R.string.change_success)
-                            dialogMessage = context.getString(R.string.change_profile_success)
-                            isErrorDialog = false
-                            showDialog = true
-                        },
-                        {
-                            dialogTitle = context.getString(R.string.change_fail)
-                            dialogMessage = context.getString(R.string.change_profile_failed)
-                            isErrorDialog = true
-                            showDialog = true
-                        }
-                    )
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                    updateUserInfo(newName.value, newSurname.value, {
+                        dialogTitle = context.getString(R.string.change_success)
+                        dialogMessage = context.getString(R.string.change_profile_success)
+                        isErrorDialog = false
+                        showDialog = true
+                    }, {
+                        dialogTitle = context.getString(R.string.change_fail)
+                        dialogMessage = context.getString(R.string.change_profile_failed)
+                        isErrorDialog = true
+                        showDialog = true
+                    })
+                }, modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
@@ -144,25 +155,19 @@ fun EditProfileSection(
                 Spacer(modifier = Modifier.height(16.dp))
                 ChangePasswordSection(
                     updatePasswordWithOldPassword = { oldPass, newPass, _, _ ->
-                        updatePasswordWithOldPassword(
-                            oldPass,
-                            newPass,
-                            {
-                                dialogTitle = context.getString(R.string.change_success)
-                                dialogMessage = context.getString(R.string.change_password_success)
-                                isErrorDialog = false
-                                showDialog = true
-                                showChangePasswordSection = false
-                            },
-                            {
-                                dialogTitle = context.getString(R.string.change_fail)
-                                dialogMessage = context.getString(R.string.change_password_failed)
-                                isErrorDialog = true
-                                showDialog = true
-                            }
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                        updatePasswordWithOldPassword(oldPass, newPass, {
+                            dialogTitle = context.getString(R.string.change_success)
+                            dialogMessage = context.getString(R.string.change_password_success)
+                            isErrorDialog = false
+                            showDialog = true
+                            showChangePasswordSection = false
+                        }, {
+                            dialogTitle = context.getString(R.string.change_fail)
+                            dialogMessage = context.getString(R.string.change_password_failed)
+                            isErrorDialog = true
+                            showDialog = true
+                        })
+                    }, modifier = Modifier.fillMaxWidth()
                 )
             }
         }

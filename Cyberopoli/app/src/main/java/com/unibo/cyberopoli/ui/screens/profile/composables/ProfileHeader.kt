@@ -11,8 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,27 +20,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.ui.components.CyberopoliGradientCard
 import com.unibo.cyberopoli.ui.components.UserAvatarInfo
 
 @Composable
 fun ProfileHeader(
     user: User, onEditProfileClick: () -> Unit, onShareClick: () -> Unit
 ) {
-    Card(
+    CyberopoliGradientCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 16.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+        elevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        gradientColors = listOf(
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+            MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
         ),
+        contentPadding = 16.dp
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             UserAvatarInfo(
                 user = user,
@@ -55,22 +57,26 @@ fun ProfileHeader(
 
             Row(horizontalArrangement = Arrangement.Center) {
                 ProfileButton(
-                    text = stringResource(R.string.edit), icon = {
+                    text = stringResource(R.string.edit),
+                    icon = {
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
                             contentDescription = stringResource(R.string.edit),
                             tint = MaterialTheme.colorScheme.tertiary
                         )
-                    }, onClick = onEditProfileClick
+                    },
+                    onClick = onEditProfileClick
                 )
                 ProfileButton(
-                    text = stringResource(R.string.share), icon = {
+                    text = stringResource(R.string.share),
+                    icon = {
                         Icon(
                             imageVector = Icons.Default.Share,
                             contentDescription = stringResource(R.string.share),
                             tint = MaterialTheme.colorScheme.tertiary
                         )
-                    }, onClick = onShareClick
+                    },
+                    onClick = onShareClick
                 )
             }
         }

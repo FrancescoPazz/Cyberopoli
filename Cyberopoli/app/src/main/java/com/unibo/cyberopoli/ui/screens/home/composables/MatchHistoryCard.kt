@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.ui.components.CyberopoliCard
-import com.unibo.cyberopoli.ui.screens.profile.composables.MatchHistoryItem
 
 @Composable
 fun MatchHistoryCard(
