@@ -131,21 +131,25 @@ class LobbyRepository(
         }
     }
 
-    suspend fun setInApp(
-        inApp : Boolean
-    ) {
-        val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
-        val lobbyId = currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found")
+    suspend fun setInApp(inApp: Boolean) {
+        val session = supabase.auth.currentSessionOrNull()
+        if (session == null) {
+            Log.w("LobbyRepository", "setInApp: Sessione utente non disponibile, operazione annullata")
+            return
+        }
+
+        val userId = session.user?.id
+        val lobbyId = currentLobbyLiveData.value?.id ?: return
+
         try {
             supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("in_app" to inApp)) {
                 filter {
                     eq("lobby_id", lobbyId)
-                    eq("user_id", userId)
+                    eq("user_id", userId!!)
                 }
             }
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "setInApp: ${e.message}")
-            throw e
         }
     }
 
@@ -204,7 +208,11 @@ class LobbyRepository(
                 ?: throw IllegalStateException("Lobby not found")
             supabase.from(LOBBY_MEMBERS_TABLE).delete {
                 filter {
-                    eq("lobby_id", lobbyId)
+                    eq("user_id", userId)
+                }
+            }
+            supabase.from("game_players").delete {
+                filter {
                     eq("user_id", userId)
                 }
             }

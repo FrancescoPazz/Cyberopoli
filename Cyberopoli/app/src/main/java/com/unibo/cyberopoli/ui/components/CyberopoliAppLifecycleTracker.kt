@@ -16,13 +16,13 @@ enum class AppLifecycleTrackerScreenContext {
     GAME, LOBBY,
 }
 
-private const val TIME_OUT_SECONDS = 30
+private const val TIME_OUT_SECONDS = 60
 
 @Composable
 fun AppLifecycleTracker(
     context: AppLifecycleTrackerScreenContext,
     setInApp: (Boolean) -> Unit,
-    onTimedOut: () -> Unit,
+    onTimedOut: () -> Unit = {},
 ) {
     var backgroundTimestamp by remember { mutableLongStateOf(0L) }
     var hasBeenInBackground by remember { mutableStateOf(false) }

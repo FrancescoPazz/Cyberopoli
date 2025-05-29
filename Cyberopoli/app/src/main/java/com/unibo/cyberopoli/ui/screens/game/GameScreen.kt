@@ -8,6 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GameDialogData
+import com.unibo.cyberopoli.ui.components.AppLifecycleTracker
+import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.game.composables.GameContent
 import com.unibo.cyberopoli.ui.screens.game.composables.GameDialog
 import com.unibo.cyberopoli.ui.screens.game.composables.GameStarterEffect
@@ -23,10 +26,21 @@ fun GameScreen(
     val players by gameParams.players
     val dialogData by gameParams.dialogData
     val isLoadingQuestion by gameParams.isLoadingQuestion
-    var hasStarted by remember { mutableStateOf(false) }
 
-    GameStarterEffect(gameParams, hasStarted) { hasStarted = true }
-    BackHandler { gameParams.leaveGame(); navController.popBackStack() }
+    AppLifecycleTracker(
+        context = AppLifecycleTrackerScreenContext.GAME,
+        setInApp = gameParams.setInApp
+    ) {
+        navController.navigate(CyberopoliRoute.Home) {
+            launchSingleTop = true
+            restoreState = true
+        }
+        gameParams.leaveLobby()
+    }
+
+    GameStarterEffect(gameParams)
+
+    BackHandler { gameParams.leaveLobby(); navController.popBackStack() }
 
     if (game == null || players == null || player == null) {
         LoadingScreen()

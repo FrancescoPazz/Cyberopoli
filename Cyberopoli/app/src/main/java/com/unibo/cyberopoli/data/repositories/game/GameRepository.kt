@@ -73,8 +73,7 @@ class GameRepository(
         } else {
             "INGLESE"
         }
-        val systemPrompt =
-            """
+        val systemPrompt = """
                 Genera 5 domande di gioco (in ${currentLanguage}) basandoti su questi dati utente:
                 $dataJson
                 Cerca di diversificare il più possibile il contenuto delle domande.
@@ -113,11 +112,9 @@ class GameRepository(
         )
         try {
             val existGame = supabase.from(GAME_TABLE).select {
-                filter {
-                    eq("lobby_id", lobbyId)
-                }
+                filter { eq("lobby_id", lobbyId) }
             }.decodeSingleOrNull<Game>()
-            Log.d("TEST", "Existing game: $existGame")
+
             if (existGame == null) {
                 val created = supabase.from(GAME_TABLE).upsert(newGame) {
                     select()
@@ -138,11 +135,10 @@ class GameRepository(
 
     @OptIn(SupabaseExperimental::class)
     private fun observeGame() {
-        val gameFlow: Flow<Game?> =
-            supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::id) {
-                eq("lobby_id", currentGameLiveData.value!!.lobbyId)
-                eq("id", currentGameLiveData.value!!.id)
-            }
+        val gameFlow: Flow<Game?> = supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::id) {
+            eq("lobby_id", currentGameLiveData.value!!.lobbyId)
+            eq("id", currentGameLiveData.value!!.id)
+        }
         MainScope().launch {
             gameFlow.collect { rawGame ->
                 if (rawGame != null) {
@@ -160,41 +156,46 @@ class GameRepository(
         val gamePlayersFlow: Flow<List<GamePlayer>> =
             supabase.from(GAME_PLAYERS_TABLE).selectAsFlow(
                 primaryKey = GamePlayer::userId,
-                filter = FilterOperation("game_id", FilterOperator.EQ, currentGameLiveData.value!!.id)
+                filter = FilterOperation(
+                    "game_id",
+                    FilterOperator.EQ,
+                    currentGameLiveData.value!!.id
+                )
             )
         MainScope().launch {
             var seenOnce = false
-            gamePlayersFlow
-                .filter { rawPlayers ->
+            gamePlayersFlow.filter { rawPlayers ->
                     if (!seenOnce) {
                         seenOnce = rawPlayers.isNotEmpty()
                         return@filter true
                     } else {
                         rawPlayers.isNotEmpty()
                     }
+                }.collect { rawPlayers ->
+                    Log.d("TEST GameRepository", "Observe Game Players updated: $rawPlayers")
+                    val players = rawPlayers.map { r ->
+                        GamePlayer(
+                            lobbyId = r.lobbyId,
+                            gameId = r.gameId,
+                            userId = r.userId,
+                            score = r.score,
+                            cellPosition = r.cellPosition,
+                            round = r.round,
+                            winner = r.winner,
+                            user = r.user,
+                        )
+                    }
+                    currentPlayersLiveData.postValue(players)
                 }
-                .collect { rawPlayers ->
-                Log.d("TEST GameRepository", "Observe Game Players updated: $rawPlayers")
-                val players = rawPlayers.map { r ->
-                    GamePlayer(
-                        lobbyId = r.lobbyId,
-                        gameId = r.gameId,
-                        userId = r.userId,
-                        score = r.score,
-                        cellPosition = r.cellPosition,
-                        round = r.round,
-                        winner = r.winner,
-                        user = r.user,
-                    )
-                }
-                currentPlayersLiveData.postValue(players)
-            }
         }
     }
 
     @OptIn(SupabaseExperimental::class)
     private fun observeTurn() {
-        Log.d("GameRepository", "observeTurn called. Current game ID: ${currentGameLiveData.value?.id}, Lobby ID: ${currentGameLiveData.value?.lobbyId}")
+        Log.d(
+            "GameRepository",
+            "observeTurn called. Current game ID: ${currentGameLiveData.value?.id}, Lobby ID: ${currentGameLiveData.value?.lobbyId}"
+        )
         if (currentGameLiveData.value?.id == null || currentGameLiveData.value?.lobbyId == null) {
             Log.e("GameRepository", "Cannot observe turn, game ID or lobby ID is null.")
             return
@@ -205,24 +206,54 @@ class GameRepository(
             eq("id", currentGameLiveData.value!!.id)
         }
         MainScope().launch {
-            Log.d("GameRepository", "Starting to collect turnFlow for game ${currentGameLiveData.value!!.id} in observeTurn")
-            turnFlow
-                .collect { game ->
-                    Log.d("TEST GameRepositoy", "Observe Turn changed in repo: ${game.turn} for game ${game.id}")
+            Log.d(
+                "GameRepository",
+                "Starting to collect turnFlow for game ${currentGameLiveData.value!!.id} in observeTurn"
+            )
+            turnFlow.collect { game ->
+                    Log.d(
+                        "TEST GameRepositoy",
+                        "Observe Turn changed in repo: ${game.turn} for game ${game.id}"
+                    )
                     currentTurnLiveData.postValue(game.turn)
                 }
         }
     }
 
-    override suspend fun joinGame(): GamePlayer {
-        if (currentGameLiveData.value == null) throw Exception("No game found")
-        val userId = supabase.auth.currentUserOrNull()?.id ?: throw Exception("User not logged in")
+    override suspend fun joinGame(): GamePlayer? {
+        if (currentGameLiveData.value == null) return null
+        val session = supabase.auth.currentSessionOrNull() ?: return null
 
+        val userId = session.user?.id
         try {
+            val existingPlayer = supabase.from(GAME_PLAYERS_TABLE).select {
+                filter {
+                    eq("lobby_id", currentGameLiveData.value!!.lobbyId)
+                    eq("game_id", currentGameLiveData.value!!.id)
+                    eq("user_id", userId!!)
+                }
+            }.decodeSingleOrNull<GamePlayer>()
+
+            if (existingPlayer != null) {
+                val player = GamePlayer(
+                    lobbyId = existingPlayer.lobbyId,
+                    gameId = existingPlayer.gameId,
+                    userId = existingPlayer.userId,
+                    score = existingPlayer.score,
+                    cellPosition = existingPlayer.cellPosition,
+                    round = existingPlayer.round,
+                    winner = existingPlayer.winner,
+                    user = existingPlayer.user
+                )
+                currentPlayerLiveData.value = player
+                return player
+            }
+
+
             val toInsert = GamePlayer(
                 lobbyId = currentGameLiveData.value!!.lobbyId,
                 gameId = currentGameLiveData.value!!.id,
-                userId = userId,
+                userId = userId!!,
                 score = 50,
                 cellPosition = 8,
                 round = 1,

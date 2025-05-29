@@ -216,7 +216,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             setInApp = lobbyViewModel::setInApp,
                             startGame = gameViewModel::startGame,
                             movePlayer = gameViewModel::movePlayer,
-                            leaveGame = lobbyViewModel::leaveLobby,
+                            leaveLobby = lobbyViewModel::leaveLobby,
                             cells = gameViewModel.cells.observeAsState(),
                             currentTurnIndex = derivedStateOf { turnIndex },
                             onResultDismiss = gameViewModel::onResultDismiss,

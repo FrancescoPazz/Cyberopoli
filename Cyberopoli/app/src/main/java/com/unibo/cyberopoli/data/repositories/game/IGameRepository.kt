@@ -8,7 +8,7 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 interface IGameRepository {
     suspend fun createOrGetGame(lobbyId: String, lobbyMembers: List<LobbyMember>)
 
-    suspend fun joinGame(): GamePlayer
+    suspend fun joinGame(): GamePlayer?
 
     suspend fun updatePlayerPoints(value: Int)
 

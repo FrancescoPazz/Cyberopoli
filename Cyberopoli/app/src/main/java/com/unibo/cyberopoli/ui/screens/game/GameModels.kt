@@ -14,7 +14,7 @@ data class GameParams(
     val endTurn: () -> Unit,
     val lobby: State<Lobby?>,
     val rollDice: () -> Unit,
-    val leaveGame: () -> Unit,
+    val leaveLobby: () -> Unit,
     val diceRoll: State<Int?>,
     val movePlayer: () -> Unit,
     val player: State<GamePlayer?>,
