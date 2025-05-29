@@ -8,11 +8,11 @@ interface ILobbyRepository {
 
     suspend fun joinLobby(member: LobbyMember)
 
-    suspend fun fetchMembers(lobbyId: String): List<LobbyMember>
+    suspend fun fetchMembers(): List<LobbyMember>
 
     suspend fun toggleReady(isReady: Boolean): LobbyMember
 
-    suspend fun leaveLobby(lobbyId: String, userId: String, isHost: Boolean)
+    suspend fun leaveLobby(isHost: Boolean)
 
-    suspend fun startGame(lobbyId: String)
+    suspend fun startGame()
 }

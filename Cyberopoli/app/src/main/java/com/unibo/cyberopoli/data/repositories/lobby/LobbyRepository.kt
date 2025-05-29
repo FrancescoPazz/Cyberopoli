@@ -149,8 +149,10 @@ class LobbyRepository(
         }
     }
 
-    override suspend fun fetchMembers(lobbyId: String): List<LobbyMember> {
+    override suspend fun fetchMembers(): List<LobbyMember> {
         try {
+            val lobbyId = currentLobbyLiveData.value?.id
+                ?: throw IllegalStateException("Lobby not found")
             val raw: List<LobbyMemberRaw> = supabase.from(LOBBY_MEMBERS_TABLE).select(
                 Columns.raw("*, users(*)")
             ) {
@@ -188,15 +190,18 @@ class LobbyRepository(
                 }
                 select()
             }.decodeSingle<LobbyMember>()
-            fetchMembers(lobbyId).first { it.userId == userId }
+            fetchMembers().first { it.userId == userId }
         } catch (e: Exception) {
             Log.e("LobbyRepoImpl", "toggleReady: ${e.message}")
             throw e
         }
     }
 
-    override suspend fun leaveLobby(lobbyId: String, userId: String, isHost: Boolean) {
+    override suspend fun leaveLobby(isHost: Boolean) {
         try {
+            val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
+            val lobbyId = currentLobbyLiveData.value?.id
+                ?: throw IllegalStateException("Lobby not found")
             supabase.from(LOBBY_MEMBERS_TABLE).delete {
                 filter {
                     eq("lobby_id", lobbyId)
@@ -213,8 +218,10 @@ class LobbyRepository(
         }
     }
 
-    override suspend fun startGame(lobbyId: String) {
+    override suspend fun startGame() {
         try {
+            val lobbyId = currentLobbyLiveData.value?.id
+                ?: throw IllegalStateException("Lobby not found")
             supabase.from(LOBBY_TABLE).update(mapOf("status" to LobbyStatus.IN_PROGRESS.value)) {
                 filter { eq("id", lobbyId) }
             }

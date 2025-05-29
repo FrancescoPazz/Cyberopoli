@@ -88,7 +88,7 @@ class LobbyViewModel(
             }
             try {
                 val isCurrentUserHost = lobby.value?.hostId == user.value!!.id
-                lobbyRepository.leaveLobby(lobby.value!!.id, user.value!!.id, isCurrentUserHost)
+                lobbyRepository.leaveLobby(isCurrentUserHost)
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error leaving lobby", e)
             }
@@ -102,7 +102,7 @@ class LobbyViewModel(
                 return@launch
             }
             try {
-                lobbyRepository.startGame(lobby.value!!.id)
+                lobbyRepository.startGame()
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error starting game", e)
                 throw e
