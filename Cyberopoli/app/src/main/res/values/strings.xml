@@ -139,15 +139,9 @@
     <string name="hacker_attack">Hacker Attack</string>
     <string name="hacker_attack_description">a hacker attack scenario and propose 3 possible actions</string>
     <string name="subscribe">Subscribe to the social</string>
-    <plurals name="subscribe_desc">
-        <item quantity="one">If you subscribe to the social, the next times you land on it you can post content that will help you earn points. It costs %1$d Internet point.</item>
-        <item quantity="many">If you subscribe to the social, the next times you land on it you can post content that will help you earn points. It costs %1$d Internet points.</item>
-    </plurals>
+    <string name="subscribe_desc">If you subscribe to the social, the next times you land on it you can post content that will help you earn points. It costs %1$d Internet points.</string>
     <string name="make_content">Place a content in the social</string>
-    <plurals name="make_content_desc">
-        <item quantity="one">If you post a content in the social you will get Internet points if a player land on it. A content lasts for 1 turn. It costs %1$d Internet point.</item>
-        <item quantity="many">If you post a content in the social you will get Internet points if a player land on it. A content lasts for 1 turn. It costs %1$d Internet points.</item>
-    </plurals>
+    <string name="make_content_desc">If you post a content in the social you will get %1$d Internet points if a player land on it. A content lasts for 1 turn. It costs %1$d Internet points.</string>
     <string name="get_vpn">VPN activated</string>
     <string name="get_vpn_desc">Having the VPN avoids paying to view content </string>Con la VPN hai bloccato il pagamento del contenuto
     <string name="vpn_avoid_pay">With the VPN you blocked the payment of the content</string>
@@ -166,14 +160,8 @@
     <string name="skip_turn_desc">You have to skip one turn</string>
     <string name="error">Error</string>
     <string name="no_players_to_block">No players to block</string>
-    <plurals name="points_earned_message">
-        <item quantity="one">You earned %1$d Internet point</item>
-        <item quantity="many">You earned %1$d Internet points</item>
-    </plurals>
-    <plurals name="points_lost_message">
-        <item quantity="one">You lost %1$d Internet point</item>
-        <item quantity="many">You lost %1$d Internet points</item>
-    </plurals>
+    <string name="points_earned_message">You earned %1$d Internet points</string>
+    <string name="points_lost_message">You lost %1$d Internet point</string>
 
     <!-- ================================= -->
     <!-- Home -->
