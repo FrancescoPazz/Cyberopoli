@@ -41,7 +41,10 @@ fun GameScreen(
 
     BackHandler {
         gameParams.leaveLobby()
-        navController.popBackStack()
+        navController.navigate(CyberopoliRoute.Home) {
+            launchSingleTop = true
+            restoreState = true
+        }
     }
 
     if (game == null || players == null || player == null) {

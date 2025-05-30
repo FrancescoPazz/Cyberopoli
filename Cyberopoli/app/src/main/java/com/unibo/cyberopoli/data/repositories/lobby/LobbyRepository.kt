@@ -7,6 +7,7 @@ import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
 import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.data.repositories.game.GAME_PLAYERS_TABLE
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.auth.auth
@@ -217,19 +218,33 @@ class LobbyRepository(
             val lobbyId =
                 currentLobbyLiveData.value?.id
                     ?: throw IllegalStateException("Lobby not found")
+
+            if (isHost) {
+                val currentMembers = fetchMembers()
+                val remainingMembers = currentMembers.filter { it.userId != userId }
+
+                if (remainingMembers.isEmpty()) {
+                    supabase.from(LOBBY_TABLE).delete { filter { eq("id", lobbyId) } }
+                } else {
+                    val newHostId = remainingMembers.first().userId
+                    supabase.from(LOBBY_TABLE).update(mapOf("host_id" to newHostId)) {
+                        filter { eq("id", lobbyId) }
+                    }
+                }
+            }
+
             supabase.from(LOBBY_MEMBERS_TABLE).delete {
                 filter {
                     eq("user_id", userId)
                 }
             }
-            supabase.from("game_players").delete {
+
+            supabase.from(GAME_PLAYERS_TABLE).delete {
                 filter {
                     eq("user_id", userId)
                 }
             }
-            if (isHost) {
-                supabase.from(LOBBY_TABLE).delete { filter { eq("id", lobbyId) } }
-            }
+
             currentLobbyLiveData.value = null
             currentMembersLiveData.value = emptyList()
         } catch (e: Exception) {
