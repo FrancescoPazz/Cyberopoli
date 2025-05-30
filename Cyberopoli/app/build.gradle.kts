@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.serialization)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.ktlint)
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
 android {
@@ -25,7 +27,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -38,6 +40,24 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+
+ktlint {
+    android.set(true)
+
+    filter {
+        include("**/src/main/**/*.kt")
+        include("**/src/debug/**/*.kt")
+        include("**/src/androidTest/**/*.kt")
+        include("**/src/test/**/*.kt")
+    }
+
+    enableExperimentalRules.set(true)
+
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.HTML)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
     }
 }
 
@@ -84,7 +104,6 @@ dependencies {
     // Ktor Client
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

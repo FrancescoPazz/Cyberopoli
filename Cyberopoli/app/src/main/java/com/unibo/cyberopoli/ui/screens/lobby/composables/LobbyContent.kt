@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.lobby.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,26 +27,27 @@ fun LobbyContent(
     onToggleReadyClick: () -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = stringResource(R.string.players_in_lobby, members.size),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp),
         )
 
         LazyColumn(modifier = modifier.weight(1f)) {
             items(members, key = { it.userId }) { member ->
                 PlayerRow(
                     playerName = member.user?.username ?: member.userId,
-                    isReady = member.isReady
+                    isReady = member.isReady,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -61,7 +61,7 @@ fun LobbyContent(
             onToggleReadyClick = onToggleReadyClick,
             onStartGameClick = onStartGameClick,
             onExitClick = onExitClick,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
 
         Spacer(modifier = Modifier.height(16.dp))

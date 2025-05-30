@@ -5,5 +5,5 @@ import com.unibo.cyberopoli.data.models.auth.AuthState
 
 data class ScanParams(
     val setScannedValue: (String) -> Unit,
-    val authState: State<AuthState?>
+    val authState: State<AuthState?>,
 )

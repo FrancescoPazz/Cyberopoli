@@ -9,7 +9,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 
 class QRCodeAnalyzer(
-    private val onCodeScanned: (String) -> Unit
+    private val onCodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
     private val scanner = BarcodeScanning.getClient()
     private var hasScanned = false
@@ -21,9 +21,11 @@ class QRCodeAnalyzer(
             imageProxy.close()
             return
         }
-        val input = InputImage.fromMediaImage(
-            mediaImage, imageProxy.imageInfo.rotationDegrees
-        )
+        val input =
+            InputImage.fromMediaImage(
+                mediaImage,
+                imageProxy.imageInfo.rotationDegrees,
+            )
         scanner.process(input).addOnSuccessListener { barcodes ->
             if (!hasScanned) {
                 barcodes.firstOrNull()?.rawValue?.let { code ->

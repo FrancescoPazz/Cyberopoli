@@ -11,16 +11,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
+    val state =
+        settingsRepository.theme.map { ThemeState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = ThemeState(Theme.System),
+        )
 
-    val state = settingsRepository.theme.map { ThemeState(it) }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = ThemeState(Theme.System)
-    )
-
-    fun changeTheme(newTheme: Theme) = viewModelScope.launch {
-        settingsRepository.setTheme(newTheme)
-    }
+    fun changeTheme(newTheme: Theme) =
+        viewModelScope.launch {
+            settingsRepository.setTheme(newTheme)
+        }
 }

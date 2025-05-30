@@ -24,17 +24,17 @@ fun CyberopoliCard(
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     contentPadding: Dp = 16.dp,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(12.dp),
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-        colors = CardDefaults.cardColors(containerColor = containerColor)
+        colors = CardDefaults.cardColors(containerColor = containerColor),
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
-            verticalArrangement = verticalArrangement
+            verticalArrangement = verticalArrangement,
         ) {
             content()
         }

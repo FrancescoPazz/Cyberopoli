@@ -17,26 +17,30 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 
 @Composable
 fun GameCell(
-    gameCell: GameCell, isBorder: Boolean, occupants: List<GamePlayer>
+    gameCell: GameCell,
+    isBorder: Boolean,
+    occupants: List<GamePlayer>,
 ) {
     Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .then(if (isBorder) Modifier.border(2.dp, Color.Gray) else Modifier),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .aspectRatio(1f)
+                .then(if (isBorder) Modifier.border(2.dp, Color.Gray) else Modifier),
+        contentAlignment = Alignment.Center,
     ) {
         gameCell.type.resource?.let { resId ->
             Image(
                 painter = painterResource(resId),
                 contentDescription = gameCell.title,
                 modifier = Modifier.matchParentSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
         } ?: run {
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Transparent)
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .background(Color.Transparent),
             )
         }
         CellOccupants(occupants)

@@ -20,29 +20,29 @@ fun LobbyActions(
     onToggleReadyClick: () -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AuthButton(
             text = stringResource(R.string.ready),
             onClick = onToggleReadyClick,
-            modifier = Modifier.fillMaxWidth(0.8f)
+            modifier = Modifier.fillMaxWidth(0.8f),
         )
         Spacer(modifier = Modifier.height(8.dp))
         AuthButton(
             text = stringResource(R.string.exit),
             onClick = onExitClick,
-            modifier = Modifier.fillMaxWidth(0.8f)
+            modifier = Modifier.fillMaxWidth(0.8f),
         )
         if (isHost.value == true && allReady.value == true) {
             Spacer(modifier = Modifier.height(16.dp))
             AuthButton(
                 text = stringResource(R.string.start),
                 onClick = onStartGameClick,
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier.fillMaxWidth(0.8f),
             )
         }
     }

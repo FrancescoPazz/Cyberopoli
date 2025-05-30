@@ -24,38 +24,44 @@ import com.unibo.cyberopoli.data.models.game.GameHistory
 fun MatchHistoryItem(match: GameHistory) {
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-        ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.Center
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 color = MaterialTheme.colorScheme.primary,
                 text = "${R.string.games} - ${match.dateCreated}",
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 color = MaterialTheme.colorScheme.secondary,
                 text = "${R.string.internet_points}: ${match.score}",
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val resultColor = when (match.winner) {
-                    true -> MaterialTheme.colorScheme.primary
-                    false -> MaterialTheme.colorScheme.error
-                }
+                val resultColor =
+                    when (match.winner) {
+                        true -> MaterialTheme.colorScheme.primary
+                        false -> MaterialTheme.colorScheme.error
+                    }
                 Text(
                     color = resultColor,
-                    text = "${stringResource(R.string.result)}: ${if (match.winner) stringResource(R.string.win) else stringResource(R.string.loss)}",
-                    fontWeight = FontWeight.SemiBold
+                    text = "${stringResource(
+                        R.string.result,
+                    )}: ${if (match.winner) stringResource(R.string.win) else stringResource(R.string.loss)}",
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }

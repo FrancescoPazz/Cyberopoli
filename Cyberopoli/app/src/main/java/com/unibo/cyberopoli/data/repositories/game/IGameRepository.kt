@@ -6,13 +6,19 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 interface IGameRepository {
-    suspend fun createOrGetGame(lobbyId: String, lobbyMembers: List<LobbyMember>)
+    suspend fun createOrGetGame(
+        lobbyId: String,
+        lobbyMembers: List<LobbyMember>,
+    )
 
     suspend fun joinGame(): GamePlayer?
 
     suspend fun updatePlayerPoints(value: Int)
 
-    suspend fun updatePlayerPoints(value: Int, ownerId: String)
+    suspend fun updatePlayerPoints(
+        value: Int,
+        ownerId: String,
+    )
 
     suspend fun updatePlayerPosition(pos: Int)
 

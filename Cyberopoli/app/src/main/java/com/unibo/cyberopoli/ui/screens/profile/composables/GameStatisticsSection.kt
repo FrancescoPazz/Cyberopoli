@@ -27,7 +27,7 @@ fun GameStatisticsSection(user: User) {
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp),
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -37,7 +37,7 @@ fun GameStatisticsSection(user: User) {
                 icon = Icons.Filled.Functions,
                 iconTint = MaterialTheme.colorScheme.primary,
                 iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             GameStatItem(
                 title = stringResource(R.string.games_played),
@@ -45,7 +45,7 @@ fun GameStatisticsSection(user: User) {
                 icon = Icons.Filled.Stadium,
                 iconTint = MaterialTheme.colorScheme.secondary,
                 iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -55,7 +55,7 @@ fun GameStatisticsSection(user: User) {
                 icon = Icons.Filled.EmojiEvents,
                 iconTint = MaterialTheme.colorScheme.primary,
                 iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             GameStatItem(
                 title = stringResource(R.string.win_rate),
@@ -63,7 +63,7 @@ fun GameStatisticsSection(user: User) {
                 icon = Icons.AutoMirrored.Filled.TrendingUp,
                 iconTint = MaterialTheme.colorScheme.tertiary,
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }

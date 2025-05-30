@@ -93,7 +93,6 @@ val CyberLight_SurfaceContainer = Color(0xFFE0E0E0)
 val CyberLight_SurfaceContainerHigh = Color(0xFFD6D6D6)
 val CyberLight_SurfaceContainerHighest = Color(0xFFCBCBCB)
 
-
 // CyberDark MediumContrast
 val CyberDarkMediumContrast_Primary = Color(0xFF33FF33)
 val CyberDarkMediumContrast_OnPrimary = Color(0xFF000000)

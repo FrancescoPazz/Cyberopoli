@@ -20,51 +20,54 @@ import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 
 @Composable
-fun CellOccupants(
-    occupants: List<GamePlayer>
-) {
+fun CellOccupants(occupants: List<GamePlayer>) {
     @Composable
-    fun getPlayerColor(index: Int) = when (index) {
-        0 -> MaterialTheme.colorScheme.primary
-        1 -> MaterialTheme.colorScheme.secondary
-        2 -> MaterialTheme.colorScheme.tertiary
-        3 -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    fun getPlayerColor(index: Int) =
+        when (index) {
+            0 -> MaterialTheme.colorScheme.primary
+            1 -> MaterialTheme.colorScheme.secondary
+            2 -> MaterialTheme.colorScheme.tertiary
+            3 -> MaterialTheme.colorScheme.error
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
+        }
 
     Box(Modifier.fillMaxSize()) {
         occupants.forEachIndexed { index, player ->
-            val alignment = when (index) {
-                0 -> Alignment.TopStart
-                1 -> Alignment.TopEnd
-                2 -> Alignment.BottomStart
-                3 -> Alignment.BottomEnd
-                else -> Alignment.Center
-            }
+            val alignment =
+                when (index) {
+                    0 -> Alignment.TopStart
+                    1 -> Alignment.TopEnd
+                    2 -> Alignment.BottomStart
+                    3 -> Alignment.BottomEnd
+                    else -> Alignment.Center
+                }
 
             Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(alignment)
-                    .padding(1.dp)
-                    .background(getPlayerColor(index), shape = CircleShape),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .align(alignment)
+                        .padding(1.dp)
+                        .background(getPlayerColor(index), shape = CircleShape),
+                contentAlignment = Alignment.Center,
             ) {
-                val avatarRes = when (player.user?.avatarUrl) {
-                    "avatar_male_1" -> R.drawable.avatar_male_1
-                    "avatar_male_2" -> R.drawable.avatar_male_2
-                    "avatar_female_1" -> R.drawable.avatar_female_1
-                    "avatar_female_2" -> R.drawable.avatar_female_2
-                    else -> R.drawable.avatar_male_1
-                }
+                val avatarRes =
+                    when (player.user?.avatarUrl) {
+                        "avatar_male_1" -> R.drawable.avatar_male_1
+                        "avatar_male_2" -> R.drawable.avatar_male_2
+                        "avatar_female_1" -> R.drawable.avatar_female_1
+                        "avatar_female_2" -> R.drawable.avatar_female_2
+                        else -> R.drawable.avatar_male_1
+                    }
 
                 Image(
                     painter = painterResource(avatarRes),
                     contentDescription = stringResource(R.string.avatar),
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                    modifier =
+                        Modifier
+                            .size(20.dp)
+                            .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
                 )
             }
         }

@@ -20,15 +20,16 @@ import com.unibo.cyberopoli.R
 @Composable
 fun LoadingScreen() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+                trackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -36,7 +37,7 @@ fun LoadingScreen() {
             Text(
                 text = stringResource(R.string.loading),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
     }

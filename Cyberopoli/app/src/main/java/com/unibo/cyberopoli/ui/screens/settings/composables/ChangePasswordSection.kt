@@ -27,7 +27,7 @@ import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 @Composable
 fun ChangePasswordSection(
     updatePasswordWithOldPassword: (oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val currentPassword = remember { mutableStateOf("") }
@@ -38,7 +38,7 @@ fun ChangePasswordSection(
         Text(
             text = stringResource(R.string.change_password),
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -47,7 +47,7 @@ fun ChangePasswordSection(
             value = currentPassword,
             imageVector = Icons.Default.Lock,
             placeholder = stringResource(R.string.old_password),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -56,7 +56,7 @@ fun ChangePasswordSection(
             value = newPassword,
             imageVector = Icons.Default.Lock,
             placeholder = stringResource(R.string.password),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -65,7 +65,7 @@ fun ChangePasswordSection(
             value = confirmPassword,
             imageVector = Icons.Default.Lock,
             placeholder = stringResource(R.string.password_confirm),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -80,30 +80,31 @@ fun ChangePasswordSection(
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.change_success),
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT,
                             ).show()
                         },
                         {
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.change_fail),
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT,
                             ).show()
-                        }
+                        },
                     )
                 } else {
                     Toast.makeText(
                         context,
                         context.getString(R.string.password_not_match),
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_SHORT,
                     ).show()
                 }
             },
-            colors = ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colorScheme.tertiary,
-                containerColor = MaterialTheme.colorScheme.onTertiary
-            ),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            colors =
+                ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.tertiary,
+                    containerColor = MaterialTheme.colorScheme.onTertiary,
+                ),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
             Text(stringResource(R.string.change_password))
         }

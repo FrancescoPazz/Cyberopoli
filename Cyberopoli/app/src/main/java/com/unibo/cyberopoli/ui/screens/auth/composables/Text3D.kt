@@ -20,7 +20,7 @@ fun Text3D(
     textColor: Color = MaterialTheme.colorScheme.primary,
     shadowColor: Color = MaterialTheme.colorScheme.tertiary,
     offsetX: Int = 3,
-    offsetY: Int = 3
+    offsetY: Int = 3,
 ) {
     Box {
         Text(
@@ -28,14 +28,14 @@ fun Text3D(
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
             color = shadowColor,
-            modifier = modifier.offset(x = offsetX.dp, y = offsetY.dp)
+            modifier = modifier.offset(x = offsetX.dp, y = offsetY.dp),
         )
         Text(
             text = text,
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
             color = textColor,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

@@ -31,21 +31,24 @@ fun GameBottomBar(actions: List<GameAction>) {
                         action.iconRes?.let { painterResource(it) }?.let {
                             Icon(
                                 painter = it,
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         }
                         Spacer(Modifier.width(4.dp))
 
-                        val resId = remember(action.id) {
-                            context.resources.getIdentifier(
-                                action.id, "string", context.packageName
-                            )
-                        }
+                        val resId =
+                            remember(action.id) {
+                                context.resources.getIdentifier(
+                                    action.id,
+                                    "string",
+                                    context.packageName,
+                                )
+                            }
                         Text(stringResource(resId))
                     }
                 },
                 selected = false,
-                onClick = action.action
+                onClick = action.action,
             )
         }
     }

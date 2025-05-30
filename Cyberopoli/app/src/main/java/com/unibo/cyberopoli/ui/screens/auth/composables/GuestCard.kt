@@ -19,15 +19,17 @@ import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 
 @Composable
 fun GuestCard(
-    navController: NavController, loginAnonymously: (String) -> Unit
+    navController: NavController,
+    loginAnonymously: (String) -> Unit,
 ) {
     val guestName = remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CyberOutlinedTextField(
             value = guestName,
@@ -37,7 +39,8 @@ fun GuestCard(
         )
 
         AuthButton(
-            text = stringResource(R.string.enter).uppercase(), onClick = {
+            text = stringResource(R.string.enter).uppercase(),
+            onClick = {
                 if (guestName.value.isNotBlank()) {
                     loginAnonymously(guestName.value)
                     navController.navigate(CyberopoliRoute.Scan) {
@@ -45,7 +48,8 @@ fun GuestCard(
                         launchSingleTop = true
                     }
                 }
-            }, modifier = Modifier.align(Alignment.CenterHorizontally)
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
     }
 }

@@ -19,43 +19,46 @@ import com.unibo.cyberopoli.R
 @SuppressLint("DefaultLocale")
 @Composable
 fun MostUsedAppsChart(
-    appsUsage: List<Pair<String, Double>>, modifier: Modifier = Modifier
+    appsUsage: List<Pair<String, Double>>,
+    modifier: Modifier = Modifier,
 ) {
     if (appsUsage.isEmpty()) {
         Text(
             stringResource(R.string.no_stats_available),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
         return
     }
     val maxHours = appsUsage.maxOf { it.second }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier =
+            modifier
+                .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         appsUsage.forEach { (packageName, hours) ->
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = packageName.substringAfterLast('.'),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = String.format("%.1f h", hours),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 LinearProgressIndicator(
                     progress = { (hours / maxHours).toFloat().coerceIn(0f, 1f) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(8.dp),
                 )
             }
         }

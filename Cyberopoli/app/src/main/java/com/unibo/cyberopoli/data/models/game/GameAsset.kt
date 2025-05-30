@@ -6,14 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GameAsset(
     @SerialName("lobby_id") val lobbyId: String,
-
     @SerialName("game_id") val gameId: String,
-
     @SerialName("cell_id") val cellId: String,
-
     @SerialName("owner_id") val ownerId: String,
-
     @SerialName("placed_at_round") val placedAtRound: Int,
-
     @SerialName("expires_at_round") val expiresAtRound: Int,
 )

@@ -42,7 +42,7 @@ fun EditProfileSection(
     user: User,
     updateUserInfo: (String?, String?, () -> Unit, (String) -> Unit) -> Unit,
     updatePasswordWithOldPassword: (oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -55,9 +55,9 @@ fun EditProfileSection(
     var dialogMessage by remember { mutableStateOf("") }
     var isErrorDialog by remember { mutableStateOf(false) }
 
-
     if (showDialog) {
-        AlertDialog(onDismissRequest = { showDialog = false },
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
             title = { Text(text = dialogTitle) },
             text = { Text(text = dialogMessage) },
             confirmButton = {
@@ -65,32 +65,36 @@ fun EditProfileSection(
                     Text(stringResource(id = android.R.string.ok))
                 }
             },
-            icon = if (isErrorDialog) {
-                { Icon(Icons.Filled.Error, contentDescription = "Error Icon") }
-            } else {
-                { Icon(Icons.Filled.CheckCircle, contentDescription = "Success Icon") }
-            })
+            icon =
+                if (isErrorDialog) {
+                    { Icon(Icons.Filled.Error, contentDescription = "Error Icon") }
+                } else {
+                    { Icon(Icons.Filled.CheckCircle, contentDescription = "Success Icon") }
+                },
+        )
     }
 
     CyberopoliCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         elevation = 4.dp,
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         contentPadding = 16.dp,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.edit_profile),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             CyberOutlinedTextField(
@@ -122,12 +126,13 @@ fun EditProfileSection(
                         isErrorDialog = true
                         showDialog = true
                     })
-                }, modifier = Modifier.align(Alignment.CenterHorizontally)
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = stringResource(R.string.save_changes),
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(stringResource(R.string.save_changes))
@@ -137,17 +142,20 @@ fun EditProfileSection(
 
             OutlinedButton(
                 onClick = { showChangePasswordSection = !showChangePasswordSection },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Lock,
                     contentDescription = stringResource(R.string.change_password),
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(
-                    if (showChangePasswordSection) stringResource(R.string.hide)
-                    else stringResource(R.string.change_password)
+                    if (showChangePasswordSection) {
+                        stringResource(R.string.hide)
+                    } else {
+                        stringResource(R.string.change_password)
+                    },
                 )
             }
 
@@ -167,7 +175,8 @@ fun EditProfileSection(
                             isErrorDialog = true
                             showDialog = true
                         })
-                    }, modifier = Modifier.fillMaxWidth()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

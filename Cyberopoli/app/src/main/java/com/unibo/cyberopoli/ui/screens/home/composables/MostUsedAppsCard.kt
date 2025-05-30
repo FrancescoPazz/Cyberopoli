@@ -15,21 +15,22 @@ import com.unibo.cyberopoli.ui.components.CyberopoliCard
 @Composable
 fun MostUsedAppsCard(
     appsUsage: List<Pair<String, Double>>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     CyberopoliCard(modifier = modifier) {
         Text(
             text = stringResource(R.string.most_used_apps_week),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.tertiary,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
         )
 
         MostUsedAppsChart(
             appsUsage = appsUsage,
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 200.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 200.dp),
         )
     }
 }

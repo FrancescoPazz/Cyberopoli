@@ -23,20 +23,21 @@ fun Top3RankingSection(users: List<User>) {
     CyberopoliCard(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         contentPadding = 20.dp,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Text(
             text = "Top 3",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
@@ -44,8 +45,11 @@ fun Top3RankingSection(users: List<User>) {
 
             if (users.size > 1) {
                 PodiumSlot(
-                    user = users[1], rank = 2, podiumColor = Color(0xFFC0C0C0), medalEmoji = "🥈",
-                    modifier = slotModifier
+                    user = users[1],
+                    rank = 2,
+                    podiumColor = Color(0xFFC0C0C0),
+                    medalEmoji = "🥈",
+                    modifier = slotModifier,
                 )
             } else {
                 Box(modifier = slotModifier)
@@ -53,8 +57,11 @@ fun Top3RankingSection(users: List<User>) {
 
             if (users.isNotEmpty()) {
                 PodiumSlot(
-                    user = users[0], rank = 1, podiumColor = Color(0xFFFFD700), medalEmoji = "🥇👑",
-                    modifier = slotModifier
+                    user = users[0],
+                    rank = 1,
+                    podiumColor = Color(0xFFFFD700),
+                    medalEmoji = "🥇👑",
+                    modifier = slotModifier,
                 )
             } else {
                 Box(modifier = slotModifier)
@@ -62,8 +69,11 @@ fun Top3RankingSection(users: List<User>) {
 
             if (users.size > 2) {
                 PodiumSlot(
-                    user = users[2], rank = 3, podiumColor = Color(0xFFCD7F32), medalEmoji = "🥉",
-                    modifier = slotModifier
+                    user = users[2],
+                    rank = 3,
+                    podiumColor = Color(0xFFCD7F32),
+                    medalEmoji = "🥉",
+                    modifier = slotModifier,
                 )
             } else {
                 Box(modifier = slotModifier)

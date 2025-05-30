@@ -13,21 +13,23 @@ import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
-    userRepository: UserRepository, private val lobbyRepository: LobbyRepository
+    userRepository: UserRepository,
+    private val lobbyRepository: LobbyRepository,
 ) : ViewModel() {
-
     val user: LiveData<User?> = userRepository.currentUserLiveData
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
     val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
 
-    val isHost: LiveData<Boolean> = lobby.map { currentLobby ->
-        val currentUser = user.value
-        currentLobby?.hostId == currentUser?.id
-    }
+    val isHost: LiveData<Boolean> =
+        lobby.map { currentLobby ->
+            val currentUser = user.value
+            currentLobby?.hostId == currentUser?.id
+        }
 
-    val allReady: LiveData<Boolean> = members.map { currentMembers ->
-        currentMembers?.all { it.isReady } ?: false
-    }
+    val allReady: LiveData<Boolean> =
+        members.map { currentMembers ->
+            currentMembers?.all { it.isReady } ?: false
+        }
 
     fun startLobbyFlow(lobbyId: String) {
         viewModelScope.launch {
@@ -41,8 +43,8 @@ class LobbyViewModel(
                     LobbyMember(
                         lobbyId = lobbyId,
                         userId = user.value!!.id,
-                        user = user.value!!
-                    )
+                        user = user.value!!,
+                    ),
                 )
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error starting lobby flow", e)

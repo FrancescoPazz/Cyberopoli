@@ -15,10 +15,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Reticle(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .size(30.dp)
-            .background(Color.Transparent),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(30.dp)
+                .background(Color.Transparent),
+        contentAlignment = Alignment.Center,
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val cx = size.width / 2
@@ -29,13 +30,13 @@ fun Reticle(modifier: Modifier = Modifier) {
                 color = Color.Red,
                 start = Offset(cx - lineLength, cy),
                 end = Offset(cx + lineLength, cy),
-                strokeWidth = strokeWidth
+                strokeWidth = strokeWidth,
             )
             drawLine(
                 color = Color.Red,
                 start = Offset(cx, cy - lineLength),
                 end = Offset(cx, cy + lineLength),
-                strokeWidth = strokeWidth
+                strokeWidth = strokeWidth,
             )
         }
     }

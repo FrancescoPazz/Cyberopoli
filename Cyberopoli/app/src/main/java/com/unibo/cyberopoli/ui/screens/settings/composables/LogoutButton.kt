@@ -14,19 +14,21 @@ import com.unibo.cyberopoli.R
 @Composable
 fun LogoutButton(
     onLogout: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onLogout,
         modifier = modifier.padding(horizontal = 4.dp),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 4.dp
-        ),
-        colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.onError,
-            containerColor = MaterialTheme.colorScheme.error
-        )
+        elevation =
+            ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 4.dp,
+            ),
+        colors =
+            ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.onError,
+                containerColor = MaterialTheme.colorScheme.error,
+            ),
     ) {
         Text(stringResource(R.string.logout))
     }

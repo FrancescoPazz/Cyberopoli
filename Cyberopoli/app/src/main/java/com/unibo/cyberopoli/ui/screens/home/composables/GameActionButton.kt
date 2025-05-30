@@ -18,45 +18,51 @@ fun GameActionButton(
     icon: ImageVector,
     onClick: () -> Unit,
     isPrimary: Boolean = false,
-    isOutlined: Boolean = false
+    isOutlined: Boolean = false,
 ) {
-    val buttonModifier = Modifier
-        .fillMaxWidth()
-        .height(52.dp)
+    val buttonModifier =
+        Modifier
+            .fillMaxWidth()
+            .height(52.dp)
 
     when {
-        isPrimary -> Button(
-            onClick = onClick,
-            modifier = buttonModifier,
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 4.dp,
-                pressedElevation = 2.dp
-            )
-        ) {
-            ActionButtonContent(icon, text)
-        }
+        isPrimary ->
+            Button(
+                onClick = onClick,
+                modifier = buttonModifier,
+                shape = MaterialTheme.shapes.medium,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                elevation =
+                    ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 2.dp,
+                    ),
+            ) {
+                ActionButtonContent(icon, text)
+            }
 
-        isOutlined -> OutlinedButton(
-            onClick = onClick,
-            modifier = buttonModifier,
-            shape = MaterialTheme.shapes.medium,
-            border = ButtonDefaults.outlinedButtonBorder(
-            ),
-        ) {
-            ActionButtonContent(icon, text, color = MaterialTheme.colorScheme.primary)
-        }
+        isOutlined ->
+            OutlinedButton(
+                onClick = onClick,
+                modifier = buttonModifier,
+                shape = MaterialTheme.shapes.medium,
+                border =
+                    ButtonDefaults.outlinedButtonBorder(),
+            ) {
+                ActionButtonContent(icon, text, color = MaterialTheme.colorScheme.primary)
+            }
 
-        else -> FilledTonalButton(
-            onClick = onClick,
-            modifier = buttonModifier,
-            shape = MaterialTheme.shapes.medium,
-        ) {
-            ActionButtonContent(icon, text)
-        }
+        else ->
+            FilledTonalButton(
+                onClick = onClick,
+                modifier = buttonModifier,
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                ActionButtonContent(icon, text)
+            }
     }
 }

@@ -7,7 +7,10 @@ import com.unibo.cyberopoli.ui.components.CyberopoliGradientCard
 import com.unibo.cyberopoli.ui.components.UserAvatarInfo
 
 @Composable
-fun PlayerWelcomeCard(user: User, modifier: Modifier = Modifier) {
+fun PlayerWelcomeCard(
+    user: User,
+    modifier: Modifier = Modifier,
+) {
     CyberopoliGradientCard(modifier = modifier) {
         UserAvatarInfo(user = user, showWelcomeMessage = true)
     }

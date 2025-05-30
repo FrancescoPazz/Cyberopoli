@@ -25,13 +25,16 @@ fun ProfileButton(
     Button(
         onClick = onClick,
         modifier = modifier.padding(horizontal = 4.dp, vertical = 8.dp),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp, pressedElevation = 4.dp
-        ),
-        colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.tertiary,
-            containerColor = MaterialTheme.colorScheme.onTertiary
-        ),
+        elevation =
+            ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 4.dp,
+            ),
+        colors =
+            ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.onTertiary,
+            ),
         enabled = enabled,
     ) {
         if (icon != null) {
@@ -39,9 +42,12 @@ fun ProfileButton(
             Spacer(modifier = Modifier.width(4.dp))
         }
         Text(
-            text = text, style = TextStyle(
-                fontSize = 18.sp, fontWeight = FontWeight.Bold
-            )
+            text = text,
+            style =
+                TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
         )
     }
 }

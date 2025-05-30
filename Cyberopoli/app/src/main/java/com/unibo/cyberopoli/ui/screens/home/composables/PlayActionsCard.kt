@@ -22,14 +22,14 @@ fun PlayActionsCard(
             text = stringResource(R.string.play_now_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         GameActionButton(
             text = stringResource(R.string.new_game_button),
             icon = Icons.Filled.PlayCircleFilled,
             onClick = onNewGameClick,
-            isPrimary = true
+            isPrimary = true,
         )
     }
 }

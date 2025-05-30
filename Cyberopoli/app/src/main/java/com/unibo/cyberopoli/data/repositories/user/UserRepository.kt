@@ -13,18 +13,19 @@ import kotlinx.coroutines.launch
 import com.unibo.cyberopoli.data.repositories.user.IUserRepository as DomainUserRepository
 
 class UserRepository(
-    private val supabase: SupabaseClient
+    private val supabase: SupabaseClient,
 ) : DomainUserRepository {
     val currentUserLiveData = MutableLiveData<User?>()
 
     override suspend fun loadUserData(): User {
         val userId = supabase.auth.currentUserOrNull()?.id ?: throw IllegalStateException("User not logged in")
         try {
-            val user = supabase.from("users").select {
-                filter {
-                    eq("id", userId)
-                }
-            }.decodeSingle<User>()
+            val user =
+                supabase.from("users").select {
+                    filter {
+                        eq("id", userId)
+                    }
+                }.decodeSingle<User>()
             currentUserLiveData.postValue(user)
             return user
         } catch (e: Exception) {
@@ -33,9 +34,10 @@ class UserRepository(
     }
 
     fun changeAvatar() {
-        val userId = supabase.auth.currentUserOrNull()?.id ?: run {
-            return
-        }
+        val userId =
+            supabase.auth.currentUserOrNull()?.id ?: run {
+                return
+            }
 
         val currentAvatar = currentUserLiveData.value?.avatarUrl ?: "avatar_male_1"
         val avatarList =
@@ -59,15 +61,19 @@ class UserRepository(
         }
     }
 
-    override suspend fun updateUserInfo(newName: String?, newSurname: String?) {
+    override suspend fun updateUserInfo(
+        newName: String?,
+        newSurname: String?,
+    ) {
         val userId = supabase.auth.currentUserOrNull()?.id ?: return
         try {
-            val user = supabase.from("users").update(mapOf("name" to newName, "surname" to newSurname)) {
-                filter {
-                    eq("id", userId)
-                }
-                select()
-            }.decodeSingle<User>()
+            val user =
+                supabase.from("users").update(mapOf("name" to newName, "surname" to newSurname)) {
+                    filter {
+                        eq("id", userId)
+                    }
+                    select()
+                }.decodeSingle<User>()
 
             currentUserLiveData.postValue(user)
         } catch (e: Exception) {
@@ -77,7 +83,10 @@ class UserRepository(
         loadUserData()
     }
 
-    override suspend fun changePassword(oldPassword: String, newPassword: String) {
+    override suspend fun changePassword(
+        oldPassword: String,
+        newPassword: String,
+    ) {
         val email = supabase.auth.currentUserOrNull()?.email ?: return
         supabase.auth.signInWith(Email) {
             this.email = email

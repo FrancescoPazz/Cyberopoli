@@ -13,20 +13,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 class PermissionHandler(private val activity: ComponentActivity) {
-
     fun hasCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-            activity, Manifest.permission.CAMERA
+            activity, Manifest.permission.CAMERA,
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun requestCameraPermission() {
         if (ContextCompat.checkSelfPermission(
-                activity, Manifest.permission.CAMERA
+                activity, Manifest.permission.CAMERA,
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                activity, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE
+                activity,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_REQUEST_CODE,
             )
         }
     }
@@ -34,19 +35,20 @@ class PermissionHandler(private val activity: ComponentActivity) {
     @RequiresApi(Build.VERSION_CODES.Q)
     fun hasUsageStatsPermission(): Boolean {
         val appOps = activity.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                activity.packageName
-            )
-        } else {
-            appOps.unsafeCheckOpRawNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                activity.packageName
-            )
-        }
+        val mode =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appOps.unsafeCheckOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    activity.packageName,
+                )
+            } else {
+                appOps.unsafeCheckOpRawNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    activity.packageName,
+                )
+            }
         return mode == AppOpsManager.MODE_ALLOWED
     }
 

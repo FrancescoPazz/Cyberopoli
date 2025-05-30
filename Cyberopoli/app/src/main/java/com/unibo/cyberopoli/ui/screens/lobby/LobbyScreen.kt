@@ -1,34 +1,36 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.os.Build
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import androidx.activity.compose.BackHandler
-import com.unibo.cyberopoli.ui.components.TopBar
-import androidx.compose.foundation.layout.padding
-import com.unibo.cyberopoli.ui.components.BottomBar
 import androidx.compose.foundation.layout.fillMaxSize
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.ui.components.AppLifecycleTracker
+import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.composables.LobbyContent
-import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
 import com.unibo.cyberopoli.ui.screens.lobby.composables.LobbyStarterEffects
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LobbyScreen(
     navController: NavHostController,
-    params: LobbyParams
+    params: LobbyParams,
 ) {
-    AppLifecycleTracker(AppLifecycleTrackerScreenContext.LOBBY, params.setInApp
+    AppLifecycleTracker(
+        AppLifecycleTrackerScreenContext.LOBBY,
+        params.setInApp,
     ) {
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
@@ -39,7 +41,7 @@ fun LobbyScreen(
 
     LobbyStarterEffects(
         navController = navController,
-        params = params
+        params = params,
     )
 
     BackHandler {
@@ -57,14 +59,15 @@ fun LobbyScreen(
         bottomBar = {
             if (!params.isGuest) BottomBar(navController)
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center,
         ) {
             if (params.lobbyId.isEmpty() || params.members.isEmpty()) {
                 LoadingScreen()
@@ -85,7 +88,7 @@ fun LobbyScreen(
                         params.leaveLobby()
                         navController.popBackStack()
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }

@@ -27,7 +27,8 @@ import com.unibo.cyberopoli.ui.screens.ranking.composables.Top3RankingSection
 
 @Composable
 fun RankingScreen(
-    navController: NavController, rankingParams: RankingParams
+    navController: NavController,
+    rankingParams: RankingParams,
 ) {
     val currentUser = rankingParams.user.value
     val rankingData = rankingParams.rankingData.value
@@ -39,18 +40,19 @@ fun RankingScreen(
         content = { paddingValues ->
             if (rankingData == null) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(16.dp),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     CircularProgressIndicator(modifier = Modifier.padding(bottom = 16.dp))
                     Text(
                         text = stringResource(R.string.loading),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             } else {
@@ -58,13 +60,18 @@ fun RankingScreen(
                 val others = rankingData.drop(3)
 
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .verticalScroll(rememberScrollState())
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .verticalScroll(rememberScrollState()),
                 ) {
                     currentUser?.let {
-                        MyRankingPositionCard(user = it, myRank = rankingData.indexOf(it) + 1, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+                        MyRankingPositionCard(
+                            user = it,
+                            myRank = rankingData.indexOf(it) + 1,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                        )
                     }
 
                     if (top3.isNotEmpty()) {
@@ -76,12 +83,12 @@ fun RankingScreen(
                         RankingListCard(
                             users = others,
                             currentUser = currentUser,
-                            rankOffset = 3
+                            rankOffset = 3,
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-        }
+        },
     )
 }

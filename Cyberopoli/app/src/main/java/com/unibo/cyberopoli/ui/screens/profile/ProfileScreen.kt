@@ -16,34 +16,39 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.profile.composables.GameStatisticsSection
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.profile.composables.EditProfileSection
+import com.unibo.cyberopoli.ui.screens.profile.composables.GameStatisticsSection
 import com.unibo.cyberopoli.ui.screens.profile.composables.ProfileHeader
 
 @Composable
 fun ProfileScreen(
-    navController: NavHostController, profileParams: ProfileParams
+    navController: NavHostController,
+    profileParams: ProfileParams,
 ) {
     val user = profileParams.user.value
 
-    Scaffold(topBar = { TopBar(navController) },
+    Scaffold(
+        topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(0.dp)
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
                 if (user == null) {
                     LoadingScreen()
                 } else {
-                    ProfileHeader(user = user,
+                    ProfileHeader(
+                        user = user,
                         onEditProfileClick = { profileParams.changeAvatar() },
-                        onShareClick = { /* TODO */ })
+                        onShareClick = { /* TODO */ },
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -56,12 +61,12 @@ fun ProfileScreen(
                     EditProfileSection(
                         user = user,
                         updateUserInfo = profileParams.updateUserInfo,
-                        updatePasswordWithOldPassword = profileParams.updatePasswordWithOldPassword
+                        updatePasswordWithOldPassword = profileParams.updatePasswordWithOldPassword,
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
-        }
+        },
     )
 }

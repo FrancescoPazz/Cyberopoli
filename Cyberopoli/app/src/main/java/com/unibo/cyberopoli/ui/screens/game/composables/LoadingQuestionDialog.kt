@@ -24,20 +24,20 @@ fun LoadingQuestionDialog() {
         Surface(
             shape = RoundedCornerShape(16.dp),
             tonalElevation = 8.dp,
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(24.dp),
         ) {
             Column(
                 Modifier
                     .padding(24.dp)
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 CircularProgressIndicator()
                 Spacer(Modifier.height(16.dp))
                 Text(
                     stringResource(R.string.loading),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

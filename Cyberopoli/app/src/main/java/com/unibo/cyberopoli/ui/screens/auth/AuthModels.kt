@@ -9,10 +9,13 @@ data class AuthParams(
     val login: (email: String, password: String) -> Unit,
     val loginGoogleUser: (context: Context) -> Unit,
     val signUp: (
-        name: String?, surname: String?, username: String, email: String, password: String
+        name: String?,
+        surname: String?,
+        username: String,
+        email: String,
+        password: String,
     ) -> Unit,
     val loginAnonymously: (String) -> Unit,
     val sendPasswordReset: (email: String) -> Unit,
     val changeForgottenPassword: (email: String, password: String, otp: String) -> Unit,
 )
-

@@ -22,24 +22,26 @@ fun CyberopoliGradientCard(
     shape: Shape = RoundedCornerShape(16.dp),
     elevation: Dp = 6.dp,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
-    gradientColors: List<Color> = listOf(
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-        MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-        MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
-    ),
+    gradientColors: List<Color> =
+        listOf(
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+            MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+        ),
     contentPadding: Dp = 16.dp,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-        colors = CardDefaults.cardColors(containerColor = containerColor)
+        colors = CardDefaults.cardColors(containerColor = containerColor),
     ) {
         Box(
-            modifier = Modifier
-                .background(Brush.horizontalGradient(colors = gradientColors))
-                .padding(contentPadding)
+            modifier =
+                Modifier
+                    .background(Brush.horizontalGradient(colors = gradientColors))
+                    .padding(contentPadding),
         ) {
             content()
         }

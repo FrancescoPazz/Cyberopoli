@@ -34,18 +34,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
-import com.unibo.cyberopoli.data.models.auth.AuthState
-import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 import com.unibo.cyberopoli.ui.screens.auth.composables.Text3D
 import com.unibo.cyberopoli.ui.screens.scan.composables.QRCodeScanner
 import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
 fun ScanScreen(
-    navController: NavHostController, scanParams: ScanParams
+    navController: NavHostController,
+    scanParams: ScanParams,
 ) {
     val manualCode = remember { mutableStateOf("") }
     val invalidCode = stringResource(R.string.invalid_code)
@@ -53,11 +54,14 @@ fun ScanScreen(
     val appName = stringResource(R.string.app_name).lowercase()
     val permissionHandler = remember { PermissionHandler(activity) }
     var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
-    val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
-        hasCameraPermission = granted
-        if (!granted) Toast.makeText(activity, activity.getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT) // Usa string resource
-            .show()
-    }
+    val launcher =
+        rememberLauncherForActivityResult(RequestPermission()) { granted ->
+            hasCameraPermission = granted
+            if (!granted) {
+                Toast.makeText(activity, activity.getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT) // Usa string resource
+                    .show()
+            }
+        }
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) launcher.launch(Manifest.permission.CAMERA)
@@ -69,31 +73,34 @@ fun ScanScreen(
                 BottomBar(navController)
             }
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.TopCenter
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                contentAlignment = Alignment.TopCenter,
             ) {
                 Text3D(text = stringResource(R.string.scan))
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                contentAlignment = Alignment.Center,
             ) {
                 if (hasCameraPermission) {
                     QRCodeScanner(onQRCodeScanned = { value ->
@@ -107,12 +114,12 @@ fun ScanScreen(
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
                     ) {
                         Text(
                             text = stringResource(R.string.camera_permission_required),
                             color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
                         )
 
                         Spacer(Modifier.height(16.dp))
@@ -142,7 +149,7 @@ fun ScanScreen(
                 onClick = {
                     scanParams.setScannedValue(manualCode.value)
                     navController.navigate(CyberopoliRoute.Lobby)
-                }
+                },
             ) {
                 Text(stringResource(R.string.enter))
             }

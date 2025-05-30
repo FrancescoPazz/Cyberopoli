@@ -8,15 +8,16 @@ import io.github.jan.supabase.postgrest.query.Order
 import com.unibo.cyberopoli.data.repositories.ranking.IRankingRepository as DomainUserRepository
 
 class RankingRepository(
-    private val supabase: SupabaseClient
+    private val supabase: SupabaseClient,
 ) : DomainUserRepository {
     val rankingUsersLiveData = MutableLiveData<List<User>?>()
 
     override suspend fun loadRanking() {
         try {
-            val users: List<User> = supabase.from("users").select {
-                order("total_score", order = Order.DESCENDING)
-            }.decodeList<User>()
+            val users: List<User> =
+                supabase.from("users").select {
+                    order("total_score", order = Order.DESCENDING)
+                }.decodeList<User>()
             rankingUsersLiveData.postValue(users)
         } catch (e: Exception) {
             throw e

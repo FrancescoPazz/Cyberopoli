@@ -15,18 +15,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ActionButtonContent(icon: ImageVector, text: String, color: Color? = null) {
+fun ActionButtonContent(
+    icon: ImageVector,
+    text: String,
+    color: Color? = null,
+) {
     Icon(
         imageVector = icon,
         contentDescription = null,
         modifier = Modifier.size(ButtonDefaults.IconSize),
-        tint = color ?: LocalContentColor.current
+        tint = color ?: LocalContentColor.current,
     )
     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
     Text(
         text,
         fontWeight = FontWeight.Medium,
         fontSize = 15.sp,
-        color = color ?: LocalContentColor.current
+        color = color ?: LocalContentColor.current,
     )
 }

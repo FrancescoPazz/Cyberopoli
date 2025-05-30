@@ -18,35 +18,37 @@ import androidx.navigation.NavController
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import com.unibo.cyberopoli.ui.screens.home.composables.MatchHistoryCard
 import com.unibo.cyberopoli.ui.screens.home.composables.MostUsedAppsCard
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayActionsCard
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayerWelcomeCard
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.home.composables.MatchHistoryCard
-
 
 @Composable
 fun HomeScreen(
-    navController: NavController, homeParams: HomeParams
+    navController: NavController,
+    homeParams: HomeParams,
 ) {
     val topApps by homeParams.topAppsUsage
     val currentUserState = homeParams.user
     val gameHistories = homeParams.gameHistories.value
 
-    Scaffold(topBar = { TopBar(navController) },
+    Scaffold(
+        topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
     ) { paddingValues ->
         if (currentUserState.value == null) {
             LoadingScreen()
         } else {
             Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                modifier =
+                    Modifier
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 Spacer(modifier = Modifier.height(4.dp))
 

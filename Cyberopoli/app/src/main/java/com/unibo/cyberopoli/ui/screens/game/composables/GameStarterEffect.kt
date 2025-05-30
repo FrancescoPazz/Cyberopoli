@@ -10,9 +10,7 @@ import androidx.compose.runtime.setValue
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 
 @Composable
-fun GameStarterEffect(
-    gameParams: GameParams,
-) {
+fun GameStarterEffect(gameParams: GameParams) {
     var hasStarted by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(gameParams.lobby) {
@@ -20,7 +18,8 @@ fun GameStarterEffect(
         if (!hasStarted && gameParams.lobby.value != null && gameParams.members.value != null) {
             Log.d("GameStarterEffect", "Starting game with lobby ID: ${gameParams.lobby.value!!.id}")
             gameParams.startGame(
-                gameParams.lobby.value!!.id, gameParams.members.value!!
+                gameParams.lobby.value!!.id,
+                gameParams.members.value!!,
             )
             hasStarted = true
         }

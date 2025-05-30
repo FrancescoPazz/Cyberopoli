@@ -14,9 +14,8 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
-
     private val _authState = MutableLiveData<AuthState>(AuthState.Unauthenticated)
     val authState: LiveData<AuthState> = _authState
 
@@ -33,7 +32,10 @@ class AuthViewModel(
         }
     }
 
-    fun login(email: String, password: String) {
+    fun login(
+        email: String,
+        password: String,
+    ) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             authRepository.signIn(email, password).collect { resp ->
@@ -52,7 +54,11 @@ class AuthViewModel(
     }
 
     fun signUp(
-        name: String?, surname: String?, username: String, email: String, password: String
+        name: String?,
+        surname: String?,
+        username: String,
+        email: String,
+        password: String,
     ) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -116,7 +122,11 @@ class AuthViewModel(
         }
     }
 
-    fun changeForgottenPassword(email: String, newPassword: String, otp: String) {
+    fun changeForgottenPassword(
+        email: String,
+        newPassword: String,
+        otp: String,
+    ) {
         viewModelScope.launch {
             val ok = authRepository.sendOtp(email, otp).single()
             if (ok is AuthResponse.Success) {

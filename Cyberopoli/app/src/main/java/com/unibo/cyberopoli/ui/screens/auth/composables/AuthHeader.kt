@@ -22,18 +22,21 @@ fun AuthHeader() {
     val imageSize = 250.dp
 
     Column(
-        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
-            contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
-                modifier = Modifier
-                    .size(imageSize)
-                    .align(Alignment.Center),
-                contentScale = ContentScale.Fit
+                modifier =
+                    Modifier
+                        .size(imageSize)
+                        .align(Alignment.Center),
+                contentScale = ContentScale.Fit,
             )
 
             Text3D(
@@ -42,9 +45,10 @@ fun AuthHeader() {
                 fontWeight = FontWeight.ExtraBold,
                 offsetX = 3,
                 offsetY = 3,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(top = imageSize / 2)
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .padding(top = imageSize / 2),
             )
         }
     }

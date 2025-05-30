@@ -8,7 +8,7 @@ import com.unibo.cyberopoli.data.repositories.ranking.RankingRepository
 import kotlinx.coroutines.launch
 
 class RankingViewModel(
-    private val rankingRepository: RankingRepository
+    private val rankingRepository: RankingRepository,
 ) : ViewModel() {
     val rankingUsers: LiveData<List<User>?> = rankingRepository.rankingUsersLiveData
 

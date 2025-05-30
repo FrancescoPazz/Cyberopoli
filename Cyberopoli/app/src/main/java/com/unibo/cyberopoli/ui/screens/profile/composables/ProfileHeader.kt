@@ -25,32 +25,36 @@ import com.unibo.cyberopoli.ui.components.UserAvatarInfo
 
 @Composable
 fun ProfileHeader(
-    user: User, onEditProfileClick: () -> Unit, onShareClick: () -> Unit
+    user: User,
+    onEditProfileClick: () -> Unit,
+    onShareClick: () -> Unit,
 ) {
     CyberopoliGradientCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
         elevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        gradientColors = listOf(
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-            MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
-        ),
-        contentPadding = 16.dp
+        gradientColors =
+            listOf(
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+            ),
+        contentPadding = 16.dp,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             UserAvatarInfo(
                 user = user,
                 showWelcomeMessage = false,
                 textStyleHeadline = MaterialTheme.typography.titleLarge,
-                textStyleBody = MaterialTheme.typography.bodyMedium
+                textStyleBody = MaterialTheme.typography.bodyMedium,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -62,10 +66,10 @@ fun ProfileHeader(
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
                             contentDescription = stringResource(R.string.edit),
-                            tint = MaterialTheme.colorScheme.tertiary
+                            tint = MaterialTheme.colorScheme.tertiary,
                         )
                     },
-                    onClick = onEditProfileClick
+                    onClick = onEditProfileClick,
                 )
                 ProfileButton(
                     text = stringResource(R.string.share),
@@ -73,10 +77,10 @@ fun ProfileHeader(
                         Icon(
                             imageVector = Icons.Default.Share,
                             contentDescription = stringResource(R.string.share),
-                            tint = MaterialTheme.colorScheme.tertiary
+                            tint = MaterialTheme.colorScheme.tertiary,
                         )
                     },
-                    onClick = onShareClick
+                    onClick = onShareClick,
                 )
             }
         }

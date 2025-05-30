@@ -19,20 +19,21 @@ import com.unibo.cyberopoli.R
 @Composable
 fun ScoreAndManageRow(
     score: Int,
-    onManageClick: () -> Unit
+    onManageClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = stringResource(R.string.internet_points) + ": $score",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
         Button(onClick = onManageClick) {
             Text(stringResource(R.string.manage))

@@ -9,20 +9,20 @@ sealed class GameDialogData {
         val prompt: String,
         val options: List<String>,
         val correctIndex: Int,
-        val points: Int
+        val points: Int,
     ) : GameDialogData()
 
     @Serializable
     data class HackerStatement(
         val title: String,
         val content: String,
-        val points: Int
+        val points: Int,
     ) : GameDialogData()
 
     @Serializable
     data class BlockChoice(
         val title: String,
-        val players: List<GamePlayer>
+        val players: List<GamePlayer>,
     ) : GameDialogData()
 
     @Serializable
@@ -46,6 +46,6 @@ sealed class GameDialogData {
         val title: String,
         val message: String,
         val options: List<String>? = null,
-        val onDismiss: (() -> Unit)? = null
+        val onDismiss: (() -> Unit)? = null,
     ) : GameDialogData()
 }

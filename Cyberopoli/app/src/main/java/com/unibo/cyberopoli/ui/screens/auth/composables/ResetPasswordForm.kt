@@ -37,16 +37,17 @@ fun ResetPasswordForm(
     isLoading: Boolean,
     onSendResetEmail: () -> Unit,
     changeForgottenPassword: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
     ) {
         Text(
             text = stringResource(R.string.reset_password_title),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
         Spacer(Modifier.height(16.dp))
 
@@ -55,13 +56,13 @@ fun ResetPasswordForm(
             onValueChange = onEmailChange,
             placeholder = stringResource(R.string.email),
             imageVector = Icons.Default.Email,
-            singleLine = true
+            singleLine = true,
         )
         Spacer(Modifier.height(8.dp))
         AuthButton(
             text = stringResource(R.string.send_reset_email),
             onClick = onSendResetEmail,
-            enabled = email.value.isNotBlank() && !isLoading
+            enabled = email.value.isNotBlank() && !isLoading,
         )
 
         if (showOtpFields) {
@@ -72,7 +73,7 @@ fun ResetPasswordForm(
                 onValueChange = onOtpChange,
                 placeholder = stringResource(R.string.enter_otp),
                 imageVector = Icons.Default.LockReset,
-                singleLine = true
+                singleLine = true,
             )
 
             Spacer(Modifier.height(8.dp))
@@ -83,7 +84,7 @@ fun ResetPasswordForm(
                 placeholder = stringResource(R.string.new_password),
                 imageVector = Icons.Default.Lock,
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
             )
             Spacer(Modifier.height(8.dp))
             CyberOutlinedTextField(
@@ -92,7 +93,7 @@ fun ResetPasswordForm(
                 placeholder = stringResource(R.string.password_confirm),
                 imageVector = Icons.Default.Lock,
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
             )
             Spacer(Modifier.height(8.dp))
             AuthButton(
@@ -100,15 +101,18 @@ fun ResetPasswordForm(
                 onClick = {
                     changeForgottenPassword()
                 },
-                enabled = otp.value.isNotBlank() && newPassword.value.isNotBlank() && newPassword.value == confirmPassword.value && !isLoading
+                enabled = otp.value.isNotBlank() && newPassword.value.isNotBlank() && newPassword.value == confirmPassword.value && !isLoading,
             )
         }
 
         Spacer(Modifier.height(16.dp))
         TextButton(
-            onClick = onBack, colors = ButtonDefaults.textButtonColors(
-                contentColor = MaterialTheme.colorScheme.tertiary
-            ), modifier = Modifier.align(Alignment.CenterHorizontally)
+            onClick = onBack,
+            colors =
+                ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.tertiary,
+                ),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
             Text(stringResource(R.string.back_to_login))
         }

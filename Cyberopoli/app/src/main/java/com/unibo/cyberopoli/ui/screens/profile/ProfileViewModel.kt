@@ -14,9 +14,8 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val userRepository: UserRepository,
     private val gameRepository: GameRepository,
-    private val usageStatsHelper: UsageStatsHelper
+    private val usageStatsHelper: UsageStatsHelper,
 ) : ViewModel() {
-
     val user: LiveData<User?> = userRepository.currentUserLiveData
 
     private val _topAppsUsage: MutableLiveData<List<Pair<String, Double>>> = MutableLiveData()
@@ -46,7 +45,12 @@ class ProfileViewModel(
         }
     }
 
-    fun updateUserInfo(newName: String?, newSurname: String?, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun updateUserInfo(
+        newName: String?,
+        newSurname: String?,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
         viewModelScope.launch {
             try {
                 userRepository.updateUserInfo(newName, newSurname)
@@ -58,7 +62,10 @@ class ProfileViewModel(
     }
 
     fun updatePasswordWithOldPassword(
-        oldPassword: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit
+        oldPassword: String,
+        newPassword: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
     ) = viewModelScope.launch {
         try {
             userRepository.changePassword(oldPassword, newPassword)

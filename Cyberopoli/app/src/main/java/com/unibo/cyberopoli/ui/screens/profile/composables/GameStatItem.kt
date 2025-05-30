@@ -32,7 +32,7 @@ fun GameStatItem(
     icon: ImageVector,
     iconTint: Color,
     iconBackgroundColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     CyberopoliCard(
         modifier = modifier,
@@ -40,33 +40,37 @@ fun GameStatItem(
         elevation = 2.dp,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentPadding = 12.dp,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         GameStatItemContent(title, value, icon, iconTint, iconBackgroundColor)
     }
-
 }
 
 @Composable
 private fun GameStatItemContent(
-    title: String, value: String, icon: ImageVector, iconTint: Color, iconBackgroundColor: Color
+    title: String,
+    value: String,
+    icon: ImageVector,
+    iconTint: Color,
+    iconBackgroundColor: Color,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(iconBackgroundColor),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(iconBackgroundColor),
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
                 tint = iconTint,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(22.dp),
             )
         }
 
@@ -76,7 +80,7 @@ private fun GameStatItemContent(
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f),
             )
 
             Text(
@@ -84,7 +88,7 @@ private fun GameStatItemContent(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

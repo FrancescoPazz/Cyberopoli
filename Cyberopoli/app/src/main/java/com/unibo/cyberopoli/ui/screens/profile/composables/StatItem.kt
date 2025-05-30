@@ -8,19 +8,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun StatItem(label: String, value: String) {
+fun StatItem(
+    label: String,
+    value: String,
+) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             color = MaterialTheme.colorScheme.primary,
             text = value,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Text(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             text = label,
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }

@@ -73,52 +73,59 @@ fun ARScreen(navController: NavController) {
                     if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) Config.DepthMode.AUTOMATIC else Config.DepthMode.DISABLED
                 config.lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
             },
-            onGestureListener = rememberOnGestureListener(onSingleTapConfirmed = { e: MotionEvent, node: Node? ->
-                if (node == null) {
-                    val hitTestResult = frameState.value?.hitTest(e.x, e.y)
-                    hitTestResult?.firstOrNull {
-                        it.isValid(depthPoint = false, point = false)
-                    }?.createAnchorOrNull()?.let { hitAnchor ->
-                        val nodeModel = ARHelper.createAnchorNode(
+            onGestureListener =
+                rememberOnGestureListener(onSingleTapConfirmed = { e: MotionEvent, node: Node? ->
+                    if (node == null) {
+                        val hitTestResult = frameState.value?.hitTest(e.x, e.y)
+                        hitTestResult?.firstOrNull {
+                            it.isValid(depthPoint = false, point = false)
+                        }?.createAnchorOrNull()?.let { hitAnchor ->
+                            val nodeModel =
+                                ARHelper.createAnchorNode(
+                                    engine = engine,
+                                    modelLoader = modelLoader,
+                                    materialLoader = materialLoader,
+                                    modelInstance = modelInstance,
+                                    anchor = hitAnchor,
+                                    model = "models/chicken_nugget.glb",
+                                )
+                            childNodes += nodeModel
+                        }
+                    }
+                }),
+        )
+        Reticle(modifier = Modifier.align(Alignment.Center))
+        FloatingActionButton(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 100.dp),
+            onClick = {
+                childNodes.clear()
+                modelInstance.clear()
+                val centerCoordinates =
+                    with(density) {
+                        Offset(
+                            x = (configuration.screenWidthDp.dp.toPx() / 2f),
+                            y = (configuration.screenHeightDp.dp.toPx() / 2f),
+                        )
+                    }
+                frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
+                    it.isValid(depthPoint = false, point = false)
+                }?.createAnchorOrNull()?.let { centerAnchor ->
+                    val nuggetNode =
+                        ARHelper.createAnchorNode(
                             engine = engine,
                             modelLoader = modelLoader,
                             materialLoader = materialLoader,
                             modelInstance = modelInstance,
-                            anchor = hitAnchor,
-                            model = "models/chicken_nugget.glb"
+                            anchor = centerAnchor,
+                            model = "models/chicken_nugget.glb",
                         )
-                        childNodes += nodeModel
-                    }
-                }
-            })
-        )
-        Reticle(modifier = Modifier.align(Alignment.Center))
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp), onClick = {
-                childNodes.clear()
-                modelInstance.clear()
-                val centerCoordinates = with(density) {
-                    Offset(
-                        x = (configuration.screenWidthDp.dp.toPx() / 2f),
-                        y = (configuration.screenHeightDp.dp.toPx() / 2f)
-                    )
-                }
-                frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
-                    it.isValid(depthPoint = false, point = false)
-                }?.createAnchorOrNull()?.let { centerAnchor ->
-                    val nuggetNode = ARHelper.createAnchorNode(
-                        engine = engine,
-                        modelLoader = modelLoader,
-                        materialLoader = materialLoader,
-                        modelInstance = modelInstance,
-                        anchor = centerAnchor,
-                        model = "models/chicken_nugget.glb"
-                    )
                     childNodes += nuggetNode
                 }
-            }) {
+            },
+        ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add Nugget")
         }
     }

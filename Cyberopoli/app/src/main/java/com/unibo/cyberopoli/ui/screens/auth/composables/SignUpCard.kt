@@ -22,16 +22,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 
 @Composable
 fun SignUpCard(
     navController: NavController,
     authState: State<AuthState?>,
     signUp: (
-        name: String?, surname: String?, username: String, email: String, password: String
+        name: String?,
+        surname: String?,
+        username: String,
+        email: String,
+        password: String,
     ) -> Unit,
 ) {
     val name = remember { mutableStateOf("") }
@@ -40,16 +44,17 @@ fun SignUpCard(
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
-    val passwordsMatch = password.value.isNotBlank() &&
+    val passwordsMatch =
+        password.value.isNotBlank() &&
             password.value == confirmPassword.value
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         CyberOutlinedTextField(
             value = name,
             placeholder = stringResource(R.string.name),
@@ -108,7 +113,11 @@ fun SignUpCard(
             text = stringResource(R.string.signup).uppercase(),
             onClick = {
                 signUp(
-                    name.value, surname.value, username.value, email.value, password.value
+                    name.value,
+                    surname.value,
+                    username.value,
+                    email.value,
+                    password.value,
                 )
                 navController.navigate(CyberopoliRoute.Auth) {
                     popUpTo(CyberopoliRoute.Auth) {
@@ -118,7 +127,7 @@ fun SignUpCard(
                 }
             },
             enabled = authState.value != AuthState.Loading && passwordsMatch,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
     }
 }

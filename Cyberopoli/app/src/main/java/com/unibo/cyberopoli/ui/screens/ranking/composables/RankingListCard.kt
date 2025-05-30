@@ -19,32 +19,32 @@ import com.unibo.cyberopoli.ui.components.CyberopoliCard
 fun RankingListCard(
     users: List<User>,
     currentUser: User?,
-    rankOffset: Int
+    rankOffset: Int,
 ) {
     CyberopoliCard(
         modifier = Modifier.padding(horizontal = 16.dp),
         contentPadding = 0.dp,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
     ) {
         Text(
             text = stringResource(R.string.ranking),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
         users.forEachIndexed { index, user ->
             val currentRank = rankOffset + index + 1
             RankingListItem(
                 user = user,
                 rank = currentRank,
-                isCurrentUser = user.id == currentUser?.id
+                isCurrentUser = user.id == currentUser?.id,
             )
             if (index < users.size - 1) {
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
                     thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
+                    color = MaterialTheme.colorScheme.outlineVariant,
                 )
             } else {
                 Spacer(modifier = Modifier.padding(vertical = 8.dp))

@@ -10,11 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.game.GamePlayer
-import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 
 @Composable
 fun GameMap(
@@ -22,25 +20,27 @@ fun GameMap(
     rows: Int,
     cols: Int,
     borderPath: List<Int>,
-    players: List<GamePlayer>
+    players: List<GamePlayer>,
 ) {
-    val posMap = remember(players) {
-        players.groupBy { it.cellPosition }
-    }
+    val posMap =
+        remember(players) {
+            players.groupBy { it.cellPosition }
+        }
     LazyVerticalGrid(
         columns = GridCells.Fixed(cols),
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(cols / rows.toFloat())
-            .padding(12.dp)
-            .background(MaterialTheme.colorScheme.secondaryContainer),
-        userScrollEnabled = false
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(cols / rows.toFloat())
+                .padding(12.dp)
+                .background(MaterialTheme.colorScheme.secondaryContainer),
+        userScrollEnabled = false,
     ) {
         items(gameCells.size) { idx ->
             GameCell(
                 gameCell = gameCells[idx],
                 isBorder = idx in borderPath,
-                occupants = posMap[idx].orEmpty().take(4)
+                occupants = posMap[idx].orEmpty().take(4),
             )
         }
     }

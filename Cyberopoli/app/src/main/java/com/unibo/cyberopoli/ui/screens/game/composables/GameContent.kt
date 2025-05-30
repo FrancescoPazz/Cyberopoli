@@ -31,16 +31,17 @@ fun GameContent(
         topBar = { TopBar(navController) },
         bottomBar = {
             GameBottomBar(
-                actions = gameParams.gameAction.value!!
+                actions = gameParams.gameAction.value!!,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
             players?.let {
                 GameMap(
@@ -48,7 +49,7 @@ fun GameContent(
                     rows = BOARD_ROWS,
                     cols = BOARD_COLS,
                     borderPath = PERIMETER_PATH,
-                    players = it
+                    players = it,
                 )
             }
 
@@ -57,7 +58,7 @@ fun GameContent(
             player?.let {
                 ScoreAndManageRow(
                     score = it.score,
-                    onManageClick = { }
+                    onManageClick = { },
                 )
             }
         }

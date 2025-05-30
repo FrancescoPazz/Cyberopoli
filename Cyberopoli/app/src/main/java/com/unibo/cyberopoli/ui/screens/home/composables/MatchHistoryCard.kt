@@ -21,19 +21,19 @@ fun MatchHistoryCard(
 ) {
     CyberopoliCard(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             color = MaterialTheme.colorScheme.tertiary,
             text = stringResource(R.string.latest_games),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         if (gameHistory.isNullOrEmpty()) {
             Text(
                 text = stringResource(R.string.no_games_played),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
         } else {
             gameHistory.forEach { match ->

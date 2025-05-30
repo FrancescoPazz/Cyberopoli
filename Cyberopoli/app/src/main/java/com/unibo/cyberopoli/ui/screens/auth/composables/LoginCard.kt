@@ -48,10 +48,11 @@ fun LoginCard(
     val confirmPassword = remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (!isResetMode) {
             CyberOutlinedTextField(
@@ -59,7 +60,7 @@ fun LoginCard(
                 onValueChange = { email.value = it },
                 placeholder = stringResource(R.string.email),
                 imageVector = Icons.Default.Email,
-                singleLine = true
+                singleLine = true,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -70,37 +71,46 @@ fun LoginCard(
                 placeholder = stringResource(R.string.password),
                 imageVector = Icons.Default.Lock,
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
             )
 
             AuthButton(
                 text = stringResource(R.string.login).uppercase(),
                 onClick = { login(email.value.trim(), password.value) },
-                enabled = authState.value != AuthState.Loading
+                enabled = authState.value != AuthState.Loading,
             )
 
             TextButton(
-                onClick = { isResetMode = true }, colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.tertiary
-                )
+                onClick = { isResetMode = true },
+                colors =
+                    ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                    ),
             ) {
                 Text(stringResource(R.string.forgot_password))
             }
 
             GoogleSignInButton(onClick = { googleLogin(context) })
         } else {
-            ResetPasswordForm(email = email,
+            ResetPasswordForm(
+                email = email,
                 onEmailChange = { email.value = it },
                 showOtpFields = showOtpFields,
                 otp = otp,
-                onOtpChange = { otp.value = it
-                               Log.d("test otp", otp.value)},
+                onOtpChange = {
+                    otp.value = it
+                    Log.d("test otp", otp.value)
+                },
                 newPassword = newPassword,
-                onNewPasswordChange = { newPassword.value = it
-                                      Log.d("test newPassword", newPassword.value)},
+                onNewPasswordChange = {
+                    newPassword.value = it
+                    Log.d("test newPassword", newPassword.value)
+                },
                 confirmPassword = confirmPassword,
-                onConfirmPasswordChange = { confirmPassword.value = it
-                                          Log.d("test confirmPassword", confirmPassword.value)},
+                onConfirmPasswordChange = {
+                    confirmPassword.value = it
+                    Log.d("test confirmPassword", confirmPassword.value)
+                },
                 isLoading = authState.value == AuthState.Loading,
                 onSendResetEmail = {
                     sendResetEmail(email.value.trim())
@@ -110,10 +120,10 @@ fun LoginCard(
                     changeForgottenPassword(
                         email.value.trim(),
                         newPassword.value.trim(),
-                        otp.value.trim()
+                        otp.value.trim(),
                     )
                 },
-                onBack = { isResetMode = false }
+                onBack = { isResetMode = false },
             )
         }
     }

@@ -32,50 +32,67 @@ import com.unibo.cyberopoli.ui.components.CyberopoliCard
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun RankingListItem(user: User, rank: Int, isCurrentUser: Boolean = false) {
+fun RankingListItem(
+    user: User,
+    rank: Int,
+    isCurrentUser: Boolean = false,
+) {
     val context = LocalContext.current
     val backgroundColor =
-        if (isCurrentUser) MaterialTheme.colorScheme.primaryContainer
-        else MaterialTheme.colorScheme.surfaceContainer
-    val contentColor = if (isCurrentUser) MaterialTheme.colorScheme.onPrimaryContainer
-                        else MaterialTheme.colorScheme.onSurface
+        if (isCurrentUser) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainer
+        }
+    val contentColor =
+        if (isCurrentUser) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        }
 
     CyberopoliCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 5.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 5.dp),
         elevation = if (isCurrentUser) 4.dp else 2.dp,
         shape = RoundedCornerShape(12.dp),
         containerColor = backgroundColor,
         contentPadding = 12.dp,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "$rank.",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = if (isCurrentUser) contentColor else MaterialTheme.colorScheme.primary,
-                modifier = Modifier.width(38.dp)
+                modifier = Modifier.width(38.dp),
             )
 
-            val resId = remember(user.avatarUrl) {
-                context.resources.getIdentifier(
-                    user.avatarUrl, "drawable", context.packageName
-                )
-            }
+            val resId =
+                remember(user.avatarUrl) {
+                    context.resources.getIdentifier(
+                        user.avatarUrl,
+                        "drawable",
+                        context.packageName,
+                    )
+                }
             Image(
                 painter = painterResource(id = resId),
                 contentDescription = stringResource(R.string.avatar),
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.inverseOnSurface, CircleShape)
-                    .padding(2.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.inverseOnSurface, CircleShape)
+                        .padding(2.dp)
+                        .clip(CircleShape),
+                contentScale = ContentScale.Crop,
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -85,12 +102,12 @@ fun RankingListItem(user: User, rank: Int, isCurrentUser: Boolean = false) {
                     text = user.username,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
-                    color = contentColor
+                    color = contentColor,
                 )
                 Text(
                     text = "${user.totalScore} pt",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = contentColor.copy(alpha = 0.8f)
+                    color = contentColor.copy(alpha = 0.8f),
                 )
             }
         }

@@ -38,12 +38,16 @@ import com.unibo.cyberopoli.ui.screens.auth.composables.LoginCard
 import com.unibo.cyberopoli.ui.screens.auth.composables.SignUpCard
 
 @Composable
-fun AuthScreen(navController: NavController, authParams: AuthParams) {
-    val tabs = listOf(
-        stringResource(R.string.login),
-        stringResource(R.string.signup),
-        stringResource(R.string.guest)
-    )
+fun AuthScreen(
+    navController: NavController,
+    authParams: AuthParams,
+) {
+    val tabs =
+        listOf(
+            stringResource(R.string.login),
+            stringResource(R.string.signup),
+            stringResource(R.string.guest),
+        )
     val context = LocalContext.current
     val authState = authParams.authState
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -62,49 +66,57 @@ fun AuthScreen(navController: NavController, authParams: AuthParams) {
                 BottomBar(navController)
             }
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AuthHeader()
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            TabRow(selectedTabIndex = selectedTabIndex,
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 indicator = { tabPositions ->
                     SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
-                }) {
+                },
+            ) {
                 tabs.forEachIndexed { index, title ->
-                    Tab(selected = selectedTabIndex == index,
+                    Tab(
+                        selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
                         selectedContentColor = MaterialTheme.colorScheme.primary,
                         unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        text = { Text(title) }
+                        text = { Text(title) },
                     )
                 }
             }
             when (selectedTabIndex) {
-                0 -> LoginCard(
-                    authParams.authState,
-                    authParams.login,
-                    authParams.loginGoogleUser,
-                    authParams.sendPasswordReset,
-                    authParams.changeForgottenPassword,
-                )
-                1 -> SignUpCard(
-                    navController, authParams.authState, authParams.signUp
-                )
+                0 ->
+                    LoginCard(
+                        authParams.authState,
+                        authParams.login,
+                        authParams.loginGoogleUser,
+                        authParams.sendPasswordReset,
+                        authParams.changeForgottenPassword,
+                    )
+                1 ->
+                    SignUpCard(
+                        navController,
+                        authParams.authState,
+                        authParams.signUp,
+                    )
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }
