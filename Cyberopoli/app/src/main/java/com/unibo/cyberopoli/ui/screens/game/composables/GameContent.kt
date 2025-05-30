@@ -28,7 +28,13 @@ fun GameContent(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar(navController) },
+        topBar = {
+            TopBar(navController, onBackPressed = {
+                gameParams.leaveLobby()
+                navController.navigateUp()
+                navController.navigateUp()
+            })
+        },
         bottomBar = {
             GameBottomBar(
                 actions = gameParams.gameAction.value!!,
@@ -37,11 +43,10 @@ fun GameContent(
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Column(
-            modifier =
-                Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
         ) {
             players?.let {
                 GameMap(

@@ -244,7 +244,7 @@ class LobbyRepository(
                     eq("user_id", userId)
                 }
             }
-
+            setInApp(false)
             currentLobbyLiveData.value = null
             currentMembersLiveData.value = emptyList()
         } catch (e: Exception) {
