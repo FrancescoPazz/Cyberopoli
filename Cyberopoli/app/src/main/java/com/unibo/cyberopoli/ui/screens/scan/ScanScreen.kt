@@ -146,6 +146,8 @@ fun ScanScreen(
             ) {
                 Text(stringResource(R.string.enter))
             }
+
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
