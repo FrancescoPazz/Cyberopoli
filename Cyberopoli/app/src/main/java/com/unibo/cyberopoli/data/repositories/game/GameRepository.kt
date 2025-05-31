@@ -40,7 +40,7 @@ class GameRepository(
     private val usageStatsHelper: UsageStatsHelper,
 ) : DomainGameRepository {
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
-    val currentTurnLiveData: MutableLiveData<String?> = MutableLiveData()
+
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
     val currentPlayersLiveData: MutableLiveData<List<GamePlayer>> = MutableLiveData(emptyList())
 
@@ -143,7 +143,6 @@ class GameRepository(
 
             observeGame()
             observeGamePlayers()
-            observeTurn()
         } catch (e: Exception) {
             throw e
         }
@@ -205,37 +204,6 @@ class GameRepository(
                         )
                     }
                 currentPlayersLiveData.postValue(players)
-            }
-        }
-    }
-
-    @OptIn(SupabaseExperimental::class)
-    private fun observeTurn() {
-        Log.d(
-            "GameRepository",
-            "observeTurn called. Current game ID: ${currentGameLiveData.value?.id}, Lobby ID: ${currentGameLiveData.value?.lobbyId}",
-        )
-        if (currentGameLiveData.value?.id == null || currentGameLiveData.value?.lobbyId == null) {
-            Log.e("GameRepository", "Cannot observe turn, game ID or lobby ID is null.")
-            return
-        }
-
-        val turnFlow: Flow<Game> =
-            supabase.from(GAME_TABLE).selectSingleValueAsFlow(Game::turn) {
-                eq("lobby_id", currentGameLiveData.value!!.lobbyId)
-                eq("id", currentGameLiveData.value!!.id)
-            }
-        MainScope().launch {
-            Log.d(
-                "GameRepository",
-                "Starting to collect turnFlow for game ${currentGameLiveData.value!!.id} in observeTurn",
-            )
-            turnFlow.collect { game ->
-                Log.d(
-                    "TEST GameRepositoy",
-                    "Observe Turn changed in repo: ${game.turn} for game ${game.id}",
-                )
-                currentTurnLiveData.postValue(game.turn)
             }
         }
     }
@@ -451,7 +419,6 @@ class GameRepository(
             }
 
             currentGameLiveData.postValue(updatedGame)
-            currentTurnLiveData.postValue(nextTurnPlayer)
         } catch (e: Exception) {
             throw e
         }

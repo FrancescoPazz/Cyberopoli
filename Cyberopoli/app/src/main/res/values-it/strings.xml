@@ -167,7 +167,7 @@
     <string name="your_game_stats">Le Tue Statistiche</string>
     <string name="win_rate">Percentuale di Vittorie</string>
     <string name="welcome_guest">Benvenuto Ospite</string>
-    <string name="welcome_back_user">Bentornato, %1$s!</string>
+    <string name="welcome_back_user">Bentornato/a, %1$s!</string>
     <string name="log_in_to_play_and_see_stats">Accedi per giocare e vedere le statistiche</string>
     <string name="play_now_title">Gioca Ora</string>
     <string name="new_game_button">Nuova Partita</string>

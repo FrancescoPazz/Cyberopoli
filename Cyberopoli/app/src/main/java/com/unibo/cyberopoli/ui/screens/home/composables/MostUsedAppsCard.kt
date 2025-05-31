@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.CyberopoliCard
@@ -20,7 +21,7 @@ fun MostUsedAppsCard(
     CyberopoliCard(modifier = modifier) {
         Text(
             text = stringResource(R.string.most_used_apps_week),
-            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(bottom = 8.dp),
         )

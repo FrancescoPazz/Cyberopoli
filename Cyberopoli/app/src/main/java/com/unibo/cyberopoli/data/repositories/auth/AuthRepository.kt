@@ -1,7 +1,6 @@
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
-import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -30,6 +29,8 @@ import java.util.UUID
 private const val GOOGLE_SERVER_CLIENT_ID =
     "965652282511-hveojtrsgklpr52hbi54qg9ct477llmh.apps.googleusercontent.com"
 
+const val USERS_TABLE = "users"
+
 class AuthRepository(
     private val supabase: SupabaseClient,
 ) : IAuthRepository {
@@ -46,7 +47,8 @@ class AuthRepository(
                     } else {
                         AuthState.AnonymousAuthenticated
                     }
-                is SessionStatus.NotAuthenticated, is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
+                is SessionStatus.NotAuthenticated,
+                is SessionStatus.RefreshFailure -> AuthState.Unauthenticated
             }
         }
 
@@ -81,7 +83,7 @@ class AuthRepository(
 
             val takenUsers =
                 supabase
-                    .from("users")
+                    .from(USERS_TABLE)
                     .select { filter { eq("username", username) } }
                     .decodeList<User>()
             if (takenUsers.isNotEmpty()) {
@@ -91,7 +93,7 @@ class AuthRepository(
 
             val takenEmails =
                 supabase
-                    .from("users")
+                    .from(USERS_TABLE)
                     .select { filter { eq("email", email) } }
                     .decodeList<User>()
             if (takenEmails.isNotEmpty()) {
@@ -117,7 +119,7 @@ class AuthRepository(
                         username = username,
                         email = email,
                     )
-                supabase.from("users").upsert(user)
+                supabase.from(USERS_TABLE).upsert(user)
 
                 emit(AuthResponse.Success)
             } catch (e: Exception) {
@@ -168,7 +170,7 @@ class AuthRepository(
                         username = username,
                         email = info.email,
                     )
-                supabase.from("users").upsert(user)
+                supabase.from(USERS_TABLE).upsert(user)
                 emit(AuthResponse.Success)
             } catch (e: Exception) {
                 emit(AuthResponse.Failure(e.message ?: "Google login error"))
@@ -193,7 +195,7 @@ class AuthRepository(
                         surname = null,
                         isGuest = true,
                     )
-                supabase.from("users").upsert(user)
+                supabase.from(USERS_TABLE).upsert(user)
                 emit(AuthResponse.Success)
             } catch (e: Exception) {
                 emit(AuthResponse.Failure(e.message ?: "Anonymous login error"))
@@ -229,7 +231,6 @@ class AuthRepository(
                 supabase.auth.verifyEmailOtp(type = OtpType.Email.EMAIL, email = email, token = otp)
                 emit(AuthResponse.Success)
             } catch (e: Exception) {
-                Log.d("AuthRepository", "Send OTP error: ${e.message}")
                 emit(AuthResponse.Failure(e.message ?: "Send OTP error"))
             }
         }
@@ -240,7 +241,7 @@ class AuthRepository(
     ) = flow {
         try {
             val user =
-                supabase.from("users")
+                supabase.from(USERS_TABLE)
                     .select {
                         filter {
                             eq("email", email)
@@ -252,7 +253,6 @@ class AuthRepository(
             }
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error changing password: ${e.message}")
             emit(AuthResponse.Failure(e.message ?: "Error changing password"))
         }
     }
@@ -264,7 +264,7 @@ class AuthRepository(
             id = data.id,
             username = data.userMetadata?.get("full_name")?.toString()?.trim('"') ?: data.id,
             isGuest =
-                supabase.from("users").select {
+                supabase.from(USERS_TABLE).select {
                     filter { eq("id", data.id) }
                 }.decodeList<User>().firstOrNull()?.isGuest ?: false,
             email = data.email,

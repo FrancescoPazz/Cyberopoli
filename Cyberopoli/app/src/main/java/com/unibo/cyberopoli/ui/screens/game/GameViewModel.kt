@@ -42,7 +42,6 @@ class GameViewModel(
 ) : ViewModel() {
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val cells: MutableLiveData<List<GameCell>> = MutableLiveData(createBoard())
-    val turn: LiveData<String?> = gameRepository.currentTurnLiveData
     val chanceQuestions = MutableLiveData(chanceQuestions(app))
     val hackerStatements = MutableLiveData(hackerStatements(app))
 
@@ -98,15 +97,15 @@ class GameViewModel(
         // Initial turn logic
         viewModelScope.launch {
             player.asFlow()
-                .combine(turn.asFlow()) { playerValue, turnValue ->
-                    Pair(playerValue, turnValue)
+                .combine(game.asFlow()) { playerValue, gameValue ->
+                    Pair(playerValue, gameValue)
                 }
                 .filterNotNull()
-                .filter { (p, t) -> p != null && t != null }
-                .onEach { (currentPlayer, currentTurnId) ->
-                    Log.d("TEST GameViewModel", "Combined Flow: Turn changed: $currentTurnId, Current player: ${currentPlayer!!.userId}")
+                .filter { (p, g) -> p != null && g != null }
+                .onEach { (currentPlayer, currentGame) ->
+                    Log.d("TEST GameViewModel", "Combined Flow: Game changed: $currentGame, Current player: ${currentPlayer!!.userId}")
 
-                    val isMyTurn = currentTurnId == currentPlayer.userId
+                    val isMyTurn = currentGame!!.turn == currentPlayer.userId
                     val currentActionId = _actionsPermitted.value.firstOrNull()?.id
 
                     if (isMyTurn) {
@@ -148,15 +147,6 @@ class GameViewModel(
                 }
             }
         }
-    }
-
-    private fun computeNewPosition(
-        current: Int,
-        roll: Int,
-    ): Int {
-        val path = PERIMETER_PATH
-        val idx = (path.indexOf(current).coerceAtLeast(0) + roll) % path.size
-        return path[idx]
     }
 
     fun startGame(
@@ -334,7 +324,7 @@ class GameViewModel(
                                             _dialog.value =
                                                 GameDialogData.MakeContentChoice(
                                                     title = app.getString(R.string.make_content),
-                                                    message = app.resources.getString(R.string.make_content_desc, gameCell.value!!, gameCell.value!!),
+                                                    message = app.resources.getString(R.string.make_content_desc, gameCell.value!!, gameCell.value * 2),
                                                     options =
                                                         listOf(
                                                             app.getString(R.string.accept), app.getString(R.string.decline),
@@ -393,9 +383,8 @@ class GameViewModel(
 
             GameTypeCell.HACKER -> {
                 val questions = hackerStatements.value.orEmpty()
-                if (questions.isEmpty()) {
-                    throw IllegalStateException("No questions available for event type: $eventType")
-                }
+                check(questions.isNotEmpty()) { "No questions available for event type: $eventType" }
+
                 val randomIndex = questions.indices.random()
                 val question = questions[randomIndex]
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
@@ -550,6 +539,13 @@ class GameViewModel(
     }
 
     fun onResultDismiss() {
+        _actionsPermitted.value = listOf(
+            GameAction(
+                id = "turn_pass",
+                iconRes = R.drawable.ic_skip,
+                action = { endTurn() }
+            )
+        )
         _dialog.value = null
     }
 
