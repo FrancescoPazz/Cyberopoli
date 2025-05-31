@@ -85,6 +85,13 @@ class GameViewModel(
             action = { },
         )
 
+    private val passTurnAction =
+        GameAction(
+            id = "pass_turn",
+            iconRes = R.drawable.ic_skip,
+            action = { endTurn() },
+        )
+
     private val _actionsPermitted = MutableStateFlow<List<GameAction>>(emptyList())
     val actionsPermitted: StateFlow<List<GameAction>> = _actionsPermitted.asStateFlow()
 
@@ -484,13 +491,15 @@ class GameViewModel(
                                         expiresAtRound = player.value!!.round + 1,
                                     )
                             }
+                            _actionsPermitted.value = listOf(passTurnAction)
                         }
+                    onResultDismiss()
                 }
 
                 is GameDialogData.SubscribeChoice -> {
                     if (idx == 0) {
                         updatePlayerPoints(-dlg.cost)
-                        _actionsPermitted.value = _actionsPermitted.value.dropLast(1)
+                        _actionsPermitted.value = listOf(passTurnAction)
                         _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
                         Log.d("GameViewModel", "Subscribed to ${_subscriptions.value}")
                     }
@@ -504,11 +513,13 @@ class GameViewModel(
                         if (actualTarget != null) {
                             confirmBlock(actualTarget)
                         }
+                        _actionsPermitted.value = listOf(passTurnAction)
                     }
                     onResultDismiss()
                 }
 
                 is GameDialogData.HackerStatement -> {
+                    _actionsPermitted.value = listOf(passTurnAction)
                     updatePlayerPoints(-dlg.points)
                     _dialog.value = null
                 }
@@ -527,6 +538,7 @@ class GameViewModel(
                         }
                     _dialog.value =
                         GameDialogData.Alert(title = resultTitle, message = resultMessage)
+                    _actionsPermitted.value = listOf(passTurnAction)
                 }
 
                 is GameDialogData.Alert -> {
@@ -539,13 +551,6 @@ class GameViewModel(
     }
 
     fun onResultDismiss() {
-        _actionsPermitted.value = listOf(
-            GameAction(
-                id = "turn_pass",
-                iconRes = R.drawable.ic_skip,
-                action = { endTurn() }
-            )
-        )
         _dialog.value = null
     }
 
