@@ -96,19 +96,4 @@ class LobbyViewModel(
             }
         }
     }
-
-    fun startGame() {
-        viewModelScope.launch {
-            if (lobby.value == null) {
-                Log.w("LobbyViewModel", "startGame: Lobby is null")
-                return@launch
-            }
-            try {
-                lobbyRepository.startGame()
-            } catch (e: Exception) {
-                Log.e("LobbyViewModel", "Error starting game", e)
-                throw e
-            }
-        }
-    }
 }

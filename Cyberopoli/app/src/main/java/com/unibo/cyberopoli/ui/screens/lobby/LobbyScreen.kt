@@ -26,38 +26,38 @@ import com.unibo.cyberopoli.ui.screens.lobby.composables.LobbyStarterEffects
 @Composable
 fun LobbyScreen(
     navController: NavHostController,
-    params: LobbyParams,
+    lobbyParams: LobbyParams,
 ) {
     AppLifecycleTracker(
         AppLifecycleTrackerScreenContext.LOBBY,
-        params.setInApp,
+        lobbyParams.setInApp,
     ) {
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
             restoreState = true
         }
-        params.leaveLobby()
+        lobbyParams.leaveLobby()
     }
 
     LobbyStarterEffects(
         navController = navController,
-        params = params,
+        params = lobbyParams,
     )
 
     BackHandler {
-        params.leaveLobby()
+        lobbyParams.leaveLobby()
         navController.popBackStack()
     }
 
     Scaffold(
         topBar = {
             TopBar(navController) {
-                params.leaveLobby()
+                lobbyParams.leaveLobby()
                 navController.popBackStack()
             }
         },
         bottomBar = {
-            if (!params.isGuest) BottomBar(navController)
+            if (!lobbyParams.isGuest) BottomBar(navController)
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
@@ -69,23 +69,22 @@ fun LobbyScreen(
                     .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
-            if (params.lobbyId.isEmpty() || params.members.isEmpty()) {
+            if (lobbyParams.lobbyId.isEmpty() || lobbyParams.members.isEmpty()) {
                 LoadingScreen()
             } else {
                 LobbyContent(
-                    members = params.members,
-                    isHost = params.isHost,
-                    allReady = params.allReady,
-                    onToggleReadyClick = params.toggleReady,
+                    members = lobbyParams.members,
+                    isHost = lobbyParams.isHost,
+                    allReady = lobbyParams.allReady,
+                    onToggleReadyClick = lobbyParams.toggleReady,
                     onStartGameClick = {
-                        params.startGame()
                         navController.navigate(CyberopoliRoute.Game) {
                             launchSingleTop = true
                             restoreState = true
                         }
                     },
                     onExitClick = {
-                        params.leaveLobby()
+                        lobbyParams.leaveLobby()
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxSize(),

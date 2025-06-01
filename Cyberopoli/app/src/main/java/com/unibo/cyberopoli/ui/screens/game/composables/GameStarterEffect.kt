@@ -16,9 +16,8 @@ fun GameStarterEffect(gameParams: GameParams) {
     LaunchedEffect(gameParams.lobby) {
         Log.d("GameStarterEffect", "Lobby: ${gameParams.lobby.value}")
         if (!hasStarted && gameParams.lobby.value != null && gameParams.members.value != null) {
-            Log.d("GameStarterEffect", "Starting game with lobby ID: ${gameParams.lobby.value!!.id}")
             gameParams.startGame(
-                gameParams.lobby.value!!.id,
+                gameParams.lobby.value!!,
                 gameParams.members.value!!,
             )
             hasStarted = true

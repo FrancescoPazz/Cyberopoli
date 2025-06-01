@@ -3,11 +3,12 @@ package com.unibo.cyberopoli.data.repositories.game
 import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 interface IGameRepository {
     suspend fun createOrGetGame(
-        lobbyId: String,
+        passedLobby: Lobby,
         lobbyMembers: List<LobbyMember>,
     )
 

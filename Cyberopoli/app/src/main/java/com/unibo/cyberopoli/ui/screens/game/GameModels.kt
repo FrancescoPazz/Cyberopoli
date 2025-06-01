@@ -30,5 +30,5 @@ data class GameParams(
     val gameAction: State<List<GameAction>?>,
     val updatePlayerPoints: (value: Int) -> Unit,
     val onDialogOptionSelected: (idx: Int) -> Unit,
-    val startGame: (lobbyId: String, members: List<LobbyMember>) -> Unit,
+    val startGame: (passedLobby: Lobby, members: List<LobbyMember>) -> Unit,
 )

@@ -3,7 +3,6 @@ package com.unibo.cyberopoli.ui.screens.game
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.ui.components.AppLifecycleTracker

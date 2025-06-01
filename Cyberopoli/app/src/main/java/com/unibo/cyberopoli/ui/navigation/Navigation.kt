@@ -189,7 +189,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             lobby = lobbyViewModel.lobby.observeAsState(),
                             isGuest = isGuest,
                             members = members ?: throw IllegalStateException("Members are null"),
-                            startGame = lobbyViewModel::startGame,
                             leaveLobby = lobbyViewModel::leaveLobby,
                             isHost = lobbyViewModel.isHost.observeAsState(),
                             toggleReady = lobbyViewModel::toggleReady,

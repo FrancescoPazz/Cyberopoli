@@ -16,6 +16,4 @@ interface ILobbyRepository {
     suspend fun toggleReady(isReady: Boolean): LobbyMember
 
     suspend fun leaveLobby(isHost: Boolean)
-
-    suspend fun startGame()
 }

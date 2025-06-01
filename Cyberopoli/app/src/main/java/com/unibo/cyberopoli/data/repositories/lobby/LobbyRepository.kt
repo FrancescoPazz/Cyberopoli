@@ -251,17 +251,4 @@ class LobbyRepository(
             Log.e("LobbyRepoImpl", "leaveLobby: ${e.message}")
         }
     }
-
-    override suspend fun startGame() {
-        try {
-            val lobbyId =
-                currentLobbyLiveData.value?.id
-                    ?: throw IllegalStateException("Lobby not found")
-            supabase.from(LOBBY_TABLE).update(mapOf("status" to LobbyStatus.IN_PROGRESS.value)) {
-                filter { eq("id", lobbyId) }
-            }
-        } catch (e: Exception) {
-            Log.e("LobbyRepoImpl", "startGame: ${e.message}")
-        }
-    }
 }

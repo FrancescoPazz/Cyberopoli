@@ -8,7 +8,6 @@ data class LobbyParams(
     val lobbyId: String,
     val isGuest: Boolean,
     val lobby: State<Lobby?>,
-    val startGame: () -> Unit,
     val leaveLobby: () -> Unit,
     val isHost: State<Boolean?>,
     val toggleReady: () -> Unit,

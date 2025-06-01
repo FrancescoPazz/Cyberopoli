@@ -22,6 +22,7 @@ import com.unibo.cyberopoli.data.models.game.createBoard
 import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
 import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
 import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
+import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import kotlinx.coroutines.delay
@@ -68,7 +69,7 @@ class GameViewModel(
     private val _hasVpn = MutableStateFlow(false)
     private val _playersBlocked = MutableStateFlow<Set<GamePlayer>>(emptySet())
     private val _gameAssets = MutableStateFlow<List<GameAsset>>(emptyList())
-
+    private val _previousTurn = MutableStateFlow<String?>(null)
     private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
 
     private val rollDiceAction =
@@ -87,7 +88,7 @@ class GameViewModel(
 
     private val passTurnAction =
         GameAction(
-            id = "pass_turn",
+            id = "turn_pass",
             iconRes = R.drawable.ic_skip,
             action = { endTurn() },
         )
@@ -104,7 +105,7 @@ class GameViewModel(
         // Initial turn logic
         viewModelScope.launch {
             player.asFlow()
-                .combine(game.asFlow()) { playerValue, gameValue ->
+                .combine(game.asFlow()) { playerValue, gameValue -> // game flow
                     Pair(playerValue, gameValue)
                 }
                 .filterNotNull()
@@ -114,22 +115,28 @@ class GameViewModel(
 
                     val isMyTurn = currentGame!!.turn == currentPlayer.userId
                     val currentActionId = _actionsPermitted.value.firstOrNull()?.id
+                    val turnChanged = _previousTurn.value != currentGame.turn
 
-                    if (isMyTurn) {
-                        if (_skipNext.value) {
-                            _skipNext.value = false
-                            _actionsPermitted.value = listOf(waitTurnAction)
-                            _dialog.value =
-                                GameDialogData.Alert(
-                                    title = app.getString(R.string.broken_router),
-                                    message = app.getString(R.string.broken_router_desc),
-                                )
+                    if (turnChanged) {
+                        _previousTurn.value = currentGame.turn
+
+                        if (isMyTurn) {
+                            if (_skipNext.value) {
+                                _skipNext.value = false
+                                _actionsPermitted.value = listOf(waitTurnAction)
+                                _dialog.value =
+                                    GameDialogData.Alert(
+                                        title = app.getString(R.string.broken_router),
+                                        message = app.getString(R.string.broken_router_desc),
+                                    )
+                                nextTurn()
+                            } else {
+                                _actionsPermitted.value = listOf(rollDiceAction)
+                            }
                         } else {
-                            _actionsPermitted.value = listOf(rollDiceAction)
-                        }
-                    } else {
-                        if (currentActionId == null || currentActionId != waitTurnAction.id) {
-                            _actionsPermitted.value = listOf(waitTurnAction)
+                            if (currentActionId == null || currentActionId != waitTurnAction.id) {
+                                _actionsPermitted.value = listOf(waitTurnAction)
+                            }
                         }
                     }
                 }.catch { e ->
@@ -157,11 +164,11 @@ class GameViewModel(
     }
 
     fun startGame(
-        lobbyId: String,
+        passedLobby: Lobby,
         lobbyMembers: List<LobbyMember>,
     ) {
         viewModelScope.launch {
-            gameRepository.createOrGetGame(lobbyId, lobbyMembers)
+            gameRepository.createOrGetGame(passedLobby, lobbyMembers)
             joinGame()
         }
     }
@@ -491,7 +498,6 @@ class GameViewModel(
                                         expiresAtRound = player.value!!.round + 1,
                                     )
                             }
-                            _actionsPermitted.value = listOf(passTurnAction)
                         }
                     onResultDismiss()
                 }
@@ -499,7 +505,6 @@ class GameViewModel(
                 is GameDialogData.SubscribeChoice -> {
                     if (idx == 0) {
                         updatePlayerPoints(-dlg.cost)
-                        _actionsPermitted.value = listOf(passTurnAction)
                         _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
                         Log.d("GameViewModel", "Subscribed to ${_subscriptions.value}")
                     }
@@ -513,13 +518,11 @@ class GameViewModel(
                         if (actualTarget != null) {
                             confirmBlock(actualTarget)
                         }
-                        _actionsPermitted.value = listOf(passTurnAction)
                     }
                     onResultDismiss()
                 }
 
                 is GameDialogData.HackerStatement -> {
-                    _actionsPermitted.value = listOf(passTurnAction)
                     updatePlayerPoints(-dlg.points)
                     _dialog.value = null
                 }
@@ -538,7 +541,6 @@ class GameViewModel(
                         }
                     _dialog.value =
                         GameDialogData.Alert(title = resultTitle, message = resultMessage)
-                    _actionsPermitted.value = listOf(passTurnAction)
                 }
 
                 is GameDialogData.Alert -> {
