@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.filament.Engine
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
+import androidx.compose.material3.Text
 import com.google.ar.core.TrackingFailureReason
 import com.unibo.cyberopoli.ui.screens.ar.composables.Reticle
 import com.unibo.cyberopoli.util.ARHelper
@@ -42,7 +43,7 @@ import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
 
 @Composable
-fun ARScreen() {
+fun ARBox() {
     val engine = rememberEngine()
     val view = rememberView(engine)
     val childNodes = rememberNodes()
@@ -134,9 +135,9 @@ fun ARScreen() {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 100.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Model"
+            Text(
+                text = "Place Board",
+                modifier = Modifier.padding(8.dp)
             )
         }
     }

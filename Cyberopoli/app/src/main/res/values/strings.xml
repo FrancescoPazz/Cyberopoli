@@ -143,7 +143,7 @@
     <string name="make_content">Place a content in the social</string>
     <string name="make_content_desc">If you post a content in the social you will get %1$d Internet points if a player land on it. A content lasts for 1 turn. It costs %2$d Internet points.</string>
     <string name="get_vpn">VPN activated</string>
-    <string name="get_vpn_desc">Having the VPN avoids paying to view content </string>Con la VPN hai bloccato il pagamento del contenuto
+    <string name="get_vpn_desc">Having the VPN avoids paying to view content </string>
     <string name="vpn_avoid_pay">With the VPN you blocked the payment of the content</string>
     <string name="correct_answer">Correct answer!</string>
     <string name="wrong_answer">Wrong answer!</string>
@@ -162,7 +162,8 @@
     <string name="no_players_to_block">No players to block</string>
     <string name="points_earned_message">You earned %1$d Internet points</string>
     <string name="points_lost_message">You lost %1$d Internet point</string>
-    <string name="ar">AR</string>
+    <string name="ar_mode">AR Mode</string>
+    <string name="place_board">Posiziona il tabellone</string>
 
     <!-- ================================= -->
     <!-- Home -->

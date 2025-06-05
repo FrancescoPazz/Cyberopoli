@@ -1,25 +1,34 @@
 package com.unibo.cyberopoli.ui.screens.game.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.data.models.game.BOARD_COLS
 import com.unibo.cyberopoli.data.models.game.BOARD_ROWS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import com.unibo.cyberopoli.ui.screens.ar.ARBox
 import com.unibo.cyberopoli.ui.screens.game.GameParams
-import androidx.compose.runtime.mutableStateOf
-import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 
 @Composable
 fun GameContent(
@@ -28,16 +37,18 @@ fun GameContent(
 ) {
     val player by gameParams.player
     val players by gameParams.players
-    val isArMode = mutableStateOf(false)
+    val isArMode = remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar(navController, onBackPressed = {
-                gameParams.leaveLobby()
-                navController.navigateUp()
-                navController.navigateUp()
-            })
+            if (!isArMode.value) {
+                TopBar(navController, onBackPressed = {
+                    gameParams.leaveLobby()
+                    navController.navigateUp()
+                    navController.navigateUp()
+                })
+            }
         },
         bottomBar = {
             GameBottomBar(
@@ -46,16 +57,47 @@ fun GameContent(
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
+
+        if (isArMode.value) {
+            Box(modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-        ) {
-            players?.let {
-                if (isArMode.value) {
-                    ARScreen()
-                } else {
+                .padding(padding)) {
+
+                ARBox()
+
+                IconButton(
+                    onClick = { isArMode.value = false },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.TopStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Close AR Mode",
+                        tint = Color.White
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                ) {
+                    player?.let {
+                        ScoreAndManageRow(
+                            score = it.score,
+                            onManageClick = { isArMode.value = false },
+                        )
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+            ) {
+                players?.let {
                     GameMap(
                         gameCells = gameParams.cells.value!!,
                         rows = BOARD_ROWS,
@@ -64,16 +106,18 @@ fun GameContent(
                         players = it,
                     )
                 }
+
+                Spacer(Modifier.weight(1f))
+
+                player?.let {
+                    ScoreAndManageRow(
+                        score = it.score,
+                        onManageClick = { isArMode.value = true },
+                    )
+                }
             }
 
-            Spacer(Modifier.weight(1f))
-
-            player?.let {
-                ScoreAndManageRow(
-                    score = it.score,
-                    onManageClick = { isArMode.value = !isArMode.value },
-                )
-            }
         }
     }
+
 }

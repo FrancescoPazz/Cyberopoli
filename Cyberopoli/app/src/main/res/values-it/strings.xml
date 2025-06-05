@@ -160,7 +160,8 @@
     <string name="no_players_to_block">Nessun giocatore da bloccare</string>
     <string name="points_earned_message">Hai guadagnato %1$d punti Internet</string>
     <string name="points_lost_message">Hai perso %1$d punti Internet</string>
-    <string name="ar">AR</string>
+    <string name="ar_mode">Modalità AR</string>
+    <string name="place_board">Posiziona il tabellone</string>
 
     <!-- ================================= -->
     <!-- Home -->
