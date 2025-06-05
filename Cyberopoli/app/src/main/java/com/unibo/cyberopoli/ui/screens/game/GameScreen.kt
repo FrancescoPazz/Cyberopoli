@@ -12,6 +12,7 @@ import com.unibo.cyberopoli.ui.screens.game.composables.GameContent
 import com.unibo.cyberopoli.ui.screens.game.composables.GameDialog
 import com.unibo.cyberopoli.ui.screens.game.composables.GameStarterEffect
 import com.unibo.cyberopoli.ui.screens.game.composables.LoadingQuestionDialog
+import com.unibo.cyberopoli.ui.screens.game.composables.QuestionResultDialog
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
 
 @Composable
@@ -82,6 +83,12 @@ fun GameScreen(
                         data.message,
                         data.options,
                     )
+                is GameDialogData.QuestionResult ->
+                    Triple(
+                        data.title,
+                        data.message,
+                        data.options,
+                    )
                 is GameDialogData.Alert ->
                     Triple(
                         data.title,
@@ -90,16 +97,23 @@ fun GameScreen(
                     )
             }
 
-        GameDialog(
-            title = title,
-            message = message,
-            options = options,
-            onOptionSelected = { index ->
-                gameParams.onDialogOptionSelected(index)
-            },
-            onDismiss = {
-                gameParams.onResultDismiss()
-            },
-        )
+        if (dialogData is GameDialogData.QuestionResult) {
+            QuestionResultDialog(
+                data = dialogData as GameDialogData.QuestionResult,
+                onDismiss = { gameParams.onResultDismiss() }
+            )
+        } else {
+            GameDialog(
+                title = title,
+                message = message,
+                options = options,
+                onOptionSelected = { index ->
+                    gameParams.onDialogOptionSelected(index)
+                },
+                onDismiss = {
+                    gameParams.onResultDismiss()
+                },
+            )
+        }
     }
 }

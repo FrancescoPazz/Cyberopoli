@@ -48,4 +48,13 @@ sealed class GameDialogData {
         val options: List<String>? = null,
         val onDismiss: (() -> Unit)? = null,
     ) : GameDialogData()
+
+    @Serializable
+    data class QuestionResult(
+        val title: String,
+        val message: String,
+        val options: List<String>,
+        val correctIndex: Int,
+        val selectedIndex: Int
+    ) : GameDialogData()
 }

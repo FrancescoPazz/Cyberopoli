@@ -16,6 +16,7 @@ import com.unibo.cyberopoli.data.models.game.BOARD_ROWS
 import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
 import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.game.GameParams
 
 @Composable
@@ -63,7 +64,7 @@ fun GameContent(
             player?.let {
                 ScoreAndManageRow(
                     score = it.score,
-                    onManageClick = { },
+                    onManageClick = { navController.navigate(CyberopoliRoute.AugmentedReality) },
                 )
             }
         }

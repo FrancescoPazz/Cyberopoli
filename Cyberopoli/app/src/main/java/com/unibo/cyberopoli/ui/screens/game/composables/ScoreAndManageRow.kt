@@ -36,7 +36,7 @@ fun ScoreAndManageRow(
             fontWeight = FontWeight.SemiBold,
         )
         Button(onClick = onManageClick) {
-            Text(stringResource(R.string.manage))
+            Text(stringResource(R.string.ar))
         }
     }
 }

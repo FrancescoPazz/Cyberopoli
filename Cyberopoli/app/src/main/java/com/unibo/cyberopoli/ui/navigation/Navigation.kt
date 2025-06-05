@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.theme.Theme
+import com.unibo.cyberopoli.ui.screens.ar.ARParams
 import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
@@ -52,7 +53,7 @@ sealed interface CyberopoliRoute {
     data object Scan : CyberopoliRoute
 
     @Serializable
-    data object ARScreen : CyberopoliRoute
+    data object AugmentedReality : CyberopoliRoute
 
     @Serializable
     data object Settings : CyberopoliRoute
@@ -81,6 +82,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val profileViewModel = koinViewModel<ProfileViewModel>()
     val lobbyViewModel = koinViewModel<LobbyViewModel>()
+    val gameViewModel = koinViewModel<GameViewModel>()
 
     val authState = authViewModel.authState.observeAsState()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
@@ -129,9 +131,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             authState = authState,
                         ),
                     )
-                }
-                composable<CyberopoliRoute.ARScreen> {
-                    ARScreen(navController)
                 }
                 composable<CyberopoliRoute.Settings> {
                     SettingScreen(
@@ -199,7 +198,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     )
                 }
                 composable<CyberopoliRoute.Game> {
-                    val gameViewModel = koinViewModel<GameViewModel>()
                     val lobby = lobbyViewModel.lobby.observeAsState()
                     val members = lobbyViewModel.members.observeAsState()
                     val game = gameViewModel.game.observeAsState()
@@ -237,6 +235,12 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
                             ),
                     )
+                }
+                composable<CyberopoliRoute.AugmentedReality> {
+                    ARScreen(navController, ARParams(
+                        players = gameViewModel.players.observeAsState(),
+                        cells = gameViewModel.cells.observeAsState()
+                    ))
                 }
             }
         }

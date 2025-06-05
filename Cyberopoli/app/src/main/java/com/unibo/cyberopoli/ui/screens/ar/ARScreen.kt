@@ -38,7 +38,7 @@ import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
 
 @Composable
-fun ARScreen(navController: NavController) {
+fun ARScreen(navController: NavController, arParams: ARParams) {
     val engine = rememberEngine()
     val childNodes = rememberNodes()
     val density = LocalDensity.current

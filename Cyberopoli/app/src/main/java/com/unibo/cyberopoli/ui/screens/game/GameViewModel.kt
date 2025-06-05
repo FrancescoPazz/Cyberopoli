@@ -507,6 +507,10 @@ class GameViewModel(
                         updatePlayerPoints(-dlg.cost)
                         _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
                         Log.d("GameViewModel", "Subscribed to ${_subscriptions.value}")
+                        _actionsPermitted.value = listOf(
+                            passTurnAction
+                        )
+
                     }
                     onResultDismiss()
                 }
@@ -539,8 +543,14 @@ class GameViewModel(
                         } else {
                             "${app.getString(R.string.points_lost)} ${dlg.points} ${app.getString(R.string.internet_points)}"
                         }
-                    _dialog.value =
-                        GameDialogData.Alert(title = resultTitle, message = resultMessage)
+
+                    _dialog.value = GameDialogData.QuestionResult(
+                        title = resultTitle,
+                        message = resultMessage,
+                        options = dlg.options,
+                        correctIndex = dlg.correctIndex,
+                        selectedIndex = idx
+                    )
                 }
 
                 is GameDialogData.Alert -> {
