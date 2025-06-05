@@ -9,15 +9,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.google.android.filament.Engine
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
 import com.google.ar.core.TrackingFailureReason
@@ -27,6 +29,8 @@ import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
 import io.github.sceneview.ar.arcore.isValid
 import io.github.sceneview.ar.rememberARCameraNode
+import io.github.sceneview.loaders.MaterialLoader
+import io.github.sceneview.loaders.ModelLoader
 import io.github.sceneview.model.ModelInstance
 import io.github.sceneview.node.Node
 import io.github.sceneview.rememberCollisionSystem
@@ -38,20 +42,72 @@ import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
 
 @Composable
-fun ARScreen(navController: NavController, arParams: ARParams) {
+fun ARScreen() {
     val engine = rememberEngine()
+    val view = rememberView(engine)
     val childNodes = rememberNodes()
+    val modelLoader = rememberModelLoader(engine)
+    val materialLoader = rememberMaterialLoader(engine)
+    val cameraNode = rememberARCameraNode(engine)
+    val collisionSystem = rememberCollisionSystem(view)
+
     val density = LocalDensity.current
-    val view = rememberView(engine = engine)
     val configuration = LocalConfiguration.current
-    val modelLoader = rememberModelLoader(engine = engine)
-    val cameraNode = rememberARCameraNode(engine = engine)
-    val collisionSystem = rememberCollisionSystem(view = view)
-    val planeRenderer = remember { mutableStateOf(true) }
-    val materialLoader = rememberMaterialLoader(engine = engine)
-    val modelInstance = remember { mutableListOf<ModelInstance>() }
-    val frameState = remember { mutableStateOf<Frame?>(null) }
-    val trackingFailureReason = remember { mutableStateOf<TrackingFailureReason?>(null) }
+
+    val modelInstances = remember { mutableListOf<ModelInstance>() }
+    var currentFrame by remember { mutableStateOf<Frame?>(null) }
+    var trackingFailure by remember { mutableStateOf<TrackingFailureReason?>(null) }
+    val showPlanes by remember { mutableStateOf(true) }
+
+    val sessionConfig: (session: Any, config: Config) -> Unit = { session, config ->
+        config.apply {
+            depthMode = if ((session as com.google.ar.core.Session).isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+                Config.DepthMode.AUTOMATIC
+            } else {
+                Config.DepthMode.DISABLED
+            }
+            lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
+        }
+    }
+
+    val gestureListener = rememberOnGestureListener(
+        onSingleTapConfirmed = { event: MotionEvent, node: Node? ->
+            if (node == null) {
+                placeModelAtPosition(
+                    frame = currentFrame,
+                    x = event.x,
+                    y = event.y,
+                    engine = engine,
+                    modelLoader = modelLoader,
+                    materialLoader = materialLoader,
+                    modelInstances = modelInstances,
+                    childNodes = childNodes
+                )
+            }
+        }
+    )
+
+    val placeModelAtCenter = {
+        clearModels(childNodes, modelInstances)
+
+        val centerOffset = with(density) {
+            Offset(
+                x = configuration.screenWidthDp.dp.toPx() / 2f,
+                y = configuration.screenHeightDp.dp.toPx() / 2f
+            )
+        }
+
+        placeModelAtPosition(
+            frame = currentFrame,
+            x = centerOffset.x,
+            y = centerOffset.y,
+            engine = engine,
+            modelLoader = modelLoader,
+            materialLoader = materialLoader,
+            modelInstances = modelInstances,
+            childNodes = childNodes
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ARScene(
@@ -61,72 +117,61 @@ fun ARScreen(navController: NavController, arParams: ARParams) {
             view = view,
             modelLoader = modelLoader,
             collisionSystem = collisionSystem,
-            planeRenderer = planeRenderer.value,
+            planeRenderer = showPlanes,
             cameraNode = cameraNode,
             materialLoader = materialLoader,
-            onTrackingFailureChanged = { trackingFailureReason.value = it },
-            onSessionUpdated = { _, updatedFrame ->
-                frameState.value = updatedFrame
-            },
-            sessionConfiguration = { session, config ->
-                config.depthMode =
-                    if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) Config.DepthMode.AUTOMATIC else Config.DepthMode.DISABLED
-                config.lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
-            },
-            onGestureListener =
-                rememberOnGestureListener(onSingleTapConfirmed = { e: MotionEvent, node: Node? ->
-                    if (node == null) {
-                        val hitTestResult = frameState.value?.hitTest(e.x, e.y)
-                        hitTestResult?.firstOrNull {
-                            it.isValid(depthPoint = false, point = false)
-                        }?.createAnchorOrNull()?.let { hitAnchor ->
-                            val nodeModel =
-                                ARHelper.createAnchorNode(
-                                    engine = engine,
-                                    modelLoader = modelLoader,
-                                    materialLoader = materialLoader,
-                                    modelInstance = modelInstance,
-                                    anchor = hitAnchor,
-                                    model = "models/chicken_nugget.glb",
-                                )
-                            childNodes += nodeModel
-                        }
-                    }
-                }),
+            onTrackingFailureChanged = { trackingFailure = it },
+            onSessionUpdated = { _, frame -> currentFrame = frame },
+            sessionConfiguration = sessionConfig,
+            onGestureListener = gestureListener
         )
+
         Reticle(modifier = Modifier.align(Alignment.Center))
+
         FloatingActionButton(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 100.dp),
-            onClick = {
-                childNodes.clear()
-                modelInstance.clear()
-                val centerCoordinates =
-                    with(density) {
-                        Offset(
-                            x = (configuration.screenWidthDp.dp.toPx() / 2f),
-                            y = (configuration.screenHeightDp.dp.toPx() / 2f),
-                        )
-                    }
-                frameState.value?.hitTest(centerCoordinates.x, centerCoordinates.y)?.firstOrNull {
-                    it.isValid(depthPoint = false, point = false)
-                }?.createAnchorOrNull()?.let { centerAnchor ->
-                    val nuggetNode =
-                        ARHelper.createAnchorNode(
-                            engine = engine,
-                            modelLoader = modelLoader,
-                            materialLoader = materialLoader,
-                            modelInstance = modelInstance,
-                            anchor = centerAnchor,
-                            model = "models/chicken_nugget.glb",
-                        )
-                    childNodes += nuggetNode
-                }
-            },
+            onClick = placeModelAtCenter,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 100.dp)
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Nugget")
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Model"
+            )
         }
     }
+}
+
+private fun placeModelAtPosition(
+    frame: Frame?,
+    x: Float,
+    y: Float,
+    engine: Engine,
+    modelLoader: ModelLoader,
+    materialLoader: MaterialLoader,
+    modelInstances: MutableList<ModelInstance>,
+    childNodes: MutableList<Node>
+) {
+    frame?.hitTest(x, y)
+        ?.firstOrNull { it.isValid(depthPoint = false, point = false) }
+        ?.createAnchorOrNull()
+        ?.let { anchor ->
+            val modelNode = ARHelper.createAnchorNode(
+                engine = engine,
+                modelLoader = modelLoader,
+                materialLoader = materialLoader,
+                modelInstance = modelInstances,
+                anchor = anchor,
+                model = "models/board.glb"
+            )
+            childNodes += modelNode
+        }
+}
+
+private fun clearModels(
+    childNodes: MutableList<Node>,
+    modelInstances: MutableList<ModelInstance>
+) {
+    childNodes.clear()
+    modelInstances.clear()
 }

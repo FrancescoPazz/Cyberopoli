@@ -18,6 +18,8 @@ import com.unibo.cyberopoli.ui.components.GameBottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.game.GameParams
+import androidx.compose.runtime.mutableStateOf
+import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 
 @Composable
 fun GameContent(
@@ -26,6 +28,7 @@ fun GameContent(
 ) {
     val player by gameParams.player
     val players by gameParams.players
+    val isArMode = mutableStateOf(false)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -50,13 +53,17 @@ fun GameContent(
                 .background(MaterialTheme.colorScheme.background),
         ) {
             players?.let {
-                GameMap(
-                    gameCells = gameParams.cells.value!!,
-                    rows = BOARD_ROWS,
-                    cols = BOARD_COLS,
-                    borderPath = PERIMETER_PATH,
-                    players = it,
-                )
+                if (isArMode.value) {
+                    ARScreen()
+                } else {
+                    GameMap(
+                        gameCells = gameParams.cells.value!!,
+                        rows = BOARD_ROWS,
+                        cols = BOARD_COLS,
+                        borderPath = PERIMETER_PATH,
+                        players = it,
+                    )
+                }
             }
 
             Spacer(Modifier.weight(1f))
@@ -64,7 +71,7 @@ fun GameContent(
             player?.let {
                 ScoreAndManageRow(
                     score = it.score,
-                    onManageClick = { navController.navigate(CyberopoliRoute.AugmentedReality) },
+                    onManageClick = { isArMode.value = !isArMode.value },
                 )
             }
         }

@@ -13,8 +13,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.ui.screens.ar.ARParams
-import com.unibo.cyberopoli.ui.screens.ar.ARScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.AuthScreen
 import com.unibo.cyberopoli.ui.screens.auth.AuthViewModel
@@ -51,9 +49,6 @@ sealed interface CyberopoliRoute {
 
     @Serializable
     data object Scan : CyberopoliRoute
-
-    @Serializable
-    data object AugmentedReality : CyberopoliRoute
 
     @Serializable
     data object Settings : CyberopoliRoute
@@ -235,12 +230,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
                             ),
                     )
-                }
-                composable<CyberopoliRoute.AugmentedReality> {
-                    ARScreen(navController, ARParams(
-                        players = gameViewModel.players.observeAsState(),
-                        cells = gameViewModel.cells.observeAsState()
-                    ))
                 }
             }
         }
