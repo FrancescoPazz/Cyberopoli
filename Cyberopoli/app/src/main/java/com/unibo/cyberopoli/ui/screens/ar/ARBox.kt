@@ -1,13 +1,13 @@
 package com.unibo.cyberopoli.ui.screens.ar
 
+import android.content.res.Configuration
 import android.view.MotionEvent
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,14 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.google.android.filament.Engine
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
-import androidx.compose.material3.Text
+import com.google.ar.core.HitResult
 import com.google.ar.core.TrackingFailureReason
+import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.game.GameCell
+import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.ui.screens.ar.composables.Reticle
 import com.unibo.cyberopoli.util.ARHelper
+import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
 import io.github.sceneview.ar.arcore.isValid
@@ -41,9 +47,14 @@ import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
 import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun ARBox() {
+fun ARBox(
+    players: List<GamePlayer>?,
+    cells: List<GameCell>? = null
+) {
     val engine = rememberEngine()
     val view = rememberView(engine)
     val childNodes = rememberNodes()
@@ -58,11 +69,16 @@ fun ARBox() {
     val modelInstances = remember { mutableListOf<ModelInstance>() }
     var currentFrame by remember { mutableStateOf<Frame?>(null) }
     var trackingFailure by remember { mutableStateOf<TrackingFailureReason?>(null) }
-    val showPlanes by remember { mutableStateOf(true) }
+
+    val boardNodeState = remember { mutableStateOf<Node?>(null) }
+    val pieceNodes = remember { mutableListOf<Node>() }
 
     val sessionConfig: (session: Any, config: Config) -> Unit = { session, config ->
         config.apply {
-            depthMode = if ((session as com.google.ar.core.Session).isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+            depthMode = if ((session as com.google.ar.core.Session).isDepthModeSupported(
+                    Config.DepthMode.AUTOMATIC
+                )
+            ) {
                 Config.DepthMode.AUTOMATIC
             } else {
                 Config.DepthMode.DISABLED
@@ -72,43 +88,24 @@ fun ARBox() {
     }
 
     val gestureListener = rememberOnGestureListener(
-        onSingleTapConfirmed = { event: MotionEvent, node: Node? ->
-            if (node == null) {
-                placeModelAtPosition(
+        onSingleTapConfirmed = { _: MotionEvent, node: Node? ->
+            Log.d("test ARBox", "Single tap detected on node: $node")
+            /*if (node == null) {
+                placeBoardAtCenter(
                     frame = currentFrame,
-                    x = event.x,
-                    y = event.y,
                     engine = engine,
                     modelLoader = modelLoader,
                     materialLoader = materialLoader,
                     modelInstances = modelInstances,
-                    childNodes = childNodes
+                    childNodes = childNodes,
+                    boardNodeState = boardNodeState,
+                    pieceNodes = pieceNodes,
+                    density = density,
+                    configuration = configuration
                 )
-            }
+            }*/
         }
     )
-
-    val placeModelAtCenter = {
-        clearModels(childNodes, modelInstances)
-
-        val centerOffset = with(density) {
-            Offset(
-                x = configuration.screenWidthDp.dp.toPx() / 2f,
-                y = configuration.screenHeightDp.dp.toPx() / 2f
-            )
-        }
-
-        placeModelAtPosition(
-            frame = currentFrame,
-            x = centerOffset.x,
-            y = centerOffset.y,
-            engine = engine,
-            modelLoader = modelLoader,
-            materialLoader = materialLoader,
-            modelInstances = modelInstances,
-            childNodes = childNodes
-        )
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ARScene(
@@ -118,7 +115,7 @@ fun ARBox() {
             view = view,
             modelLoader = modelLoader,
             collisionSystem = collisionSystem,
-            planeRenderer = showPlanes,
+            planeRenderer = true,
             cameraNode = cameraNode,
             materialLoader = materialLoader,
             onTrackingFailureChanged = { trackingFailure = it },
@@ -130,34 +127,75 @@ fun ARBox() {
         Reticle(modifier = Modifier.align(Alignment.Center))
 
         FloatingActionButton(
-            onClick = placeModelAtCenter,
+            onClick = {
+                placeBoardAtCenter(
+                    frame = currentFrame,
+                    engine = engine,
+                    modelLoader = modelLoader,
+                    materialLoader = materialLoader,
+                    modelInstances = modelInstances,
+                    childNodes = childNodes,
+                    boardNodeState = boardNodeState,
+                    pieceNodes = pieceNodes,
+                    density = density,
+                    configuration = configuration
+                )
+
+                MainScope().launch {
+                    placePieceOnBoard(
+                        frame = currentFrame,
+                        engine = engine,
+                        modelLoader = modelLoader,
+                        materialLoader = materialLoader,
+                        modelInstances = modelInstances,
+                        childNodes = childNodes,
+                        boardNode = boardNodeState.value,
+                        pieceNodes = pieceNodes,
+                        density = density,
+                        configuration = configuration
+                    )
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp)
+                .padding(start = 24.dp, bottom = 140.dp)
         ) {
             Text(
-                text = "Place Board",
+                text = stringResource(R.string.place_board),
                 modifier = Modifier.padding(8.dp)
             )
         }
     }
 }
 
-private fun placeModelAtPosition(
+private fun placeBoardAtCenter(
     frame: Frame?,
-    x: Float,
-    y: Float,
     engine: Engine,
     modelLoader: ModelLoader,
     materialLoader: MaterialLoader,
     modelInstances: MutableList<ModelInstance>,
-    childNodes: MutableList<Node>
+    childNodes: MutableList<Node>,
+    boardNodeState: androidx.compose.runtime.MutableState<Node?>,
+    pieceNodes: MutableList<Node>,
+    density: Density,
+    configuration: Configuration
 ) {
-    frame?.hitTest(x, y)
-        ?.firstOrNull { it.isValid(depthPoint = false, point = false) }
+    if (frame == null) return
+
+    clearAll(childNodes, modelInstances, boardNodeState, pieceNodes)
+
+    val centerOffset = with(density) {
+        Offset(
+            x = configuration.screenWidthDp.dp.toPx() / 2f,
+            y = configuration.screenHeightDp.dp.toPx() / 2f
+        )
+    }
+
+    frame.hitTest(centerOffset.x, centerOffset.y)
+        .firstOrNull { it.isValid(depthPoint = false, point = false) }
         ?.createAnchorOrNull()
         ?.let { anchor ->
-            val modelNode = ARHelper.createAnchorNode(
+            val boardNode = ARHelper.createAnchorNode(
                 engine = engine,
                 modelLoader = modelLoader,
                 materialLoader = materialLoader,
@@ -165,14 +203,80 @@ private fun placeModelAtPosition(
                 anchor = anchor,
                 model = "models/board.glb"
             )
-            childNodes += modelNode
+            childNodes += boardNode
+            boardNodeState.value = boardNode
+            Log.d("test ARBox", "Board posizionata: $boardNode")
         }
 }
 
-private fun clearModels(
+private suspend fun placePieceOnBoard(
+    frame: Frame?,
+    engine: Engine,
+    modelLoader: ModelLoader,
+    materialLoader: MaterialLoader,
+    modelInstances: MutableList<ModelInstance>,
     childNodes: MutableList<Node>,
-    modelInstances: MutableList<ModelInstance>
+    boardNode: Node?,
+    pieceNodes: MutableList<Node>,
+    density: Density,
+    configuration: Configuration
+) {
+    if (frame == null) return
+    if (boardNode == null) {
+        Log.d("test ARBox", "Impossibile piazzare pedina: la board non è stata ancora posizionata")
+        return
+    }
+
+    val centerOffset = with(density) {
+        Offset(
+            x = configuration.screenWidthDp.dp.toPx() / 2f,
+            y = configuration.screenHeightDp.dp.toPx() / 2f
+        )
+    }
+
+    frame.hitTest(centerOffset.x, centerOffset.y)
+        .firstOrNull { it.isValid(depthPoint = false, point = false) }
+        ?.let { hitResult: HitResult ->
+            val hitPose = hitResult.hitPose
+            val worldX = hitPose.tx()
+            val worldY = hitPose.ty()
+            val worldZ = hitPose.tz()
+
+            val boardWorldPos = boardNode.worldPosition
+
+            val localX = worldX - boardWorldPos.x
+            val localY = worldY - boardWorldPos.y
+            val localZ = worldZ - boardWorldPos.z
+
+            val pieceContainer = Node(engine = engine).apply {
+                position = Float3(localX, localY + 0.02f, localZ)
+                scale = Float3(0.05f, 0.05f, 0.05f)
+            }
+
+            val pawnModelPath = "models/chess_pawn.glb"
+            modelLoader.loadModelInstance(pawnModelPath)?.let { loadedPawn ->
+                modelInstances.add(loadedPawn)
+                val modelNode = io.github.sceneview.node.ModelNode(
+                    modelInstance = loadedPawn
+                )
+                pieceContainer.addChildNode(modelNode)
+
+                boardNode.addChildNode(pieceContainer)
+                childNodes.add(pieceContainer)
+                pieceNodes.add(pieceContainer)
+                Log.d("test ARBox", "Pedina posizionata su board: $pieceContainer")
+            }
+        }
+}
+
+private fun clearAll(
+    childNodes: MutableList<Node>,
+    modelInstances: MutableList<ModelInstance>,
+    boardNodeState: androidx.compose.runtime.MutableState<Node?>,
+    pieceNodes: MutableList<Node>
 ) {
     childNodes.clear()
     modelInstances.clear()
+    pieceNodes.clear()
+    boardNodeState.value = null
 }

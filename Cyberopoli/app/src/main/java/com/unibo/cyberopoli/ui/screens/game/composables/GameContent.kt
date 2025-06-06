@@ -63,7 +63,10 @@ fun GameContent(
                 .fillMaxSize()
                 .padding(padding)) {
 
-                ARBox()
+                ARBox(
+                    players = players,
+                    cells = gameParams.cells.value,
+                )
 
                 IconButton(
                     onClick = { isArMode.value = false },
