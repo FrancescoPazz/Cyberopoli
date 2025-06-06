@@ -57,3 +57,33 @@ object ARHelper {
         return anchorNode
     }
 }
+
+fun getOffsetForPerimeterIndex(perimeterIndex: Int): Pair<Float, Float> {
+    return when (perimeterIndex) {
+        // First line
+        8  -> Pair(-0.066f,  -0.0652f)
+        9  -> Pair(-0.03675f, -0.0652f)
+        10 -> Pair(-0.00752f, -0.0652f)
+        11 -> Pair(+0.02173f, -0.0652f)
+        12 -> Pair(+0.05098f, -0.0652f)
+
+        // Left board
+        15 -> Pair(-0.066f,  -0.03595f)
+        22 -> Pair(-0.066f,  -0.00300f)
+        29 -> Pair(-0.066f,  +0.02400f)
+
+        // Right board
+        19 -> Pair(+0.05098f, -0.03595f)
+        26 -> Pair(+0.05098f, -0.00300f)
+        33 -> Pair(+0.05098f, +0.02400f)
+
+        // Last line
+        36 -> Pair(-0.066f,  +0.05098f)
+        37 -> Pair(-0.03675f, +0.05098f)
+        38 -> Pair(-0.00752f, +0.05098f)
+        39 -> Pair(+0.02173f, +0.05098f)
+        40 -> Pair(+0.05098f, +0.05098f)
+
+        else -> Pair(0f, 0f)
+    }
+}

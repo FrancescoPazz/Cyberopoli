@@ -31,6 +31,7 @@ import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.ui.screens.ar.composables.Reticle
 import com.unibo.cyberopoli.util.ARHelper
+import com.unibo.cyberopoli.util.getOffsetForPerimeterIndex
 import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
@@ -142,18 +143,21 @@ fun ARBox(
                 )
 
                 MainScope().launch {
-                    placePieceOnBoard(
-                        frame = currentFrame,
-                        engine = engine,
-                        modelLoader = modelLoader,
-                        materialLoader = materialLoader,
-                        modelInstances = modelInstances,
-                        childNodes = childNodes,
-                        boardNode = boardNodeState.value,
-                        pieceNodes = pieceNodes,
-                        density = density,
-                        configuration = configuration
-                    )
+                    players?.forEach { player ->
+                        placePieceOnBoard(
+                            frame = currentFrame,
+                            engine = engine,
+                            modelLoader = modelLoader,
+                            modelInstances = modelInstances,
+                            childNodes = childNodes,
+                            boardNode = boardNodeState.value,
+                            pieceNodes = pieceNodes,
+                            density = density,
+                            configuration = configuration,
+                            cellPosition = player.cellPosition
+                        )
+                    }
+
                 }
             },
             modifier = Modifier
@@ -213,13 +217,13 @@ private suspend fun placePieceOnBoard(
     frame: Frame?,
     engine: Engine,
     modelLoader: ModelLoader,
-    materialLoader: MaterialLoader,
     modelInstances: MutableList<ModelInstance>,
     childNodes: MutableList<Node>,
     boardNode: Node?,
     pieceNodes: MutableList<Node>,
     density: Density,
-    configuration: Configuration
+    configuration: Configuration,
+    cellPosition: Int
 ) {
     if (frame == null) return
     if (boardNode == null) {
@@ -244,16 +248,19 @@ private suspend fun placePieceOnBoard(
 
             val boardWorldPos = boardNode.worldPosition
 
-            val localX = worldX - boardWorldPos.x
+            val pos = getOffsetForPerimeterIndex(cellPosition)
+
+
+            val localX = worldX - boardWorldPos.x + pos.first
             val localY = worldY - boardWorldPos.y
-            val localZ = worldZ - boardWorldPos.z
+            val localZ = worldZ - boardWorldPos.z + pos.second
 
             val pieceContainer = Node(engine = engine).apply {
-                position = Float3(localX, localY + 0.02f, localZ)
-                scale = Float3(0.05f, 0.05f, 0.05f)
+                position = Float3(localX, localY, localZ)
+                scale = Float3(0.02f, 0.02f, 0.02f)
             }
 
-            val pawnModelPath = "models/chess_pawn.glb"
+            val pawnModelPath = "models/yellow_pawn.glb"
             modelLoader.loadModelInstance(pawnModelPath)?.let { loadedPawn ->
                 modelInstances.add(loadedPawn)
                 val modelNode = io.github.sceneview.node.ModelNode(
