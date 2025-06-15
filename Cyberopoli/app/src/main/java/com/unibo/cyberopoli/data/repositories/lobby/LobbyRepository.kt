@@ -124,18 +124,8 @@ class LobbyRepository(
     }
 
     override suspend fun joinLobby(member: LobbyMember) {
-        val data =
-            LobbyMember(
-                lobbyId =
-                    currentLobbyLiveData.value?.id
-                        ?: throw IllegalStateException("Lobby not found"),
-                userId = member.userId,
-                isReady = member.isReady,
-                joinedAt = member.joinedAt,
-                user = member.user,
-            )
         try {
-            supabase.from(LOBBY_MEMBERS_TABLE).insert(data) { select() }
+            supabase.from(LOBBY_MEMBERS_TABLE).insert(member) { select() }
         } catch (e: Exception) {
             throw e
         }

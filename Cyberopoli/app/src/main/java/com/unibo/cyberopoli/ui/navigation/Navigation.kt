@@ -221,7 +221,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 startGame = gameViewModel::startGame,
                                 movePlayer = gameViewModel::movePlayer,
                                 leaveLobby = lobbyViewModel::leaveLobby,
-                                cells = gameViewModel.cells.observeAsState(),
+                                cells = gameViewModel.cells,
                                 currentTurnIndex = derivedStateOf { turnIndex },
                                 onResultDismiss = gameViewModel::onResultDismiss,
                                 updatePlayerPoints = gameViewModel::updatePlayerPoints,

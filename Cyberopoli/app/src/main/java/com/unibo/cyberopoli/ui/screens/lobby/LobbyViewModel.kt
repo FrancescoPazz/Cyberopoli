@@ -13,8 +13,8 @@ import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
-    userRepository: UserRepository,
     private val lobbyRepository: LobbyRepository,
+    userRepository: UserRepository,
 ) : ViewModel() {
     val user: LiveData<User?> = userRepository.currentUserLiveData
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData

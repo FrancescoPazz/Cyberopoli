@@ -37,4 +37,8 @@ fun LobbyStarterEffects(
             }
         }
     }
+
+    LaunchedEffect(params.members) {
+        Log.d("lobby test GameContent", "Players updated: ${params.members}")
+    }
 }

@@ -2,12 +2,13 @@ package com.unibo.cyberopoli.ui.screens.game
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameAction
 import com.unibo.cyberopoli.data.models.game.GameAsset
@@ -25,6 +26,7 @@ import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
+import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,11 +42,13 @@ import kotlinx.coroutines.launch
 class GameViewModel(
     private val app: Application,
     private val gameRepository: GameRepository,
+    userRepository: UserRepository
 ) : ViewModel() {
+    val user:  LiveData<User?> = userRepository.currentUserLiveData
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
-    val cells: MutableLiveData<List<GameCell>> = MutableLiveData(createBoard())
-    val chanceQuestions = MutableLiveData(chanceQuestions(app))
-    val hackerStatements = MutableLiveData(hackerStatements(app))
+    val cells = mutableStateOf(createBoard())
+    private var chanceQuestions = mutableStateOf(chanceQuestions(app))
+    private var hackerStatements = mutableStateOf(hackerStatements(app))
 
     // Mine variables
     val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
@@ -100,7 +104,7 @@ class GameViewModel(
         viewModelScope.launch {
             val generatedHackerStatement = gameRepository.generateDigitalWellBeingStatements()
             hackerStatements.value =
-                hackerStatements.value?.plus(generatedHackerStatement) ?: hackerStatements.value
+                hackerStatements.value.plus(generatedHackerStatement)
         }
         // Initial turn logic
         viewModelScope.launch {
@@ -391,7 +395,7 @@ class GameViewModel(
                 val randomIndex = questions.indices.random()
                 val question = questions[randomIndex]
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
-                chanceQuestions.postValue(updatedQuestions)
+                chanceQuestions.value = updatedQuestions
                 _dialog.value = question
             }
 
@@ -402,7 +406,7 @@ class GameViewModel(
                 val randomIndex = questions.indices.random()
                 val question = questions[randomIndex]
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
-                hackerStatements.postValue(updatedQuestions)
+                hackerStatements.value = updatedQuestions
                 _dialog.value = question
                 updatePlayerPoints(question.points)
             }
@@ -483,8 +487,7 @@ class GameViewModel(
         viewModelScope.launch {
             when (val dlg = _dialog.value) {
                 is GameDialogData.MakeContentChoice -> {
-                    cells.value =
-                        cells.value?.toMutableList()?.apply {
+                    cells.value = cells.value.toMutableList().apply {
                             val position = getAssetPositionFromPerimeterPosition(player.value!!.cellPosition)
                             if (position != null) {
                                 this[position] = GameCell(player.value!!.cellPosition.toString(), GameTypeCell.OCCUPIED, "Occupied")
