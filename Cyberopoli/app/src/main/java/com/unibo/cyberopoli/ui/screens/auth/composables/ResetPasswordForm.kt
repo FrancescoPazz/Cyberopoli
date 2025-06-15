@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -18,6 +19,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
@@ -27,7 +29,6 @@ import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 fun ResetPasswordForm(
     email: MutableState<String>,
     onEmailChange: (String) -> Unit,
-    showOtpFields: Boolean,
     otp: MutableState<String>,
     onOtpChange: (String) -> Unit,
     newPassword: MutableState<String>,
@@ -36,7 +37,7 @@ fun ResetPasswordForm(
     onConfirmPasswordChange: (String) -> Unit,
     isLoading: Boolean,
     onSendResetEmail: () -> Unit,
-    changeForgottenPassword: () -> Unit,
+    sendOtp: () -> Unit,
     onBack: () -> Unit,
 ) {
     Column(
@@ -65,45 +66,46 @@ fun ResetPasswordForm(
             enabled = email.value.isNotBlank() && !isLoading,
         )
 
-        if (showOtpFields) {
-            Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(24.dp))
 
-            CyberOutlinedTextField(
-                value = otp,
-                onValueChange = onOtpChange,
-                placeholder = stringResource(R.string.enter_otp),
-                imageVector = Icons.Default.LockReset,
-                singleLine = true,
+        CyberOutlinedTextField(
+            value = otp,
+            onValueChange = onOtpChange,
+            placeholder = stringResource(R.string.enter_otp),
+            imageVector = Icons.Default.LockReset,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
             )
+        )
 
-            Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
 
-            CyberOutlinedTextField(
-                value = newPassword,
-                onValueChange = onNewPasswordChange,
-                placeholder = stringResource(R.string.new_password),
-                imageVector = Icons.Default.Lock,
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-            )
-            Spacer(Modifier.height(8.dp))
-            CyberOutlinedTextField(
-                value = confirmPassword,
-                onValueChange = onConfirmPasswordChange,
-                placeholder = stringResource(R.string.password_confirm),
-                imageVector = Icons.Default.Lock,
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-            )
-            Spacer(Modifier.height(8.dp))
-            AuthButton(
-                text = stringResource(R.string.reset_password_title).uppercase(),
-                onClick = {
-                    changeForgottenPassword()
-                },
-                enabled = otp.value.isNotBlank() && newPassword.value.isNotBlank() && newPassword.value == confirmPassword.value && !isLoading,
-            )
-        }
+        CyberOutlinedTextField(
+            value = newPassword,
+            onValueChange = onNewPasswordChange,
+            placeholder = stringResource(R.string.new_password),
+            imageVector = Icons.Default.Lock,
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+        )
+        Spacer(Modifier.height(8.dp))
+        CyberOutlinedTextField(
+            value = confirmPassword,
+            onValueChange = onConfirmPasswordChange,
+            placeholder = stringResource(R.string.password_confirm),
+            imageVector = Icons.Default.Lock,
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+        )
+        Spacer(Modifier.height(8.dp))
+        AuthButton(
+            text = stringResource(R.string.reset_password_title),
+            onClick = {
+                sendOtp()
+            },
+            enabled = otp.value.isNotBlank() && newPassword.value.isNotBlank() && newPassword.value == confirmPassword.value && !isLoading,
+        )
 
         Spacer(Modifier.height(16.dp))
         TextButton(

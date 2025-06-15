@@ -1,6 +1,7 @@
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -14,6 +15,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
+import io.github.jan.supabase.auth.providers.builtin.OTP
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
@@ -222,38 +224,28 @@ class AuthRepository(
             }
         }
 
-    fun sendOtp(
-        email: String,
-        otp: String,
-    ): Flow<AuthResponse> =
-        flow {
-            try {
-                supabase.auth.verifyEmailOtp(type = OtpType.Email.EMAIL, email = email, token = otp)
-                emit(AuthResponse.Success)
-            } catch (e: Exception) {
-                emit(AuthResponse.Failure(e.message ?: "Send OTP error"))
-            }
-        }
-
-    fun changeForgottenPassword(
-        email: String,
-        newPassword: String,
-    ) = flow {
+    fun sendOtp(email: String, otp: String): Flow<AuthResponse> = flow {
         try {
-            val user =
-                supabase.from(USERS_TABLE)
-                    .select {
-                        filter {
-                            eq("email", email)
-                        }
-                    }.decodeSingle<User>()
-
-            supabase.auth.admin.updateUserById(user.id) {
-                password = newPassword
+            supabase.auth.verifyEmailOtp(type = OtpType.Email.EMAIL, email = email, token = otp)
+            if (supabase.auth.currentUserOrNull() == null) {
+                supabase.auth.signInWith(OTP) {
+                    this.email = email
+                }
             }
             emit(AuthResponse.Success)
         } catch (e: Exception) {
-            emit(AuthResponse.Failure(e.message ?: "Error changing password"))
+            emit(AuthResponse.Failure(e.message ?: "Send OTP error"))
+        }
+    }
+
+    fun changeForgottenPassword(newPassword: String) = flow  {
+        try {
+            supabase.auth.updateUser {
+                password = newPassword
+            }
+            emit (AuthResponse.Success)
+        } catch (e: Exception) {
+            emit (AuthResponse.Failure(e.message ?: "Error changing password"))
         }
     }
 

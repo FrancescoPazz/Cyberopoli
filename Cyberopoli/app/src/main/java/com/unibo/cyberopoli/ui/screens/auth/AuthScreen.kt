@@ -109,7 +109,7 @@ fun AuthScreen(
                         authParams.login,
                         authParams.loginGoogleUser,
                         authParams.sendPasswordReset,
-                        authParams.changeForgottenPassword,
+                        authParams.sendOtp,
                     )
                 1 ->
                     SignUpCard(

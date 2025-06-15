@@ -17,5 +17,5 @@ data class AuthParams(
     ) -> Unit,
     val loginAnonymously: (String) -> Unit,
     val sendPasswordReset: (email: String) -> Unit,
-    val changeForgottenPassword: (email: String, password: String, otp: String) -> Unit,
+    val sendOtp: (email: String, otp: String, newPassword: String) -> Unit,
 )

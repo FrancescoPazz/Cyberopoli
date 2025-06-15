@@ -36,13 +36,12 @@ fun LoginCard(
     login: (email: String, password: String) -> Unit,
     googleLogin: (context: Context) -> Unit,
     sendResetEmail: (email: String) -> Unit,
-    changeForgottenPassword: (email: String, password: String, otp: String) -> Unit,
+    sendOtp: (email: String, otp: String, newPassword: String) -> Unit,
 ) {
     val context = LocalContext.current
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     var isResetMode by remember { mutableStateOf(false) }
-    var showOtpFields by remember { mutableStateOf(false) }
     val otp = remember { mutableStateOf("") }
     val newPassword = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
@@ -95,32 +94,27 @@ fun LoginCard(
             ResetPasswordForm(
                 email = email,
                 onEmailChange = { email.value = it },
-                showOtpFields = showOtpFields,
                 otp = otp,
                 onOtpChange = {
                     otp.value = it
-                    Log.d("test otp", otp.value)
                 },
                 newPassword = newPassword,
                 onNewPasswordChange = {
                     newPassword.value = it
-                    Log.d("test newPassword", newPassword.value)
                 },
                 confirmPassword = confirmPassword,
                 onConfirmPasswordChange = {
                     confirmPassword.value = it
-                    Log.d("test confirmPassword", confirmPassword.value)
                 },
                 isLoading = authState.value == AuthState.Loading,
                 onSendResetEmail = {
                     sendResetEmail(email.value.trim())
-                    showOtpFields = true
                 },
-                changeForgottenPassword = {
-                    changeForgottenPassword(
+                sendOtp = {
+                    sendOtp(
                         email.value.trim(),
-                        newPassword.value.trim(),
                         otp.value.trim(),
+                        newPassword.value.trim(),
                     )
                 },
                 onBack = { isResetMode = false },

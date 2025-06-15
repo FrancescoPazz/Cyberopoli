@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,6 +22,7 @@ fun CyberOutlinedTextField(
     imageVector: ImageVector? = null,
     onValueChange: (String) -> Unit = { value.value = it },
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     OutlinedTextField(
         value = value.value,
@@ -42,5 +44,6 @@ fun CyberOutlinedTextField(
                 .clip(RoundedCornerShape(20.dp)),
         singleLine = singleLine,
         visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
     )
 }
