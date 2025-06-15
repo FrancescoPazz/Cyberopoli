@@ -162,6 +162,7 @@
     <string name="points_lost_message">Hai perso %1$d punti Internet</string>
     <string name="ar_mode">Modalità AR</string>
     <string name="place_board">Posiziona il tabellone</string>
+    <string name="unknown_player">Giocatore sconosciuto</string>
 
     <!-- ================================= -->
     <!-- Home -->

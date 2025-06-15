@@ -164,6 +164,7 @@
     <string name="points_lost_message">You lost %1$d Internet point</string>
     <string name="ar_mode">AR Mode</string>
     <string name="place_board">Place the board</string>
+    <string name="unknown_player">Unknown Player</string>
 
     <!-- ================================= -->
     <!-- Home -->

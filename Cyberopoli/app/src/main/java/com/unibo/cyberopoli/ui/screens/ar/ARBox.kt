@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -88,23 +90,26 @@ fun ARBox(
         }
     }
 
+    LaunchedEffect(players) {
+        if (currentFrame == null || players.isNullOrEmpty()) return@LaunchedEffect
+        renderBoardAndPieces(
+            frame = currentFrame,
+            engine = engine,
+            modelLoader = modelLoader,
+            materialLoader = materialLoader,
+            modelInstances = modelInstances,
+            childNodes = childNodes,
+            boardNodeState = boardNodeState,
+            pieceNodes = pieceNodes,
+            density = density,
+            configuration = configuration,
+            players = players
+        )
+    }
+
     val gestureListener = rememberOnGestureListener(
         onSingleTapConfirmed = { _: MotionEvent, node: Node? ->
-            Log.d("test ARBox", "Single tap detected on node: $node")
-            /*if (node == null) {
-                placeBoardAtCenter(
-                    frame = currentFrame,
-                    engine = engine,
-                    modelLoader = modelLoader,
-                    materialLoader = materialLoader,
-                    modelInstances = modelInstances,
-                    childNodes = childNodes,
-                    boardNodeState = boardNodeState,
-                    pieceNodes = pieceNodes,
-                    density = density,
-                    configuration = configuration
-                )
-            }*/
+            Log.d("ARBox", "Single tap detected on node: $node")
         }
     )
 
@@ -179,7 +184,7 @@ private fun placeBoardAtCenter(
     materialLoader: MaterialLoader,
     modelInstances: MutableList<ModelInstance>,
     childNodes: MutableList<Node>,
-    boardNodeState: androidx.compose.runtime.MutableState<Node?>,
+    boardNodeState: MutableState<Node?>,
     pieceNodes: MutableList<Node>,
     density: Density,
     configuration: Configuration
@@ -209,7 +214,6 @@ private fun placeBoardAtCenter(
             )
             childNodes += boardNode
             boardNodeState.value = boardNode
-            Log.d("test ARBox", "Board posizionata: $boardNode")
         }
 }
 
@@ -227,7 +231,6 @@ private suspend fun placePieceOnBoard(
 ) {
     if (frame == null) return
     if (boardNode == null) {
-        Log.d("test ARBox", "Impossibile piazzare pedina: la board non è stata ancora posizionata")
         return
     }
 
@@ -271,15 +274,45 @@ private suspend fun placePieceOnBoard(
                 boardNode.addChildNode(pieceContainer)
                 childNodes.add(pieceContainer)
                 pieceNodes.add(pieceContainer)
-                Log.d("test ARBox", "Pedina posizionata su board: $pieceContainer")
             }
         }
+}
+
+private suspend fun renderBoardAndPieces(
+    frame: Frame?,
+    engine: Engine,
+    modelLoader: ModelLoader,
+    materialLoader: MaterialLoader,
+    modelInstances: MutableList<ModelInstance>,
+    childNodes: MutableList<Node>,
+    boardNodeState: MutableState<Node?>,
+    pieceNodes: MutableList<Node>,
+    density: Density,
+    configuration: Configuration,
+    players: List<GamePlayer>
+) {
+    if (frame == null) return
+    clearPieces(
+        pieceNodes = pieceNodes,
+        modelInstances = modelInstances
+    )
+    players.forEach { player ->
+        placePieceOnBoard(frame, engine, modelLoader, modelInstances, childNodes, boardNodeState.value, pieceNodes, density, configuration, player.cellPosition)
+    }
+}
+
+private fun clearPieces(
+    pieceNodes: MutableList<Node>,
+    modelInstances: MutableList<ModelInstance>
+) {
+    pieceNodes.clear()
+    modelInstances.clear()
 }
 
 private fun clearAll(
     childNodes: MutableList<Node>,
     modelInstances: MutableList<ModelInstance>,
-    boardNodeState: androidx.compose.runtime.MutableState<Node?>,
+    boardNodeState: MutableState<Node?>,
     pieceNodes: MutableList<Node>
 ) {
     childNodes.clear()
