@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.util.AvatarUtils
 
 @SuppressLint("DiscouragedApi")
 @Composable
@@ -39,22 +40,14 @@ fun UserAvatarInfo(
     textStyleHeadline: TextStyle = MaterialTheme.typography.headlineMedium,
     textStyleBody: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
-    val context = LocalContext.current
-    val resId =
-        remember(user.avatarUrl) {
-            context.resources.getIdentifier(
-                user.avatarUrl,
-                "drawable",
-                context.packageName,
-            )
-        }
+    val avatarRes = AvatarUtils.getAvatarResourceForUser(user)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 8.dp),
     ) {
         Image(
-            painter = painterResource(id = resId),
+            painter = painterResource(avatarRes),
             contentDescription = stringResource(R.string.avatar, user.username),
             modifier =
                 Modifier

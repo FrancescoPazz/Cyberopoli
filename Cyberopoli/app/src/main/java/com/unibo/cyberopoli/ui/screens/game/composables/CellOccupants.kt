@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.util.AvatarUtils
 import com.unibo.cyberopoli.util.PlayerColorUtils
 
 @Composable
@@ -36,13 +37,7 @@ fun CellOccupants(occupants: List<GamePlayer>) {
                     .background(PlayerColorUtils.getPlayerColor(player), shape = CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
-                val avatarRes = when (player.user?.avatarUrl) {
-                    "avatar_male_1" -> R.drawable.avatar_male_1
-                    "avatar_male_2" -> R.drawable.avatar_male_2
-                    "avatar_female_1" -> R.drawable.avatar_female_1
-                    "avatar_female_2" -> R.drawable.avatar_female_2
-                    else -> R.drawable.avatar_male_1
-                }
+                val avatarRes = AvatarUtils.getAvatarResourceForPlayer(player)
 
                 Image(
                     painter = painterResource(avatarRes),

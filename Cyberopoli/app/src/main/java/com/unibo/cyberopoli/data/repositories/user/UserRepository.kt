@@ -3,6 +3,7 @@ package com.unibo.cyberopoli.data.repositories.user
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.util.AvatarUtils
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -34,17 +35,12 @@ class UserRepository(
     }
 
     fun changeAvatar() {
-        val userId =
-            supabase.auth.currentUserOrNull()?.id ?: run {
-                return
-            }
+        val userId = supabase.auth.currentUserOrNull()?.id ?: run {
+            return
+        }
 
-        val currentAvatar = currentUserLiveData.value?.avatarUrl ?: "avatar_male_1"
-        val avatarList =
-            listOf("avatar_male_1", "avatar_male_2", "avatar_female_1", "avatar_female_2")
-        val currentIndex = avatarList.indexOf(currentAvatar).takeIf { it >= 0 } ?: 0
-        val nextIndex = if (currentIndex == avatarList.lastIndex) 0 else currentIndex + 1
-        val newAvatar = avatarList[nextIndex]
+        val currentAvatar = currentUserLiveData.value?.avatarUrl ?: AvatarUtils.DEFAULT_AVATAR
+        val newAvatar = AvatarUtils.getNextAvatar(currentAvatar)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
