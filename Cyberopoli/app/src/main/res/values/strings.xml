@@ -1,28 +1,15 @@
 <resources>
-
-    <!-- ================================= -->
-    <!-- App Identity -->
-    <!-- ================================= -->
     <string name="app_name">Cyberopoli</string>
-
-    <!-- ================================= -->
-    <!-- Authentication & User Management -->
-    <!-- ================================= -->
-    <!-- Login / Sign-up -->
     <string name="login">Login</string>
     <string name="signup">Sign Up</string>
     <string name="guest">Guest</string>
     <string name="logout">Logout</string>
-
-    <!-- Form fields -->
     <string name="username">Username</string>
     <string name="name">Name</string>
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="password_confirm">Password Confirm</string>
-
-    <!-- Validation & Errors -->
     <string name="login_failed">Login Failed</string>
     <string name="signup_failed">Signup Failed</string>
     <string name="empty_fields">Email or password cannot be empty</string>
@@ -30,8 +17,6 @@
     <string name="empty_email_warning">Email cannot be empty</string>
     <string name="enter_guest_error">Unable to enter as a guest</string>
     <string name="user_unauthenticated">User Unauthenticated</string>
-
-    <!-- Password Reset & Change -->
     <string name="save_changes">Save Changes</string>
     <string name="change_password">Change Password</string>
     <string name="hide">Hide</string>
@@ -48,43 +33,25 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="back_to_login">Back to login</string>
     <string name="reset_password_failed">Failed to send password reset email</string>
-
-    <!-- ================================= -->
-    <!-- Navigation & Screens -->
-    <!-- ================================= -->
     <string name="back">Back</string>
     <string name="enter">Enter</string>
     <string name="home">Home</string>
     <string name="ranking">Ranking</string>
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
-
-    <!-- ================================= -->
-    <!-- Scanning / QR Code -->
-    <!-- ================================= -->
     <string name="scan">Scan</string>
     <string name="invalid_code">Invalid Code</string>
     <string name="qrcode_hint">Scan the QR Code to access the lobby.</string>
-    <string name="camera_permission_required">
-        Camera permission is required to scan the QR code.
-    </string>
+    <string name="camera_permission_required">Camera permission is required to scan the QR code.</string>
     <string name="request_camera">Request Camera Permission</string>
     <string name="camera_permission_denied">Camera permission denied</string>
     <string name="enter_code">Enter Code</string>
-
-    <!-- ================================= -->
-    <!-- Settings -->
-    <!-- ================================= -->
     <string name="notifications">Notifications</string>
     <string name="enable_notifications">Enable Notifications</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="system">System</string>
     <string name="theme">Theme</string>
-
-    <!-- ================================= -->
-    <!-- Profile & Ranking Details -->
-    <!-- ================================= -->
     <string name="avatar">Avatar</string>
     <string name="edit">Edit</string>
     <string name="share">Share</string>
@@ -99,10 +66,6 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="change_profile_success">Change profile successful</string>
     <string name="change_profile_failed">Change profile failed</string>
-
-    <!-- ================================= -->
-    <!-- Lobby -->
-    <!-- ================================= -->
     <string name="ready">Ready</string>
     <string name="not_ready">Not ready</string>
     <string name="exit">Exit</string>
@@ -110,10 +73,6 @@
     <string name="waiting">Waiting</string>
     <string name="players_in_lobby">Players in lobby</string>
     <string name="start">Start</string>
-
-    <!-- ================================= -->
-    <!-- Match / Game -->
-    <!-- ================================= -->
     <string name="games">Matches</string>
     <string name="latest_games">Latest matches</string>
     <string name="result">Result</string>
@@ -165,10 +124,6 @@
     <string name="ar_mode">AR Mode</string>
     <string name="place_board">Place the board</string>
     <string name="unknown_player">Unknown Player</string>
-
-    <!-- ================================= -->
-    <!-- Home -->
-    <!-- ================================= -->
     <string name="your_game_stats">Your game stats</string>
     <string name="win_rate">Win Rate</string>
     <string name="welcome_guest">Welcome Guest</string>
@@ -179,111 +134,88 @@
     <string name="join_game_button">Join Game</string>
     <string name="most_used_apps_week">Most used apps this week</string>
     <string name="no_stats_available">No stats available</string>
-
-    <!-- Statistics & Charts -->
     <string name="score_chart">Score Chart</string>
     <string name="account_statistics">Account Statistics</string>
     <string name="total_score">Total Score</string>
     <string name="games_played">Games Played</string>
     <string name="best_score">Best Score</string>
     <string name="average_score">Average Score</string>
-
-    <!-- ================================= -->
-    <!-- Hacker Statements -->
-    <!-- ================================= -->
+    <string name="logout_confirm">Logout Confirmation</string>
+    <string name="logout_desc">Are you sure you want to log out?</string>
+    <string name="confirm">Confirmm</string>
+    <string name="cancel">Cancel</string>
     <string name="hacker_statement_title_1">Weak password</string>
     <string name="hacker_statement_content_1">Your password \'123456\' was discovered. Lose 4 security points.</string>
-
     <string name="hacker_statement_title_2">Unsecured public Wi-Fi</string>
     <string name="hacker_statement_content_2">A hacker injected malware while you were on public Wi-Fi without a VPN. Lose 5 points.</string>
-
     <string name="hacker_statement_title_3">Successful phishing</string>
     <string name="hacker_statement_content_3">You clicked a suspicious link in an email. Your bank data was stolen! Lose 7 points.</string>
-
     <string name="hacker_statement_title_4">Ransomware</string>
     <string name="hacker_statement_content_4">Your files were encrypted by ransomware. You pay a 5-point ransom to recover them.</string>
-
     <string name="hacker_statement_title_5">Social engineering</string>
     <string name="hacker_statement_content_5">You answered a call from a fake technician and shared your credentials. Lose 3 points.</string>
-
     <string name="hacker_statement_title_6">Compromised account</string>
     <string name="hacker_statement_content_6">Your social account was hacked and used for scams. Lose 5 points and your profile.</string>
-
     <string name="hacker_statement_title_7">Malware</string>
     <string name="hacker_statement_content_7">Malware infected your computer. Lose 6 points and you need to reinstall the system.</string>
-
-
-    <!-- ================================= -->
-    <!-- Chance Questions  -->
-    <!-- ================================= -->
     <string name="chance_question_title_1">Secure password</string>
     <string name="chance_question_prompt_1">Which of these is the best practice for creating a secure password?</string>
     <string name="chance_question_option_1_1">Use common words separated by hyphens</string>
     <string name="chance_question_option_1_2">Use a long random string with letters, numbers, and symbols</string>
     <string name="chance_question_option_1_3">Always use the same password for every account</string>
     <string name="chance_question_option_1_4">Change your password every 2 years</string>
-
     <string name="chance_question_title_2">What is phishing?</string>
     <string name="chance_question_prompt_2">What is the correct definition of phishing?</string>
     <string name="chance_question_option_2_1">Sending fraudulent emails to obtain sensitive data</string>
     <string name="chance_question_option_2_2">Physical attack on a company server</string>
     <string name="chance_question_option_2_3">Using ransomware to encrypt files</string>
     <string name="chance_question_option_2_4">Intercepting satellite communications</string>
-
     <string name="chance_question_title_3">Brute Force</string>
     <string name="chance_question_prompt_3">In a brute-force attack, what does the attacker do?</string>
     <string name="chance_question_option_3_1">Intercept emails</string>
     <string name="chance_question_option_3_2">Systematically try all password combinations</string>
     <string name="chance_question_option_3_3">Install a hardware keylogger</string>
     <string name="chance_question_option_3_4">Use a virus to encrypt files</string>
-
     <string name="chance_question_title_4">Public Wi-Fi</string>
     <string name="chance_question_prompt_4">What is the main risk when connecting to an unsecured public Wi-Fi network?</string>
     <string name="chance_question_option_4_1">Excessive battery drain</string>
     <string name="chance_question_option_4_2">Traffic interception by malicious actors</string>
     <string name="chance_question_option_4_3">Too high connection speed</string>
     <string name="chance_question_option_4_4">Forced automatic updates</string>
-
     <string name="chance_question_title_5">Two-factor authentication</string>
     <string name="chance_question_prompt_5">What is the main benefit of two-factor authentication (2FA)?</string>
     <string name="chance_question_option_5_1">Faster access to services</string>
     <string name="chance_question_option_5_2">Greater security by requiring two different credentials</string>
     <string name="chance_question_option_5_3">Reduces the space taken by passwords</string>
     <string name="chance_question_option_5_4">Increases connection speed</string>
-
     <string name="chance_question_title_6">Data backup</string>
     <string name="chance_question_prompt_6">What is the most reliable method to protect data from accidental loss?</string>
     <string name="chance_question_option_6_1">Save everything on the desktop</string>
     <string name="chance_question_option_6_2">Regularly back up to an external device and the cloud</string>
     <string name="chance_question_option_6_3">Leave data on the original device</string>
     <string name="chance_question_option_6_4">Use only public USB drives</string>
-
     <string name="chance_question_title_7">Social engineering</string>
     <string name="chance_question_prompt_7">What is the main technique used in social engineering?</string>
     <string name="chance_question_option_7_1">Exploiting network vulnerabilities</string>
     <string name="chance_question_option_7_2">Psychologically manipulating the victim</string>
     <string name="chance_question_option_7_3">Encrypting data with ransomware</string>
     <string name="chance_question_option_7_4">Intercepting network packets</string>
-
     <string name="chance_question_title_8">Security patch</string>
     <string name="chance_question_prompt_8">Why is it important to promptly install security patches?</string>
     <string name="chance_question_option_8_1">To improve system performance</string>
     <string name="chance_question_option_8_2">To fix known vulnerabilities before they are exploited</string>
     <string name="chance_question_option_8_3">To increase free disk space</string>
     <string name="chance_question_option_8_4">To change the user interface</string>
-
     <string name="chance_question_title_9">DDoS attack</string>
     <string name="chance_question_prompt_9">What characterizes a DDoS attack?</string>
     <string name="chance_question_option_9_1">Compromising a single host</string>
     <string name="chance_question_option_9_2">Spreading spyware via email</string>
     <string name="chance_question_option_9_3">Saturating bandwidth with numerous requests</string>
     <string name="chance_question_option_9_4">Encrypting the user’s files</string>
-
     <string name="chance_question_title_10">VPN and privacy</string>
     <string name="chance_question_prompt_10">A VPN (Virtual Private Network) is mainly used to:</string>
     <string name="chance_question_option_10_1">Speed up the internet connection</string>
     <string name="chance_question_option_10_2">Create an encrypted tunnel to protect traffic</string>
     <string name="chance_question_option_10_3">Automatically block all ads</string>
     <string name="chance_question_option_10_4">Increase the device’s RAM</string>
-
 </resources>

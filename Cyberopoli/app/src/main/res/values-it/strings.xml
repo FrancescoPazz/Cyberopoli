@@ -1,28 +1,15 @@
 <resources>
-
-    <!-- ================================= -->
-    <!-- Identità dell’App -->
-    <!-- ================================= -->
     <string name="app_name">Cyberopoli</string>
-
-    <!-- ================================= -->
-    <!-- Autenticazione e Gestione Utente -->
-    <!-- ================================= -->
-    <!-- Accesso / Registrazione -->
     <string name="login">Accedi</string>
     <string name="signup">Registrati</string>
     <string name="guest">Ospite</string>
     <string name="logout">Esci</string>
-
-    <!-- Campi dei form -->
     <string name="username">Nome utente</string>
     <string name="name">Nome</string>
     <string name="last_name">Cognome</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="password_confirm">Conferma Password</string>
-
-    <!-- Validazioni ed errori -->
     <string name="login_failed">Accesso fallito</string>
     <string name="signup_failed">Registrazione fallita</string>
     <string name="empty_fields">Email o password non possono essere vuote</string>
@@ -30,8 +17,6 @@
     <string name="empty_email_warning">L’email non può essere vuota</string>
     <string name="enter_guest_error">Impossibile accedere come ospite</string>
     <string name="user_unauthenticated">Utente non autenticato</string>
-
-    <!-- Reimposta/Cambio password -->
     <string name="save_changes">Salva Modifiche</string>
     <string name="change_password">Cambia Password</string>
     <string name="hide">Nascondi</string>
@@ -48,43 +33,25 @@
     <string name="send_reset_email">Invia email</string>
     <string name="back_to_login">Torna al login</string>
     <string name="reset_password_failed">Invio email di reset fallito</string>
-
-    <!-- ================================= -->
-    <!-- Navigazione e Schermate -->
-    <!-- ================================= -->
     <string name="back">Indietro</string>
     <string name="enter">Entra</string>
     <string name="home">Home</string>
     <string name="ranking">Classifica</string>
     <string name="profile">Profilo</string>
     <string name="settings">Impostazioni</string>
-
-    <!-- ================================= -->
-    <!-- Scansione / Codice QR -->
-    <!-- ================================= -->
     <string name="scan">Scansiona</string>
     <string name="invalid_code">Codice non valido</string>
     <string name="qrcode_hint">Scansiona il codice QR per accedere alla lobby.</string>
-    <string name="camera_permission_required">
-        È necessario il permesso per usare la fotocamera per scansionare il codice QR.
-    </string>
+    <string name="camera_permission_required">È necessario il permesso per usare la fotocamera per scansionare il codice QR.</string>
     <string name="request_camera">Richiedi permesso fotocamera</string>
     <string name="camera_permission_denied">Permesso fotocamera negato</string>
     <string name="enter_code">Inserisci codice</string>
-
-    <!-- ================================= -->
-    <!-- Impostazioni -->
-    <!-- ================================= -->
     <string name="notifications">Notifiche</string>
     <string name="enable_notifications">Abilita notifiche</string>
     <string name="dark">Scuro</string>
     <string name="light">Chiaro</string>
     <string name="system">Sistema</string>
     <string name="theme">Tema</string>
-
-    <!-- ================================= -->
-    <!-- Profilo e Dettagli Classifica -->
-    <!-- ================================= -->
     <string name="avatar">Avatar</string>
     <string name="edit">Modifica</string>
     <string name="share">Condividi</string>
@@ -97,10 +64,6 @@
     <string name="edit_profile">Modifica Profilo</string>
     <string name="change_profile_success">Modifica profilo avvenuta con successo</string>
     <string name="change_profile_failed">Modifica profilo fallita</string>
-
-    <!-- ================================= -->
-    <!-- Lobby -->
-    <!-- ================================= -->
     <string name="ready">Pronto</string>
     <string name="not_ready">Non pronto</string>
     <string name="exit">Esci</string>
@@ -108,10 +71,6 @@
     <string name="waiting">In attesa</string>
     <string name="players_in_lobby">Giocatori in lobby</string>
     <string name="start">Inizia</string>
-
-    <!-- ================================= -->
-    <!-- Partita / Gioco -->
-    <!-- ================================= -->
     <string name="games">Partite</string>
     <string name="latest_games">Ultime partite</string>
     <string name="result">Risultato</string>
@@ -163,10 +122,6 @@
     <string name="ar_mode">Modalità AR</string>
     <string name="place_board">Posiziona il tabellone</string>
     <string name="unknown_player">Giocatore sconosciuto</string>
-
-    <!-- ================================= -->
-    <!-- Home -->
-    <!-- ================================= -->
     <string name="your_game_stats">Le Tue Statistiche</string>
     <string name="win_rate">Percentuale di Vittorie</string>
     <string name="welcome_guest">Benvenuto Ospite</string>
@@ -179,105 +134,84 @@
     <string name="loss">Persa</string>
     <string name="most_used_apps_week">App più usate settimanali</string>
     <string name="no_stats_available">Nessuna statistica disponibile</string>
-
-    <!-- Statistiche e Grafici -->
     <string name="score_chart">Grafico Punteggio</string>
     <string name="account_statistics">Statistiche Account</string>
     <string name="total_score">Punteggio Totale</string>
     <string name="games_played">Partite Giocate</string>
     <string name="best_score">Punteggio Migliore</string>
     <string name="average_score">Punteggio Medio</string>
-
-    <!-- ================================= -->
-    <!-- Imprevisti hacker -->
-    <!-- ================================= -->
+    <string name="logout_confirm">Conferma disconnessione?</string>
+    <string name="logout_desc">Sei sicuro di voler effettuare la disconnessione?</string>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
     <string name="hacker_statement_title_1">Password debole</string>
     <string name="hacker_statement_content_1">Hanno scoperto la tua password \'123456\'. Perdi 4 punti di sicurezza.</string>
-
     <string name="hacker_statement_title_2">Wi-Fi pubblico non sicuro</string>
     <string name="hacker_statement_content_2">Un hacker ha iniettato malware mentre eri connesso ad una rete Wi-Fi pubblica senza VPN. Perdi 5 punti.</string>
-
     <string name="hacker_statement_title_3">Phishing riuscito</string>
     <string name="hacker_statement_content_3">Hai cliccato su un link sospetto in una email. I tuoi dati bancari sono stati rubati! Perdi 7 punti.</string>
-
     <string name="hacker_statement_title_4">Ransomware</string>
     <string name="hacker_statement_content_4">I tuoi file sono stati criptati da un ransomware. Paghi il riscatto di 5 punti per recuperarli.</string>
-
     <string name="hacker_statement_title_5">Social Engineering</string>
     <string name="hacker_statement_content_5">Hai risposto a una telefonata di un falso tecnico e hai condiviso le tue credenziali. Perdi 3 punti.</string>
-
     <string name="hacker_statement_title_6">Account compromesso</string>
     <string name="hacker_statement_content_6">Il tuo account social è stato hackerato e usato per truffe. Perdi 5 punti e il tuo profilo.</string>
-
     <string name="hacker_statement_title_7">Malware</string>
     <string name="hacker_statement_content_7">Un malware ha infettato il tuo computer. Perdi 6 punti e devi reinstallare il sistema.</string>
-
-    <!-- ================================= -->
-    <!-- Domande di probabilità -->
-    <!-- ================================= -->
     <string name="chance_question_title_1">Password sicura</string>
     <string name="chance_question_prompt_1">Quale tra queste è la migliore pratica per creare una password sicura?</string>
     <string name="chance_question_option_1_1">Usare parole comuni separate da trattini</string>
     <string name="chance_question_option_1_2">Usare una lunga stringa casuale con lettere, numeri e simboli</string>
     <string name="chance_question_option_1_3">Utilizzare sempre la stessa password per ogni account</string>
     <string name="chance_question_option_1_4">Aggiornare la password ogni 2 anni</string>
-
     <string name="chance_question_title_2">Phishing: cos’è?</string>
     <string name="chance_question_prompt_2">Qual è la definizione corretta di phishing?</string>
     <string name="chance_question_option_2_1">Invio di email fraudolente per ottenere dati sensibili</string>
     <string name="chance_question_option_2_2">Attacco fisico a un server aziendale</string>
     <string name="chance_question_option_2_3">Utilizzo di ransomware per criptare file</string>
     <string name="chance_question_option_2_4">Intercettazione di comunicazioni via satellite</string>
-
     <string name="chance_question_title_3">Brute Force</string>
     <string name="chance_question_prompt_3">In un attacco brute-force, cosa fa l’aggressore?</string>
     <string name="chance_question_option_3_1">Intercetta le email</string>
     <string name="chance_question_option_3_2">Prova sistematicamente tutte le combinazioni di password</string>
     <string name="chance_question_option_3_3">Installa un keylogger hardware</string>
     <string name="chance_question_option_3_4">Utilizza un virus per criptare i file</string>
-
     <string name="chance_question_title_4">Wi-Fi pubblico</string>
     <string name="chance_question_prompt_4">Qual è il rischio principale quando ci si connette a una rete Wi-Fi pubblica non protetta?</string>
     <string name="chance_question_option_4_1">Consumo eccessivo di batteria</string>
     <string name="chance_question_option_4_2">Intercettazione del traffico da parte di malintenzionati</string>
     <string name="chance_question_option_4_3">Velocità di connessione troppo alta</string>
     <string name="chance_question_option_4_4">Aggiornamenti automatici forzati</string>
-
     <string name="chance_question_title_5">Autenticazione a due fattori</string>
     <string name="chance_question_prompt_5">Quale vantaggio principale offre l’autenticazione a due fattori (2FA)?</string>
     <string name="chance_question_option_5_1">Accesso più rapido ai servizi</string>
     <string name="chance_question_option_5_2">Maggiore sicurezza richiedendo due credenziali diverse</string>
     <string name="chance_question_option_5_3">Riduce lo spazio occupato dalle password</string>
     <string name="chance_question_option_5_4">Aumenta la velocità di connessione</string>
-
     <string name="chance_question_title_6">Backup dei dati</string>
     <string name="chance_question_prompt_6">Qual è il metodo più affidabile per proteggere i dati da perdita accidentale?</string>
     <string name="chance_question_option_6_1">Salvare tutto sul desktop</string>
     <string name="chance_question_option_6_2">Eseguire backup regolari su un dispositivo esterno e in cloud</string>
     <string name="chance_question_option_6_3">Lasciare i dati sul dispositivo originale</string>
     <string name="chance_question_option_6_4">Usare solo USB pubbliche</string>
-
     <string name="chance_question_title_7">Social engineering</string>
     <string name="chance_question_prompt_7">Qual è la tecnica principale utilizzata nel social engineering?</string>
     <string name="chance_question_option_7_1">Sfruttare vulnerabilità di rete</string>
     <string name="chance_question_option_7_2">Manipolare psicologicamente la vittima</string>
     <string name="chance_question_option_7_3">Criptare i dati con ransomware</string>
     <string name="chance_question_option_7_4">Intercettare pacchetti di rete</string>
-
     <string name="chance_question_title_8">Patch di sicurezza</string>
     <string name="chance_question_prompt_8">Perché è importante installare tempestivamente le patch di sicurezza?</string>
     <string name="chance_question_option_8_1">Per migliorare le prestazioni del sistema</string>
     <string name="chance_question_option_8_2">Per correggere vulnerabilità note prima che diventino exploit</string>
     <string name="chance_question_option_8_3">Per aumentare lo spazio libero su disco</string>
     <string name="chance_question_option_8_4">Per cambiare l\'interfaccia grafica</string>
-
     <string name="chance_question_title_9">Attacco DDoS</string>
     <string name="chance_question_prompt_9">Cosa caratterizza un attacco di tipo DDoS?</string>
     <string name="chance_question_option_9_1">Compromissione di un singolo host</string>
     <string name="chance_question_option_9_2">Diffusione di spyware tramite email</string>
     <string name="chance_question_option_9_3">Saturazione di banda tramite numerose richieste</string>
     <string name="chance_question_option_9_4">Criptazione dei file dell\'utente</string>
-
     <string name="chance_question_title_10">VPN e privacy</string>
     <string name="chance_question_prompt_10">Una VPN (Virtual Private Network) serve principalmente a:</string>
     <string name="chance_question_option_10_1">Velocizzare la connessione internet</string>
