@@ -123,33 +123,26 @@ class GameRepository(
             turn = lobbyMembers[0].userId,
         )
         try {
-            val existGame = supabase.from(GAME_TABLE).select {
+            var currentGame = supabase.from(GAME_TABLE).select {
                 filter { eq("lobby_id", lobbyId) }
             }.decodeSingleOrNull<Game>()
 
-            if (existGame == null) {
-                supabase.from(GAME_TABLE).upsert(newGame) {
+            if (currentGame == null) {
+                currentGame = supabase.from(GAME_TABLE).insert(newGame) {
                     select()
-                }.decodeSingle<Game>().let {
-                    currentGameLiveData.value = it
-                }
+                }.decodeSingle<Game>()
 
                 supabase.from(LOBBY_TABLE)
                     .update(mapOf("status" to LobbyStatus.IN_PROGRESS.value)) {
                         filter { eq("id", lobbyId) }
-                        select()
-                    }.decodeSingleOrNull<Lobby>()?.let { lobby ->
-                    currentLobbyLiveData.value = lobby
-                }
-
-            } else {
-                supabase.from(LOBBY_TABLE).select {
-                    filter { eq("id", lobbyId) }
-                }.decodeSingleOrNull<Lobby>()?.let { existLobby ->
-                    currentLobbyLiveData.value = existLobby
-                }
-                currentGameLiveData.value = existGame
+                    }
             }
+            val currentLobby = supabase.from(LOBBY_TABLE).select {
+                filter { eq("id", lobbyId) }
+            }.decodeSingleOrNull<Lobby>()
+
+            currentLobbyLiveData.value = currentLobby
+            currentGameLiveData.value = currentGame
 
             observeGame()
             observeGamePlayers()
