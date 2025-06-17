@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.data.repositories.game
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
@@ -46,6 +47,8 @@ class GameRepository(
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
     val currentPlayersLiveData: MutableLiveData<List<GamePlayer>> = MutableLiveData(emptyList())
+
+    private val userCache = mutableMapOf<String, User>()
 
     companion object {
         private val jsonParser = Json { ignoreUnknownKeys = true }
@@ -160,7 +163,6 @@ class GameRepository(
         MainScope().launch {
             gameFlow.collect { rawGame ->
                 if (rawGame != null) {
-                    Log.d("TEST GameRepository", "Observe Game updated: $rawGame")
                     currentGameLiveData.value = rawGame
                 } else {
                     currentGameLiveData.value = null
@@ -181,16 +183,26 @@ class GameRepository(
                 ),
             )
         MainScope().launch {
-            var seenOnce = false
-            gamePlayersFlow.filter { rawPlayers ->
-                if (!seenOnce) {
-                    seenOnce = rawPlayers.isNotEmpty()
-                    return@filter true
-                } else {
-                    rawPlayers.isNotEmpty()
+            var lastValid: List<GamePlayer> = emptyList()
+
+            gamePlayersFlow.collect { rawPlayers ->
+
+                if (rawPlayers.isNotEmpty()) {
+                    lastValid = rawPlayers
                 }
-            }.collect { rawPlayers ->
-                Log.d("TEST GameRepository", "Observe Game Players updated: $rawPlayers")
+
+                val allIds = lastValid.map { it.userId }.distinct()
+                val missingIds = allIds.filterNot { userCache.containsKey(it) }
+                if (missingIds.isNotEmpty()) {
+                    val fetchedUsers: List<User> = supabase.from("users").select {
+                        filter { isIn("id", missingIds) }
+                    }.decodeList<User>()
+
+                    fetchedUsers.forEach { user ->
+                        userCache[user.id] = user
+                    }
+                }
+
                 val players = rawPlayers.map { r ->
                     GamePlayer(
                         lobbyId = r.lobbyId,
@@ -200,7 +212,7 @@ class GameRepository(
                         cellPosition = r.cellPosition,
                         round = r.round,
                         winner = r.winner,
-                        user = r.user,
+                        user = userCache[r.userId]!!,
                     )
                 }
                 currentPlayersLiveData.postValue(players)
