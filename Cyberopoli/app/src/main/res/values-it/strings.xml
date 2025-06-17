@@ -41,7 +41,7 @@
     <string name="settings">Impostazioni</string>
     <string name="scan">Scansiona</string>
     <string name="invalid_code">Codice non valido</string>
-    <string name="qrcode_hint">Scansiona il codice QR per accedere alla lobby.</string>
+    <string name="qrcode_hint">Scansiona il codice QR per accedere alla lobby oppure inserisci manualmente il codice.</string>
     <string name="camera_permission_required">È necessario il permesso per usare la fotocamera per scansionare il codice QR.</string>
     <string name="request_camera">Richiedi permesso fotocamera</string>
     <string name="camera_permission_denied">Permesso fotocamera negato</string>

@@ -282,28 +282,16 @@ class GameViewModel(
                 }
 
                 GameTypeCell.VPN -> {
-                    if (_hasVpn.value) {
-                        _hasVpn.value = false
-                        gameRepository.removeGameEvent(
-                            GameEvent(
-                                lobbyId = game.value!!.lobbyId,
-                                gameId = game.value!!.id,
-                                senderUserId = player.value!!.userId,
-                                eventType = GameTypeCell.VPN,
-                            ),
-                        )
-                        showDialogPerType(GameTypeCell.VPN)
-                    } else {
-                        _hasVpn.value = true
-                        gameRepository.addGameEvent(
-                            GameEvent(
-                                lobbyId = game.value!!.lobbyId,
-                                gameId = game.value!!.id,
-                                senderUserId = player.value!!.userId,
-                                eventType = GameTypeCell.VPN,
-                            ),
-                        )
-                    }
+                    _hasVpn.value = true
+                    gameRepository.addGameEvent(
+                        GameEvent(
+                            lobbyId = game.value!!.lobbyId,
+                            gameId = game.value!!.id,
+                            senderUserId = player.value!!.userId,
+                            eventType = GameTypeCell.VPN,
+                        ),
+                    )
+                    showDialogPerType(GameTypeCell.VPN)
                 }
 
                 GameTypeCell.BROKEN_ROUTER -> {
@@ -388,7 +376,7 @@ class GameViewModel(
         _isLoadingQuestion.value = true
         when (eventType) {
             GameTypeCell.CHANCE -> {
-                val questions = chanceQuestions.value.orEmpty()
+                val questions = chanceQuestions.value
                 if (questions.isEmpty()) {
                     throw IllegalStateException("No questions available for event type: $eventType")
                 }
@@ -400,7 +388,7 @@ class GameViewModel(
             }
 
             GameTypeCell.HACKER -> {
-                val questions = hackerStatements.value.orEmpty()
+                val questions = hackerStatements.value
                 check(questions.isNotEmpty()) { "No questions available for event type: $eventType" }
 
                 val randomIndex = questions.indices.random()
@@ -449,6 +437,16 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
             updatePlayerPoints(+10)
+
+            _hasVpn.value = false
+            gameRepository.removeGameEvent(
+                GameEvent(
+                    lobbyId = game.value!!.lobbyId,
+                    gameId = game.value!!.id,
+                    senderUserId = player.value!!.userId,
+                    eventType = GameTypeCell.VPN,
+                ),
+            )
         }
     }
 

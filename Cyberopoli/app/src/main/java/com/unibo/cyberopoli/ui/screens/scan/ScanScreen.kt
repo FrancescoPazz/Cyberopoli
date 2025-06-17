@@ -133,7 +133,15 @@ fun ScanScreen(
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(R.string.qrcode_hint),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+
+            Spacer(Modifier.height(8.dp))
 
             CyberOutlinedTextField(
                 value = manualCode,
