@@ -10,8 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -23,11 +27,24 @@ fun CyberOutlinedTextField(
     onValueChange: (String) -> Unit = { value.value = it },
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    isRequired: Boolean = false,
 ) {
     OutlinedTextField(
         value = value.value,
         onValueChange = onValueChange,
-        label = { Text(placeholder) },
+        label = {
+            Text(
+                buildAnnotatedString {
+                    append(placeholder)
+                    if (isRequired) {
+                        append(" ")
+                        withStyle(style = SpanStyle(color = Color.Red)) {
+                            append("*")
+                        }
+                    }
+                }
+            )
+        },
         placeholder = { Text(placeholder) },
         leadingIcon = {
             imageVector?.let {
@@ -39,9 +56,9 @@ fun CyberOutlinedTextField(
         },
         shape = RoundedCornerShape(20.dp),
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp)),
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp)),
         singleLine = singleLine,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,

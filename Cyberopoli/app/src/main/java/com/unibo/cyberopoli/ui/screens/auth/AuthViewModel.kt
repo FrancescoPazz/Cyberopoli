@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unibo.cyberopoli.data.models.auth.AuthErrorContext
 import com.unibo.cyberopoli.data.models.auth.AuthResponse
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.repositories.auth.AuthRepository
@@ -36,15 +37,18 @@ class AuthViewModel(
     ) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepository.signIn(email, password).collect { resp ->
+            authRepository.signIn(
+                email.trim(),
+                password
+            ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
                         userRepository.loadUserData()
-                        _authState.value = AuthState.Authenticated
+                        _authState.value = AuthState.RegistrationSuccess
                     }
 
                     is AuthResponse.Failure -> {
-                        _authState.value = AuthState.Error(resp.message)
+                        _authState.value = AuthState.Error(resp.message, AuthErrorContext.LOGIN)
                     }
                 }
             }
@@ -60,13 +64,19 @@ class AuthViewModel(
     ) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepository.signUp(name, surname, username, email, password).collect { resp ->
+            authRepository.signUp(
+                name?.trim(),
+                surname?.trim(),
+                username.trim(),
+                email.trim(),
+                password
+            ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
                         _authState.value = AuthState.Unauthenticated
                     }
                     is AuthResponse.Failure -> {
-                        _authState.value = AuthState.Error(resp.message)
+                        _authState.value = AuthState.Error(resp.message, AuthErrorContext.SIGNUP)
                     }
                 }
             }
@@ -84,7 +94,7 @@ class AuthViewModel(
                     }
 
                     is AuthResponse.Failure -> {
-                        _authState.value = AuthState.Error(resp.message)
+                        _authState.value = AuthState.Error(resp.message, AuthErrorContext.GOOGLE_AUTH)
                     }
                 }
             }
@@ -94,7 +104,9 @@ class AuthViewModel(
     fun loginAnonymously(name: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            authRepository.signInAnonymously(name).collect { resp ->
+            authRepository.signInAnonymously(
+                name.trim()
+            ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
                         userRepository.loadUserData()
@@ -102,7 +114,7 @@ class AuthViewModel(
                     }
 
                     is AuthResponse.Failure -> {
-                        _authState.value = AuthState.Error(resp.message)
+                        _authState.value = AuthState.Error(resp.message, AuthErrorContext.ANONYMOUS_LOGIN)
                     }
                 }
             }
@@ -111,11 +123,13 @@ class AuthViewModel(
 
     fun sendPasswordReset(email: String) {
         viewModelScope.launch {
-            val resp = authRepository.resetPassword(email).single()
+            val resp = authRepository.resetPassword(
+                email.trim()
+            ).single()
             if (resp is AuthResponse.Success) {
                 _authState.value = AuthState.Unauthenticated
             } else if (resp is AuthResponse.Failure) {
-                _authState.value = AuthState.Error(resp.message)
+                _authState.value = AuthState.Error(resp.message, AuthErrorContext.PASSWORD_RESET)
             }
         }
     }
@@ -123,13 +137,16 @@ class AuthViewModel(
     private val emailForgotPassword = MutableLiveData("")
     fun sendOTPCode(email: String, otp: String, newPassword: String) {
         viewModelScope.launch {
-            val ok = authRepository.sendOtp(email, otp).single()
+            val ok = authRepository.sendOtp(
+                email.trim(),
+                otp.trim()
+            ).single()
             if (ok is AuthResponse.Success) {
                 emailForgotPassword.value = email
                 _authState.value = AuthState.Authenticated
                 changeForgottenPassword(newPassword)
             } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error("Impossible to send OTP code")
+                _authState.value = AuthState.Error("Impossible to send OTP code", AuthErrorContext.OTP_VERIFICATION)
             }
         }
     }
@@ -140,7 +157,7 @@ class AuthViewModel(
             if (ok is AuthResponse.Success) {
                 _authState.value = AuthState.Authenticated
             } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error("Impossible to change password")
+                _authState.value = AuthState.Error("Impossible to change password", AuthErrorContext.PASSWORD_RESET)
             }
         }
     }

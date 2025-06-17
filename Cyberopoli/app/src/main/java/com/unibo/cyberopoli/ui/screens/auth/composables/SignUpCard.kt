@@ -24,7 +24,6 @@ import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 
 @Composable
 fun SignUpCard(
@@ -78,6 +77,7 @@ fun SignUpCard(
             placeholder = stringResource(R.string.username),
             imageVector = Icons.Default.Face,
             singleLine = true,
+            isRequired = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -87,6 +87,7 @@ fun SignUpCard(
             placeholder = stringResource(R.string.email),
             imageVector = Icons.Default.Email,
             singleLine = true,
+            isRequired = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -97,6 +98,7 @@ fun SignUpCard(
             imageVector = Icons.Default.Lock,
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
+            isRequired = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -107,6 +109,7 @@ fun SignUpCard(
             imageVector = Icons.Default.Lock,
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
+            isRequired = true,
         )
 
         AuthButton(
@@ -119,12 +122,6 @@ fun SignUpCard(
                     email.value,
                     password.value,
                 )
-                navController.navigate(CyberopoliRoute.Auth) {
-                    popUpTo(CyberopoliRoute.Auth) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
             },
             enabled = authState.value != AuthState.Loading && passwordsMatch,
             modifier = Modifier.align(Alignment.CenterHorizontally),

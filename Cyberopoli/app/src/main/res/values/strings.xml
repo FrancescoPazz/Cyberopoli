@@ -142,8 +142,9 @@
     <string name="average_score">Average Score</string>
     <string name="logout_confirm">Logout Confirmation</string>
     <string name="logout_desc">Are you sure you want to log out?</string>
-    <string name="confirm">Confirmm</string>
+    <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="signup_success">Signup successful, check your email for the verification link</string>
     <string name="hacker_statement_title_1">Weak password</string>
     <string name="hacker_statement_content_1">Your password \'123456\' was discovered. Lose 4 security points.</string>
     <string name="hacker_statement_title_2">Unsecured public Wi-Fi</string>

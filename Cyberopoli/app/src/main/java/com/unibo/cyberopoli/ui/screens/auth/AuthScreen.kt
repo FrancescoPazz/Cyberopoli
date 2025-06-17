@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.auth.AuthErrorContext
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
@@ -51,12 +52,25 @@ fun AuthScreen(
     val context = LocalContext.current
     val authState = authParams.authState
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val signupSuccess = stringResource(R.string.signup_success)
 
     LaunchedEffect(authState.value) {
-        if (authState.value is AuthState.Error) {
-            Toast
-                .makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_LONG)
-                .show()
+        when (val state = authState.value) {
+            is AuthState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+
+                when (state.context) {
+                    AuthErrorContext.SIGNUP -> selectedTabIndex = 1
+                    AuthErrorContext.LOGIN -> selectedTabIndex = 0
+                    AuthErrorContext.ANONYMOUS_LOGIN -> selectedTabIndex = 2
+                    else -> { }
+                }
+            }
+            is AuthState.RegistrationSuccess -> {
+                Toast.makeText(context, signupSuccess, Toast.LENGTH_LONG).show()
+                selectedTabIndex = 0
+            }
+            else -> { }
         }
     }
     Scaffold(
