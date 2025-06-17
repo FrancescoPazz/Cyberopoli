@@ -66,7 +66,7 @@ fun SignUpCard(
         CyberOutlinedTextField(
             value = surname,
             placeholder = stringResource(R.string.last_name),
-            imageVector = Icons.Default.AccountCircle,
+            imageVector = Icons.Default.Person,
             singleLine = true,
         )
 

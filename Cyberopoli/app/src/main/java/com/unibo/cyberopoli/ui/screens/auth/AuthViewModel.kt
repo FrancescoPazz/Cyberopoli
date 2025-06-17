@@ -73,7 +73,7 @@ class AuthViewModel(
             ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        _authState.value = AuthState.Unauthenticated
+                        _authState.value = AuthState.RegistrationSuccess
                     }
                     is AuthResponse.Failure -> {
                         _authState.value = AuthState.Error(resp.message, AuthErrorContext.SIGNUP)
