@@ -144,6 +144,9 @@
     <string name="logout_desc">Sei sicuro di voler effettuare la disconnessione?</string>
     <string name="confirm">Conferma</string>
     <string name="cancel">Annulla</string>
+    <string name="validation_failed">Errore di validazione</string>
+    <string name="invalid_credentials">Credenziali non valide</string>
+    <string name="email_not_confirmed">Email non confermata</string>
     <string name="signup_success">Registrazione avvenuta con successo, controlla la tua email per il link di verifica</string>
     <string name="hacker_statement_title_1">Password debole</string>
     <string name="hacker_statement_content_1">Hanno scoperto la tua password \'123456\'. Perdi 4 punti di sicurezza.</string>

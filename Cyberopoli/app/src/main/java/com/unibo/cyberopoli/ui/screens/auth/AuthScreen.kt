@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.auth
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import com.unibo.cyberopoli.ui.screens.auth.composables.GuestCard
 import com.unibo.cyberopoli.ui.screens.auth.composables.LoginCard
 import com.unibo.cyberopoli.ui.screens.auth.composables.SignUpCard
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun AuthScreen(
     navController: NavController,
@@ -57,7 +59,19 @@ fun AuthScreen(
     LaunchedEffect(authState.value) {
         when (val state = authState.value) {
             is AuthState.Error -> {
-                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                val dialogId = state.message.split(" ")[0]
+                val dialogMessage = context.getString(
+                    context.resources.getIdentifier(
+                        dialogId,
+                        "string",
+                        context.packageName
+                    )
+                )
+                if (dialogMessage.isNotEmpty()) {
+                    Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                }
 
                 when (state.context) {
                     AuthErrorContext.SIGNUP -> selectedTabIndex = 1
