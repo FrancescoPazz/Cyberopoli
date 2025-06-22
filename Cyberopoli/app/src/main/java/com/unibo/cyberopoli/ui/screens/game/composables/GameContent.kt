@@ -40,9 +40,14 @@ fun GameContent(
     val player by gameParams.player
     val players by gameParams.players
     val isArMode = remember { mutableStateOf(false) }
+    val lobby = gameParams.lobby.value
 
     LaunchedEffect(players) {
         Log.d("GameContent", "Players updated: ${players ?: 0}")
+    }
+
+    LaunchedEffect(lobby?.status) {
+        Log.d("TESTEA GameContent", "Lobby status: ${lobby?.status}")
     }
 
     Scaffold(

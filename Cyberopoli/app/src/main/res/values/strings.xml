@@ -150,6 +150,10 @@
     <string name="email_not_confirmed">Email not confirmed</string>
     <string name="next">Next</string>
     <string name="close">Close</string>
+    <string name="you_win">You won!</string>
+    <string name="congratulations_you_won">Congratulations! You won the game!</string>
+    <string name="you_lose">You lose!</string>
+    <string name="better_luck_next_time">You lose the game! Try again next time!</string>
 
     <string name="hacker_statement_title_1">Weak password</string>
     <string name="hacker_statement_content_1">Your password \'123456\' was discovered. Lose 4 security points.</string>

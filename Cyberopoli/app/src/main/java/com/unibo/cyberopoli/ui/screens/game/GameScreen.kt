@@ -3,7 +3,9 @@ package com.unibo.cyberopoli.ui.screens.game
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.ui.components.AppLifecycleTracker
 import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
@@ -48,7 +50,35 @@ fun GameScreen(
     }
 
     if (game == null || players == null || player == null) {
-        LoadingScreen()
+        if (gameParams.gameOver.value) {
+            gameParams.refreshUserData()
+            val hasWon = player?.winner ?: false
+            val dialogTitle = if (hasWon) stringResource(R.string.you_win) else stringResource(R.string.you_lose)
+            val dialogMessage = if (hasWon)
+                stringResource(R.string.congratulations_you_won)
+            else
+                stringResource(R.string.better_luck_next_time)
+
+            GameDialog(
+                title = dialogTitle,
+                message = dialogMessage,
+                options = listOf("OK"),
+                onOptionSelected = { _ ->
+                    navController.navigate(CyberopoliRoute.Profile) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onDismiss = {
+                    navController.navigate(CyberopoliRoute.Profile) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        } else {
+            LoadingScreen()
+        }
     } else {
         GameContent(
             navController = navController,

@@ -12,6 +12,7 @@ import com.unibo.cyberopoli.data.models.game.GamePlayerRaw
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.data.repositories.auth.USERS_TABLE
 import com.unibo.cyberopoli.data.repositories.lobby.LOBBY_TABLE
 import com.unibo.cyberopoli.data.services.LLMService
 import com.unibo.cyberopoli.util.UsageStatsHelper
@@ -27,7 +28,6 @@ import io.github.jan.supabase.realtime.selectAsFlow
 import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.util.Locale
@@ -264,11 +264,7 @@ class GameRepository(
                         """
                             *,
                             users (
-                              id,
-                              username,
-                              name,
-                              surname,
-                              avatar_url
+                              *
                             )
                             """.trimIndent(),
                     ),
@@ -297,6 +293,7 @@ class GameRepository(
             val updatedPlayer = currentPlayerLiveData.value!!.copy(
                 round = currentPlayerLiveData.value!!.round + 1,
             )
+            Log.d("TESTEA", "Updating player: $updatedPlayer")
             supabase.from(GAME_PLAYERS_TABLE).update(updatedPlayer) {
                 filter {
                     eq("lobby_id", currentGameLiveData.value!!.lobbyId)
@@ -304,18 +301,18 @@ class GameRepository(
                     eq("user_id", updatedPlayer.userId)
                 }
             }
-            currentPlayerLiveData.postValue(updatedPlayer)
+            currentPlayerLiveData.value = updatedPlayer
         } catch (
             e: Exception, ) {
             throw e
         }
     }
 
-    override suspend fun updatePlayerPoints(value: Int) {
-        updatePlayerPoints(value, currentPlayerLiveData.value!!.userId)
+    override suspend fun updatePlayerScore(value: Int) {
+        updatePlayerScore(value, currentPlayerLiveData.value!!.userId)
     }
 
-    override suspend fun updatePlayerPoints(
+    override suspend fun updatePlayerScore(
         value: Int,
         ownerId: String,
     ) {
@@ -513,25 +510,64 @@ class GameRepository(
     suspend fun gameOver() {
         try {
             val game = currentGameLiveData.value ?: return
-            val player = currentPlayerLiveData.value ?: return
-            val winner = currentPlayersLiveData.value?.maxByOrNull { it.score } ?: return
 
             supabase.from(LOBBY_TABLE).update(mapOf("status" to LobbyStatus.FINISHED.value)) {
                 filter { eq("id", game.lobbyId) }
             }
 
-            supabase.from(GAME_PLAYERS_TABLE)
+            clearGameData()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun saveUserProgress() {
+        Log.d("testlbbd GameRepository", "Saving user progress... ${currentPlayersLiveData.value}")
+
+        if (currentPlayerLiveData.value == null || currentPlayerLiveData.value?.user == null) throw Exception()
+
+        try {
+            val user = currentPlayerLiveData.value!!.user!!
+            Log.d("test GameRepository", "User: $user")
+            val updatedUser = user.copy(
+                totalScore = user.totalScore + currentPlayerLiveData.value!!.score,
+                totalGames = user.totalGames + 1,
+                totalWins = if (currentPlayerLiveData.value!!.winner) user.totalWins + 1 else user.totalWins,
+            )
+            Log.d("test GameRepository", "User: ${user.totalScore} + ${currentPlayerLiveData.value!!.score}")
+            Log.d("TEST GameRepository", "asdaw ${user.totalScore + currentPlayerLiveData.value!!.score}")
+            Log.d("TEST GameRepository", "Saving user progress: $updatedUser")
+            supabase.from(USERS_TABLE).update(updatedUser) {
+                filter { eq("id", user.id) }
+            }
+        } catch (e: Exception) {
+            Log.e("GameRepository", "Error saving user progress: ${e.message}")
+            throw e
+        }
+    }
+
+    suspend fun clearGameData() {
+        try {
+            val game = currentGameLiveData.value ?: return
+            val player = currentPlayerLiveData.value ?: return
+            val winner = currentPlayersLiveData.value?.maxByOrNull { it.score } ?: return
+
+            val updatedPlayer = supabase.from(GAME_PLAYERS_TABLE)
                 .update(mapOf("winner" to (winner.userId == player.userId))) {
                     filter {
                         eq("lobby_id", game.lobbyId)
                         eq("game_id", game.id)
                         eq("user_id", player.userId)
                     }
-                }
+                    select()
+                }.decodeSingleOrNull<GamePlayer>()
+
+            currentPlayerLiveData.value = updatedPlayer
 
             currentGameLiveData.postValue(null)
             currentPlayersLiveData.postValue(emptyList())
         } catch (e: Exception) {
+            Log.e("GameRepository", "Error clearing game data: ${e.message}")
             throw e
         }
     }

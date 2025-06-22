@@ -14,9 +14,9 @@ interface IGameRepository {
 
     suspend fun joinGame(): GamePlayer?
 
-    suspend fun updatePlayerPoints(value: Int)
+    suspend fun updatePlayerScore(value: Int)
 
-    suspend fun updatePlayerPoints(
+    suspend fun updatePlayerScore(
         value: Int,
         ownerId: String,
     )

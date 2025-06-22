@@ -47,7 +47,6 @@ fun ProfileScreen(
                     ProfileHeader(
                         user = user,
                         onEditProfileClick = { profileParams.changeAvatar() },
-                        onShareClick = { /* TODO */ },
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))

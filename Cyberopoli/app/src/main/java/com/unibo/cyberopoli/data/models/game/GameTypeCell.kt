@@ -20,5 +20,5 @@ enum class GameTypeCell(val resource: Int? = null) {
     BROKEN_ROUTER(R.drawable.ic_broken_router),
     VPN(R.drawable.ic_vpn),
     OCCUPIED(R.drawable.ic_content),
-    COMMON(),
+    COMMON,
 }

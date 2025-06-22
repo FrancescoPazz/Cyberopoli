@@ -31,7 +31,7 @@ val appModule =
         viewModel { ProfileViewModel(get(), get(), get()) }
         viewModel { RankingViewModel(get()) }
         viewModel { LobbyViewModel(get(), get()) }
-        viewModel { GameViewModel(androidApplication(), get(), get()) }
+        viewModel { GameViewModel(androidApplication(), get(), get(), get()) }
 
         single { UsageStatsHelper(get()) }
         single { LLMService() }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -27,7 +26,6 @@ import com.unibo.cyberopoli.ui.components.UserAvatarInfo
 fun ProfileHeader(
     user: User,
     onEditProfileClick: () -> Unit,
-    onShareClick: () -> Unit,
 ) {
     CyberopoliGradientCard(
         modifier =
@@ -70,17 +68,6 @@ fun ProfileHeader(
                         )
                     },
                     onClick = onEditProfileClick,
-                )
-                ProfileButton(
-                    text = stringResource(R.string.share),
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(R.string.share),
-                            tint = MaterialTheme.colorScheme.tertiary,
-                        )
-                    },
-                    onClick = onShareClick,
                 )
             }
         }

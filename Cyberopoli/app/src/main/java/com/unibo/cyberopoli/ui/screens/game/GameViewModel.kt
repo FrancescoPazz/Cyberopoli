@@ -2,6 +2,7 @@ package com.unibo.cyberopoli.ui.screens.game
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +26,9 @@ import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
 import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
+import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
 import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,18 +36,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val app: Application,
+    private val lobbyRepository: LobbyRepository,
     private val gameRepository: GameRepository,
     userRepository: UserRepository
 ) : ViewModel() {
     val user:  LiveData<User?> = userRepository.currentUserLiveData
+    val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val cells = mutableStateOf(createBoard())
     private var chanceQuestions = mutableStateOf(chanceQuestions(app))
@@ -68,6 +75,9 @@ class GameViewModel(
 
     private val _isLoadingQuestion = MutableStateFlow(false)
     val isLoadingQuestion: StateFlow<Boolean> = _isLoadingQuestion.asStateFlow()
+
+    private val _gameOver = mutableStateOf(false)
+    val gameOver: State<Boolean> = _gameOver
 
     private val _skipNext = MutableStateFlow(false)
     private val _hasVpn = MutableStateFlow(false)
@@ -109,7 +119,7 @@ class GameViewModel(
         // Initial turn logic
         viewModelScope.launch {
             player.asFlow()
-                .combine(game.asFlow()) { playerValue, gameValue -> // game flow
+                .combine(game.asFlow()) { playerValue, gameValue -> // Game Flow
                     Pair(playerValue, gameValue)
                 }
                 .filterNotNull()
@@ -147,6 +157,22 @@ class GameViewModel(
                     Log.e("GameViewModel", "Error observing combined turn/player changes: ${e.message}", e)
                     _actionsPermitted.value = emptyList()
                 }.launchIn(viewModelScope)
+        }
+
+        viewModelScope.launch {
+            lobby.asFlow()
+                .filterNotNull()
+                .map { it.status }
+                .distinctUntilChanged()
+                .onEach { newStatus ->
+                    Log.d("testlbbd GameViewModel", "Lobby status changed: $newStatus")
+                    if (newStatus == LobbyStatus.FINISHED.value) {
+                        _gameOver.value = true
+                        gameRepository.saveUserProgress()
+                        gameRepository.clearGameData()
+                    }
+                }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -362,8 +388,8 @@ class GameViewModel(
                                 )
                             gameCell.value?.let {
                                 Log.d("GameViewModel", "Paying rent: $it to $cellOwner")
-                                updatePlayerPoints(-it)
-                                updatePlayerPoints(it, cellOwner)
+                                updatePlayerScore(-it)
+                                updatePlayerScore(it, cellOwner)
                             }
                         }
                     }
@@ -396,7 +422,7 @@ class GameViewModel(
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
                 hackerStatements.value = updatedQuestions
                 _dialog.value = question
-                updatePlayerPoints(question.points)
+                updatePlayerScore(question.points)
             }
 
             GameTypeCell.BLOCK -> {
@@ -436,7 +462,11 @@ class GameViewModel(
     private fun increasePlayerRound() {
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
-            updatePlayerPoints(+10)
+            Log.d("TESTEA GameViewModel", "Player round increased to ${player.value?.round}")
+            if (player.value?.round == 2) {
+                gameRepository.gameOver()
+            }
+            updatePlayerScore(+10)
 
             _hasVpn.value = false
             gameRepository.removeGameEvent(
@@ -450,18 +480,18 @@ class GameViewModel(
         }
     }
 
-    fun updatePlayerPoints(points: Int) {
+    fun updatePlayerScore(points: Int) {
         viewModelScope.launch {
-            gameRepository.updatePlayerPoints(points)
+            gameRepository.updatePlayerScore(points)
         }
     }
 
-    private fun updatePlayerPoints(
+    private fun updatePlayerScore(
         points: Int,
         ownerId: String,
     ) {
         viewModelScope.launch {
-            gameRepository.updatePlayerPoints(points, ownerId)
+            gameRepository.updatePlayerScore(points, ownerId)
         }
     }
 
@@ -505,7 +535,7 @@ class GameViewModel(
 
                 is GameDialogData.SubscribeChoice -> {
                     if (idx == 0) {
-                        updatePlayerPoints(-dlg.cost)
+                        updatePlayerScore(-dlg.cost)
                         _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
                         Log.d("GameViewModel", "Subscribed to ${_subscriptions.value}")
                         _actionsPermitted.value = listOf(
@@ -528,14 +558,14 @@ class GameViewModel(
                 }
 
                 is GameDialogData.HackerStatement -> {
-                    updatePlayerPoints(-dlg.points)
+                    updatePlayerScore(-dlg.points)
                     _dialog.value = null
                 }
 
                 is GameDialogData.ChanceQuestion -> {
                     val correct = (idx == dlg.correctIndex)
                     val delta = if (correct) dlg.points else -dlg.points
-                    updatePlayerPoints(delta)
+                    updatePlayerScore(delta)
                     val resultTitle =
                         if (correct) app.getString(R.string.correct_answer) else app.getString(R.string.wrong_answer)
                     val resultMessage =

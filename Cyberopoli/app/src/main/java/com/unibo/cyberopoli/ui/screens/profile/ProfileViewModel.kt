@@ -80,4 +80,10 @@ class ProfileViewModel(
             gameRepository.getGamesHistory()
         }
     }
+
+    fun refreshUserData() {
+        viewModelScope.launch {
+            userRepository.loadUserData()
+        }
+    }
 }
