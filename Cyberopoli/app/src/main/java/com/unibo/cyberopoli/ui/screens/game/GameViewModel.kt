@@ -422,7 +422,6 @@ class GameViewModel(
                 val updatedQuestions = questions.toMutableList().apply { removeAt(randomIndex) }
                 hackerStatements.value = updatedQuestions
                 _dialog.value = question
-                updatePlayerScore(question.points)
             }
 
             GameTypeCell.BLOCK -> {
@@ -463,7 +462,7 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
             Log.d("TESTEA GameViewModel", "Player round increased to ${player.value?.round}")
-            if (player.value?.round == 2) {
+            if (player.value?.round == 5) {
                 gameRepository.gameOver()
             }
             updatePlayerScore(+10)
