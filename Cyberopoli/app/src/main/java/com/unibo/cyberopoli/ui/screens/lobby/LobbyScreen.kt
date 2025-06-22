@@ -88,6 +88,7 @@ fun LobbyScreen(
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxSize(),
+                    isReady = lobbyParams.members.find { it.userId == lobbyParams.userId }?.isReady ?: false,
                 )
             }
         }

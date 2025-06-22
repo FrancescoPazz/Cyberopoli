@@ -17,6 +17,7 @@ import com.unibo.cyberopoli.ui.screens.auth.composables.AuthButton
 fun LobbyActions(
     isHost: State<Boolean?>,
     allReady: State<Boolean?>,
+    isReady: Boolean,
     onToggleReadyClick: () -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,
@@ -27,7 +28,7 @@ fun LobbyActions(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AuthButton(
-            text = stringResource(R.string.ready),
+            text = stringResource(if (isReady) R.string.not_ready else R.string.ready),
             onClick = onToggleReadyClick,
             modifier = Modifier.fillMaxWidth(0.8f),
         )

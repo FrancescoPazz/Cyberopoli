@@ -5,6 +5,7 @@ import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 data class LobbyParams(
+    val userId: String,
     val lobbyId: String,
     val isGuest: Boolean,
     val lobby: State<Lobby?>,

@@ -23,6 +23,7 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 fun LobbyContent(
     members: List<LobbyMember>,
     isHost: State<Boolean?>,
+    isReady: Boolean,
     allReady: State<Boolean?>,
     onToggleReadyClick: () -> Unit,
     onStartGameClick: () -> Unit,
@@ -62,6 +63,7 @@ fun LobbyContent(
             onStartGameClick = onStartGameClick,
             onExitClick = onExitClick,
             modifier = Modifier.align(Alignment.CenterHorizontally),
+            isReady = isReady,
         )
 
         Spacer(modifier = Modifier.height(16.dp))

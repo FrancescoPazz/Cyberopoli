@@ -189,6 +189,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             startLobbyFlow = lobbyViewModel::startLobbyFlow,
                             allReady = lobbyViewModel.allReady.observeAsState(),
                             setInApp = lobbyViewModel::setInApp,
+                            userId = profileViewModel.user.value?.id ?: "",
                         ),
                     )
                 }
