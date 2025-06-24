@@ -546,7 +546,6 @@ class GameRepository(
 
     override suspend fun getGamesHistory(): List<GameHistory> {
         try {
-            Log.d("TESTONE", "getGamesHistory calleddd")
             val userId = supabase.auth.currentSessionOrNull()?.user?.id ?: throw Exception("No user found")
 
             val historyItems: List<GameHistory> = supabase.from("v_games_history").select{
@@ -556,7 +555,6 @@ class GameRepository(
                 order("lobby_created_at", Order.ASCENDING)
             }.decodeList<GameHistory>()
 
-            Log.d("TESTONE", "History items: $historyItems")
             return historyItems
         } catch (e: Exception) {
             return emptyList()

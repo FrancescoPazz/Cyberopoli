@@ -19,6 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameHistory
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun MatchHistoryItem(match: GameHistory) {
@@ -39,18 +41,38 @@ fun MatchHistoryItem(match: GameHistory) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                color = MaterialTheme.colorScheme.primary,
-                text = "${R.string.games} - ${match.lobbyCreatedAt}",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = "${stringResource(R.string.games)} - ${
+                    try {
+                        val dateTime = LocalDateTime.parse(match.lobbyCreatedAt)
+                        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                        dateTime.format(formatter)
+                    } catch (e: Exception) {
+                        match.lobbyCreatedAt
+                    }
+                }",
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                color = MaterialTheme.colorScheme.secondary,
-                text = "${R.string.internet_points}: ${match.score}",
-                fontWeight = FontWeight.SemiBold,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = "${stringResource(R.string.internet_points)}: ",
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(
+                    color = MaterialTheme.colorScheme.secondary,
+                    text = "${match.score}",
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = "${stringResource(R.string.result)}: ",
+                    fontWeight = FontWeight.Medium,
+                )
                 val resultColor =
                     when (match.winner) {
                         true -> MaterialTheme.colorScheme.primary
@@ -58,9 +80,7 @@ fun MatchHistoryItem(match: GameHistory) {
                     }
                 Text(
                     color = resultColor,
-                    text = "${stringResource(
-                        R.string.result,
-                    )}: ${if (match.winner) stringResource(R.string.win) else stringResource(R.string.loss)}",
+                    text = if (match.winner) stringResource(R.string.win) else stringResource(R.string.loss),
                     fontWeight = FontWeight.SemiBold,
                 )
             }
