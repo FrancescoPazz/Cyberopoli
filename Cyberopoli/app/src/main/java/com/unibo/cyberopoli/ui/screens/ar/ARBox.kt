@@ -305,9 +305,13 @@ private fun clearPieces(
     pieceNodes: MutableList<Node>,
     modelInstances: MutableList<ModelInstance>
 ) {
+    pieceNodes.forEach { node ->
+        node.parent?.removeChildNode(node)
+    }
     pieceNodes.clear()
     modelInstances.clear()
 }
+
 
 private fun clearAll(
     childNodes: MutableList<Node>,
@@ -315,8 +319,10 @@ private fun clearAll(
     boardNodeState: MutableState<Node?>,
     pieceNodes: MutableList<Node>
 ) {
+    childNodes.forEach { it.parent?.removeChildNode(it) }
     childNodes.clear()
-    modelInstances.clear()
     pieceNodes.clear()
+    modelInstances.clear()
     boardNodeState.value = null
 }
+

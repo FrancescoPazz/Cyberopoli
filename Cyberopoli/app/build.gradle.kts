@@ -87,8 +87,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.guava)
-    implementation(libs.coil.compose)
 
     // Supabase
     implementation(platform(libs.bom.vversion))
