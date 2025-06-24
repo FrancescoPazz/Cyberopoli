@@ -143,8 +143,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         navController,
                         HomeParams(
                             user = profileViewModel.user.observeAsState(),
-                            gameHistories = profileViewModel.gameHistories.observeAsState(),
-                            topAppsUsage = profileViewModel.topAppsUsage.observeAsState(),
+                            gameHistories = profileViewModel.gameHistories,
+                            topAppsUsage = profileViewModel.topAppsUsage,
                         ),
                     )
                 }
@@ -181,6 +181,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                         ?: throw IllegalStateException("Scanned value is null"),
                                 ).toString(),
                             lobby = lobbyViewModel.lobby.observeAsState(),
+                            lobbyAlreadyStarted =
+                                lobbyViewModel.lobbyAlreadyStarted,
                             isGuest = isGuest,
                             members = members ?: throw IllegalStateException("Members are null"),
                             leaveLobby = lobbyViewModel::leaveLobby,

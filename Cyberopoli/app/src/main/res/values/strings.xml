@@ -154,6 +154,7 @@
     <string name="congratulations_you_won">Congratulations! You won the game!</string>
     <string name="you_lose">You lose!</string>
     <string name="better_luck_next_time">You lose the game! Try again next time!</string>
+    <string name="lobby_already_started">Lobby already started. Redirecting to Home…</string>
 
     <string name="hacker_statement_title_1">Weak password</string>
     <string name="hacker_statement_content_1">Your password \'123456\' was discovered. Lose 4 security points.</string>

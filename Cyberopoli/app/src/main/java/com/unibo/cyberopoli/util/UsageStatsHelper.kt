@@ -1,11 +1,16 @@
 package com.unibo.cyberopoli.util
 
+import android.app.AppOpsManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import android.os.Process
+import android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS
 
 data class SessionStats(
     val sessionCount: Int,
@@ -13,15 +18,34 @@ data class SessionStats(
     val unlockCount: Int,
 )
 
+fun Context.hasUsageStatsPermission(): Boolean {
+    val am = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+    val mode = am.checkOpNoThrow(
+        AppOpsManager.OPSTR_GET_USAGE_STATS,
+        Process.myUid(),
+        packageName
+    )
+    return mode == AppOpsManager.MODE_ALLOWED
+}
+
+fun Context.openUsageAccessSettings() {
+    startActivity(
+        Intent(ACTION_USAGE_ACCESS_SETTINGS)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    )
+}
+
 class UsageStatsHelper(private val context: Context) {
     suspend fun getTopUsedApps(limit: Int = 15): List<Pair<String, Double>> =
         withContext(Dispatchers.IO) {
+            Log.d("TESTONE", "getTopUsedApps called")
             val stats =
                 (context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager).queryUsageStats(
                     UsageStatsManager.INTERVAL_WEEKLY,
                     System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000,
                     System.currentTimeMillis(),
                 )
+            Log.d("TESTONE", "Usage stats size: ${stats.size}: ${stats.joinToString { it.packageName }}")
             stats.sortedByDescending { it.totalTimeInForeground }.take(limit)
                 .map { it.packageName to (it.totalTimeInForeground / 3_600_000.0) }
         }

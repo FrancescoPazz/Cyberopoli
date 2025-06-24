@@ -40,7 +40,7 @@ fun MatchHistoryItem(match: GameHistory) {
         ) {
             Text(
                 color = MaterialTheme.colorScheme.primary,
-                text = "${R.string.games} - ${match.dateCreated}",
+                text = "${R.string.games} - ${match.lobbyCreatedAt}",
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(4.dp))

@@ -1,6 +1,8 @@
 package com.unibo.cyberopoli.ui.screens.lobby
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
@@ -8,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
 import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.launch
@@ -19,6 +22,9 @@ class LobbyViewModel(
     val user: LiveData<User?> = userRepository.currentUserLiveData
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
     val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
+
+    private val _lobbyAlreadyStarted = mutableStateOf(false)
+    val lobbyAlreadyStarted : State<Boolean> = _lobbyAlreadyStarted
 
     val isHost: LiveData<Boolean> =
         lobby.map { currentLobby ->
@@ -38,10 +44,20 @@ class LobbyViewModel(
                 return@launch
             }
             try {
-                lobbyRepository.createOrGetLobby(lobbyId, user.value!!)
+                val response = lobbyRepository.createOrGetLobby(lobbyId, user.value!!)
+                if (response is LobbyResponse.AlreadyStarted) {
+                    Log.w("LobbyViewModel", "startLobbyFlow: Lobby already started")
+                    _lobbyAlreadyStarted.value = true
+                    return@launch
+                }
+                if (lobby.value == null) {
+                    Log.w("LobbyViewModel", "startLobbyFlow: Lobby is null after creation")
+                    return@launch
+                }
                 lobbyRepository.joinLobby(
                     LobbyMember(
-                        lobbyId = lobbyId,
+                        lobbyId = lobby.value?.id!!,
+                        lobbyCreatedAt = lobby.value?.createdAt!!,
                         userId = user.value!!.id,
                         user = user.value!!,
                     ),

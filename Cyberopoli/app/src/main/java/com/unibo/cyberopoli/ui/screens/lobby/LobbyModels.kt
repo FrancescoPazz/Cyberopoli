@@ -15,5 +15,6 @@ data class LobbyParams(
     val allReady: State<Boolean?>,
     val members: List<LobbyMember>,
     val setInApp: (inApp: Boolean) -> Unit,
+    val lobbyAlreadyStarted: State<Boolean>,
     val startLobbyFlow: (lobbyId: String) -> Unit,
 )

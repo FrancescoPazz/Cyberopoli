@@ -8,6 +8,7 @@ import kotlinx.serialization.Transient
 @Serializable
 data class GamePlayerRaw(
     @SerialName("lobby_id") val lobbyId: String,
+    @SerialName("lobby_created_at") val lobbyCreatedAt: String,
     @SerialName("game_id") val gameId: String,
     @SerialName("user_id") val userId: String,
     @SerialName("score") val score: Int,
@@ -20,6 +21,7 @@ data class GamePlayerRaw(
 @Serializable
 data class GamePlayer(
     @SerialName("lobby_id") val lobbyId: String,
+    @SerialName("lobby_created_at") val lobbyCreatedAt: String,
     @SerialName("game_id") val gameId: String,
     @SerialName("user_id") val userId: String,
     @SerialName("score") var score: Int,

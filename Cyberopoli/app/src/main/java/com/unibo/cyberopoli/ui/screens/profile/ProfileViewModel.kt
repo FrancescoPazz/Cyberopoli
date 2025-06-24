@@ -1,5 +1,9 @@
 package com.unibo.cyberopoli.ui.screens.profile
 
+import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,15 +22,17 @@ class ProfileViewModel(
 ) : ViewModel() {
     val user: LiveData<User?> = userRepository.currentUserLiveData
 
-    private val _topAppsUsage: MutableLiveData<List<Pair<String, Double>>> = MutableLiveData()
-    val topAppsUsage: LiveData<List<Pair<String, Double>>> = _topAppsUsage
+    private val _topAppsUsage = mutableStateListOf<Pair<String, Double>>()
+    val topAppsUsage: SnapshotStateList<Pair<String, Double>> = _topAppsUsage
 
-    private val _gameHistories: MutableLiveData<List<GameHistory>> = MutableLiveData()
-    val gameHistories: LiveData<List<GameHistory>> = _gameHistories
+    private val _gameHistories = mutableStateListOf<GameHistory>()
+    val gameHistories: SnapshotStateList<GameHistory> = _gameHistories
 
     init {
         viewModelScope.launch {
+            Log.d("TESTONE", "ProfileViewModel init called")
             getTopUsedApps()
+            getGameHistory()
         }
     }
 
@@ -38,10 +44,11 @@ class ProfileViewModel(
 
     private suspend fun getTopUsedApps() {
         try {
+            Log.d("TESTONE", "getTopUsedApps called")
             val appsUsage = usageStatsHelper.getTopUsedApps(5)
-            _topAppsUsage.postValue(appsUsage)
+            _topAppsUsage.addAll(appsUsage)
         } catch (e: Exception) {
-            _topAppsUsage.postValue(emptyList())
+            _topAppsUsage.clear()
         }
     }
 
@@ -77,7 +84,9 @@ class ProfileViewModel(
 
     fun getGameHistory() {
         viewModelScope.launch {
-            gameRepository.getGamesHistory()
+            Log.d("TESTONE", "getGameHistory called")
+            _gameHistories.addAll(gameRepository.getGamesHistory())
+            Log.d("TESTONE", "Game history size: ${_gameHistories}")
         }
     }
 

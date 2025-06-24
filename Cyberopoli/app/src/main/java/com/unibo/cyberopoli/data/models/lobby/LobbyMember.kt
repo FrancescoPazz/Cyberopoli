@@ -9,6 +9,7 @@ import kotlinx.serialization.Transient
 @Serializable
 data class LobbyMemberRaw(
     @SerialName("lobby_id") val lobbyId: String,
+    @SerialName("lobby_created_at") val lobbyCreatedAt: String,
     @SerialName("user_id") val userId: String,
     @SerialName("ready") var isReady: Boolean = false,
     @SerialName("joined_at") val joinedAt: String = Clock.System.now().toString(),
@@ -19,6 +20,7 @@ data class LobbyMemberRaw(
 @Serializable
 data class LobbyMember(
     @SerialName("lobby_id") val lobbyId: String,
+    @SerialName("lobby_created_at") val lobbyCreatedAt: String,
     @SerialName("user_id") val userId: String,
     @SerialName("ready") var isReady: Boolean = false,
     @SerialName("joined_at") val joinedAt: String = Clock.System.now().toString(),

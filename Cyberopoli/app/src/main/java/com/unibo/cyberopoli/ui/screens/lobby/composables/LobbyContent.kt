@@ -30,6 +30,8 @@ fun LobbyContent(
     onExitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val uniquedMembers = members.distinctBy { it.userId }
+
     Column(
         modifier =
             modifier
@@ -45,7 +47,7 @@ fun LobbyContent(
         )
 
         LazyColumn(modifier = modifier.weight(1f)) {
-            items(members, key = { it.userId }) { member ->
+            items(uniquedMembers, key = { it.userId }) { member ->
                 PlayerRow(
                     playerName = member.user?.username ?: member.userId,
                     isReady = member.isReady,

@@ -6,6 +6,7 @@ import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
+import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
 import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
 import com.unibo.cyberopoli.data.repositories.game.GAME_PLAYERS_TABLE
 import io.github.jan.supabase.SupabaseClient
@@ -37,12 +38,32 @@ class LobbyRepository(
     override suspend fun createOrGetLobby(
         lobbyId: String,
         host: User,
-    ) {
+    ) : LobbyResponse {
         val lobby = Lobby(id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value)
         try {
+            val lobbyAlreadyStarted =
+                supabase.from(LOBBY_TABLE).select {
+                    filter {
+                        and {
+                            eq("id", lobbyId)
+                            eq("status", LobbyStatus.IN_PROGRESS.value)
+                        }
+                    }
+                }.decodeSingleOrNull<Lobby>()
+
+            if (lobbyAlreadyStarted != null) {
+                Log.w("LobbyRepository", "createOrGetLobby: Lobby already started")
+                return LobbyResponse.AlreadyStarted
+            }
+
             var currentLobby =
                 supabase.from(LOBBY_TABLE).select {
-                    filter { eq("id", lobbyId) }
+                    filter {
+                        and {
+                            eq("id", lobbyId)
+                            eq("status", LobbyStatus.WAITING.value)
+                        }
+                    }
                 }.decodeSingleOrNull<Lobby>()
 
             if (currentLobby == null) {
@@ -53,8 +74,12 @@ class LobbyRepository(
             }
             currentLobbyLiveData.value = currentLobby
 
+            currentMembersLiveData.value = emptyList()
+
             observeLobby()
             observeLobbyMembers()
+
+            return LobbyResponse.Success
         } catch (e: Exception) {
             throw e
         }
@@ -64,7 +89,10 @@ class LobbyRepository(
     private fun observeLobby() {
         val lobbyFlow: Flow<Lobby?> =
             supabase.from(LOBBY_TABLE).selectSingleValueAsFlow(Lobby::id) {
-                eq("id", currentLobbyLiveData.value!!.id)
+                and {
+                    eq("id", currentLobbyLiveData.value!!.id)
+                    eq("created_at", currentLobbyLiveData.value!!.createdAt)
+                }
             }
         MainScope().launch {
             lobbyFlow.collect { rawLobby ->
@@ -114,6 +142,7 @@ class LobbyRepository(
                     lastValid.map { raw ->
                         LobbyMember(
                             lobbyId = raw.lobbyId,
+                            lobbyCreatedAt = raw.lobbyCreatedAt,
                             userId = raw.userId,
                             isReady = raw.isReady,
                             joinedAt = raw.joinedAt,
@@ -142,11 +171,15 @@ class LobbyRepository(
 
         val userId = session.user?.id
         val lobbyId = currentLobbyLiveData.value?.id ?: return
+        val lobbyCreatedAt =
+            currentLobbyLiveData.value?.createdAt
+                ?: throw IllegalStateException("Lobby created_at not found")
 
         try {
             supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("in_app" to inApp)) {
                 filter {
                     eq("lobby_id", lobbyId)
+                    eq("lobby_created_at", lobbyCreatedAt)
                     eq("user_id", userId!!)
                 }
             }
@@ -160,25 +193,31 @@ class LobbyRepository(
             val lobbyId =
                 currentLobbyLiveData.value?.id
                     ?: throw IllegalStateException("Lobby not found")
+            val currentLobbyCreatedAt =
+                currentLobbyLiveData.value?.createdAt
+                    ?: throw IllegalStateException("Lobby created_at not found")
+
             val raw: List<LobbyMemberRaw> =
                 supabase.from(LOBBY_MEMBERS_TABLE).select(
                     Columns.raw("*, users(*)"),
                 ) {
                     filter {
                         eq("lobby_id", lobbyId)
+                        eq("lobby_created_at", currentLobbyCreatedAt)
                     }
                 }.decodeList<LobbyMemberRaw>()
             val members =
                 raw.map { d ->
                     LobbyMember(
                         lobbyId = d.lobbyId,
+                        lobbyCreatedAt = d.lobbyCreatedAt,
                         userId = d.userId,
                         isReady = d.isReady,
                         joinedAt = d.joinedAt,
                         user = d.user,
                     )
                 }
-            currentMembersLiveData.value = members
+            currentMembersLiveData.value = members.distinctBy { it.userId }
             return members
         } catch (e: Exception) {
             return emptyList()
@@ -189,10 +228,14 @@ class LobbyRepository(
         val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
         val lobbyId =
             currentLobbyLiveData.value?.id ?: throw IllegalStateException("Lobby not found")
+        val currentLobbyCreatedAt =
+            currentLobbyLiveData.value?.createdAt
+                ?: throw IllegalStateException("Lobby created_at not found")
         return try {
             supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("ready" to isReady)) {
                 filter {
                     eq("lobby_id", lobbyId)
+                    eq("lobby_created_at", currentLobbyCreatedAt)
                     eq("user_id", userId)
                 }
                 select()
@@ -210,30 +253,56 @@ class LobbyRepository(
             val lobbyId =
                 currentLobbyLiveData.value?.id
                     ?: throw IllegalStateException("Lobby not found")
+            val createdAt =
+                currentLobbyLiveData.value?.createdAt
+                    ?: throw IllegalStateException("Lobby created_at not found")
 
             if (isHost) {
                 val currentMembers = fetchMembers()
                 val remainingMembers = currentMembers.filter { it.userId != userId }
 
+                Log.d("LobbyRepoImpl", "leaveLobby: Remaining members: ${remainingMembers.size}")
+                Log.d("Lobby", "leasdawadaveLobby: ${currentLobbyLiveData.value}")
+
                 if (remainingMembers.isEmpty()) {
-                    supabase.from(LOBBY_TABLE).delete { filter { eq("id", lobbyId) } }
+                    supabase.from(LOBBY_TABLE).delete {
+                        filter {
+                            and {
+                                eq("id", lobbyId)
+                                eq("created_at", createdAt)
+                            }
+                        }
+                    }
                 } else {
                     val newHostId = remainingMembers.first().userId
                     supabase.from(LOBBY_TABLE).update(mapOf("host_id" to newHostId)) {
-                        filter { eq("id", lobbyId) }
+                        filter {
+                            and {
+                                eq("id", lobbyId)
+                                eq("created_at", createdAt)
+                            }
+                        }
                     }
                 }
             }
 
             supabase.from(LOBBY_MEMBERS_TABLE).delete {
                 filter {
-                    eq("user_id", userId)
+                    and {
+                        eq("lobby_id", lobbyId)
+                        eq("lobby_created_at", createdAt)
+                        eq("user_id", userId)
+                    }
                 }
             }
 
             supabase.from(GAME_PLAYERS_TABLE).delete {
                 filter {
-                    eq("user_id", userId)
+                    and {
+                        eq("lobby_id", lobbyId)
+                        eq("lobby_created_at", createdAt)
+                        eq("user_id", userId)
+                    }
                 }
             }
             setInApp(false)

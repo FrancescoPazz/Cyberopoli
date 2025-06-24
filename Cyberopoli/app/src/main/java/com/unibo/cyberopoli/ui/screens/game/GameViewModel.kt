@@ -312,6 +312,7 @@ class GameViewModel(
                     gameRepository.addGameEvent(
                         GameEvent(
                             lobbyId = game.value!!.lobbyId,
+                            lobbyCreatedAt = game.value!!.lobbyCreatedAt,
                             gameId = game.value!!.id,
                             senderUserId = player.value!!.userId,
                             eventType = GameTypeCell.VPN,
@@ -462,7 +463,7 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
             Log.d("TESTEA GameViewModel", "Player round increased to ${player.value?.round}")
-            if (player.value?.round == 5) {
+            if (player.value?.round == 2) {
                 gameRepository.gameOver()
             }
             updatePlayerScore(+10)
@@ -471,6 +472,7 @@ class GameViewModel(
             gameRepository.removeGameEvent(
                 GameEvent(
                     lobbyId = game.value!!.lobbyId,
+                    lobbyCreatedAt = game.value!!.lobbyCreatedAt,
                     gameId = game.value!!.id,
                     senderUserId = player.value!!.userId,
                     eventType = GameTypeCell.VPN,
@@ -499,6 +501,7 @@ class GameViewModel(
             gameRepository.addGameEvent(
                 GameEvent(
                     lobbyId = game.value!!.lobbyId,
+                    lobbyCreatedAt = game.value!!.lobbyCreatedAt,
                     gameId = game.value!!.id,
                     senderUserId = player.value!!.userId,
                     recipientUserId = target.userId,
@@ -521,6 +524,7 @@ class GameViewModel(
                                 _gameAssets.value +=
                                     GameAsset(
                                         lobbyId = game.value!!.lobbyId,
+                                        lobbyCreatedAt = game.value!!.lobbyCreatedAt,
                                         gameId = game.value!!.id,
                                         cellId = player.value!!.cellPosition.toString(),
                                         ownerId = player.value!!.userId,

@@ -154,6 +154,7 @@
     <string name="congratulations_you_won">Congratulazioni! Hai vinto la partita!</string>
     <string name="you_lose">Hai perso!</string>
     <string name="better_luck_next_time">Hai perso la partita! Riprova la prossima volta!</string>
+    <string name="lobby_already_started">La lobby è già iniziata. Riportando alla Home…</string>
 
     <string name="hacker_statement_title_1">Password debole</string>
     <string name="hacker_statement_content_1">Hanno scoperto la tua password \'123456\'. Perdi 4 punti di sicurezza.</string>

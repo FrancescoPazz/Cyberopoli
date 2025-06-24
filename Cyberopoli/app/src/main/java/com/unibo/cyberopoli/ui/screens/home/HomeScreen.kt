@@ -23,15 +23,17 @@ import com.unibo.cyberopoli.ui.screens.home.composables.MostUsedAppsCard
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayActionsCard
 import com.unibo.cyberopoli.ui.screens.home.composables.PlayerWelcomeCard
 import com.unibo.cyberopoli.ui.screens.loading.LoadingScreen
+import com.unibo.cyberopoli.util.openUsageAccessSettings
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     homeParams: HomeParams,
 ) {
-    val topApps by homeParams.topAppsUsage
+    val context = navController.context
+    val topApps = homeParams.topAppsUsage
     val currentUserState = homeParams.user
-    val gameHistories = homeParams.gameHistories.value
+    val gameHistories = homeParams.gameHistories
 
     Scaffold(
         topBar = { TopBar(navController) },
@@ -56,11 +58,12 @@ fun HomeScreen(
 
                 PlayActionsCard(onNewGameClick = { navController.navigate(CyberopoliRoute.Scan) })
 
-                topApps?.let { apps ->
-                    MostUsedAppsCard(
-                        appsUsage = apps,
-                    )
-                }
+                MostUsedAppsCard(
+                    appsUsage = topApps,
+                    onRequestPermission = {
+                        context.openUsageAccessSettings()
+                    },
+                )
 
                 MatchHistoryCard(gameHistory = gameHistories)
 
