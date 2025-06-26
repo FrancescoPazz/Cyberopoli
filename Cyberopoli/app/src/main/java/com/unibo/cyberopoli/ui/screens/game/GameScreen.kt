@@ -62,14 +62,14 @@ fun GameScreen(
                 title = dialogTitle,
                 message = dialogMessage,
                 options = listOf("OK"),
-                onOptionSelected = { _ ->
+                onOptionSelected = {
                     navController.navigate(CyberopoliRoute.Profile) {
                         launchSingleTop = true
                         restoreState = true
                     }
+                    gameParams.resetGame()
                 },
-                onDismiss = {
-                }
+                onDismiss = { }
             )
         } else {
             LoadingScreen()

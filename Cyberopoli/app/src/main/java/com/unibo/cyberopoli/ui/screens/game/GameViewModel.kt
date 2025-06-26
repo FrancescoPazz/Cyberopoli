@@ -60,6 +60,8 @@ class GameViewModel(
     // Mine variables
     val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
     val players: LiveData<List<GamePlayer>> = gameRepository.currentPlayersLiveData
+    val events: LiveData<List<GameEvent>> = gameRepository.currentGameEventsLiveData
+    val assets: LiveData<List<GameAsset>> = gameRepository.currentGameAssetsLiveData
 
     private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
     val subscriptions: StateFlow<List<GameTypeCell>> = _subscriptions.asStateFlow()
@@ -82,9 +84,7 @@ class GameViewModel(
     private val _skipNext = MutableStateFlow(false)
     private val _hasVpn = MutableStateFlow(false)
     private val _playersBlocked = MutableStateFlow<Set<GamePlayer>>(emptySet())
-    private val _gameAssets = MutableStateFlow<List<GameAsset>>(emptyList())
     private val _previousTurn = MutableStateFlow<String?>(null)
-    private val _events = MutableStateFlow<List<GameEvent>>(emptyList())
 
     private val rollDiceAction = GameAction(
         id = "roll_dice",
@@ -173,6 +173,25 @@ class GameViewModel(
                     }
                 }.launchIn(viewModelScope)
         }
+        viewModelScope.launch {
+            gameRepository.currentGameEventsLiveData
+                .asFlow()
+                .filterNotNull()
+                .distinctUntilChanged()
+                .collect { events ->
+                    Log.d("GameViewModel", "GameEvents aggiornati: $events")
+                }
+        }
+
+        viewModelScope.launch {
+            gameRepository.currentGameAssetsLiveData
+                .asFlow()
+                .filterNotNull()
+                .distinctUntilChanged()
+                .collect { assets ->
+                    Log.d("GameViewModel", "GameAssets aggiornati: $assets")
+                }
+        }
     }
 
     fun resetGame() {
@@ -184,9 +203,7 @@ class GameViewModel(
         _skipNext.value = false
         _hasVpn.value = false
         _playersBlocked.value = emptySet()
-        _gameAssets.value = emptyList()
         _previousTurn.value = null
-        _events.value = emptyList()
     }
 
     private fun nextTurn() {
@@ -279,9 +296,9 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
-        val isCellOwned = _gameAssets.value.any { it.cellId == gameCell.id }
+        val isCellOwned = assets.value?.any { it.cellId == gameCell.id }
         val amISubscribe = _subscriptions.value.contains(gameTypeCell)
-        val amIOwner = _gameAssets.value.any { it.ownerId == player.value?.userId }
+        val amIOwner = assets.value?.any { it.ownerId == player.value?.userId }
 
         viewModelScope.launch {
             _actionsPermitted.value = listOf(
@@ -325,13 +342,6 @@ class GameViewModel(
                             eventType = GameTypeCell.VPN,
                         ),
                     )
-                    _events.value += GameEvent(
-                        lobbyId = game.value!!.lobbyId,
-                        lobbyCreatedAt = game.value!!.lobbyCreatedAt,
-                        gameId = game.value!!.id,
-                        senderUserId = player.value!!.userId,
-                        eventType = GameTypeCell.VPN,
-                    )
                     showDialogPerType(GameTypeCell.VPN)
                 }
 
@@ -340,7 +350,7 @@ class GameViewModel(
                 }
 
                 else -> {
-                    if (!isCellOwned) {
+                    if (!isCellOwned!!) {
                         if (!amISubscribe) {
                             _actionsPermitted.value += listOf(
                                 GameAction(
@@ -387,14 +397,14 @@ class GameViewModel(
                                 ),
                             )
                         }
-                    } else if (!amIOwner) {
+                    } else if (!amIOwner!!) {
                         if (_hasVpn.value) {
                             _dialog.value = GameDialogData.Alert(
                                 title = app.getString(R.string.get_vpn),
                                 message = app.getString(R.string.vpn_avoid_pay),
                             )
                         } else {
-                            val cellOwner = _gameAssets.value.firstOrNull { asset ->
+                            val cellOwner = assets.value?.firstOrNull { asset ->
                                 asset.cellId == gameCell.id
                             }?.ownerId!!
                             _dialog.value = GameDialogData.Alert(
@@ -491,7 +501,6 @@ class GameViewModel(
                     eventType = GameTypeCell.VPN,
                 ),
             )
-            _events.value = _events.value.filterNot { it.eventType == GameTypeCell.VPN }
         }
     }
 
@@ -522,14 +531,6 @@ class GameViewModel(
                     eventType = GameTypeCell.BLOCK,
                 ),
             )
-            _events.value += GameEvent(
-                lobbyId = game.value!!.lobbyId,
-                lobbyCreatedAt = game.value!!.lobbyCreatedAt,
-                gameId = game.value!!.id,
-                senderUserId = player.value!!.userId,
-                recipientUserId = target.userId,
-                eventType = GameTypeCell.BLOCK,
-            )
             _playersBlocked.value += target
             endTurn()
         }
@@ -548,14 +549,16 @@ class GameViewModel(
                                 GameTypeCell.OCCUPIED,
                                 "Occupied"
                             )
-                            _gameAssets.value += GameAsset(
-                                lobbyId = game.value!!.lobbyId,
-                                lobbyCreatedAt = game.value!!.lobbyCreatedAt,
-                                gameId = game.value!!.id,
-                                cellId = player.value!!.cellPosition.toString(),
-                                ownerId = player.value!!.userId,
-                                placedAtRound = player.value!!.round,
-                                expiresAtRound = player.value!!.round + 1,
+                            gameRepository.addGameAsset(
+                                GameAsset(
+                                    lobbyId = game.value!!.lobbyId,
+                                    lobbyCreatedAt = game.value!!.lobbyCreatedAt,
+                                    gameId = game.value!!.id,
+                                    cellId = player.value!!.cellPosition.toString(),
+                                    ownerId = player.value!!.userId,
+                                    placedAtRound = player.value!!.round,
+                                    expiresAtRound = player.value!!.round + 1,
+                                )
                             )
                         }
                     }

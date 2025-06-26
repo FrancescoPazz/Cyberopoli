@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.game.Game
+import com.unibo.cyberopoli.data.models.game.GameAsset
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.data.models.game.GameEvent
 import com.unibo.cyberopoli.data.models.game.GameHistory
@@ -20,7 +21,6 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
@@ -37,6 +37,7 @@ import com.unibo.cyberopoli.data.repositories.game.IGameRepository as DomainGame
 
 const val GAME_TABLE = "games"
 const val GAME_EVENTS_TABLE = "game_events"
+const val GAME_ASSETS_TABLE = "game_assets"
 const val GAME_PLAYERS_TABLE = "game_players"
 
 class GameRepository(
@@ -48,6 +49,8 @@ class GameRepository(
     val currentGameLiveData: MutableLiveData<Game?> = MutableLiveData()
     val currentPlayerLiveData: MutableLiveData<GamePlayer?> = MutableLiveData()
     val currentPlayersLiveData: MutableLiveData<List<GamePlayer>> = MutableLiveData(emptyList())
+    val currentGameEventsLiveData: MutableLiveData<List<GameEvent>> = MutableLiveData(emptyList())
+    val currentGameAssetsLiveData: MutableLiveData<List<GameAsset>> = MutableLiveData(emptyList())
 
     private val userCache = mutableMapOf<String, User>()
 
@@ -167,6 +170,8 @@ class GameRepository(
 
             observeGame()
             observeGamePlayers()
+            observeGameEvents()
+            observeGameAssets()
         } catch (e: Exception) {
             throw e
         }
@@ -236,6 +241,69 @@ class GameRepository(
                     )
                 }
                 currentPlayersLiveData.postValue(players)
+            }
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeGameEvents() {
+        val gameEventsFlow: Flow<List<GameEvent>> =
+            supabase.from(GAME_EVENTS_TABLE).selectAsFlow(
+                primaryKey = GameEvent::eventType,
+                filter = FilterOperation(
+                    "game_id",
+                    FilterOperator.EQ,
+                    currentGameLiveData.value!!.id,
+                ),
+            )
+        MainScope().launch {
+            gameEventsFlow.collect { rawEvents ->
+                if (rawEvents.isNotEmpty()) {
+                    val events = rawEvents.map { r ->
+                        GameEvent(
+                            lobbyId = r.lobbyId,
+                            lobbyCreatedAt = r.lobbyCreatedAt,
+                            gameId = r.gameId,
+                            senderUserId = r.senderUserId,
+                            recipientUserId = r.recipientUserId,
+                            eventType = r.eventType,
+                            value = r.value,
+                            createdAt = r.createdAt,
+                        )
+                    }
+                    currentGameEventsLiveData.postValue(events)
+                }
+            }
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    private fun observeGameAssets() {
+        val gameAssetsFlow: Flow<List<GameAsset>> =
+            supabase.from(GAME_ASSETS_TABLE).selectAsFlow(
+                primaryKey = GameAsset::cellId,
+                filter = FilterOperation(
+                    "game_id",
+                    FilterOperator.EQ,
+                    currentGameLiveData.value!!.id,
+                ),
+            )
+        MainScope().launch {
+            gameAssetsFlow.collect { rawAssets ->
+                if (rawAssets.isNotEmpty()) {
+                    val assets = rawAssets.map { r ->
+                        GameAsset(
+                            lobbyId = r.lobbyId,
+                            lobbyCreatedAt = r.lobbyCreatedAt,
+                            gameId = r.gameId,
+                            cellId = r.cellId,
+                            ownerId = r.ownerId,
+                            placedAtRound = r.placedAtRound,
+                            expiresAtRound = r.expiresAtRound,
+                        )
+                    }
+                    currentGameAssetsLiveData.postValue(assets)
+                }
             }
         }
     }
@@ -544,6 +612,53 @@ class GameRepository(
         }
     }
 
+    suspend fun addGameAsset(gameAsset: GameAsset): GameAsset {
+        try {
+            val inserted: GameAsset = supabase.from(GAME_ASSETS_TABLE).insert(gameAsset) {
+                select()
+            }.decodeSingle()
+            return inserted
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun removeGameAsset(gameAsset: GameAsset) {
+        try {
+            supabase.from(GAME_ASSETS_TABLE).delete {
+                filter {
+                    and {
+                        eq("lobby_id", gameAsset.lobbyId)
+                        eq("lobby_created_at", gameAsset.lobbyCreatedAt)
+                        eq("game_id", gameAsset.gameId)
+                        eq("cell_id", gameAsset.cellId)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun getGameAssets(): List<GameAsset> {
+        if (currentGameLiveData.value == null) throw Exception("No game found")
+
+        try {
+            val raw: List<GameAsset> = supabase.from(GAME_ASSETS_TABLE).select {
+                filter {
+                    and {
+                        eq("lobby_id", currentGameLiveData.value!!.lobbyId)
+                        eq("lobby_created_at", currentGameLiveData.value!!.lobbyCreatedAt)
+                        eq("game_id", currentGameLiveData.value!!.id)
+                    }
+                }
+            }.decodeList()
+            return raw
+        } catch (e: Exception) {
+            return emptyList()
+        }
+    }
+
     override suspend fun getGamesHistory(): List<GameHistory> {
         try {
             val userId = supabase.auth.currentSessionOrNull()?.user?.id ?: throw Exception("No user found")
@@ -581,18 +696,13 @@ class GameRepository(
     }
 
     suspend fun saveUserProgress() {
-        Log.d("testlbbd GameRepository", "Saving user progress... ${currentPlayersLiveData.value}")
-
-        if (currentPlayerLiveData.value == null || currentPlayerLiveData.value?.user == null) throw Exception()
+        if (currentPlayerLiveData.value == null) throw Exception("No player found")
 
         try {
-            val user = currentPlayerLiveData.value!!.user!!
-            Log.d("test GameRepository", "User: $user")
-            if (currentPlayerLiveData.value!!.winner) {
-                Log.d("test GameRepository", "User is a winner, updating user progress...")
-            } else {
-                Log.d("test GameRepository", "User is not a winner, no score update.")
-            }
+            Log.d("GameRepository", "Saving user progress for player: ${currentPlayerLiveData.value!!.userId}")
+            Log.d("GameRepository", "Current players: ${supabase.auth.currentSessionOrNull()?.user?.id}")
+            val user = currentPlayersLiveData.value?.find { it.userId == currentPlayerLiveData.value!!.userId }?.user
+                ?: throw Exception("User not found in current players")
             val winner = currentPlayersLiveData.value?.maxByOrNull { it.score } ?: return
 
             val updatedUser = user.copy(
@@ -600,9 +710,6 @@ class GameRepository(
                 totalGames = user.totalGames + 1,
                 totalWins = if (winner.userId == user.id) user.totalWins + 1 else user.totalWins,
             )
-            Log.d("test GameRepository", "User: ${user.totalScore} + ${currentPlayerLiveData.value!!.score}")
-            Log.d("TEST GameRepository", "asdaw ${user.totalScore + currentPlayerLiveData.value!!.score}")
-            Log.d("TEST GameRepository", "Saving user progress: $updatedUser")
             supabase.from(USERS_TABLE).update(updatedUser) {
                 filter { eq("id", user.id) }
             }
@@ -630,8 +737,11 @@ class GameRepository(
 
             currentPlayerLiveData.value = updatedPlayer
 
+            currentLobbyLiveData.postValue(null)
             currentGameLiveData.postValue(null)
             currentPlayersLiveData.postValue(emptyList())
+            currentGameEventsLiveData.postValue(emptyList())
+            currentGameAssetsLiveData.postValue(emptyList())
         } catch (e: Exception) {
             Log.e("GameRepository", "Error clearing game data: ${e.message}")
             throw e
