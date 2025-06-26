@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.settings
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.settings.ThemeState
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
@@ -24,4 +26,12 @@ class SettingsViewModel(
         viewModelScope.launch {
             settingsRepository.setTheme(newTheme)
         }
+
+    val language = settingsRepository.language
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), Locale.getDefault().language)
+
+    fun changeLanguage(langCode: String) = viewModelScope.launch {
+        Log.d("SettingsViewModel", "Changing language to: $langCode")
+        settingsRepository.setLanguage(langCode)
+    }
 }

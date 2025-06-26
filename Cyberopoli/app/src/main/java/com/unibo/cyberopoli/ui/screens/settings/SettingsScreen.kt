@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.settings
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,10 +18,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,6 +54,8 @@ fun SettingScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showRulesDialog by remember { mutableStateOf(false) }
     var currentRulePage by remember { mutableIntStateOf(0) }
+    val lang by settingsParams.language.collectAsState()
+
 
     val rulesPages = CyberopoliInstructions(context)
 
@@ -162,6 +168,31 @@ fun SettingScreen(
                 currentTheme = settingsParams.themeState.theme,
                 onThemeSelected = { settingsParams.changeTheme(it) },
             )
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+
+            Text(
+                text = stringResource(R.string.choose_language),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Row {
+                listOf("it" to stringResource(R.string.italian), "en" to stringResource(R.string.english)).forEach { (code, label) ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(end = 16.dp)
+                    ) {
+                        RadioButton(
+                            selected = (lang == code),
+                            onClick = {
+                                Log.d("SettingsScreen", "Changing language to $code")
+                                settingsParams.changeLanguage(code)
+                            }
+                        )
+                        Text(text = label)
+                    }
+                }
+            }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 

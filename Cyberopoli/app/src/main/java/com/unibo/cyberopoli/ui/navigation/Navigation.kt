@@ -4,9 +4,11 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -41,6 +43,7 @@ import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
+import java.util.Locale
 import java.util.UUID
 
 sealed interface CyberopoliRoute {
@@ -80,9 +83,20 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val gameViewModel = koinViewModel<GameViewModel>()
 
     val authState = authViewModel.authState.observeAsState()
+    val language = settingsViewModel.language.collectAsStateWithLifecycle()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
 
     KoinContext {
+        LaunchedEffect(language.value) {
+            val locale = Locale(language.value)
+            Locale.setDefault(locale)
+            val config = context.resources.configuration
+            config.setLocale(locale)
+            context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        }
+
         CyberopoliTheme(
             darkTheme =
                 when (themeState.theme) {
@@ -135,6 +149,8 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             logout = authViewModel::logout,
                             authState = authViewModel.authState,
                             changeTheme = settingsViewModel::changeTheme,
+                            language = settingsViewModel.language,
+                            changeLanguage = settingsViewModel::changeLanguage,
                         ),
                     )
                 }
