@@ -588,10 +588,17 @@ class GameRepository(
         try {
             val user = currentPlayerLiveData.value!!.user!!
             Log.d("test GameRepository", "User: $user")
+            if (currentPlayerLiveData.value!!.winner) {
+                Log.d("test GameRepository", "User is a winner, updating user progress...")
+            } else {
+                Log.d("test GameRepository", "User is not a winner, no score update.")
+            }
+            val winner = currentPlayersLiveData.value?.maxByOrNull { it.score } ?: return
+
             val updatedUser = user.copy(
                 totalScore = user.totalScore + currentPlayerLiveData.value!!.score,
                 totalGames = user.totalGames + 1,
-                totalWins = if (currentPlayerLiveData.value!!.winner) user.totalWins + 1 else user.totalWins,
+                totalWins = if (winner.userId == user.id) user.totalWins + 1 else user.totalWins,
             )
             Log.d("test GameRepository", "User: ${user.totalScore} + ${currentPlayerLiveData.value!!.score}")
             Log.d("TEST GameRepository", "asdaw ${user.totalScore + currentPlayerLiveData.value!!.score}")

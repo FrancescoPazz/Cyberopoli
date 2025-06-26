@@ -2,22 +2,33 @@ package com.unibo.cyberopoli.ui.screens.game.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.unibo.cyberopoli.data.models.game.GameDialogData
 
 @Composable
 fun QuestionResultDialog(
-    data: GameDialogData.QuestionResult,
-    onDismiss: () -> Unit
+    data: GameDialogData.QuestionResult, onDismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss, properties = DialogProperties(
+            dismissOnClickOutside = false, dismissOnBackPress = false
+        )
+    ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
             tonalElevation = 8.dp,
@@ -59,8 +70,7 @@ fun QuestionResultDialog(
                             .border(1.dp, borderColor, RoundedCornerShape(8.dp))
                     ) {
                         Text(
-                            text = label,
-                            modifier = Modifier.padding(12.dp)
+                            text = label, modifier = Modifier.padding(12.dp)
                         )
                     }
                 }

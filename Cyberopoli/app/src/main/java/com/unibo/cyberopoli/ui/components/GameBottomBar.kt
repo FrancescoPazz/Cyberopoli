@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.data.models.game.GameAction
 
@@ -32,19 +34,24 @@ fun GameBottomBar(actions: List<GameAction>) {
                             Icon(
                                 painter = it,
                                 contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
                             )
                         }
                         Spacer(Modifier.width(4.dp))
 
-                        val resId =
-                            remember(action.id) {
-                                context.resources.getIdentifier(
-                                    action.id,
-                                    "string",
-                                    context.packageName,
-                                )
-                            }
-                        Text(stringResource(resId))
+                        val resId = remember(action.id) {
+                            context.resources.getIdentifier(
+                                action.id,
+                                "string",
+                                context.packageName,
+                            )
+                        }
+                        Text(
+                            stringResource(resId),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 },
                 selected = false,

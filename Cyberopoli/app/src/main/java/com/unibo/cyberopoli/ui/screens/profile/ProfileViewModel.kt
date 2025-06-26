@@ -82,11 +82,11 @@ class ProfileViewModel(
         }
     }
 
-    fun getGameHistory() {
+    private fun getGameHistory() {
         viewModelScope.launch {
             Log.d("TESTONE", "getGameHistory called")
             _gameHistories.addAll(gameRepository.getGamesHistory())
-            Log.d("TESTONE", "Game history size: ${_gameHistories}")
+            Log.d("TESTONE", "Game history size: $_gameHistories")
         }
     }
 

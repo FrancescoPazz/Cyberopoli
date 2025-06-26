@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun GameDialog(
@@ -23,7 +24,11 @@ fun GameDialog(
     onOptionSelected: (Int) -> Unit = {},
     onDismiss: () -> Unit,
 ) {
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss, properties = DialogProperties(
+            dismissOnClickOutside = false, dismissOnBackPress = false
+        )
+    ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
             tonalElevation = 8.dp,
@@ -46,10 +51,9 @@ fun GameDialog(
                     options.forEachIndexed { idx, label ->
                         Button(
                             onClick = { onOptionSelected(idx) },
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         ) {
                             Text(label)
                         }

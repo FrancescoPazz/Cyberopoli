@@ -8,20 +8,24 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 object AvatarUtils {
     private const val AVATAR_MALE_1 = "avatar_male_1"
     private const val AVATAR_MALE_2 = "avatar_male_2"
+    private const val AVATAR_MALE_3 = "avatar_male_3"
     private const val AVATAR_FEMALE_1 = "avatar_female_1"
     private const val AVATAR_FEMALE_2 = "avatar_female_2"
+    private const val AVATAR_FEMALE_3 = "avatar_female_3"
 
     const val DEFAULT_AVATAR = AVATAR_MALE_1
 
-    private val AVATAR_LIST = listOf(AVATAR_MALE_1, AVATAR_MALE_2, AVATAR_FEMALE_1, AVATAR_FEMALE_2)
+    private val AVATAR_LIST = listOf(AVATAR_MALE_1, AVATAR_MALE_2, AVATAR_MALE_3, AVATAR_FEMALE_1, AVATAR_FEMALE_2, AVATAR_FEMALE_3)
 
     @DrawableRes
     fun getAvatarResource(avatarUrl: String?): Int {
         return when (avatarUrl) {
             AVATAR_MALE_1 -> R.drawable.avatar_male_1
             AVATAR_MALE_2 -> R.drawable.avatar_male_2
+            AVATAR_MALE_3 -> R.drawable.avatar_male_3
             AVATAR_FEMALE_1 -> R.drawable.avatar_female_1
             AVATAR_FEMALE_2 -> R.drawable.avatar_female_2
+            AVATAR_FEMALE_3 -> R.drawable.avatar_female_3
             else -> R.drawable.avatar_male_1
         }
     }

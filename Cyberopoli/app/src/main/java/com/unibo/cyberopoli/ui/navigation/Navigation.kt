@@ -192,6 +192,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             allReady = lobbyViewModel.allReady.observeAsState(),
                             setInApp = lobbyViewModel::setInApp,
                             userId = profileViewModel.user.value?.id ?: "",
+                            resetGame = gameViewModel::resetGame,
                         ),
                     )
                 }

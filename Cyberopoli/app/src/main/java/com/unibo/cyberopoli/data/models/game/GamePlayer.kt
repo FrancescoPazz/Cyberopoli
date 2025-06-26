@@ -27,6 +27,6 @@ data class GamePlayer(
     @SerialName("score") var score: Int,
     @SerialName("cell_position") val cellPosition: Int,
     @SerialName("round") val round: Int,
-    @SerialName("winner") val winner: Boolean,
+    @SerialName("winner") var winner: Boolean,
     @Transient val user: User? = null,
 )

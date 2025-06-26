@@ -93,6 +93,7 @@ fun LobbyScreen(
                     allReady = lobbyParams.allReady,
                     onToggleReadyClick = lobbyParams.toggleReady,
                     onStartGameClick = {
+                        lobbyParams.resetGame()
                         navController.navigate(CyberopoliRoute.Game) {
                             launchSingleTop = true
                             restoreState = true

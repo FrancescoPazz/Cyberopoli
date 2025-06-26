@@ -58,16 +58,15 @@ fun GameScreen(
                 stringResource(R.string.congratulations_you_won)
             else
                 stringResource(R.string.better_luck_next_time)
-            navController.navigate(CyberopoliRoute.Profile) {
-                launchSingleTop = true
-                restoreState = true
-            }
             GameDialog(
                 title = dialogTitle,
                 message = dialogMessage,
                 options = listOf("OK"),
                 onOptionSelected = { _ ->
-
+                    navController.navigate(CyberopoliRoute.Profile) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 onDismiss = {
                 }
