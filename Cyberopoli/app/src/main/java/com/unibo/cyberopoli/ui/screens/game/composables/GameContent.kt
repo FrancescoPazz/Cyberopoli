@@ -75,8 +75,7 @@ fun GameContent(
                 .padding(padding)) {
 
                 ARBox(
-                    players = players,
-                    cells = gameParams.cells.value,
+                    players = players
                 )
 
                 IconButton(

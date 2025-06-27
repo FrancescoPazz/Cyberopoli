@@ -33,15 +33,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.settings.CyberopoliInstructions
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import com.unibo.cyberopoli.ui.screens.settings.composables.LanguageSection
 import com.unibo.cyberopoli.ui.screens.settings.composables.LogoutButton
 import com.unibo.cyberopoli.ui.screens.settings.composables.ThemeSection
 
@@ -52,9 +54,9 @@ fun SettingScreen(
 ) {
     val context = LocalContext.current
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showRulesDialog by remember { mutableStateOf(false) }
     var currentRulePage by remember { mutableIntStateOf(0) }
-    val lang by settingsParams.language.collectAsState()
 
 
     val rulesPages = CyberopoliInstructions(context)
@@ -146,6 +148,27 @@ fun SettingScreen(
         )
     }
 
+    if (showLanguageDialog) {
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = { Text(stringResource(R.string.choose_language_confirm)) },
+            text = { Text(stringResource(R.string.choose_language_confirm_desc)) },
+            confirmButton = {
+                TextButton(onClick = { showLanguageDialog = false
+                    navController.navigate(CyberopoliRoute.Settings) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }) {
+                    Text("OK")
+                }
+            },
+            properties = DialogProperties(
+                dismissOnClickOutside = false, dismissOnBackPress = false
+            )
+        )
+    }
+
     Scaffold(
         topBar = { TopBar(navController) },
         bottomBar = {
@@ -171,28 +194,13 @@ fun SettingScreen(
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
-            Text(
-                text = stringResource(R.string.choose_language),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Row {
-                listOf("it" to stringResource(R.string.italian), "en" to stringResource(R.string.english)).forEach { (code, label) ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(end = 16.dp)
-                    ) {
-                        RadioButton(
-                            selected = (lang == code),
-                            onClick = {
-                                Log.d("SettingsScreen", "Changing language to $code")
-                                settingsParams.changeLanguage(code)
-                            }
-                        )
-                        Text(text = label)
-                    }
+            LanguageSection(
+                onShowLanguageDialog = { showLanguageDialog = true },
+                selectedLanguage = settingsParams.language.collectAsState().value,
+                onSelect = { code ->
+                    settingsParams.changeLanguage(code)
                 }
-            }
+            )
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 

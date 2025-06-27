@@ -55,8 +55,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ARBox(
-    players: List<GamePlayer>?,
-    cells: List<GameCell>? = null
+    players: List<GamePlayer>?
 ) {
     val engine = rememberEngine()
     val view = rememberView(engine)

@@ -156,6 +156,8 @@
     <string name="better_luck_next_time">Hai perso la partita! Riprova la prossima volta!</string>
     <string name="lobby_already_started">La lobby è già iniziata. Riportando alla Home…</string>
     <string name="choose_language">Scegli la lingua</string>
+    <string name="choose_language_confirm">Conferma del cambio lingua</string>
+    <string name="choose_language_confirm_desc">Cambio della lingua avvenuto correttamente</string>
     <string name="italian">Italiano</string>
     <string name="english">Inglese</string>
 
