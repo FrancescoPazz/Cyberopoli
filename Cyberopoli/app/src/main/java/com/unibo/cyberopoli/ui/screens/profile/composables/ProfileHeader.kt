@@ -55,15 +55,13 @@ fun ProfileHeader(
                 textStyleBody = MaterialTheme.typography.bodyMedium,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(horizontalArrangement = Arrangement.Center) {
+            Row(horizontalArrangement = Arrangement.Start) {
                 ProfileButton(
-                    text = stringResource(R.string.edit),
+                    text = stringResource(R.string.change_avatar),
                     icon = {
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
-                            contentDescription = stringResource(R.string.edit),
+                            contentDescription = stringResource(R.string.change_avatar),
                             tint = MaterialTheme.colorScheme.tertiary,
                         )
                     },

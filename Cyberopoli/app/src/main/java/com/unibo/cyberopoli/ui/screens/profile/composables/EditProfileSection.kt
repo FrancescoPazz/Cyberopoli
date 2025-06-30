@@ -49,6 +49,7 @@ fun EditProfileSection(
     val newName = remember(user.name) { mutableStateOf(user.name ?: "") }
     val newSurname = remember(user.surname) { mutableStateOf(user.surname ?: "") }
     var showChangePasswordSection by remember { mutableStateOf(false) }
+    var showEditProfileSection by remember { mutableStateOf(false) }
 
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
@@ -97,48 +98,70 @@ fun EditProfileSection(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            CyberOutlinedTextField(
-                value = newName,
-                placeholder = stringResource(R.string.name),
-                imageVector = Icons.Default.Person,
-                singleLine = true,
-            )
-
-            CyberOutlinedTextField(
-                value = newSurname,
-                placeholder = stringResource(R.string.last_name),
-                imageVector = Icons.Default.AccountCircle,
-                singleLine = true,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = {
-                    updateUserInfo(newName.value, newSurname.value, {
-                        dialogTitle = context.getString(R.string.change_success)
-                        dialogMessage = context.getString(R.string.change_profile_success)
-                        isErrorDialog = false
-                        showDialog = true
-                    }, {
-                        dialogTitle = context.getString(R.string.change_fail)
-                        dialogMessage = context.getString(R.string.change_profile_failed)
-                        isErrorDialog = true
-                        showDialog = true
-                    })
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+            OutlinedButton(
+                onClick = { showEditProfileSection = !showEditProfileSection },
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = stringResource(R.string.save_changes),
+                    contentDescription = stringResource(R.string.edit_profile),
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(stringResource(R.string.save_changes))
+                Text(
+                    if (showEditProfileSection) {
+                        stringResource(R.string.hide)
+                    } else {
+                        stringResource(R.string.edit_profile)
+                    },
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            if (showEditProfileSection) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CyberOutlinedTextField(
+                    value = newName,
+                    placeholder = stringResource(R.string.name),
+                    imageVector = Icons.Default.Person,
+                    singleLine = true,
+                )
+
+                CyberOutlinedTextField(
+                    value = newSurname,
+                    placeholder = stringResource(R.string.last_name),
+                    imageVector = Icons.Default.AccountCircle,
+                    singleLine = true,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        updateUserInfo(newName.value, newSurname.value, {
+                            dialogTitle = context.getString(R.string.change_success)
+                            dialogMessage = context.getString(R.string.change_profile_success)
+                            isErrorDialog = false
+                            showDialog = true
+                            showEditProfileSection = false
+                        }, {
+                            dialogTitle = context.getString(R.string.change_fail)
+                            dialogMessage = context.getString(R.string.change_profile_failed)
+                            isErrorDialog = true
+                            showDialog = true
+                        })
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = stringResource(R.string.save_changes),
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.save_changes))
+                }
+            }
 
             OutlinedButton(
                 onClick = { showChangePasswordSection = !showChangePasswordSection },
@@ -160,7 +183,7 @@ fun EditProfileSection(
             }
 
             if (showChangePasswordSection) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 ChangePasswordSection(
                     updatePasswordWithOldPassword = { oldPass, newPass, _, _ ->
                         updatePasswordWithOldPassword(oldPass, newPass, {

@@ -56,10 +56,8 @@ class UsageStatsHelper(private val context: Context) {
                 val hours = totalMillis / 3_600_000.0
                 appName to hours
             }
-
             result
         }
-
 
     suspend fun getWeeklyUsageTime(): Double =
         withContext(Dispatchers.IO) {
