@@ -44,7 +44,7 @@ fun MostUsedAppsChart(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = packageName.substringAfterLast('.'),
+                        text = packageName,
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(

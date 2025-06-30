@@ -5,6 +5,7 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,16 +19,6 @@ data class SessionStats(
     val unlockCount: Int,
 )
 
-fun Context.hasUsageStatsPermission(): Boolean {
-    val am = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-    val mode = am.checkOpNoThrow(
-        AppOpsManager.OPSTR_GET_USAGE_STATS,
-        Process.myUid(),
-        packageName
-    )
-    return mode == AppOpsManager.MODE_ALLOWED
-}
-
 fun Context.openUsageAccessSettings() {
     startActivity(
         Intent(ACTION_USAGE_ACCESS_SETTINGS)
@@ -38,17 +29,37 @@ fun Context.openUsageAccessSettings() {
 class UsageStatsHelper(private val context: Context) {
     suspend fun getTopUsedApps(limit: Int = 15): List<Pair<String, Double>> =
         withContext(Dispatchers.IO) {
-            Log.d("TESTONE", "getTopUsedApps called")
-            val stats =
-                (context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager).queryUsageStats(
+            val now = System.currentTimeMillis()
+            val oneWeekAgo = now - 7L * 24 * 60 * 60 * 1000
+            val usageStats = (context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager)
+                .queryUsageStats(
                     UsageStatsManager.INTERVAL_WEEKLY,
-                    System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000,
-                    System.currentTimeMillis(),
+                    oneWeekAgo,
+                    now
                 )
-            Log.d("TESTONE", "Usage stats size: ${stats.size}: ${stats.joinToString { it.packageName }}")
-            stats.sortedByDescending { it.totalTimeInForeground }.take(limit)
-                .map { it.packageName to (it.totalTimeInForeground / 3_600_000.0) }
+            val summedByPackage: List<Pair<String, Long>> = usageStats
+                .groupBy { it.packageName }
+                .map { (pkg, statsList) ->
+                    val total = statsList.sumOf { it.totalTimeInForeground }
+                    pkg to total
+                }
+            val topList = summedByPackage
+                .sortedByDescending { it.second }
+                .take(limit)
+            val result = topList.map { (pkg, totalMillis) ->
+                val appName = try {
+                    val ai = context.packageManager.getApplicationInfo(pkg, 0)
+                    context.packageManager.getApplicationLabel(ai).toString()
+                } catch (e: PackageManager.NameNotFoundException) {
+                    pkg
+                }
+                val hours = totalMillis / 3_600_000.0
+                appName to hours
+            }
+
+            result
         }
+
 
     suspend fun getWeeklyUsageTime(): Double =
         withContext(Dispatchers.IO) {
