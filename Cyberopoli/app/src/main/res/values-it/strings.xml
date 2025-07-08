@@ -84,7 +84,7 @@
     <string name="turn_pass">Passa il turno</string>
     <string name="manage">Gestisci</string>
     <string name="roll_dice">Lancia il dado</string>
-    <string name="roll_dice_desc">Hai tirato un dado ed è uscito il numero:</string>
+    <string name="roll_dice_desc">Hai tirato un dado ed è uscito il numero: %1$s</string>
     <string name="move_on">Spostati</string>
     <string name="cells">Caselle</string>
     <string name="chance">Probabilità</string>
@@ -96,9 +96,9 @@
     <string name="hacker_attack">Attacco hacker</string>
     <string name="hacker_attack_description">uno scenario di attacco hacker e proponi 3 azioni possibili</string>
     <string name="subscribe">Iscriviti al social</string>
-    <string name="subscribe_desc">Se ti iscrivi al social, le volte successive che lo visiterai potrai pubblicare contenuti che ti aiuteranno a guadagnare punti. Costa %1$d punti Internet.</string>
+    <string name="subscribe_desc">Se ti iscrivi al social, le volte successive che lo visiterai potrai pubblicare contenuti che ti aiuteranno a guadagnare punti. Costa %1$s punti Internet.</string>
     <string name="make_content">Piazza un contenuto nel sociale</string>
-    <string name="make_content_desc">Se posti un contenuto nel social riceverai %1$d punti Internet se un giocatore ci finisce sopra. Un contenuto ha durata di un turno. Il suo costo è di %2$d punti Internet.</string>
+    <string name="make_content_desc">Se posti un contenuto nel social riceverai %1$s punti Internet se un giocatore ci finisce sopra. Un contenuto ha durata di un turno. Il suo costo è di %2$s punti Internet.</string>
     <string name="get_vpn">VPN attivata</string>
     <string name="get_vpn_desc">Avendo la VPN eviti di pagare la visualizzazione di un contenuto</string>
     <string name="vpn_avoid_pay">Con la VPN hai bloccato il pagamento del contenuto</string>
@@ -117,8 +117,8 @@
     <string name="skip_turn_desc">Devi saltare questo turno</string>
     <string name="error">Errore</string>
     <string name="no_players_to_block">Nessun giocatore da bloccare</string>
-    <string name="points_earned_message">Hai guadagnato %1$d punti Internet</string>
-    <string name="points_lost_message">Hai perso %1$d punti Internet</string>
+    <string name="points_earned_message">Hai guadagnato %1$s punti Internet</string>
+    <string name="points_lost_message">Hai perso %1$s punti Internet</string>
     <string name="ar_mode">Modalità AR</string>
     <string name="place_board">Posiziona il tabellone</string>
     <string name="unknown_player">Giocatore sconosciuto</string>

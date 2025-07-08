@@ -85,36 +85,40 @@ fun GameScreen(
 
     dialogData?.let { data ->
         val (title, message, options) = when (data) {
-            is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
-            is GameDialogData.HackerStatement -> Triple(data.title, data.content, listOf("OK"))
+            is GameDialogData.ChanceQuestion -> Triple(stringResource(data.titleRes), stringResource(data.promptRes), data.optionsRes.map { stringResource(it) })
+            is GameDialogData.HackerStatement -> Triple(stringResource(data.titleRes), stringResource(data.contentRes), listOf("OK"))
             is GameDialogData.BlockChoice -> Triple(
-                data.title,
+                stringResource(data.titleRes),
                 "",
                 data.players.map { it.user?.username ?: it.userId },
             )
 
             is GameDialogData.SubscribeChoice -> Triple(
-                data.title,
-                data.message,
-                data.options,
+                stringResource(data.titleRes),
+                stringResource(data.messageRes),
+                data.optionsRes.map { stringResource(it) },
             )
 
             is GameDialogData.MakeContentChoice -> Triple(
-                data.title,
-                data.message,
-                data.options,
+                stringResource(data.titleRes),
+                stringResource(data.messageRes),
+                data.optionsRes.map { stringResource(it) },
             )
 
             is GameDialogData.QuestionResult -> Triple(
-                data.title,
-                data.message,
-                data.options,
+                stringResource(data.titleRes),
+                stringResource(data.messageRes),
+                data.optionsRes.map { stringResource(it) },
             )
 
             is GameDialogData.Alert -> Triple(
-                data.title,
-                data.message,
-                data.options ?: listOf("OK"),
+                stringResource(data.titleRes),
+                data.messageArgs?.let { args ->
+                    if (args.isEmpty()) stringResource(data.messageRes)
+                    else if (args.size == 1) stringResource(data.messageRes, args[0])
+                    else stringResource(data.messageRes, args[0], args[1])
+                } ?: stringResource(data.messageRes),
+                data.optionsRes?.map { stringResource(it) } ?: listOf("OK"),
             )
         }
 

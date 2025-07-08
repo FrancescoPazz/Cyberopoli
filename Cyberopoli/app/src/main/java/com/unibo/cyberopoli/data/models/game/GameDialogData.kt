@@ -5,55 +5,57 @@ import kotlinx.serialization.Serializable
 sealed class GameDialogData {
     @Serializable
     data class ChanceQuestion(
-        val title: String,
-        val prompt: String,
-        val options: List<String>,
+        val titleRes: Int,
+        val promptRes: Int,
+        val optionsRes: List<Int>,
         val correctIndex: Int,
         val points: Int,
     ) : GameDialogData()
 
     @Serializable
     data class HackerStatement(
-        val title: String,
-        val content: String,
+        val titleRes: Int,
+        val contentRes: Int,
         val points: Int,
     ) : GameDialogData()
 
     @Serializable
     data class BlockChoice(
-        val title: String,
+        val titleRes: Int,
         val players: List<GamePlayer>,
     ) : GameDialogData()
 
     @Serializable
     data class SubscribeChoice(
-        val title: String,
-        val message: String,
-        val options: List<String>,
+        val titleRes: Int,
+        val messageRes: Int,
+        val messageArgs: List<String>? = null,
+        val optionsRes: List<Int>,
         val cost: Int,
     ) : GameDialogData()
 
     @Serializable
     data class MakeContentChoice(
-        val title: String,
-        val message: String,
-        val options: List<String>,
+        val titleRes: Int,
+        val messageRes: Int,
+        val messageArgs: List<String>? = null,
+        val optionsRes: List<Int>,
         val cost: Int,
     ) : GameDialogData()
 
     @Serializable
     data class Alert(
-        val title: String,
-        val message: String,
-        val options: List<String>? = null,
-        val onDismiss: (() -> Unit)? = null,
+        val titleRes: Int,
+        val messageRes: Int,
+        val messageArgs: List<String>? = null,
+        val optionsRes: List<Int>? = null,
     ) : GameDialogData()
 
     @Serializable
     data class QuestionResult(
-        val title: String,
-        val message: String,
-        val options: List<String>,
+        val titleRes: Int,
+        val messageRes: Int,
+        val optionsRes: List<Int>,
         val correctIndex: Int,
         val selectedIndex: Int
     ) : GameDialogData()

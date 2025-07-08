@@ -54,8 +54,8 @@ class GameViewModel(
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val cells = mutableStateOf(createBoard())
-    private var chanceQuestions = mutableStateOf(chanceQuestions(app))
-    private var hackerStatements = mutableStateOf(hackerStatements(app))
+    private var chanceQuestions = mutableStateOf(chanceQuestions())
+    private var hackerStatements = mutableStateOf(hackerStatements())
 
     // Mine variables
     val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
@@ -135,8 +135,8 @@ class GameViewModel(
                                 _skipNext.value = false
                                 _actionsPermitted.value = listOf(waitTurnAction)
                                 _dialog.value = GameDialogData.Alert(
-                                    title = app.getString(R.string.broken_router),
-                                    message = app.getString(R.string.broken_router_desc),
+                                    titleRes = R.string.broken_router,
+                                    messageRes = R.string.broken_router_desc,
                                 )
                                 nextTurn()
                             } else {
@@ -237,8 +237,9 @@ class GameViewModel(
         viewModelScope.launch {
             _diceRoll.value = (1..6).random()
             _dialog.value = GameDialogData.Alert(
-                title = app.getString(R.string.roll_dice),
-                message = "${app.getString(R.string.roll_dice_desc)} ${_diceRoll.value}",
+                titleRes = R.string.roll_dice,
+                messageRes = R.string.roll_dice_desc,
+                messageArgs = listOf(_diceRoll.value.toString()),
             )
             _actionsPermitted.value = listOf(
                 GameAction(
@@ -352,15 +353,14 @@ class GameViewModel(
                                     iconRes = R.drawable.ic_subscribe,
                                     action = {
                                         _dialog.value = GameDialogData.SubscribeChoice(
-                                            title = app.getString(R.string.subscribe),
-                                            message = app.resources.getString(
-                                                R.string.subscribe_desc, gameCell.value!!
+                                            titleRes = R.string.subscribe,
+                                            messageRes = R.string.subscribe_desc,
+                                            messageArgs = listOf(gameCell.value.toString()),
+                                            optionsRes = listOf(
+                                                R.string.accept,
+                                                R.string.decline,
                                             ),
-                                            options = listOf(
-                                                app.getString(R.string.accept),
-                                                app.getString(R.string.decline),
-                                            ),
-                                            cost = gameCell.value,
+                                            cost = gameCell.value ?: 0,
                                         )
                                     },
                                 ),
@@ -372,17 +372,14 @@ class GameViewModel(
                                     iconRes = R.drawable.ic_make_content,
                                     action = {
                                         _dialog.value = GameDialogData.MakeContentChoice(
-                                            title = app.getString(R.string.make_content),
-                                            message = app.resources.getString(
-                                                R.string.make_content_desc,
-                                                gameCell.value!!,
-                                                gameCell.value * 2
+                                            titleRes = R.string.make_content,
+                                            messageRes = R.string.make_content_desc,
+                                            messageArgs = listOf(gameCell.value.toString(), gameCell.value?.times(2).toString()),
+                                            optionsRes = listOf(
+                                                R.string.accept,
+                                                R.string.decline,
                                             ),
-                                            options = listOf(
-                                                app.getString(R.string.accept),
-                                                app.getString(R.string.decline),
-                                            ),
-                                            cost = (gameCell.value.times(2)),
+                                            cost = (gameCell.value?.times(2) ?: 0),
                                         )
 
                                         endTurn()
@@ -393,18 +390,16 @@ class GameViewModel(
                     } else if (!amIOwner!!) {
                         if (_hasVpn.value) {
                             _dialog.value = GameDialogData.Alert(
-                                title = app.getString(R.string.get_vpn),
-                                message = app.getString(R.string.vpn_avoid_pay),
+                                titleRes = R.string.get_vpn,
+                                messageRes = R.string.vpn_avoid_pay,
                             )
                         } else {
                             val cellOwner = assets.value?.firstOrNull { asset ->
                                 asset.cellId == gameCell.id
                             }?.ownerId!!
                             _dialog.value = GameDialogData.Alert(
-                                title = app.getString(R.string.pay_content),
-                                message = "${app.getString(R.string.pay_content_desc)} ${gameCell.value} ${
-                                    app.getString(R.string.internet_points)
-                                }",
+                                titleRes = R.string.pay_content,
+                                messageRes = R.string.pay_content_desc,
                             )
                             gameCell.value?.let {
                                 Log.d("GameViewModel", "Paying rent: $it to $cellOwner")
@@ -448,22 +443,22 @@ class GameViewModel(
                 val others = players.value?.filter { it.userId != player.value?.userId }
                 _dialog.value = others?.let {
                     GameDialogData.BlockChoice(
-                        title = app.getString(R.string.block_player_choice), players = it,
+                        titleRes = R.string.block_player_choice, players = it,
                     )
                 }
             }
 
             GameTypeCell.VPN -> {
                 _dialog.value = GameDialogData.Alert(
-                    title = app.getString(R.string.get_vpn),
-                    message = app.getString(R.string.get_vpn_desc),
+                    titleRes = R.string.get_vpn,
+                    messageRes = R.string.get_vpn_desc,
                 )
             }
 
             GameTypeCell.BROKEN_ROUTER -> {
                 _dialog.value = GameDialogData.Alert(
-                    title = app.getString(R.string.broken_router),
-                    message = app.getString(R.string.broken_router_desc),
+                    titleRes = R.string.broken_router,
+                    messageRes = R.string.broken_router_desc,
                 )
                 _skipNext.value = true
             }
@@ -596,17 +591,17 @@ class GameViewModel(
                     val delta = if (correct) dlg.points else -dlg.points
                     updatePlayerScore(delta)
                     val resultTitle =
-                        if (correct) app.getString(R.string.correct_answer) else app.getString(R.string.wrong_answer)
+                        if (correct) R.string.correct_answer else R.string.wrong_answer
                     val resultMessage = if (correct) {
-                        "${app.getString(R.string.points_earned)} ${dlg.points} ${app.getString(R.string.internet_points)}"
+                        R.string.points_earned
                     } else {
-                        "${app.getString(R.string.points_lost)} ${dlg.points} ${app.getString(R.string.internet_points)}"
+                        R.string.points_lost
                     }
 
                     _dialog.value = GameDialogData.QuestionResult(
-                        title = resultTitle,
-                        message = resultMessage,
-                        options = dlg.options,
+                        titleRes = resultTitle,
+                        messageRes = resultMessage,
+                        optionsRes = dlg.optionsRes,
                         correctIndex = dlg.correctIndex,
                         selectedIndex = idx
                     )

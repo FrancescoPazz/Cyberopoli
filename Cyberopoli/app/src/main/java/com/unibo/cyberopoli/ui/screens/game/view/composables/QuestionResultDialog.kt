@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -36,19 +37,19 @@ fun QuestionResultDialog(
         ) {
             Column(Modifier.padding(24.dp)) {
                 Text(
-                    data.title,
+                    stringResource(data.titleRes),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    data.message,
+                    stringResource(data.messageRes),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(24.dp))
 
-                data.options.forEachIndexed { idx, label ->
+                data.optionsRes.forEachIndexed { idx, label ->
                     val isCorrect = idx == data.correctIndex
                     val isSelected = idx == data.selectedIndex
                     val backgroundColor = when {
@@ -70,7 +71,7 @@ fun QuestionResultDialog(
                             .border(1.dp, borderColor, RoundedCornerShape(8.dp))
                     ) {
                         Text(
-                            text = label, modifier = Modifier.padding(12.dp)
+                            text = stringResource(label), modifier = Modifier.padding(12.dp)
                         )
                     }
                 }

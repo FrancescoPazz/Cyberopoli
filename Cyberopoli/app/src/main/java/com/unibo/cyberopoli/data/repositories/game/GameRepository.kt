@@ -112,8 +112,8 @@ class GameRepository(
 
         return payloads.map {
             GameDialogData.HackerStatement(
-                title = it.title,
-                content = it.content,
+                titleRes = it.titleRes,
+                contentRes = it.contentRes,
                 points = it.points,
             )
         }
