@@ -160,6 +160,7 @@
     <string name="choose_language_confirm_desc">Language change was successful</string>
     <string name="italian">Italian</string>
     <string name="english">English</string>
+    <string name="load_all">Load All</string>
 
     <string name="hacker_statement_title_1">Weak password</string>
     <string name="hacker_statement_content_1">Your password \'123456\' was discovered. Lose 4 security points.</string>

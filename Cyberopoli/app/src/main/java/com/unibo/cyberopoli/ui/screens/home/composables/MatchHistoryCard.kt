@@ -13,12 +13,22 @@ import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GameHistory
 import com.unibo.cyberopoli.ui.components.CyberopoliCard
+import java.time.LocalDateTime
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.layout.fillMaxWidth
 
 @Composable
 fun MatchHistoryCard(
     gameHistory: List<GameHistory>?,
     modifier: Modifier = Modifier,
 ) {
+    var showAll by remember { mutableStateOf(false) }
+
     CyberopoliCard(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -36,9 +46,36 @@ fun MatchHistoryCard(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         } else {
-            gameHistory.forEach { match ->
+            val sortedGameHistory = gameHistory.sortedByDescending { match ->
+                try {
+                    LocalDateTime.parse(match.lobbyCreatedAt)
+                } catch (e: Exception) {
+                    LocalDateTime.MIN
+                }
+            }
+
+            val displayedGames = if (showAll || sortedGameHistory.size <= 3) {
+                sortedGameHistory
+            } else {
+                sortedGameHistory.take(3)
+            }
+
+            displayedGames.forEach { match ->
                 MatchHistoryItem(match)
                 Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            if (sortedGameHistory.size > 3 && !showAll) {
+                Button(
+                    onClick = { showAll = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text(text = stringResource(R.string.load_all))
+                }
             }
         }
     }

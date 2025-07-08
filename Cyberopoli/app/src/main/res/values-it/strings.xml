@@ -160,6 +160,7 @@
     <string name="choose_language_confirm_desc">Cambio della lingua avvenuto correttamente</string>
     <string name="italian">Italiano</string>
     <string name="english">Inglese</string>
+    <string name="load_all">Carica tutti</string>
 
     <string name="hacker_statement_title_1">Password debole</string>
     <string name="hacker_statement_content_1">Hanno scoperto la tua password \'123456\'. Perdi 4 punti di sicurezza.</string>
