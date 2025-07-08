@@ -10,12 +10,12 @@ import com.unibo.cyberopoli.data.models.game.GameDialogData
 import com.unibo.cyberopoli.ui.components.AppLifecycleTracker
 import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
-import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
 import com.unibo.cyberopoli.ui.screens.game.view.composables.GameContent
 import com.unibo.cyberopoli.ui.screens.game.view.composables.GameDialog
 import com.unibo.cyberopoli.ui.screens.game.view.composables.GameStarterEffect
 import com.unibo.cyberopoli.ui.screens.game.view.composables.LoadingQuestionDialog
 import com.unibo.cyberopoli.ui.screens.game.view.composables.QuestionResultDialog
+import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
 import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
 
 @Composable
@@ -54,13 +54,11 @@ fun GameScreen(
         if (gameParams.gameOver.value) {
             gameParams.refreshUserData()
             val hasWon = player?.winner ?: false
-            val dialogTitle = if (hasWon) stringResource(R.string.you_win) else stringResource(R.string.you_lose)
-            val dialogMessage = if (hasWon)
-                stringResource(R.string.congratulations_you_won)
-            else
-                stringResource(R.string.better_luck_next_time)
-            GameDialog(
-                title = dialogTitle,
+            val dialogTitle =
+                if (hasWon) stringResource(R.string.you_win) else stringResource(R.string.you_lose)
+            val dialogMessage = if (hasWon) stringResource(R.string.congratulations_you_won)
+            else stringResource(R.string.better_luck_next_time)
+            GameDialog(title = dialogTitle,
                 message = dialogMessage,
                 options = listOf("OK"),
                 onOptionSelected = {
@@ -70,8 +68,7 @@ fun GameScreen(
                     }
                     gameParams.resetGame()
                 },
-                onDismiss = { }
-            )
+                onDismiss = { })
         } else {
             LoadingScreen()
         }
@@ -87,47 +84,43 @@ fun GameScreen(
     }
 
     dialogData?.let { data ->
-        val (title, message, options) =
-            when (data) {
-                is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
-                is GameDialogData.HackerStatement -> Triple(data.title, data.content, listOf("OK"))
-                is GameDialogData.BlockChoice ->
-                    Triple(
-                        data.title,
-                        "",
-                        data.players.map { it.user?.username ?: it.userId },
-                    )
-                is GameDialogData.SubscribeChoice ->
-                    Triple(
-                        data.title,
-                        data.message,
-                        data.options,
-                    )
-                is GameDialogData.MakeContentChoice ->
-                    Triple(
-                        data.title,
-                        data.message,
-                        data.options,
-                    )
-                is GameDialogData.QuestionResult ->
-                    Triple(
-                        data.title,
-                        data.message,
-                        data.options,
-                    )
-                is GameDialogData.Alert ->
-                    Triple(
-                        data.title,
-                        data.message,
-                        data.options ?: listOf("OK"),
-                    )
-            }
+        val (title, message, options) = when (data) {
+            is GameDialogData.ChanceQuestion -> Triple(data.title, data.prompt, data.options)
+            is GameDialogData.HackerStatement -> Triple(data.title, data.content, listOf("OK"))
+            is GameDialogData.BlockChoice -> Triple(
+                data.title,
+                "",
+                data.players.map { it.user?.username ?: it.userId },
+            )
+
+            is GameDialogData.SubscribeChoice -> Triple(
+                data.title,
+                data.message,
+                data.options,
+            )
+
+            is GameDialogData.MakeContentChoice -> Triple(
+                data.title,
+                data.message,
+                data.options,
+            )
+
+            is GameDialogData.QuestionResult -> Triple(
+                data.title,
+                data.message,
+                data.options,
+            )
+
+            is GameDialogData.Alert -> Triple(
+                data.title,
+                data.message,
+                data.options ?: listOf("OK"),
+            )
+        }
 
         if (dialogData is GameDialogData.QuestionResult) {
-            QuestionResultDialog(
-                data = dialogData as GameDialogData.QuestionResult,
-                onDismiss = { gameParams.onResultDismiss() }
-            )
+            QuestionResultDialog(data = dialogData as GameDialogData.QuestionResult,
+                onDismiss = { gameParams.onResultDismiss() })
         } else {
             GameDialog(
                 title = title,

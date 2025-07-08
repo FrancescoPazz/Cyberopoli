@@ -33,7 +33,10 @@ fun CellOccupants(occupants: List<GamePlayer>) {
             }
 
             Box(
-                modifier = Modifier.size(24.dp).align(alignment).padding(1.dp)
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(alignment)
+                    .padding(1.dp)
                     .background(PlayerColorUtils.getPlayerColor(player), shape = CircleShape),
                 contentAlignment = Alignment.Center,
             ) {

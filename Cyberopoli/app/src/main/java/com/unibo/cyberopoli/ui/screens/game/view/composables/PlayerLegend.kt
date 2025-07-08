@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.game.view.composables
 
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -62,8 +62,7 @@ fun PlayerLegend(players: List<GamePlayer>) {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = "${player.score} pts",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "${player.score} pts", style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

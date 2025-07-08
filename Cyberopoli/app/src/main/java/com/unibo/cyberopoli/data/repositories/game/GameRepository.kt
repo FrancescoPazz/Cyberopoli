@@ -247,15 +247,14 @@ class GameRepository(
 
     @OptIn(SupabaseExperimental::class)
     private fun observeGameEvents() {
-        val gameEventsFlow: Flow<List<GameEvent>> =
-            supabase.from(GAME_EVENTS_TABLE).selectAsFlow(
-                primaryKey = GameEvent::eventType,
-                filter = FilterOperation(
-                    "game_id",
-                    FilterOperator.EQ,
-                    currentGameLiveData.value!!.id,
-                ),
-            )
+        val gameEventsFlow: Flow<List<GameEvent>> = supabase.from(GAME_EVENTS_TABLE).selectAsFlow(
+            primaryKey = GameEvent::eventType,
+            filter = FilterOperation(
+                "game_id",
+                FilterOperator.EQ,
+                currentGameLiveData.value!!.id,
+            ),
+        )
         MainScope().launch {
             gameEventsFlow.collect { rawEvents ->
                 if (rawEvents.isNotEmpty()) {
@@ -279,15 +278,14 @@ class GameRepository(
 
     @OptIn(SupabaseExperimental::class)
     private fun observeGameAssets() {
-        val gameAssetsFlow: Flow<List<GameAsset>> =
-            supabase.from(GAME_ASSETS_TABLE).selectAsFlow(
-                primaryKey = GameAsset::cellId,
-                filter = FilterOperation(
-                    "game_id",
-                    FilterOperator.EQ,
-                    currentGameLiveData.value!!.id,
-                ),
-            )
+        val gameAssetsFlow: Flow<List<GameAsset>> = supabase.from(GAME_ASSETS_TABLE).selectAsFlow(
+            primaryKey = GameAsset::cellId,
+            filter = FilterOperation(
+                "game_id",
+                FilterOperator.EQ,
+                currentGameLiveData.value!!.id,
+            ),
+        )
         MainScope().launch {
             gameAssetsFlow.collect { rawAssets ->
                 if (rawAssets.isNotEmpty()) {
@@ -661,9 +659,10 @@ class GameRepository(
 
     override suspend fun getGamesHistory(): List<GameHistory> {
         try {
-            val userId = supabase.auth.currentSessionOrNull()?.user?.id ?: throw Exception("No user found")
+            val userId =
+                supabase.auth.currentSessionOrNull()?.user?.id ?: throw Exception("No user found")
 
-            val historyItems: List<GameHistory> = supabase.from("v_games_history").select{
+            val historyItems: List<GameHistory> = supabase.from("v_games_history").select {
                 filter {
                     eq("user_id", userId)
                 }
@@ -699,10 +698,17 @@ class GameRepository(
         if (currentPlayerLiveData.value == null) throw Exception("No player found")
 
         try {
-            Log.d("GameRepository", "Saving user progress for player: ${currentPlayerLiveData.value!!.userId}")
-            Log.d("GameRepository", "Current players: ${supabase.auth.currentSessionOrNull()?.user?.id}")
-            val user = currentPlayersLiveData.value?.find { it.userId == currentPlayerLiveData.value!!.userId }?.user
-                ?: throw Exception("User not found in current players")
+            Log.d(
+                "GameRepository",
+                "Saving user progress for player: ${currentPlayerLiveData.value!!.userId}"
+            )
+            Log.d(
+                "GameRepository",
+                "Current players: ${supabase.auth.currentSessionOrNull()?.user?.id}"
+            )
+            val user =
+                currentPlayersLiveData.value?.find { it.userId == currentPlayerLiveData.value!!.userId }?.user
+                    ?: throw Exception("User not found in current players")
             val winner = currentPlayersLiveData.value?.maxByOrNull { it.score } ?: return
 
             val updatedUser = user.copy(

@@ -66,30 +66,27 @@ fun EditProfileSection(
                     Text(stringResource(id = android.R.string.ok))
                 }
             },
-            icon =
-                if (isErrorDialog) {
-                    { Icon(Icons.Filled.Error, contentDescription = "Error Icon") }
-                } else {
-                    { Icon(Icons.Filled.CheckCircle, contentDescription = "Success Icon") }
-                },
+            icon = if (isErrorDialog) {
+                { Icon(Icons.Filled.Error, contentDescription = "Error Icon") }
+            } else {
+                { Icon(Icons.Filled.CheckCircle, contentDescription = "Success Icon") }
+            },
         )
     }
 
     CyberopoliCard(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         elevation = 4.dp,
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         contentPadding = 16.dp,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(
-            modifier =
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(

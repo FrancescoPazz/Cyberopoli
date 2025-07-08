@@ -17,12 +17,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -49,13 +47,12 @@ fun UserAvatarInfo(
         Image(
             painter = painterResource(avatarRes),
             contentDescription = stringResource(R.string.avatar, user.username),
-            modifier =
-                Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface, CircleShape)
-                    .padding(4.dp)
-                    .clip(CircleShape),
+            modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .padding(4.dp)
+                .clip(CircleShape),
             contentScale = ContentScale.Crop,
         )
 
@@ -63,7 +60,10 @@ fun UserAvatarInfo(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (showWelcomeMessage) stringResource(R.string.welcome_back_user, user.username) else user.username,
+                text = if (showWelcomeMessage) stringResource(
+                    R.string.welcome_back_user,
+                    user.username
+                ) else user.username,
                 style = textStyleHeadline,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,

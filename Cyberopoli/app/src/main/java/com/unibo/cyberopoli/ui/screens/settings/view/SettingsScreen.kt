@@ -41,10 +41,10 @@ import com.unibo.cyberopoli.data.models.settings.CyberopoliInstructions
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
-import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
 import com.unibo.cyberopoli.ui.screens.settings.view.composables.LanguageSection
 import com.unibo.cyberopoli.ui.screens.settings.view.composables.LogoutButton
 import com.unibo.cyberopoli.ui.screens.settings.view.composables.ThemeSection
+import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
 
 @Composable
 fun SettingScreen(
@@ -61,8 +61,7 @@ fun SettingScreen(
     val rulesPages = CyberopoliInstructions(context)
 
     if (showLogoutDialog) {
-        AlertDialog(
-            onDismissRequest = { showLogoutDialog = false },
+        AlertDialog(onDismissRequest = { showLogoutDialog = false },
             title = { Text(stringResource(R.string.logout_confirm)) },
             text = { Text(stringResource(R.string.logout_desc)) },
             confirmButton = {
@@ -77,83 +76,68 @@ fun SettingScreen(
                 TextButton(onClick = { showLogoutDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
-        )
+            })
     }
 
     if (showRulesDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                showRulesDialog = false
-                currentRulePage = 0
-            },
-            title = { Text(rulesPages[currentRulePage].first) },
-            text = {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = rulesPages[currentRulePage].second,
-                        textAlign = TextAlign.Start
-                    )
+        AlertDialog(onDismissRequest = {
+            showRulesDialog = false
+            currentRulePage = 0
+        }, title = { Text(rulesPages[currentRulePage].first) }, text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = rulesPages[currentRulePage].second, textAlign = TextAlign.Start
+                )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        repeat(rulesPages.size) { index ->
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .size(8.dp)
-                                    .background(
-                                        color = if (index == currentRulePage)
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.outline,
-                                        shape = CircleShape
-                                    )
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (currentRulePage < rulesPages.size - 1) {
-                            currentRulePage++
-                        } else {
-                            showRulesDialog = false
-                            currentRulePage = 0
-                        }
-                    }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        if (currentRulePage < rulesPages.size - 1)
-                            stringResource(R.string.next)
-                        else
-                            stringResource(R.string.close)
-                    )
-                }
-            },
-            dismissButton = {
-                if (currentRulePage > 0) {
-                    TextButton(onClick = { currentRulePage-- }) {
-                        Text(stringResource(R.string.back))
+                    repeat(rulesPages.size) { index ->
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .size(8.dp)
+                                .background(
+                                    color = if (index == currentRulePage) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.outline, shape = CircleShape
+                                )
+                        )
                     }
                 }
             }
-        )
+        }, confirmButton = {
+            TextButton(onClick = {
+                if (currentRulePage < rulesPages.size - 1) {
+                    currentRulePage++
+                } else {
+                    showRulesDialog = false
+                    currentRulePage = 0
+                }
+            }) {
+                Text(
+                    if (currentRulePage < rulesPages.size - 1) stringResource(R.string.next)
+                    else stringResource(R.string.close)
+                )
+            }
+        }, dismissButton = {
+            if (currentRulePage > 0) {
+                TextButton(onClick = { currentRulePage-- }) {
+                    Text(stringResource(R.string.back))
+                }
+            }
+        })
     }
 
     if (showLanguageDialog) {
-        AlertDialog(
-            onDismissRequest = { showLanguageDialog = false },
+        AlertDialog(onDismissRequest = { showLanguageDialog = false },
             title = { Text(stringResource(R.string.choose_language_confirm)) },
             text = { Text(stringResource(R.string.choose_language_confirm_desc)) },
             confirmButton = {
-                TextButton(onClick = { showLanguageDialog = false
+                TextButton(onClick = {
+                    showLanguageDialog = false
                     navController.navigate(CyberopoliRoute.Settings) {
                         launchSingleTop = true
                         restoreState = true
@@ -178,8 +162,7 @@ fun SettingScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Column(
-            modifier =
-            Modifier
+            modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
@@ -193,22 +176,18 @@ fun SettingScreen(
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
-            LanguageSection(
-                onShowLanguageDialog = { showLanguageDialog = true },
+            LanguageSection(onShowLanguageDialog = { showLanguageDialog = true },
                 selectedLanguage = settingsParams.language.collectAsState().value,
                 onSelect = { code ->
                     settingsParams.changeLanguage(code)
-                }
-            )
+                })
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             Button(
-                onClick = { showRulesDialog = true },
-                colors = ButtonDefaults.buttonColors(
+                onClick = { showRulesDialog = true }, colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                ), modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text(stringResource(R.string.game_instructions))
             }

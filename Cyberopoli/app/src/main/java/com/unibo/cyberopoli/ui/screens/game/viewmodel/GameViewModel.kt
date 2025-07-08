@@ -115,8 +115,8 @@ class GameViewModel(
         // Initial turn logic
         viewModelScope.launch {
             player.asFlow().combine(game.asFlow()) { playerValue, gameValue -> // Game Flow
-                    Pair(playerValue, gameValue)
-                }.filterNotNull().filter { (p, g) -> p != null && g != null }
+                Pair(playerValue, gameValue)
+            }.filterNotNull().filter { (p, g) -> p != null && g != null }
                 .onEach { (currentPlayer, currentGame) ->
                     Log.d(
                         "TEST GameViewModel",
@@ -174,20 +174,14 @@ class GameViewModel(
                 }.launchIn(viewModelScope)
         }
         viewModelScope.launch {
-            gameRepository.currentGameEventsLiveData
-                .asFlow()
-                .filterNotNull()
-                .distinctUntilChanged()
+            gameRepository.currentGameEventsLiveData.asFlow().filterNotNull().distinctUntilChanged()
                 .collect { events ->
                     Log.d("GameViewModel", "GameEvents aggiornati: $events")
                 }
         }
 
         viewModelScope.launch {
-            gameRepository.currentGameAssetsLiveData
-                .asFlow()
-                .filterNotNull()
-                .distinctUntilChanged()
+            gameRepository.currentGameAssetsLiveData.asFlow().filterNotNull().distinctUntilChanged()
                 .collect { assets ->
                     Log.d("GameViewModel", "GameAssets aggiornati: $assets")
                 }
@@ -360,8 +354,7 @@ class GameViewModel(
                                         _dialog.value = GameDialogData.SubscribeChoice(
                                             title = app.getString(R.string.subscribe),
                                             message = app.resources.getString(
-                                                R.string.subscribe_desc,
-                                                gameCell.value!!
+                                                R.string.subscribe_desc, gameCell.value!!
                                             ),
                                             options = listOf(
                                                 app.getString(R.string.accept),

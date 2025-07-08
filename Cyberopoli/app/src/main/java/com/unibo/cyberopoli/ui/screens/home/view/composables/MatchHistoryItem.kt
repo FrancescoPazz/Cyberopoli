@@ -26,15 +26,13 @@ import java.time.format.DateTimeFormatter
 fun MatchHistoryItem(match: GameHistory) {
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(4.dp),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -73,11 +71,10 @@ fun MatchHistoryItem(match: GameHistory) {
                     text = "${stringResource(R.string.result)}: ",
                     fontWeight = FontWeight.Medium,
                 )
-                val resultColor =
-                    when (match.winner) {
-                        true -> MaterialTheme.colorScheme.primary
-                        false -> MaterialTheme.colorScheme.error
-                    }
+                val resultColor = when (match.winner) {
+                    true -> MaterialTheme.colorScheme.primary
+                    false -> MaterialTheme.colorScheme.error
+                }
                 Text(
                     color = resultColor,
                     text = if (match.winner) stringResource(R.string.win) else stringResource(R.string.loss),

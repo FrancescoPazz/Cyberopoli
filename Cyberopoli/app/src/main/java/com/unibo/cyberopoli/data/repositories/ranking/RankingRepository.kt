@@ -14,10 +14,9 @@ class RankingRepository(
 
     override suspend fun loadRanking() {
         try {
-            val users: List<User> =
-                supabase.from("users").select {
-                    order("total_score", order = Order.DESCENDING)
-                }.decodeList<User>()
+            val users: List<User> = supabase.from("users").select {
+                order("total_score", order = Order.DESCENDING)
+            }.decodeList<User>()
             rankingUsersLiveData.postValue(users)
         } catch (e: Exception) {
             throw e

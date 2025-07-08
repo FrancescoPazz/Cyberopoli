@@ -19,14 +19,13 @@ class SettingsRepository(
         private val LANGUAGE_KEY = stringPreferencesKey("language")
     }
 
-    val theme =
-        dataStore.data.map { preferences ->
-            try {
-                Theme.valueOf(preferences[THEME_KEY] ?: "System")
-            } catch (_: Exception) {
-                Theme.System
-            }
+    val theme = dataStore.data.map { preferences ->
+        try {
+            Theme.valueOf(preferences[THEME_KEY] ?: "System")
+        } catch (_: Exception) {
+            Theme.System
         }
+    }
 
     val language = dataStore.data.map { prefs ->
         prefs[LANGUAGE_KEY] ?: Locale.getDefault().language

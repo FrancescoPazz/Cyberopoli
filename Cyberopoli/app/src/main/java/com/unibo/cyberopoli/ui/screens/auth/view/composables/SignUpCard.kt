@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Lock
@@ -43,15 +42,12 @@ fun SignUpCard(
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
-    val passwordsMatch =
-        password.value.isNotBlank() &&
-            password.value == confirmPassword.value
+    val passwordsMatch = password.value.isNotBlank() && password.value == confirmPassword.value
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CyberOutlinedTextField(

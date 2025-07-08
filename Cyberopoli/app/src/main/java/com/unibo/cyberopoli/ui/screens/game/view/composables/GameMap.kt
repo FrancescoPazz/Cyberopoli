@@ -22,18 +22,16 @@ fun GameMap(
     borderPath: List<Int>,
     players: List<GamePlayer>,
 ) {
-    val posMap =
-        remember(players) {
-            players.groupBy { it.cellPosition }
-        }
+    val posMap = remember(players) {
+        players.groupBy { it.cellPosition }
+    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(cols),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(cols / rows.toFloat())
-                .padding(12.dp)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(cols / rows.toFloat())
+            .padding(12.dp)
+            .background(MaterialTheme.colorScheme.secondaryContainer),
         userScrollEnabled = false,
     ) {
         items(gameCells.size) { idx ->

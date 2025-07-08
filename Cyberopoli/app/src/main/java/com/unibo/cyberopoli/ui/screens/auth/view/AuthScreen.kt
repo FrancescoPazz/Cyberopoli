@@ -34,11 +34,11 @@ import com.unibo.cyberopoli.data.models.auth.AuthErrorContext
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.view.composables.AuthHeader
 import com.unibo.cyberopoli.ui.screens.auth.view.composables.GuestCard
 import com.unibo.cyberopoli.ui.screens.auth.view.composables.LoginCard
 import com.unibo.cyberopoli.ui.screens.auth.view.composables.SignUpCard
+import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
 
 @SuppressLint("DiscouragedApi")
 @Composable
@@ -46,12 +46,11 @@ fun AuthScreen(
     navController: NavController,
     authParams: AuthParams,
 ) {
-    val tabs =
-        listOf(
-            stringResource(R.string.login),
-            stringResource(R.string.signup),
-            stringResource(R.string.guest),
-        )
+    val tabs = listOf(
+        stringResource(R.string.login),
+        stringResource(R.string.signup),
+        stringResource(R.string.guest),
+    )
     val context = LocalContext.current
     val authState = authParams.authState
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -63,9 +62,7 @@ fun AuthScreen(
                 val dialogId = state.message.split(" ")[0]
                 val dialogMessage = context.getString(
                     context.resources.getIdentifier(
-                        dialogId,
-                        "string",
-                        context.packageName
+                        dialogId, "string", context.packageName
                     )
                 )
                 if (dialogMessage.isNotEmpty()) {
@@ -78,14 +75,16 @@ fun AuthScreen(
                     AuthErrorContext.SIGNUP -> selectedTabIndex = 1
                     AuthErrorContext.LOGIN -> selectedTabIndex = 0
                     AuthErrorContext.ANONYMOUS_LOGIN -> selectedTabIndex = 2
-                    else -> { }
+                    else -> {}
                 }
             }
+
             is AuthState.RegistrationSuccess -> {
                 Toast.makeText(context, signupSuccess, Toast.LENGTH_LONG).show()
                 selectedTabIndex = 0
             }
-            else -> { }
+
+            else -> {}
         }
     }
     Scaffold(
@@ -98,12 +97,11 @@ fun AuthScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AuthHeader()
@@ -132,20 +130,20 @@ fun AuthScreen(
                 }
             }
             when (selectedTabIndex) {
-                0 ->
-                    LoginCard(
-                        authParams.authState,
-                        authParams.login,
-                        authParams.loginGoogleUser,
-                        authParams.sendPasswordReset,
-                        authParams.sendOtp,
-                    )
-                1 ->
-                    SignUpCard(
-                        navController,
-                        authParams.authState,
-                        authParams.signUp,
-                    )
+                0 -> LoginCard(
+                    authParams.authState,
+                    authParams.login,
+                    authParams.loginGoogleUser,
+                    authParams.sendPasswordReset,
+                    authParams.sendOtp,
+                )
+
+                1 -> SignUpCard(
+                    navController,
+                    authParams.authState,
+                    authParams.signUp,
+                )
+
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }
         }

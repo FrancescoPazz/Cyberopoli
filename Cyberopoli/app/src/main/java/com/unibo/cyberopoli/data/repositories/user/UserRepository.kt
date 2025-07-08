@@ -19,14 +19,14 @@ class UserRepository(
     val currentUserLiveData = MutableLiveData<User?>()
 
     override suspend fun loadUserData(): User {
-        val userId = supabase.auth.currentUserOrNull()?.id ?: throw IllegalStateException("User not logged in")
+        val userId = supabase.auth.currentUserOrNull()?.id
+            ?: throw IllegalStateException("User not logged in")
         try {
-            val user =
-                supabase.from("users").select {
-                    filter {
-                        eq("id", userId)
-                    }
-                }.decodeSingle<User>()
+            val user = supabase.from("users").select {
+                filter {
+                    eq("id", userId)
+                }
+            }.decodeSingle<User>()
             currentUserLiveData.postValue(user)
             return user
         } catch (e: Exception) {

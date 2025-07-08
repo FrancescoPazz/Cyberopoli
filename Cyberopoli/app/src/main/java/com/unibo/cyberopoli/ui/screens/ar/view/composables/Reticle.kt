@@ -15,10 +15,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Reticle(modifier: Modifier = Modifier) {
     Box(
-        modifier =
-            modifier
-                .size(30.dp)
-                .background(Color.Transparent),
+        modifier = modifier
+            .size(30.dp)
+            .background(Color.Transparent),
         contentAlignment = Alignment.Center,
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {

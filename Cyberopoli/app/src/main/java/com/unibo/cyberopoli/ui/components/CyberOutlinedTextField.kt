@@ -33,17 +33,15 @@ fun CyberOutlinedTextField(
         value = value.value,
         onValueChange = onValueChange,
         label = {
-            Text(
-                buildAnnotatedString {
-                    append(placeholder)
-                    if (isRequired) {
-                        append(" ")
-                        withStyle(style = SpanStyle(color = Color.Red)) {
-                            append("*")
-                        }
+            Text(buildAnnotatedString {
+                append(placeholder)
+                if (isRequired) {
+                    append(" ")
+                    withStyle(style = SpanStyle(color = Color.Red)) {
+                        append("*")
                     }
                 }
-            )
+            })
         },
         placeholder = { Text(placeholder) },
         leadingIcon = {
@@ -55,8 +53,7 @@ fun CyberOutlinedTextField(
             }
         },
         shape = RoundedCornerShape(20.dp),
-        modifier =
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp)),
         singleLine = singleLine,

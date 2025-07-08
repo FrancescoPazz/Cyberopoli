@@ -21,11 +21,10 @@ class QRCodeAnalyzer(
             imageProxy.close()
             return
         }
-        val input =
-            InputImage.fromMediaImage(
-                mediaImage,
-                imageProxy.imageInfo.rotationDegrees,
-            )
+        val input = InputImage.fromMediaImage(
+            mediaImage,
+            imageProxy.imageInfo.rotationDegrees,
+        )
         scanner.process(input).addOnSuccessListener { barcodes ->
             if (!hasScanned) {
                 barcodes.firstOrNull()?.rawValue?.let { code ->

@@ -8,7 +8,7 @@ interface ILobbyRepository {
     suspend fun createOrGetLobby(
         lobbyId: String,
         host: User,
-    ) : LobbyResponse
+    ): LobbyResponse
 
     suspend fun joinLobby(member: LobbyMember)
 

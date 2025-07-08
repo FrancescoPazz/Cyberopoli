@@ -1,7 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.auth.view.composables
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,10 +46,9 @@ fun LoginCard(
     val confirmPassword = remember { mutableStateOf("") }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (!isResetMode) {
@@ -81,10 +79,9 @@ fun LoginCard(
 
             TextButton(
                 onClick = { isResetMode = true },
-                colors =
-                    ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                    ),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.tertiary,
+                ),
             ) {
                 Text(stringResource(R.string.forgot_password))
             }

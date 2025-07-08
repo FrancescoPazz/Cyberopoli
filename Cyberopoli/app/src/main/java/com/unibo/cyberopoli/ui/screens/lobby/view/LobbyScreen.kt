@@ -22,9 +22,9 @@ import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.view.composables.LobbyContent
 import com.unibo.cyberopoli.ui.screens.lobby.view.composables.LobbyStarterEffects
+import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -68,11 +68,10 @@ fun LobbyScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
             if (lobbyParams.lobbyAlreadyStarted.value) {
@@ -104,7 +103,8 @@ fun LobbyScreen(
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxSize(),
-                    isReady = lobbyParams.members.find { it.userId == lobbyParams.userId }?.isReady ?: false,
+                    isReady = lobbyParams.members.find { it.userId == lobbyParams.userId }?.isReady
+                        ?: false,
                 )
             }
         }

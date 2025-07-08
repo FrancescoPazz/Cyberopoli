@@ -21,10 +21,10 @@ import androidx.navigation.NavController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
-import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
 import com.unibo.cyberopoli.ui.screens.ranking.view.composables.MyRankingPositionCard
 import com.unibo.cyberopoli.ui.screens.ranking.view.composables.RankingListCard
 import com.unibo.cyberopoli.ui.screens.ranking.view.composables.Top3RankingSection
+import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
 
 @Composable
 fun RankingScreen(
@@ -41,11 +41,10 @@ fun RankingScreen(
         content = { paddingValues ->
             if (rankingData == null) {
                 Column(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -61,11 +60,10 @@ fun RankingScreen(
                 val others = rankingData.drop(3)
 
                 Column(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .verticalScroll(rememberScrollState()),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     currentUser?.let {
                         MyRankingPositionCard(

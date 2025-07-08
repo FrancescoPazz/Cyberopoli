@@ -32,10 +32,9 @@ fun AuthHeader() {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
-                modifier =
-                    Modifier
-                        .size(imageSize)
-                        .align(Alignment.Center),
+                modifier = Modifier
+                    .size(imageSize)
+                    .align(Alignment.Center),
                 contentScale = ContentScale.Fit,
             )
 
@@ -45,10 +44,9 @@ fun AuthHeader() {
                 fontWeight = FontWeight.ExtraBold,
                 offsetX = 3,
                 offsetY = 3,
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .padding(top = imageSize / 2),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(top = imageSize / 2),
             )
         }
     }

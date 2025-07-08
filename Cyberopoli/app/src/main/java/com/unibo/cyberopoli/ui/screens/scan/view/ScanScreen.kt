@@ -40,8 +40,8 @@ import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
 import com.unibo.cyberopoli.ui.screens.auth.view.composables.Text3D
-import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
 import com.unibo.cyberopoli.ui.screens.scan.view.composables.QRCodeScanner
+import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
 import com.unibo.cyberopoli.util.PermissionHandler
 
 @Composable
@@ -55,14 +55,17 @@ fun ScanScreen(
     val appName = stringResource(R.string.app_name).lowercase()
     val permissionHandler = remember { PermissionHandler(activity) }
     var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
-    val launcher =
-        rememberLauncherForActivityResult(RequestPermission()) { granted ->
-            hasCameraPermission = granted
-            if (!granted) {
-                Toast.makeText(activity, activity.getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT) // Usa string resource
-                    .show()
-            }
+    val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
+        hasCameraPermission = granted
+        if (!granted) {
+            Toast.makeText(
+                activity,
+                activity.getString(R.string.camera_permission_denied),
+                Toast.LENGTH_SHORT
+            ) // Usa string resource
+                .show()
         }
+    }
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) launcher.launch(Manifest.permission.CAMERA)
@@ -78,38 +81,36 @@ fun ScanScreen(
     ) { paddingValues ->
 
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Text3D(text = stringResource(R.string.scan))
             }
 
             Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
                 if (hasCameraPermission) {
                     QRCodeScanner(onQRCodeScanned = { value ->
-                        try{
+                        try {
                             scanParams.setScannedValue(value)
                             navController.navigate(CyberopoliRoute.Lobby)
                         } catch (e: Exception) {
-                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)
+                                .show()
                             return@QRCodeScanner
                         }
                     })

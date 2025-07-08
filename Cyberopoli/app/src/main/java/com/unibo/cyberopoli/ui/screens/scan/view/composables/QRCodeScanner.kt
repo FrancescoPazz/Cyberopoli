@@ -30,42 +30,38 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val previewView =
-        remember {
-            PreviewView(context).apply {
-                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-            }
+    val previewView = remember {
+        PreviewView(context).apply {
+            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
         }
+    }
 
     DisposableEffect(previewView) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         val executor = ContextCompat.getMainExecutor(context)
 
         cameraProviderFuture.addListener({
-            val cameraProvider =
-                try {
-                    cameraProviderFuture.get()
-                } catch (e: Exception) {
-                    Log.e("QRCodeScanner", "Error getting camera provider", e)
-                    throw e
-                }
+            val cameraProvider = try {
+                cameraProviderFuture.get()
+            } catch (e: Exception) {
+                Log.e("QRCodeScanner", "Error getting camera provider", e)
+                throw e
+            }
 
-            val previewUseCase =
-                Preview.Builder().build().also {
-                    it.surfaceProvider = previewView.surfaceProvider
-                }
+            val previewUseCase = Preview.Builder().build().also {
+                it.surfaceProvider = previewView.surfaceProvider
+            }
 
-            val analysisUseCase =
-                ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
-                    .also { analysis ->
-                        analysis.setAnalyzer(
-                            executor,
-                            QRCodeAnalyzer { code ->
-                                onQRCodeScanned(code)
-                            },
-                        )
-                    }
+            val analysisUseCase = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
+                .also { analysis ->
+                    analysis.setAnalyzer(
+                        executor,
+                        QRCodeAnalyzer { code ->
+                            onQRCodeScanned(code)
+                        },
+                    )
+                }
 
             try {
                 cameraProvider.unbindAll()
@@ -88,11 +84,10 @@ fun QRCodeScanner(onQRCodeScanned: (String) -> Unit) {
 
     AndroidView(
         factory = { previewView },
-        modifier =
-            Modifier
-                .size(300.dp)
-                .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
-                .clip(RoundedCornerShape(16.dp))
-                .padding(4.dp),
+        modifier = Modifier
+            .size(300.dp)
+            .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .padding(4.dp),
     )
 }

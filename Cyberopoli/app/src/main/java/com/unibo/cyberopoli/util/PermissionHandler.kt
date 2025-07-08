@@ -35,20 +35,19 @@ class PermissionHandler(private val activity: ComponentActivity) {
     @RequiresApi(Build.VERSION_CODES.Q)
     fun hasUsageStatsPermission(): Boolean {
         val appOps = activity.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                appOps.unsafeCheckOpNoThrow(
-                    AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    android.os.Process.myUid(),
-                    activity.packageName,
-                )
-            } else {
-                appOps.unsafeCheckOpRawNoThrow(
-                    AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    android.os.Process.myUid(),
-                    activity.packageName,
-                )
-            }
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                activity.packageName,
+            )
+        } else {
+            appOps.unsafeCheckOpRawNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                activity.packageName,
+            )
+        }
         return mode == AppOpsManager.MODE_ALLOWED
     }
 

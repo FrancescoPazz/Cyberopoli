@@ -38,24 +38,21 @@ fun RankingListItem(
     isCurrentUser: Boolean = false,
 ) {
     val context = LocalContext.current
-    val backgroundColor =
-        if (isCurrentUser) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surfaceContainer
-        }
-    val contentColor =
-        if (isCurrentUser) {
-            MaterialTheme.colorScheme.onPrimaryContainer
-        } else {
-            MaterialTheme.colorScheme.onSurface
-        }
+    val backgroundColor = if (isCurrentUser) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surfaceContainer
+    }
+    val contentColor = if (isCurrentUser) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
 
     CyberopoliCard(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 5.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 5.dp),
         elevation = if (isCurrentUser) 4.dp else 2.dp,
         shape = RoundedCornerShape(12.dp),
         containerColor = backgroundColor,
@@ -74,24 +71,22 @@ fun RankingListItem(
                 modifier = Modifier.width(38.dp),
             )
 
-            val resId =
-                remember(user.avatarUrl) {
-                    context.resources.getIdentifier(
-                        user.avatarUrl,
-                        "drawable",
-                        context.packageName,
-                    )
-                }
+            val resId = remember(user.avatarUrl) {
+                context.resources.getIdentifier(
+                    user.avatarUrl,
+                    "drawable",
+                    context.packageName,
+                )
+            }
             Image(
                 painter = painterResource(id = resId),
                 contentDescription = stringResource(R.string.avatar),
-                modifier =
-                    Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.inverseOnSurface, CircleShape)
-                        .padding(2.dp)
-                        .clip(CircleShape),
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.inverseOnSurface, CircleShape)
+                    .padding(2.dp)
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop,
             )
 

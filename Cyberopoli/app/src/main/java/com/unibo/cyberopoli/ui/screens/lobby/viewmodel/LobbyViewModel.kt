@@ -24,18 +24,16 @@ class LobbyViewModel(
     val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
 
     private val _lobbyAlreadyStarted = mutableStateOf(false)
-    val lobbyAlreadyStarted : State<Boolean> = _lobbyAlreadyStarted
+    val lobbyAlreadyStarted: State<Boolean> = _lobbyAlreadyStarted
 
-    val isHost: LiveData<Boolean> =
-        lobby.map { currentLobby ->
-            val currentUser = user.value
-            currentLobby?.hostId == currentUser?.id
-        }
+    val isHost: LiveData<Boolean> = lobby.map { currentLobby ->
+        val currentUser = user.value
+        currentLobby?.hostId == currentUser?.id
+    }
 
-    val allReady: LiveData<Boolean> =
-        members.map { currentMembers ->
-            currentMembers?.all { it.isReady } ?: false
-        }
+    val allReady: LiveData<Boolean> = members.map { currentMembers ->
+        currentMembers?.all { it.isReady } ?: false
+    }
 
     fun startLobbyFlow(lobbyId: String) {
         viewModelScope.launch {

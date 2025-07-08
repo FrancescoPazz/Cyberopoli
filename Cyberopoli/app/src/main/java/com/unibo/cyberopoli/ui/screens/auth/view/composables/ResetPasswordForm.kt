@@ -41,10 +41,9 @@ fun ResetPasswordForm(
     onBack: () -> Unit,
 ) {
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
     ) {
         Text(
             text = stringResource(R.string.reset_password_title),
@@ -110,10 +109,9 @@ fun ResetPasswordForm(
         Spacer(Modifier.height(16.dp))
         TextButton(
             onClick = onBack,
-            colors =
-                ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.tertiary,
-                ),
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
+            ),
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
             Text(stringResource(R.string.back_to_login))

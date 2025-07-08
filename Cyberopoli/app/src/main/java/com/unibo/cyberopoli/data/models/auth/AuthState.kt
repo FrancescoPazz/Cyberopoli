@@ -1,13 +1,7 @@
 package com.unibo.cyberopoli.data.models.auth
 
 enum class AuthErrorContext {
-    LOGIN,
-    SIGNUP,
-    PASSWORD_RESET,
-    GOOGLE_AUTH,
-    ANONYMOUS_LOGIN,
-    OTP_VERIFICATION,
-    OTHER
+    LOGIN, SIGNUP, PASSWORD_RESET, GOOGLE_AUTH, ANONYMOUS_LOGIN, OTP_VERIFICATION, OTHER
 }
 
 sealed class AuthState {
@@ -22,7 +16,6 @@ sealed class AuthState {
     data object RegistrationSuccess : AuthState()
 
     data class Error(
-        val message: String,
-        val context: AuthErrorContext = AuthErrorContext.OTHER
+        val message: String, val context: AuthErrorContext = AuthErrorContext.OTHER
     ) : AuthState()
 }

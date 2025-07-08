@@ -22,29 +22,25 @@ fun AuthButton(
 ) {
     Button(
         onClick = onClick,
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        elevation =
-            ButtonDefaults.buttonElevation(
-                defaultElevation = 8.dp,
-                pressedElevation = 4.dp,
-            ),
-        colors =
-            ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colorScheme.tertiary,
-                containerColor = MaterialTheme.colorScheme.onTertiary,
-            ),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 8.dp,
+            pressedElevation = 4.dp,
+        ),
+        colors = ButtonDefaults.buttonColors(
+            contentColor = MaterialTheme.colorScheme.tertiary,
+            containerColor = MaterialTheme.colorScheme.onTertiary,
+        ),
         enabled = enabled,
     ) {
         Text(
             text = text,
-            style =
-                TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            ),
         )
     }
 }

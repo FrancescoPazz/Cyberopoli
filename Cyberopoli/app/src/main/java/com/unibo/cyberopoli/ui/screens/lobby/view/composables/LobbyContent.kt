@@ -33,9 +33,7 @@ fun LobbyContent(
     val uniquedMembers = members.distinctBy { it.userId }
 
     Column(
-        modifier =
-            modifier
-                .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(

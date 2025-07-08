@@ -15,26 +15,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.view.AuthScreen
+import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
 import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthViewModel
-import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
 import com.unibo.cyberopoli.ui.screens.game.view.GameScreen
+import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
 import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameViewModel
-import com.unibo.cyberopoli.ui.screens.home.viewmodel.HomeParams
 import com.unibo.cyberopoli.ui.screens.home.view.HomeScreen
+import com.unibo.cyberopoli.ui.screens.home.viewmodel.HomeParams
 import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.view.LobbyScreen
+import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyViewModel
-import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.view.ProfileScreen
+import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileViewModel
-import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
 import com.unibo.cyberopoli.ui.screens.ranking.view.RankingScreen
+import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
 import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingViewModel
-import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
 import com.unibo.cyberopoli.ui.screens.scan.view.ScanScreen
+import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
 import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanViewModel
 import com.unibo.cyberopoli.ui.screens.settings.view.SettingScreen
 import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
@@ -98,22 +98,20 @@ fun CyberopoliNavGraph(navController: NavHostController) {
         }
 
         CyberopoliTheme(
-            darkTheme =
-                when (themeState.theme) {
-                    Theme.Light -> false
-                    Theme.Dark -> true
-                    Theme.System -> isSystemInDarkTheme()
-                },
+            darkTheme = when (themeState.theme) {
+                Theme.Light -> false
+                Theme.Dark -> true
+                Theme.System -> isSystemInDarkTheme()
+            },
         ) {
             if (authState.value == null || authState.value == AuthState.Loading) {
                 LoadingScreen()
                 return@CyberopoliTheme
             }
-            val startRoute =
-                when (authState.value) {
-                    is AuthState.Authenticated -> CyberopoliRoute.Home
-                    else -> CyberopoliRoute.Auth
-                }
+            val startRoute = when (authState.value) {
+                is AuthState.Authenticated -> CyberopoliRoute.Home
+                else -> CyberopoliRoute.Auth
+            }
             NavHost(
                 navController = navController,
                 startDestination = startRoute,
@@ -191,14 +189,12 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     LobbyScreen(
                         navController,
                         LobbyParams(
-                            lobbyId =
-                                UUID.nameUUIDFromBytes(
-                                    scanViewModel.scannedValue.value?.toByteArray()
-                                        ?: throw IllegalStateException("Scanned value is null"),
-                                ).toString(),
+                            lobbyId = UUID.nameUUIDFromBytes(
+                                scanViewModel.scannedValue.value?.toByteArray()
+                                    ?: throw IllegalStateException("Scanned value is null"),
+                            ).toString(),
                             lobby = lobbyViewModel.lobby.observeAsState(),
-                            lobbyAlreadyStarted =
-                                lobbyViewModel.lobbyAlreadyStarted,
+                            lobbyAlreadyStarted = lobbyViewModel.lobbyAlreadyStarted,
                             isGuest = isGuest,
                             members = members ?: throw IllegalStateException("Members are null"),
                             leaveLobby = lobbyViewModel::leaveLobby,
@@ -220,37 +216,37 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     val players = gameViewModel.players.observeAsState()
                     val diceRoll = gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData = gameViewModel.dialog.collectAsStateWithLifecycle()
-                    val turnIndex = players.value?.indexOfFirst { p -> p.userId == game.value?.turn } ?: 0
+                    val turnIndex =
+                        players.value?.indexOfFirst { p -> p.userId == game.value?.turn } ?: 0
 
                     GameScreen(
                         navController = navController,
-                        gameParams =
-                            GameParams(
-                                game = game,
-                                lobby = lobby,
-                                members = members,
-                                player = player,
-                                players = players,
-                                diceRoll = diceRoll,
-                                dialogData = dialogData,
-                                gameAction = gameAction,
-                                cells = gameViewModel.cells,
-                                endTurn = gameViewModel::endTurn,
-                                gameOver = gameViewModel.gameOver,
-                                rollDice = gameViewModel::rollDice,
-                                setInApp = lobbyViewModel::setInApp,
-                                resetGame = gameViewModel::resetGame,
-                                startGame = gameViewModel::startGame,
-                                movePlayer = gameViewModel::movePlayer,
-                                leaveLobby = lobbyViewModel::leaveLobby,
-                                currentTurnIndex = derivedStateOf { turnIndex },
-                                onResultDismiss = gameViewModel::onResultDismiss,
-                                refreshUserData = profileViewModel::refreshUserData,
-                                updatePlayerScore = gameViewModel::updatePlayerScore,
-                                onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
-                                startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
-                                isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
-                            ),
+                        gameParams = GameParams(
+                            game = game,
+                            lobby = lobby,
+                            members = members,
+                            player = player,
+                            players = players,
+                            diceRoll = diceRoll,
+                            dialogData = dialogData,
+                            gameAction = gameAction,
+                            cells = gameViewModel.cells,
+                            endTurn = gameViewModel::endTurn,
+                            gameOver = gameViewModel.gameOver,
+                            rollDice = gameViewModel::rollDice,
+                            setInApp = lobbyViewModel::setInApp,
+                            resetGame = gameViewModel::resetGame,
+                            startGame = gameViewModel::startGame,
+                            movePlayer = gameViewModel::movePlayer,
+                            leaveLobby = lobbyViewModel::leaveLobby,
+                            currentTurnIndex = derivedStateOf { turnIndex },
+                            onResultDismiss = gameViewModel::onResultDismiss,
+                            refreshUserData = profileViewModel::refreshUserData,
+                            updatePlayerScore = gameViewModel::updatePlayerScore,
+                            onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
+                            startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
+                            isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
+                        ),
                     )
                 }
             }

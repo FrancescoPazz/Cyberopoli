@@ -99,11 +99,10 @@ fun ChangePasswordSection(
                     ).show()
                 }
             },
-            colors =
-                ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.tertiary,
-                    containerColor = MaterialTheme.colorScheme.onTertiary,
-                ),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.onTertiary,
+            ),
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
             Text(stringResource(R.string.change_password))

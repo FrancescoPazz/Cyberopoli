@@ -17,10 +17,10 @@ import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
 import com.unibo.cyberopoli.ui.screens.profile.view.composables.EditProfileSection
 import com.unibo.cyberopoli.ui.screens.profile.view.composables.GameStatisticsSection
 import com.unibo.cyberopoli.ui.screens.profile.view.composables.ProfileHeader
+import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
 
 @Composable
 fun ProfileScreen(
@@ -34,11 +34,10 @@ fun ProfileScreen(
         bottomBar = { BottomBar(navController) },
         content = { paddingValues ->
             Column(
-                modifier =
-                    Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {

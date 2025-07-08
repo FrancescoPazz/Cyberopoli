@@ -1,7 +1,6 @@
 package com.unibo.cyberopoli.ui.components
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,20 +52,18 @@ fun TopBar(
         title = {
             if (currentRoute != null) {
                 val routeName = currentRoute.substringAfterLast(".")
-                val resId =
-                    remember(routeName) {
-                        context.resources.getIdentifier(
-                            routeName,
-                            "string",
-                            context.packageName,
-                        )
-                    }
-                val titleText =
-                    if (resId != 0) {
-                        stringResource(resId)
-                    } else {
-                        routeName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                    }
+                val resId = remember(routeName) {
+                    context.resources.getIdentifier(
+                        routeName,
+                        "string",
+                        context.packageName,
+                    )
+                }
+                val titleText = if (resId != 0) {
+                    stringResource(resId)
+                } else {
+                    routeName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                }
                 Text(
                     titleText,
                     fontWeight = FontWeight.Medium,
@@ -74,15 +71,13 @@ fun TopBar(
                 )
             }
         },
-        colors =
-            TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor =
-                    if (currentRoute == CyberopoliRoute.Auth.toString()) {
-                        MaterialTheme.colorScheme.background
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainerHighest
-                    },
-            ),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = if (currentRoute == CyberopoliRoute.Auth.toString()) {
+                MaterialTheme.colorScheme.background
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHighest
+            },
+        ),
         navigationIcon = {
             if (navController.previousBackStackEntry != null) {
                 IconButton(onClick = {
@@ -124,34 +119,33 @@ data class BottomNavItem(
 
 @Composable
 fun BottomBar(navController: NavController) {
-    val bottomNavItems =
-        listOf(
-            BottomNavItem(
-                name = stringResource(R.string.home),
-                route = CyberopoliRoute.Home,
-                icon = Icons.Filled.Home,
-            ),
-            BottomNavItem(
-                name = stringResource(R.string.ranking),
-                route = CyberopoliRoute.Ranking,
-                icon = Icons.Filled.AutoGraph,
-            ),
-            BottomNavItem(
-                name = stringResource(R.string.scan),
-                route = CyberopoliRoute.Scan,
-                icon = Icons.Filled.Image,
-            ),
-            BottomNavItem(
-                name = stringResource(R.string.profile),
-                route = CyberopoliRoute.Profile,
-                icon = Icons.Default.Person,
-            ),
-            BottomNavItem(
-                name = stringResource(R.string.settings),
-                route = CyberopoliRoute.Settings,
-                icon = Icons.Filled.Settings,
-            ),
-        )
+    val bottomNavItems = listOf(
+        BottomNavItem(
+            name = stringResource(R.string.home),
+            route = CyberopoliRoute.Home,
+            icon = Icons.Filled.Home,
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.ranking),
+            route = CyberopoliRoute.Ranking,
+            icon = Icons.Filled.AutoGraph,
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.scan),
+            route = CyberopoliRoute.Scan,
+            icon = Icons.Filled.Image,
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.profile),
+            route = CyberopoliRoute.Profile,
+            icon = Icons.Default.Person,
+        ),
+        BottomNavItem(
+            name = stringResource(R.string.settings),
+            route = CyberopoliRoute.Settings,
+            icon = Icons.Filled.Settings,
+        ),
+    )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route?.substringAfterLast(".")
@@ -194,14 +188,13 @@ fun BottomBar(navController: NavController) {
                             }
                         }
                     },
-                    colors =
-                        NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.tertiary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                            selectedTextColor = MaterialTheme.colorScheme.tertiary,
-                            unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                            indicatorColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
-                        ),
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.tertiary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                        selectedTextColor = MaterialTheme.colorScheme.tertiary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                        indicatorColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+                    ),
                 )
             }
         }

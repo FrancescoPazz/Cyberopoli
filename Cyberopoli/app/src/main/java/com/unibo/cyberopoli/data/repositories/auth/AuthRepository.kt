@@ -88,12 +88,11 @@ class AuthRepository(
             return@flow
         }
 
-        val takenEmails =
-            supabase.from(USERS_TABLE).select {
-                filter {
-                    ilike("email", email)
-                }
-            }.decodeList<User>()
+        val takenEmails = supabase.from(USERS_TABLE).select {
+            filter {
+                ilike("email", email)
+            }
+        }.decodeList<User>()
         if (takenEmails.isNotEmpty()) {
             emit(AuthResponse.Failure("Already registered email"))
             return@flow

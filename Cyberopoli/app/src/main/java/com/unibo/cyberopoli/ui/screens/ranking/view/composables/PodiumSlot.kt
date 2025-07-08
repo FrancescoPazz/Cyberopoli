@@ -42,13 +42,12 @@ fun PodiumSlot(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val podiumHeight =
-        when (rank) {
-            1 -> 120.dp
-            2 -> 90.dp
-            3 -> 60.dp
-            else -> 40.dp
-        }
+    val podiumHeight = when (rank) {
+        1 -> 120.dp
+        2 -> 90.dp
+        3 -> 60.dp
+        else -> 40.dp
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,24 +59,22 @@ fun PodiumSlot(
             modifier = Modifier.padding(bottom = 4.dp),
         )
 
-        val resId =
-            remember(user.avatarUrl) {
-                context.resources.getIdentifier(
-                    user.avatarUrl,
-                    "drawable",
-                    context.packageName,
-                )
-            }
+        val resId = remember(user.avatarUrl) {
+            context.resources.getIdentifier(
+                user.avatarUrl,
+                "drawable",
+                context.packageName,
+            )
+        }
         Image(
             painter = painterResource(resId),
             contentDescription = stringResource(R.string.avatar),
-            modifier =
-                Modifier
-                    .size(if (rank == 1) 64.dp else 54.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface, CircleShape)
-                    .padding(3.dp)
-                    .clip(CircleShape),
+            modifier = Modifier
+                .size(if (rank == 1) 64.dp else 54.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .padding(3.dp)
+                .clip(CircleShape),
             contentScale = ContentScale.Crop,
         )
 
@@ -88,11 +85,10 @@ fun PodiumSlot(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
-            modifier =
-                Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
         )
 
         Text(
@@ -102,23 +98,21 @@ fun PodiumSlot(
         )
 
         Box(
-            modifier =
-                Modifier
-                    .padding(top = 8.dp)
-                    .width(64.dp)
-                    .height(podiumHeight)
-                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-                    .background(podiumColor),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .width(64.dp)
+                .height(podiumHeight)
+                .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                .background(podiumColor),
         ) {
             Text(
                 text = "#$rank",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black.copy(alpha = 0.7f),
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .padding(bottom = 4.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(bottom = 4.dp),
             )
         }
     }

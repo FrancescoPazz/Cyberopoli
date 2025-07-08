@@ -1,8 +1,8 @@
 package com.unibo.cyberopoli.ui.screens.ar.view
 
 import android.content.res.Configuration
-import android.view.MotionEvent
 import android.util.Log
+import android.view.MotionEvent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -105,11 +105,10 @@ fun ARBox(
         )
     }
 
-    val gestureListener = rememberOnGestureListener(
-        onSingleTapConfirmed = { _: MotionEvent, node: Node? ->
+    val gestureListener =
+        rememberOnGestureListener(onSingleTapConfirmed = { _: MotionEvent, node: Node? ->
             Log.d("ARBox", "Single tap detected on node: $node")
-        }
-    )
+        })
 
     Box(modifier = Modifier.fillMaxSize()) {
         ARScene(
@@ -168,8 +167,7 @@ fun ARBox(
                 .padding(start = 24.dp, bottom = 140.dp)
         ) {
             Text(
-                text = stringResource(R.string.place_board),
-                modifier = Modifier.padding(8.dp)
+                text = stringResource(R.string.place_board), modifier = Modifier.padding(8.dp)
             )
         }
     }
@@ -199,8 +197,7 @@ private fun placeBoardAtCenter(
     }
 
     frame.hitTest(centerOffset.x, centerOffset.y)
-        .firstOrNull { it.isValid(depthPoint = false, point = false) }
-        ?.createAnchorOrNull()
+        .firstOrNull { it.isValid(depthPoint = false, point = false) }?.createAnchorOrNull()
         ?.let { anchor ->
             val boardNode = ARHelper.createAnchorNode(
                 engine = engine,
@@ -291,17 +288,26 @@ private suspend fun renderBoardAndPieces(
 ) {
     if (frame == null) return
     clearPieces(
-        pieceNodes = pieceNodes,
-        modelInstances = modelInstances
+        pieceNodes = pieceNodes, modelInstances = modelInstances
     )
     players.forEach { player ->
-        placePieceOnBoard(frame, engine, modelLoader, modelInstances, childNodes, boardNodeState.value, pieceNodes, density, configuration, player.cellPosition)
+        placePieceOnBoard(
+            frame,
+            engine,
+            modelLoader,
+            modelInstances,
+            childNodes,
+            boardNodeState.value,
+            pieceNodes,
+            density,
+            configuration,
+            player.cellPosition
+        )
     }
 }
 
 private fun clearPieces(
-    pieceNodes: MutableList<Node>,
-    modelInstances: MutableList<ModelInstance>
+    pieceNodes: MutableList<Node>, modelInstances: MutableList<ModelInstance>
 ) {
     pieceNodes.forEach { node ->
         node.parent?.removeChildNode(node)

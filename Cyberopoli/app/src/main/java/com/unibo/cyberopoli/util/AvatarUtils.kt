@@ -15,7 +15,14 @@ object AvatarUtils {
 
     const val DEFAULT_AVATAR = AVATAR_MALE_1
 
-    private val AVATAR_LIST = listOf(AVATAR_MALE_1, AVATAR_MALE_2, AVATAR_MALE_3, AVATAR_FEMALE_1, AVATAR_FEMALE_2, AVATAR_FEMALE_3)
+    private val AVATAR_LIST = listOf(
+        AVATAR_MALE_1,
+        AVATAR_MALE_2,
+        AVATAR_MALE_3,
+        AVATAR_FEMALE_1,
+        AVATAR_FEMALE_2,
+        AVATAR_FEMALE_3
+    )
 
     @DrawableRes
     fun getAvatarResource(avatarUrl: String?): Int {

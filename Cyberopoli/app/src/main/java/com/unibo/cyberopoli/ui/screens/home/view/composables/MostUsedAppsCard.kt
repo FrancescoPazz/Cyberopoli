@@ -41,8 +41,7 @@ fun MostUsedAppsCard(
         } else {
             MostUsedAppsChart(
                 appsUsage = appsUsage,
-                modifier =
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 200.dp),
             )

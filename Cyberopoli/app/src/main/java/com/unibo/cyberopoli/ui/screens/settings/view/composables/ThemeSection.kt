@@ -34,32 +34,29 @@ fun ThemeSection(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .selectable(
-                        selected = theme == currentTheme,
-                        onClick = { onThemeSelected(theme) },
-                        role = Role.RadioButton,
-                    )
-                    .padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .selectable(
+                    selected = theme == currentTheme,
+                    onClick = { onThemeSelected(theme) },
+                    role = Role.RadioButton,
+                )
+                .padding(horizontal = 16.dp),
         ) {
             RadioButton(
                 selected = theme == currentTheme,
                 onClick = null,
-                colors =
-                    RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.tertiary,
-                    ),
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.tertiary,
+                ),
             )
             Text(
-                text =
-                    when (theme) {
-                        Theme.Light -> stringResource(R.string.light)
-                        Theme.Dark -> stringResource(R.string.dark)
-                        Theme.System -> stringResource(R.string.system)
-                    },
+                text = when (theme) {
+                    Theme.Light -> stringResource(R.string.light)
+                    Theme.Dark -> stringResource(R.string.dark)
+                    Theme.System -> stringResource(R.string.system)
+                },
                 modifier = Modifier.padding(start = 16.dp),
                 color = MaterialTheme.colorScheme.onSurface,
             )
