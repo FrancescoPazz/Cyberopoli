@@ -474,6 +474,9 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
             Log.d("TESTEA GameViewModel", "Player round increased to ${player.value?.round}")
+
+            checkAndRemoveExpiredAssets()
+
             if (player.value?.round == 2) {
                 gameRepository.gameOver()
             }
@@ -489,6 +492,30 @@ class GameViewModel(
                     eventType = GameTypeCell.VPN,
                 ),
             )
+        }
+    }
+
+    private fun checkAndRemoveExpiredAssets() {
+        viewModelScope.launch {
+            val currentRound = player.value?.round ?: return@launch
+            val currentAssets = assets.value ?: return@launch
+
+            val expiredAssets = currentAssets.filter { asset ->
+                asset.expiresAtRound >= currentRound
+            }
+
+            expiredAssets.forEach { expiredAsset ->
+                try {
+                    gameRepository.removeGameAsset(expiredAsset)
+                    Log.d("GameViewModel", "Removed expired asset: ${expiredAsset.cellId}")
+                } catch (e: Exception) {
+                    Log.e("GameViewModel", "Error removing expired asset: ${e.message}")
+                }
+            }
+
+            if (expiredAssets.isNotEmpty()) {
+                Log.d("GameViewModel", "Removed ${expiredAssets.size} expired assets")
+            }
         }
     }
 
