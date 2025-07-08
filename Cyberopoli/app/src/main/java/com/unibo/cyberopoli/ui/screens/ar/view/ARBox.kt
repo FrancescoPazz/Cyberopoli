@@ -31,7 +31,9 @@ import com.google.ar.core.TrackingFailureReason
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.ui.screens.ar.view.composables.Reticle
+import com.unibo.cyberopoli.ui.screens.game.view.composables.PlayerLegend
 import com.unibo.cyberopoli.util.ARHelper
+import com.unibo.cyberopoli.util.PlayerColorUtils
 import com.unibo.cyberopoli.util.getOffsetForPerimeterIndex
 import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.ar.ARScene
@@ -90,18 +92,39 @@ fun ARBox(
 
     LaunchedEffect(players) {
         if (currentFrame == null || players.isNullOrEmpty()) return@LaunchedEffect
-        renderBoardAndPieces(
+
+        clearAll(childNodes, modelInstances, boardNodeState, pieceNodes)
+
+        placeBoardAtCenter(
             frame = currentFrame,
             engine = engine,
             modelLoader = modelLoader,
+            materialLoader = materialLoader,
             modelInstances = modelInstances,
             childNodes = childNodes,
             boardNodeState = boardNodeState,
             pieceNodes = pieceNodes,
             density = density,
-            configuration = configuration,
-            players = players
+            configuration = configuration
         )
+
+        boardNodeState.value?.let {
+            players.forEach { player ->
+                placePieceOnBoard(
+                    frame = currentFrame,
+                    engine = engine,
+                    modelLoader = modelLoader,
+                    modelInstances = modelInstances,
+                    childNodes = childNodes,
+                    boardNode = it,
+                    pieceNodes = pieceNodes,
+                    density = density,
+                    configuration = configuration,
+                    cellPosition = player.cellPosition,
+                    player = player
+                )
+            }
+        }
     }
 
     val gestureListener =
@@ -127,6 +150,15 @@ fun ARBox(
         )
 
         Reticle(modifier = Modifier.align(Alignment.Center))
+
+        players?.let {
+            PlayerLegend(
+                players = it,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            )
+        }
 
         FloatingActionButton(
             onClick = {
@@ -155,7 +187,8 @@ fun ARBox(
                             pieceNodes = pieceNodes,
                             density = density,
                             configuration = configuration,
-                            cellPosition = player.cellPosition
+                            cellPosition = player.cellPosition,
+                            player = player
                         )
                     }
 
@@ -221,7 +254,8 @@ private suspend fun placePieceOnBoard(
     pieceNodes: MutableList<Node>,
     density: Density,
     configuration: Configuration,
-    cellPosition: Int
+    cellPosition: Int,
+    player: GamePlayer
 ) {
     if (frame == null) return
     if (boardNode == null) {
@@ -257,7 +291,7 @@ private suspend fun placePieceOnBoard(
                 scale = Float3(0.02f, 0.02f, 0.02f)
             }
 
-            val pawnModelPath = "models/yellow_pawn.glb"
+            val pawnModelPath = PlayerColorUtils.getPawnModelForPlayer(player)
             modelLoader.loadModelInstance(pawnModelPath)?.let { loadedPawn ->
                 modelInstances.add(loadedPawn)
                 val modelNode = io.github.sceneview.node.ModelNode(
@@ -299,7 +333,8 @@ private suspend fun renderBoardAndPieces(
             pieceNodes,
             density,
             configuration,
-            player.cellPosition
+            player.cellPosition,
+            player
         )
     }
 }

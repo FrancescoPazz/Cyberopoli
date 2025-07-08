@@ -22,9 +22,10 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.util.PlayerColorUtils
 
 @Composable
-fun PlayerLegend(players: List<GamePlayer>) {
+fun PlayerLegend(players: List<GamePlayer>,
+                 modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .background(
