@@ -95,13 +95,15 @@ fun GameScreen(
 
             is GameDialogData.SubscribeChoice -> Triple(
                 stringResource(data.titleRes),
-                stringResource(data.messageRes),
+                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
+                    ?: stringResource(data.messageRes),
                 data.optionsRes.map { stringResource(it) },
             )
 
             is GameDialogData.MakeContentChoice -> Triple(
                 stringResource(data.titleRes),
-                stringResource(data.messageRes),
+                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
+                    ?: stringResource(data.messageRes),
                 data.optionsRes.map { stringResource(it) },
             )
 
@@ -113,11 +115,8 @@ fun GameScreen(
 
             is GameDialogData.Alert -> Triple(
                 stringResource(data.titleRes),
-                data.messageArgs?.let { args ->
-                    if (args.isEmpty()) stringResource(data.messageRes)
-                    else if (args.size == 1) stringResource(data.messageRes, args[0])
-                    else stringResource(data.messageRes, args[0], args[1])
-                } ?: stringResource(data.messageRes),
+                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
+                    ?: stringResource(data.messageRes),
                 data.optionsRes?.map { stringResource(it) } ?: listOf("OK"),
             )
         }
