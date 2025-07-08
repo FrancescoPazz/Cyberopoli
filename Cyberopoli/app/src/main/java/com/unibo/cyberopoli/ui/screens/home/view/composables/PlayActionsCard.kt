@@ -15,7 +15,6 @@ import com.unibo.cyberopoli.ui.components.CyberopoliCard
 fun PlayActionsCard(
     modifier: Modifier = Modifier,
     onNewGameClick: () -> Unit = {},
-    onJoinGameClick: () -> Unit = {},
 ) {
     CyberopoliCard(modifier = modifier) {
         Text(

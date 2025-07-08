@@ -52,7 +52,6 @@ fun ScanScreen(
     val manualCode = remember { mutableStateOf("") }
     val invalidCode = stringResource(R.string.invalid_code)
     val activity = LocalActivity.current as ComponentActivity
-    val appName = stringResource(R.string.app_name).lowercase()
     val permissionHandler = remember { PermissionHandler(activity) }
     var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->

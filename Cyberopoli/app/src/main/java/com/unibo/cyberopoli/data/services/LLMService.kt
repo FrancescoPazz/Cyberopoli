@@ -24,8 +24,6 @@ import kotlinx.serialization.json.jsonPrimitive
 class LLMService(
     private val baseUrl: String = "http://213.165.71.13:8080",
 ) {
-    private val json = Json { ignoreUnknownKeys = true }
-
     private val client = HttpClient(OkHttp) {
         install(Logging) {
             logger = object : io.ktor.client.plugins.logging.Logger {

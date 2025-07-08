@@ -11,8 +11,7 @@ import java.util.Locale
 import com.unibo.cyberopoli.data.repositories.settings.ISettingsRepository as DomainSettingsRepository
 
 class SettingsRepository(
-    private val dataStore: DataStore<Preferences>,
-    private val supabase: SupabaseClient,
+    private val dataStore: DataStore<Preferences>
 ) : DomainSettingsRepository {
     companion object {
         private val THEME_KEY = stringPreferencesKey("theme")

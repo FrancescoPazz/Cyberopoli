@@ -36,7 +36,7 @@ val appModule = module {
     single { LLMService() }
 
     single { AuthRepository(get()) }
-    single { SettingsRepository(get(), get()) }
+    single { SettingsRepository(get()) }
     single { UserRepository(get()) }
     single { RankingRepository(get()) }
     single { LobbyRepository(get()) }

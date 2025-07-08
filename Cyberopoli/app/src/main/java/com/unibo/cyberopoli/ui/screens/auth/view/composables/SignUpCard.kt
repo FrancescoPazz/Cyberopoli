@@ -26,7 +26,6 @@ import com.unibo.cyberopoli.ui.components.CyberOutlinedTextField
 
 @Composable
 fun SignUpCard(
-    navController: NavController,
     authState: State<AuthState?>,
     signUp: (
         name: String?,

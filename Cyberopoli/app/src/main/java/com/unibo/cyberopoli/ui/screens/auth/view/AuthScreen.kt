@@ -139,7 +139,6 @@ fun AuthScreen(
                 )
 
                 1 -> SignUpCard(
-                    navController,
                     authParams.authState,
                     authParams.signUp,
                 )

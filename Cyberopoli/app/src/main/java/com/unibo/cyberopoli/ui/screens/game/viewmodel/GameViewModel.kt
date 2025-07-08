@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val app: Application,
-    private val lobbyRepository: LobbyRepository,
+    lobbyRepository: LobbyRepository,
     private val gameRepository: GameRepository,
     userRepository: UserRepository
 ) : ViewModel() {
