@@ -104,11 +104,12 @@ fun ScanScreen(
             ) {
                 if (hasCameraPermission) {
                     QRCodeScanner(onQRCodeScanned = { value ->
-                        if (value.contains(appName)) {
+                        try{
                             scanParams.setScannedValue(value)
                             navController.navigate(CyberopoliRoute.Lobby)
-                        } else {
+                        } catch (e: Exception) {
                             Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+                            return@QRCodeScanner
                         }
                     })
                 } else {

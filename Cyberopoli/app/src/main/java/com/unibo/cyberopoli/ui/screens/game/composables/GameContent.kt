@@ -70,9 +70,11 @@ fun GameContent(
     ) { padding ->
 
         if (isArMode.value) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
 
                 ARBox(
                     players = players
@@ -131,7 +133,6 @@ fun GameContent(
                     )
                 }
             }
-
         }
     }
 
