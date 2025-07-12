@@ -30,5 +30,9 @@ interface IAuthRepository {
 
     fun resetPassword(email: String): Flow<AuthResponse>
 
+    fun sendOtp(email: String, otp: String): Flow<AuthResponse>
+
+    fun changeForgottenPassword(newPassword: String): Flow<AuthResponse>
+
     suspend fun currentUser(): User?
 }

@@ -1,31 +1,31 @@
 package com.unibo.cyberopoli.data.repositories.auth
 
+import java.util.UUID
 import android.content.Context
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.unibo.cyberopoli.data.models.auth.AuthResponse
-import com.unibo.cyberopoli.data.models.auth.AuthState
-import com.unibo.cyberopoli.data.models.auth.User
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.OtpType
+import kotlinx.coroutines.flow.map
+import java.security.MessageDigest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.OtpType
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.postgrest.from
+import kotlinx.serialization.json.JsonObject
+import androidx.credentials.CredentialManager
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.coroutines.flow.filterIsInstance
+import androidx.credentials.GetCredentialRequest
+import com.unibo.cyberopoli.data.models.auth.User
 import io.github.jan.supabase.auth.providers.Google
+import com.unibo.cyberopoli.data.models.auth.AuthState
+import io.github.jan.supabase.auth.status.SessionStatus
+import io.github.jan.supabase.auth.providers.builtin.OTP
+import com.unibo.cyberopoli.data.models.auth.AuthResponse
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
-import io.github.jan.supabase.auth.providers.builtin.OTP
-import io.github.jan.supabase.auth.status.SessionStatus
-import io.github.jan.supabase.postgrest.from
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import java.security.MessageDigest
-import java.util.UUID
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 
 private const val GOOGLE_SERVER_CLIENT_ID =
     "965652282511-hveojtrsgklpr52hbi54qg9ct477llmh.apps.googleusercontent.com"
@@ -208,7 +208,7 @@ class AuthRepository(
         }
     }
 
-    fun sendOtp(email: String, otp: String): Flow<AuthResponse> = flow {
+    override fun sendOtp(email: String, otp: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.verifyEmailOtp(type = OtpType.Email.EMAIL, email = email, token = otp)
             if (supabase.auth.currentUserOrNull() == null) {
@@ -222,7 +222,7 @@ class AuthRepository(
         }
     }
 
-    fun changeForgottenPassword(newPassword: String) = flow {
+    override fun changeForgottenPassword(newPassword: String): Flow<AuthResponse> = flow {
         try {
             supabase.auth.updateUser {
                 password = newPassword

@@ -166,13 +166,14 @@ class GameViewModel(
                         _gameOver.value = true
                         val player = player.value ?: return@onEach
                         player.user.let { userId ->
-                            Log.d("GameViewModel", "Saving user progress for user: $userId")
+                            Log.d("provolone", "Saving user progress for user: $userId")
                             gameRepository.saveUserProgress()
                             gameRepository.clearGameData()
                         }
                     }
                 }.launchIn(viewModelScope)
         }
+
         viewModelScope.launch {
             gameRepository.currentGameEventsLiveData.asFlow().filterNotNull().distinctUntilChanged()
                 .collect { events ->
