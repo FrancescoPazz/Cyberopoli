@@ -1,16 +1,16 @@
 package com.unibo.cyberopoli.data.repositories.user
 
 import android.util.Log
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.CoroutineScope
 import androidx.lifecycle.MutableLiveData
-import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.util.AvatarUtils
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.unibo.cyberopoli.data.models.auth.User
+import io.github.jan.supabase.auth.providers.builtin.Email
 import com.unibo.cyberopoli.data.repositories.user.IUserRepository as DomainUserRepository
 
 class UserRepository(
@@ -34,7 +34,7 @@ class UserRepository(
         }
     }
 
-    fun changeAvatar() {
+    override fun changeAvatar() {
         val userId = supabase.auth.currentUserOrNull()?.id ?: run {
             return
         }
@@ -93,7 +93,7 @@ class UserRepository(
         }
     }
 
-    fun clearUserData() {
+    override fun clearUserData() {
         currentUserLiveData.value = null
     }
 }
