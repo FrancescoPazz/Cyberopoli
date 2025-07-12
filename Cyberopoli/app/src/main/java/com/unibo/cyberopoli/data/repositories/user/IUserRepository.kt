@@ -3,9 +3,9 @@ package com.unibo.cyberopoli.data.repositories.user
 import com.unibo.cyberopoli.data.models.auth.User
 
 interface IUserRepository {
-    suspend fun loadUserData(): User
+    suspend fun getUser() : User
 
-    fun changeAvatar()
+    suspend fun changeAvatar()
 
     suspend fun updateUserInfo(
         newName: String?,
@@ -16,6 +16,4 @@ interface IUserRepository {
         oldPassword: String,
         newPassword: String,
     )
-
-    fun clearUserData()
 }

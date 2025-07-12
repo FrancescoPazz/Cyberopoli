@@ -24,9 +24,6 @@ class AuthViewModel(
         viewModelScope.launch {
             authRepository.authState().collect { state ->
                 _authState.postValue(state)
-                if (state is AuthState.Authenticated) {
-                    userRepository.loadUserData()
-                }
             }
         }
     }
@@ -42,7 +39,6 @@ class AuthViewModel(
             ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepository.loadUserData()
                         _authState.value = AuthState.RegistrationSuccess
                     }
 
@@ -85,7 +81,6 @@ class AuthViewModel(
             authRepository.signInWithGoogle(context).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepository.loadUserData()
                         _authState.value = AuthState.Authenticated
                     }
 
@@ -106,7 +101,6 @@ class AuthViewModel(
             ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
-                        userRepository.loadUserData()
                         _authState.value = AuthState.AnonymousAuthenticated
                     }
 
@@ -169,7 +163,6 @@ class AuthViewModel(
         viewModelScope.launch {
             val resp = authRepository.signOut().single()
             if (resp is AuthResponse.Success) {
-                userRepository.clearUserData()
                 _authState.value = AuthState.Unauthenticated
             } else if (resp is AuthResponse.Failure) {
                 _authState.value = AuthState.Error(resp.message)

@@ -55,6 +55,7 @@ sealed class GameDialogData {
     data class QuestionResult(
         val titleRes: Int,
         val messageRes: Int,
+        val messageArgs: List<String>? = null,
         val optionsRes: List<Int>,
         val correctIndex: Int,
         val selectedIndex: Int

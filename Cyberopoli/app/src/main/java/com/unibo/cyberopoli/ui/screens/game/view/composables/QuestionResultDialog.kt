@@ -43,7 +43,9 @@ fun QuestionResultDialog(
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    stringResource(data.messageRes),
+                    data.messageArgs?.let { args ->
+                        stringResource(data.messageRes, *args.toTypedArray())
+                    } ?: stringResource(data.messageRes),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

@@ -11,14 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.ui.screens.auth.view.composables.AuthButton
 
 @Composable
 fun LobbyActions(
-    isHost: State<Boolean?>,
+    user: User,
+    isHost: (user: User) -> Boolean,
     allReady: State<Boolean?>,
     isReady: Boolean,
-    onToggleReadyClick: () -> Unit,
+    onToggleReadyClick: (user: User) -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -29,7 +31,7 @@ fun LobbyActions(
     ) {
         AuthButton(
             text = stringResource(if (isReady) R.string.not_ready else R.string.ready),
-            onClick = onToggleReadyClick,
+            onClick = { onToggleReadyClick(user) },
             modifier = Modifier.fillMaxWidth(0.8f),
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -38,7 +40,7 @@ fun LobbyActions(
             onClick = onExitClick,
             modifier = Modifier.fillMaxWidth(0.8f),
         )
-        if (isHost.value == true && allReady.value == true) {
+        if (isHost(user) && allReady.value == true) {
             Spacer(modifier = Modifier.height(16.dp))
             AuthButton(
                 text = stringResource(R.string.start),

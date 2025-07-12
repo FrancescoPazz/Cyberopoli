@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.unibo.cyberopoli.data.models.auth.User
 
 enum class AppLifecycleTrackerScreenContext {
     GAME, LOBBY,
@@ -21,14 +22,15 @@ private const val TIME_OUT_SECONDS = 60
 @Composable
 fun AppLifecycleTracker(
     context: AppLifecycleTrackerScreenContext,
-    setInApp: (Boolean) -> Unit,
+    user: User,
+    setInApp: (user: User, inApp: Boolean) -> Unit,
     onTimedOut: () -> Unit = {},
 ) {
     var backgroundTimestamp by remember { mutableLongStateOf(0L) }
     var hasBeenInBackground by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
-        setInApp(true)
+        setInApp(user,true)
 
         val lifecycle = ProcessLifecycleOwner.get().lifecycle
         val observer = LifecycleEventObserver { _, event ->
@@ -41,7 +43,7 @@ fun AppLifecycleTracker(
                     } else if (context == AppLifecycleTrackerScreenContext.LOBBY) {
                         Log.d("AppLifecycle IN-LOBBY", "App moved to BACKGROUND (ON_STOP)")
                     }
-                    setInApp(false)
+                    setInApp(user,false)
                 }
 
                 Lifecycle.Event.ON_START -> {
@@ -62,7 +64,7 @@ fun AppLifecycleTracker(
                                 "App moved to FOREGROUND (ON_START), spent $elapsed s in bg",
                             )
                         }
-                        setInApp(true)
+                        setInApp(user,true)
                     }
                 }
 

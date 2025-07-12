@@ -24,6 +24,7 @@ fun GameScreen(
     gameParams: GameParams,
 ) {
     val game by gameParams.game
+    val user by gameParams.user
     val player by gameParams.player
     val players by gameParams.players
     val dialogData by gameParams.dialogData
@@ -32,18 +33,19 @@ fun GameScreen(
     AppLifecycleTracker(
         context = AppLifecycleTrackerScreenContext.GAME,
         setInApp = gameParams.setInApp,
+        user = user ?: player?.user!!
     ) {
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
             restoreState = true
         }
-        gameParams.leaveLobby()
+        gameParams.leaveLobby(user!!)
     }
 
     GameStarterEffect(gameParams)
 
     BackHandler {
-        gameParams.leaveLobby()
+        gameParams.leaveLobby(user!!)
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
             restoreState = true
@@ -109,7 +111,8 @@ fun GameScreen(
 
             is GameDialogData.QuestionResult -> Triple(
                 stringResource(data.titleRes),
-                stringResource(data.messageRes),
+                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
+                    ?: stringResource(data.messageRes),
                 data.optionsRes.map { stringResource(it) },
             )
 

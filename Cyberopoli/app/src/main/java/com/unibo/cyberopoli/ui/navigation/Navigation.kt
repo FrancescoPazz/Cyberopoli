@@ -1,50 +1,50 @@
 package com.unibo.cyberopoli.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.unibo.cyberopoli.data.models.auth.AuthState
-import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.ui.screens.auth.view.AuthScreen
-import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
-import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthViewModel
-import com.unibo.cyberopoli.ui.screens.game.view.GameScreen
-import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
-import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameViewModel
-import com.unibo.cyberopoli.ui.screens.home.view.HomeScreen
-import com.unibo.cyberopoli.ui.screens.home.viewmodel.HomeParams
-import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.lobby.view.LobbyScreen
-import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
-import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyViewModel
-import com.unibo.cyberopoli.ui.screens.profile.view.ProfileScreen
-import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
-import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileViewModel
-import com.unibo.cyberopoli.ui.screens.ranking.view.RankingScreen
-import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
-import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingViewModel
-import com.unibo.cyberopoli.ui.screens.scan.view.ScanScreen
-import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
-import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanViewModel
-import com.unibo.cyberopoli.ui.screens.settings.view.SettingScreen
-import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
-import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsViewModel
-import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
-import kotlinx.serialization.Serializable
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.KoinContext
-import java.util.Locale
 import java.util.UUID
+import java.util.Locale
+import android.os.Build
+import org.koin.compose.KoinContext
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import kotlinx.serialization.Serializable
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.compose.runtime.LaunchedEffect
+import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.ui.platform.LocalContext
+import com.unibo.cyberopoli.data.models.theme.Theme
+import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
+import androidx.compose.foundation.isSystemInDarkTheme
+import com.unibo.cyberopoli.data.models.auth.AuthState
+import androidx.compose.runtime.livedata.observeAsState
+import com.unibo.cyberopoli.ui.screens.scan.view.ScanScreen
+import com.unibo.cyberopoli.ui.screens.auth.view.AuthScreen
+import com.unibo.cyberopoli.ui.screens.game.view.GameScreen
+import com.unibo.cyberopoli.ui.screens.home.view.HomeScreen
+import com.unibo.cyberopoli.ui.screens.lobby.view.LobbyScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
+import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
+import com.unibo.cyberopoli.ui.screens.home.viewmodel.HomeParams
+import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
+import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
+import com.unibo.cyberopoli.ui.screens.profile.view.ProfileScreen
+import com.unibo.cyberopoli.ui.screens.ranking.view.RankingScreen
+import com.unibo.cyberopoli.ui.screens.settings.view.SettingScreen
+import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
+import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthViewModel
+import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameViewModel
+import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanViewModel
+import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyViewModel
+import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
+import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
+import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
+import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingViewModel
+import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileViewModel
+import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsViewModel
 
 sealed interface CyberopoliRoute {
     @Serializable
@@ -87,7 +87,6 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-
     KoinContext {
         LaunchedEffect(language.value) {
             val locale = Locale(language.value)
@@ -108,10 +107,17 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 LoadingScreen()
                 return@CyberopoliTheme
             }
+
             val startRoute = when (authState.value) {
-                is AuthState.Authenticated -> CyberopoliRoute.Home
+                is AuthState.Authenticated -> {
+                    LaunchedEffect(Unit) {
+                        profileViewModel.getUser()
+                    }
+                    CyberopoliRoute.Home
+                }
                 else -> CyberopoliRoute.Auth
             }
+
             NavHost(
                 navController = navController,
                 startDestination = startRoute,
@@ -156,7 +162,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     HomeScreen(
                         navController,
                         HomeParams(
-                            user = profileViewModel.user.observeAsState(),
+                            user = profileViewModel.user,
                             gameHistories = profileViewModel.gameHistories,
                             topAppsUsage = profileViewModel.topAppsUsage,
                         ),
@@ -166,7 +172,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     ProfileScreen(
                         navController,
                         ProfileParams(
-                            user = profileViewModel.user.observeAsState(),
+                            user = profileViewModel.user,
                             changeAvatar = profileViewModel::changeAvatar,
                             updateUserInfo = profileViewModel::updateUserInfo,
                             updatePasswordWithOldPassword = profileViewModel::updatePasswordWithOldPassword,
@@ -179,7 +185,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         navController,
                         RankingParams(
                             rankingData = rankingVm.rankingUsers.observeAsState(),
-                            user = profileViewModel.user.observeAsState(),
+                            user = profileViewModel.user,
                         ),
                     )
                 }
@@ -198,12 +204,12 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             isGuest = isGuest,
                             members = members ?: throw IllegalStateException("Members are null"),
                             leaveLobby = lobbyViewModel::leaveLobby,
-                            isHost = lobbyViewModel.isHost.observeAsState(),
+                            isHost = lobbyViewModel::isHost,
                             toggleReady = lobbyViewModel::toggleReady,
                             startLobbyFlow = lobbyViewModel::startLobbyFlow,
                             allReady = lobbyViewModel.allReady.observeAsState(),
                             setInApp = lobbyViewModel::setInApp,
-                            userId = profileViewModel.user.value?.id ?: "",
+                            user = profileViewModel.user
                         ),
                     )
                 }
@@ -246,6 +252,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
                             startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
                             isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
+                            user = profileViewModel.user
                         ),
                     )
                 }

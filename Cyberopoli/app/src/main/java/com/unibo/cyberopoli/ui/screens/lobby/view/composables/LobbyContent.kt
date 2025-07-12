@@ -17,15 +17,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.unibo.cyberopoli.R
+import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 
 @Composable
 fun LobbyContent(
+    user: User,
     members: List<LobbyMember>,
-    isHost: State<Boolean?>,
+    isHost: (user: User?) -> Boolean,
     isReady: Boolean,
     allReady: State<Boolean?>,
-    onToggleReadyClick: () -> Unit,
+    onToggleReadyClick: (user: User) -> Unit,
     onStartGameClick: () -> Unit,
     onExitClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -57,6 +59,7 @@ fun LobbyContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         LobbyActions(
+            user = user,
             isHost = isHost,
             allReady = allReady,
             onToggleReadyClick = onToggleReadyClick,

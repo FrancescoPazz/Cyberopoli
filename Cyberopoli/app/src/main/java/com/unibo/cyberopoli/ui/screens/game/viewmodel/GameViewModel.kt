@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.game.viewmodel
 
-import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.game.Game
 import com.unibo.cyberopoli.data.models.game.GameAction
 import com.unibo.cyberopoli.data.models.game.GameAsset
@@ -29,7 +27,6 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
-import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,14 +40,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class GameViewModel(
-    private val app: Application,
     lobbyRepository: LobbyRepository,
     private val gameRepository: GameRepository,
-    userRepository: UserRepository
 ) : ViewModel() {
-    val user: LiveData<User?> = userRepository.currentUserLiveData
     val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val cells = mutableStateOf(createBoard())
@@ -236,7 +231,7 @@ class GameViewModel(
 
     fun rollDice() {
         viewModelScope.launch {
-            _diceRoll.value = (1..6).random()
+            _diceRoll.value = 6//(1..6).random()
             _dialog.value = GameDialogData.Alert(
                 titleRes = R.string.roll_dice,
                 messageRes = R.string.roll_dice_desc,
@@ -621,14 +616,17 @@ class GameViewModel(
                     val resultTitle =
                         if (correct) R.string.correct_answer else R.string.wrong_answer
                     val resultMessage = if (correct) {
-                        R.string.points_earned
+                        R.string.points_earned_message
                     } else {
-                        R.string.points_lost
+                        R.string.points_lost_message
                     }
 
+
+                    Log.d("PKAOS", "QuestionResultDialog: $resultMessage, delta: $delta")
                     _dialog.value = GameDialogData.QuestionResult(
                         titleRes = resultTitle,
                         messageRes = resultMessage,
+                        messageArgs = listOf(abs(delta).toString()),
                         optionsRes = dlg.optionsRes,
                         correctIndex = dlg.correctIndex,
                         selectedIndex = idx
