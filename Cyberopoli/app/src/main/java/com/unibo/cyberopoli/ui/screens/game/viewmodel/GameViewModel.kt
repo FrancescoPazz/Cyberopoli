@@ -57,19 +57,21 @@ class GameViewModel(
     val assets: StateFlow<List<GameAsset>> = gameRepository.currentGameAssets
 
     private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
-    val subscriptions: StateFlow<List<GameTypeCell>> = _subscriptions.asStateFlow()
 
     private val _startAnimation = MutableStateFlow(false)
-    val startAnimation: StateFlow<Boolean> = _startAnimation.asStateFlow()
+    val startAnimation: StateFlow<Boolean> = _startAnimation
 
     private val _diceRoll = MutableStateFlow<Int?>(null)
-    val diceRoll: StateFlow<Int?> = _diceRoll.asStateFlow()
+    val diceRoll: StateFlow<Int?> = _diceRoll
 
     private val _dialog = MutableStateFlow<GameDialogData?>(null)
-    val dialog: StateFlow<GameDialogData?> = _dialog.asStateFlow()
+    val dialog: StateFlow<GameDialogData?> = _dialog
 
     private val _isLoadingQuestion = MutableStateFlow(false)
-    val isLoadingQuestion: StateFlow<Boolean> = _isLoadingQuestion.asStateFlow()
+    val isLoadingQuestion: StateFlow<Boolean> = _isLoadingQuestion
+
+    private val _isActionInProgress = MutableStateFlow(false)
+    val isActionInProgress: StateFlow<Boolean> = _isActionInProgress
 
     private val _gameOver = mutableStateOf(false)
     val gameOver: State<Boolean> = _gameOver
@@ -111,12 +113,8 @@ class GameViewModel(
                 Pair(playerValue, gameValue)
             }.filterNotNull().filter { (p, g) -> p != null && g != null }
                 .onEach { (currentPlayer, currentGame) ->
-                    Log.d(
-                        "TEST GameViewModel",
-                        "Combined Flow: Game changed: $currentGame, Current player: ${currentPlayer!!.userId}"
-                    )
 
-                    val isMyTurn = currentGame!!.turn == currentPlayer.userId
+                    val isMyTurn = currentGame!!.turn == currentPlayer?.userId
                     val currentActionId = _actionsPermitted.value.firstOrNull()?.id
                     val turnChanged = _previousTurn.value != currentGame.turn
 
@@ -154,12 +152,10 @@ class GameViewModel(
         viewModelScope.launch {
             lobby.filterNotNull().map { it.status }.distinctUntilChanged()
                 .onEach { newStatus ->
-                    Log.d("testlbbd GameViewModel", "Lobby status changed: $newStatus")
                     if (newStatus == LobbyStatus.FINISHED.value) {
                         _gameOver.value = true
                         val player = player.value ?: return@onEach
                         player.user.let { userId ->
-                            Log.d("provolone", "Saving user progress for user: $userId")
                             gameRepository.saveUserProgress()
                             gameRepository.clearGameData()
                         }
@@ -170,14 +166,14 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.currentGameEvents.filterNotNull().distinctUntilChanged()
                 .collect { events ->
-                    Log.d("GameViewModel", "GameEvents aggiornati: $events")
+                    Log.d("GameViewModel", "GameEvents: $events")
                 }
         }
 
         viewModelScope.launch {
             gameRepository.currentGameAssets.filterNotNull().distinctUntilChanged()
                 .collect { assets ->
-                    Log.d("GameViewModel", "GameAssets aggiornati: $assets")
+                    Log.d("GameViewModel", "GameAssets: $assets")
                 }
         }
     }
@@ -228,6 +224,9 @@ class GameViewModel(
     }
 
     fun rollDice() {
+        if (_isActionInProgress.value) return
+        _isActionInProgress.value = true
+
         viewModelScope.launch {
             _diceRoll.value = 6//(1..6).random()
             _dialog.value = GameDialogData.Alert(
@@ -245,9 +244,12 @@ class GameViewModel(
                 ),
             )
         }
+        _isActionInProgress.value = false
     }
 
     fun movePlayer() {
+        _isActionInProgress.value = true
+
         viewModelScope.launch {
             val currentPlayer = player.value ?: return@launch
             val me =
@@ -267,7 +269,6 @@ class GameViewModel(
 
             val animationDelayMs = 200L
             for (newPos in steps) {
-                Log.d("GameViewModel", "Animating move to $newPos")
                 gameRepository.updatePlayerPosition(newPos)
                 delay(animationDelayMs)
             }
@@ -276,10 +277,11 @@ class GameViewModel(
                 increasePlayerRound()
             }
 
-            Log.d("GameViewModel", "Player ${me.userId} landed on ${steps.last()}")
             PERIMETER_CELLS[steps.last()]?.let { landedCell ->
                 handleLanding(landedCell)
             } ?: Log.e("GameViewModel", "Landed on a cell not in PERIMETER_CELLS: ${steps.last()}")
+
+            _isActionInProgress.value = false
         }
     }
 
@@ -396,7 +398,6 @@ class GameViewModel(
                                 messageRes = R.string.pay_content_desc,
                             )
                             gameCell.value?.let {
-                                Log.d("GameViewModel", "Paying rent: $it to $cellOwner")
                                 updatePlayerScore(-it)
                                 updatePlayerScore(it, cellOwner)
                             }
@@ -467,7 +468,6 @@ class GameViewModel(
     private fun increasePlayerRound() {
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
-            Log.d("TESTEA GameViewModel", "Player round increased to ${player.value?.round}")
 
             checkAndRemoveExpiredAssets()
 
@@ -502,7 +502,6 @@ class GameViewModel(
             expiredAssets.forEach { expiredAsset ->
                 try {
                     gameRepository.removeGameAsset(expiredAsset)
-                    Log.d("GameViewModel", "Removed expired asset: ${expiredAsset.cellId}")
                 } catch (e: Exception) {
                     Log.e("GameViewModel", "Error removing expired asset: ${e.message}")
                 }
@@ -579,7 +578,6 @@ class GameViewModel(
                     if (idx == 0) {
                         updatePlayerScore(-dlg.cost)
                         _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
-                        Log.d("GameViewModel", "Subscribed to ${_subscriptions.value}")
                         _actionsPermitted.value = listOf(
                             passTurnAction
                         )
@@ -620,8 +618,6 @@ class GameViewModel(
                         R.string.points_lost_message
                     }
 
-
-                    Log.d("PKAOS", "QuestionResultDialog: $resultMessage, delta: $delta")
                     _dialog.value = GameDialogData.QuestionResult(
                         titleRes = resultTitle,
                         messageRes = resultMessage,
@@ -646,9 +642,12 @@ class GameViewModel(
     }
 
     fun endTurn() {
-        Log.d("GameViewModel", "Ending turn.")
+        _isActionInProgress.value = true
+
         _actionsPermitted.value = listOf(waitTurnAction)
         _diceRoll.value = null
         nextTurn()
+
+        _isActionInProgress.value = false
     }
 }

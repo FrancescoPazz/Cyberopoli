@@ -252,6 +252,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
                             startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
                             isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
+                            isActionInProgress = gameViewModel.isActionInProgress.collectAsStateWithLifecycle(),
                             user = profileViewModel.user
                         ),
                     )

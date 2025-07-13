@@ -31,6 +31,7 @@ data class GameParams(
     val isLoadingQuestion: State<Boolean>,
     val members: State<List<LobbyMember>?>,
     val dialogData: State<GameDialogData?>,
+    val isActionInProgress: State<Boolean>,
     val gameAction: State<List<GameAction>?>,
     val updatePlayerScore: (value: Int) -> Unit,
     val onDialogOptionSelected: (idx: Int) -> Unit,

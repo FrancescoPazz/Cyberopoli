@@ -15,7 +15,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +54,7 @@ fun GameContent(
         bottomBar = {
             GameBottomBar(
                 actions = gameParams.gameAction.value!!,
+                isActionInProgress = gameParams.isActionInProgress
             )
         },
         containerColor = MaterialTheme.colorScheme.background,

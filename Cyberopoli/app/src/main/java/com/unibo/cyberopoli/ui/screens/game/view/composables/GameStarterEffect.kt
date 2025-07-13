@@ -23,4 +23,8 @@ fun GameStarterEffect(gameParams: GameParams) {
             hasStarted = true
         }
     }
+
+    LaunchedEffect(gameParams.isActionInProgress) {
+        Log.d("sadsadawa", "iasd starteder sActionInProgress: ${gameParams.isActionInProgress.value}")
+    }
 }
