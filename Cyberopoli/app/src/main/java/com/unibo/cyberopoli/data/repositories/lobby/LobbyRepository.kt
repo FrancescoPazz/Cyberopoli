@@ -1,26 +1,26 @@
 package com.unibo.cyberopoli.data.repositories.lobby
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import com.unibo.cyberopoli.data.models.auth.User
-import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
-import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
-import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
-import com.unibo.cyberopoli.data.repositories.game.GAME_PLAYERS_TABLE
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.annotations.SupabaseExperimental
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.Columns
-import io.github.jan.supabase.postgrest.query.filter.FilterOperation
-import io.github.jan.supabase.postgrest.query.filter.FilterOperator
-import io.github.jan.supabase.realtime.selectAsFlow
-import io.github.jan.supabase.realtime.selectSingleValueAsFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import io.github.jan.supabase.auth.auth
+import androidx.lifecycle.MutableLiveData
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.SupabaseClient
+import com.unibo.cyberopoli.data.models.auth.User
+import io.github.jan.supabase.realtime.selectAsFlow
+import com.unibo.cyberopoli.data.models.lobby.Lobby
+import io.github.jan.supabase.postgrest.query.Columns
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
+import io.github.jan.supabase.annotations.SupabaseExperimental
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
+import io.github.jan.supabase.postgrest.query.filter.FilterOperation
+import com.unibo.cyberopoli.data.repositories.game.GAME_PLAYERS_TABLE
 import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
 
 const val LOBBY_TABLE = "lobbies"

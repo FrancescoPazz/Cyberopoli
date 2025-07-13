@@ -1,13 +1,12 @@
 package com.unibo.cyberopoli.data.repositories.settings
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.unibo.cyberopoli.data.models.theme.Theme
-import io.github.jan.supabase.SupabaseClient
-import kotlinx.coroutines.flow.map
 import java.util.Locale
+import kotlinx.coroutines.flow.map
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.edit
+import com.unibo.cyberopoli.data.models.theme.Theme
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.unibo.cyberopoli.data.repositories.settings.ISettingsRepository as DomainSettingsRepository
 
 class SettingsRepository(
