@@ -1,10 +1,15 @@
 package com.unibo.cyberopoli.data.repositories.lobby
 
+import kotlinx.coroutines.flow.StateFlow
 import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
 
 interface ILobbyRepository {
+    val currentLobby: StateFlow<Lobby?>
+    val currentLobbyMembers: StateFlow<List<LobbyMember>>
+
     suspend fun createOrGetLobby(
         lobbyId: String,
         host: User,

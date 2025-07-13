@@ -191,7 +191,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 }
                 composable<CyberopoliRoute.Lobby> {
                     val isGuest = profileViewModel.user.value?.isGuest!!
-                    val members by lobbyViewModel.members.observeAsState()
+                    val members by lobbyViewModel.membersState.collectAsStateWithLifecycle()
                     LobbyScreen(
                         navController,
                         LobbyParams(
@@ -199,23 +199,23 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                                 scanViewModel.scannedValue.value?.toByteArray()
                                     ?: throw IllegalStateException("Scanned value is null"),
                             ).toString(),
-                            lobby = lobbyViewModel.lobby.observeAsState(),
+                            lobby = lobbyViewModel.lobbyState.collectAsStateWithLifecycle(),
                             lobbyAlreadyStarted = lobbyViewModel.lobbyAlreadyStarted,
                             isGuest = isGuest,
-                            members = members ?: throw IllegalStateException("Members are null"),
+                            members = members,
                             leaveLobby = lobbyViewModel::leaveLobby,
                             isHost = lobbyViewModel::isHost,
                             toggleReady = lobbyViewModel::toggleReady,
                             startLobbyFlow = lobbyViewModel::startLobbyFlow,
-                            allReady = lobbyViewModel.allReady.observeAsState(),
+                            allReady = lobbyViewModel.allReady.collectAsStateWithLifecycle(false),
                             setInApp = lobbyViewModel::setInApp,
                             user = profileViewModel.user
                         ),
                     )
                 }
                 composable<CyberopoliRoute.Game> {
-                    val lobby = lobbyViewModel.lobby.observeAsState()
-                    val members = lobbyViewModel.members.observeAsState()
+                    val lobby = lobbyViewModel.lobbyState.collectAsStateWithLifecycle()
+                    val members = lobbyViewModel.membersState.collectAsStateWithLifecycle()
                     val game = gameViewModel.game.observeAsState()
                     val gameAction = gameViewModel.actionsPermitted.collectAsStateWithLifecycle()
                     val player = gameViewModel.player.observeAsState()

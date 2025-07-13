@@ -3,32 +3,33 @@ package com.unibo.cyberopoli.ui.screens.lobby.viewmodel
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class LobbyViewModel(
     private val lobbyRepository: LobbyRepository
 ) : ViewModel() {
-    val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
-    val members: LiveData<List<LobbyMember>?> = lobbyRepository.currentMembersLiveData
+    val lobbyState: StateFlow<Lobby?> = lobbyRepository.currentLobby
+    val membersState: StateFlow<List<LobbyMember>> = lobbyRepository.currentLobbyMembers
 
     private val _lobbyAlreadyStarted = mutableStateOf(false)
     val lobbyAlreadyStarted: State<Boolean> = _lobbyAlreadyStarted
 
-    val allReady: LiveData<Boolean> = members.map { currentMembers ->
-        currentMembers?.all { it.isReady } ?: false
+    val allReady: Flow<Boolean> = membersState.map { currentMembers ->
+        currentMembers.all { it.isReady }
     }
 
     fun isHost(user: User?): Boolean {
-        return lobby.value?.hostId == user?.id
+        return lobbyState.value?.hostId == user?.id
     }
 
     fun startLobbyFlow(lobbyId: String, user: User) {
@@ -39,13 +40,13 @@ class LobbyViewModel(
                     _lobbyAlreadyStarted.value = true
                     return@launch
                 }
-                if (lobby.value == null) {
+                if (lobbyState.value == null) {
                     return@launch
                 }
                 lobbyRepository.joinLobby(
                     LobbyMember(
-                        lobbyId = lobby.value?.id!!,
-                        lobbyCreatedAt = lobby.value?.createdAt!!,
+                        lobbyId = lobbyState.value?.id!!,
+                        lobbyCreatedAt = lobbyState.value?.createdAt!!,
                         userId = user.id,
                         user = user,
                     ),
@@ -58,11 +59,11 @@ class LobbyViewModel(
 
     fun toggleReady(user: User?) {
         viewModelScope.launch {
-            if (user == null || lobby.value == null) {
+            if (user == null || lobbyState.value == null) {
                 Log.w("LobbyViewModel", "toggleReady: User or Lobby is null")
                 return@launch
             }
-            val member = members.value?.find { it.userId == user.id }
+            val member = membersState.value.find { it.userId == user.id }
             val newReady = !(member?.isReady ?: false)
             try {
                 lobbyRepository.toggleReady(newReady)
@@ -74,7 +75,7 @@ class LobbyViewModel(
 
     fun setInApp(user: User?, inApp: Boolean) {
         viewModelScope.launch {
-            if (user == null || lobby.value == null) {
+            if (user == null || lobbyState.value == null) {
                 Log.w("LobbyViewModel", "setInApp: User or Lobby is null")
                 return@launch
             }
@@ -88,12 +89,12 @@ class LobbyViewModel(
 
     fun leaveLobby(user: User?) {
         viewModelScope.launch {
-            if (user == null || lobby.value == null) {
+            if (user == null || lobbyState.value == null) {
                 Log.w("LobbyViewModel", "leaveLobby: User or Lobby is null")
                 return@launch
             }
             try {
-                val isCurrentUserHost = lobby.value?.hostId == user.id
+                val isCurrentUserHost = lobbyState.value?.hostId == user.id
                 lobbyRepository.leaveLobby(isCurrentUserHost)
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error leaving lobby", e)

@@ -46,7 +46,7 @@ class GameViewModel(
     lobbyRepository: LobbyRepository,
     private val gameRepository: GameRepository,
 ) : ViewModel() {
-    val lobby: LiveData<Lobby?> = lobbyRepository.currentLobbyLiveData
+    val lobby: StateFlow<Lobby?> = lobbyRepository.currentLobby
     val game: LiveData<Game?> = gameRepository.currentGameLiveData
     val cells = mutableStateOf(createBoard())
     private var chanceQuestions = mutableStateOf(chanceQuestions())
@@ -154,7 +154,7 @@ class GameViewModel(
         }
 
         viewModelScope.launch {
-            lobby.asFlow().filterNotNull().map { it.status }.distinctUntilChanged()
+            lobby.filterNotNull().map { it.status }.distinctUntilChanged()
                 .onEach { newStatus ->
                     Log.d("testlbbd GameViewModel", "Lobby status changed: $newStatus")
                     if (newStatus == LobbyStatus.FINISHED.value) {
