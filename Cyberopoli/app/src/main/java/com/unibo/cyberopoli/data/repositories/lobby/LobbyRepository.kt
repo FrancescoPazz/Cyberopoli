@@ -155,15 +155,8 @@ class LobbyRepository(
         }
     }
 
-    suspend fun setInApp(inApp: Boolean) {
-        val session = supabase.auth.currentSessionOrNull()
-        if (session == null) {
-            Log.w(
-                "LobbyRepository",
-                "setInApp: Sessione utente non disponibile, operazione annullata"
-            )
-            return
-        }
+    override suspend fun setInApp(inApp: Boolean) {
+        val session = supabase.auth.currentSessionOrNull() ?: return
 
         val userId = session.user?.id
         val lobbyId = _lobbyStateFlow.value?.id ?: return

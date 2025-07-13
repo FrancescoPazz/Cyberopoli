@@ -1,62 +1,60 @@
 package com.unibo.cyberopoli.ui.screens.game.viewmodel
 
+import kotlin.math.abs
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.R
-import com.unibo.cyberopoli.data.models.game.Game
-import com.unibo.cyberopoli.data.models.game.GameAction
-import com.unibo.cyberopoli.data.models.game.GameAsset
-import com.unibo.cyberopoli.data.models.game.GameCell
-import com.unibo.cyberopoli.data.models.game.GameDialogData
-import com.unibo.cyberopoli.data.models.game.GameEvent
-import com.unibo.cyberopoli.data.models.game.GamePlayer
-import com.unibo.cyberopoli.data.models.game.GameTypeCell
-import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
-import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
-import com.unibo.cyberopoli.data.models.game.createBoard
-import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
-import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
-import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
-import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
-import com.unibo.cyberopoli.data.repositories.game.GameRepository
-import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.catch
+import androidx.compose.runtime.State
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlin.math.abs
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import com.unibo.cyberopoli.data.models.game.Game
+import kotlinx.coroutines.flow.distinctUntilChanged
+import com.unibo.cyberopoli.data.models.lobby.Lobby
+import com.unibo.cyberopoli.data.models.game.GameCell
+import com.unibo.cyberopoli.data.models.game.GameEvent
+import com.unibo.cyberopoli.data.models.game.GameAsset
+import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.game.GameAction
+import com.unibo.cyberopoli.data.models.game.createBoard
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.data.models.game.GameTypeCell
+import com.unibo.cyberopoli.data.models.game.GameDialogData
+import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
+import com.unibo.cyberopoli.data.repositories.game.GameRepository
+import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
+import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
+import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
 
 class GameViewModel(
     lobbyRepository: LobbyRepository,
     private val gameRepository: GameRepository,
 ) : ViewModel() {
     val lobby: StateFlow<Lobby?> = lobbyRepository.currentLobby
-    val game: LiveData<Game?> = gameRepository.currentGameLiveData
+    val game: StateFlow<Game?> = gameRepository.currentGame
     val cells = mutableStateOf(createBoard())
     private var chanceQuestions = mutableStateOf(chanceQuestions())
     private var hackerStatements = mutableStateOf(hackerStatements())
 
     // Mine variables
-    val player: LiveData<GamePlayer?> = gameRepository.currentPlayerLiveData
-    val players: LiveData<List<GamePlayer>> = gameRepository.currentPlayersLiveData
-    val events: LiveData<List<GameEvent>> = gameRepository.currentGameEventsLiveData
-    val assets: LiveData<List<GameAsset>> = gameRepository.currentGameAssetsLiveData
+    val player: StateFlow<GamePlayer?> = gameRepository.currentPlayer
+    val players: StateFlow<List<GamePlayer>> = gameRepository.currentPlayers
+    val events: StateFlow<List<GameEvent>> = gameRepository.currentGameEvents
+    val assets: StateFlow<List<GameAsset>> = gameRepository.currentGameAssets
 
     private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
     val subscriptions: StateFlow<List<GameTypeCell>> = _subscriptions.asStateFlow()
@@ -109,7 +107,7 @@ class GameViewModel(
         }
         // Initial turn logic
         viewModelScope.launch {
-            player.asFlow().combine(game.asFlow()) { playerValue, gameValue -> // Game Flow
+            player.combine(game) { playerValue, gameValue -> // Game Flow
                 Pair(playerValue, gameValue)
             }.filterNotNull().filter { (p, g) -> p != null && g != null }
                 .onEach { (currentPlayer, currentGame) ->
@@ -170,14 +168,14 @@ class GameViewModel(
         }
 
         viewModelScope.launch {
-            gameRepository.currentGameEventsLiveData.asFlow().filterNotNull().distinctUntilChanged()
+            gameRepository.currentGameEvents.filterNotNull().distinctUntilChanged()
                 .collect { events ->
                     Log.d("GameViewModel", "GameEvents aggiornati: $events")
                 }
         }
 
         viewModelScope.launch {
-            gameRepository.currentGameAssetsLiveData.asFlow().filterNotNull().distinctUntilChanged()
+            gameRepository.currentGameAssets.filterNotNull().distinctUntilChanged()
                 .collect { assets ->
                     Log.d("GameViewModel", "GameAssets aggiornati: $assets")
                 }
@@ -197,12 +195,12 @@ class GameViewModel(
     }
 
     private fun nextTurn() {
-        if (game.value == null || players.value == null || players.value!!.isEmpty()) return
+        if (game.value == null || players.value.isEmpty()) return
 
         viewModelScope.launch {
             players.value.let { players ->
                 val currentTurnUserId = game.value!!.turn
-                val currentTurnIndex = players!!.indexOfFirst { it.userId == currentTurnUserId }
+                val currentTurnIndex = players.indexOfFirst { it.userId == currentTurnUserId }
                 val nextIdx = (currentTurnIndex + 1) % players.size
                 val nextPlayerId = players[nextIdx].userId
                 gameRepository.setNextTurn(nextPlayerId)
@@ -253,7 +251,7 @@ class GameViewModel(
         viewModelScope.launch {
             val currentPlayer = player.value ?: return@launch
             val me =
-                players.value?.firstOrNull { it.userId == currentPlayer.userId } ?: return@launch
+                players.value.firstOrNull { it.userId == currentPlayer.userId } ?: return@launch
 
             val oldCellPosition = me.cellPosition
             val diceRolled = _diceRoll.value ?: 0
@@ -287,9 +285,9 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
-        val isCellOwned = assets.value?.any { it.cellId == gameCell.id }
+        val isCellOwned = assets.value.any { it.cellId == gameCell.id }
         val amISubscribe = _subscriptions.value.contains(gameTypeCell)
-        val amIOwner = assets.value?.any { it.ownerId == player.value?.userId }
+        val amIOwner = assets.value.any { it.ownerId == player.value?.userId }
 
         viewModelScope.launch {
             _actionsPermitted.value = listOf(
@@ -341,7 +339,7 @@ class GameViewModel(
                 }
 
                 else -> {
-                    if (!isCellOwned!!) {
+                    if (!isCellOwned) {
                         if (!amISubscribe) {
                             _actionsPermitted.value += listOf(
                                 GameAction(
@@ -383,14 +381,14 @@ class GameViewModel(
                                 ),
                             )
                         }
-                    } else if (!amIOwner!!) {
+                    } else if (!amIOwner) {
                         if (_hasVpn.value) {
                             _dialog.value = GameDialogData.Alert(
                                 titleRes = R.string.get_vpn,
                                 messageRes = R.string.vpn_avoid_pay,
                             )
                         } else {
-                            val cellOwner = assets.value?.firstOrNull { asset ->
+                            val cellOwner = assets.value.firstOrNull { asset ->
                                 asset.cellId == gameCell.id
                             }?.ownerId!!
                             _dialog.value = GameDialogData.Alert(
@@ -436,8 +434,8 @@ class GameViewModel(
             }
 
             GameTypeCell.BLOCK -> {
-                val others = players.value?.filter { it.userId != player.value?.userId }
-                _dialog.value = others?.let {
+                val others = players.value.filter { it.userId != player.value?.userId }
+                _dialog.value = others.let {
                     GameDialogData.BlockChoice(
                         titleRes = R.string.block_player_choice, players = it,
                     )
@@ -475,6 +473,7 @@ class GameViewModel(
 
             if (player.value?.round == 2) {
                 gameRepository.gameOver()
+                return@launch
             }
             updatePlayerScore(+10)
 
@@ -494,7 +493,7 @@ class GameViewModel(
     private fun checkAndRemoveExpiredAssets() {
         viewModelScope.launch {
             val currentRound = player.value?.round ?: return@launch
-            val currentAssets = assets.value ?: return@launch
+            val currentAssets = assets.value
 
             val expiredAssets = currentAssets.filter { asset ->
                 asset.expiresAtRound >= currentRound
@@ -592,7 +591,7 @@ class GameViewModel(
                 is GameDialogData.BlockChoice -> {
                     if (idx >= 0 && idx < dlg.players.size) {
                         val target = dlg.players[idx]
-                        val actualTarget = players.value?.firstOrNull { it.userId == target.userId }
+                        val actualTarget = players.value.firstOrNull { it.userId == target.userId }
                         if (actualTarget != null) {
                             confirmBlock(actualTarget)
                         }

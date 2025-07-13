@@ -216,14 +216,14 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 composable<CyberopoliRoute.Game> {
                     val lobby = lobbyViewModel.lobbyState.collectAsStateWithLifecycle()
                     val members = lobbyViewModel.membersState.collectAsStateWithLifecycle()
-                    val game = gameViewModel.game.observeAsState()
+                    val game = gameViewModel.game.collectAsStateWithLifecycle()
                     val gameAction = gameViewModel.actionsPermitted.collectAsStateWithLifecycle()
-                    val player = gameViewModel.player.observeAsState()
-                    val players = gameViewModel.players.observeAsState()
+                    val player = gameViewModel.player.collectAsStateWithLifecycle()
+                    val players = gameViewModel.players.collectAsStateWithLifecycle()
                     val diceRoll = gameViewModel.diceRoll.collectAsStateWithLifecycle()
                     val dialogData = gameViewModel.dialog.collectAsStateWithLifecycle()
                     val turnIndex =
-                        players.value?.indexOfFirst { p -> p.userId == game.value?.turn } ?: 0
+                        players.value.indexOfFirst { p -> p.userId == game.value?.turn }
 
                     GameScreen(
                         navController = navController,

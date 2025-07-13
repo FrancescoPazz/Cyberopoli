@@ -17,6 +17,8 @@ interface ILobbyRepository {
 
     suspend fun joinLobby(member: LobbyMember)
 
+    suspend fun setInApp(inApp: Boolean)
+
     suspend fun fetchMembers(): List<LobbyMember>
 
     suspend fun toggleReady(isReady: Boolean): LobbyMember

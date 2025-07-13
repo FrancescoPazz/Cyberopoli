@@ -1,19 +1,19 @@
 package com.unibo.cyberopoli.ui.screens.lobby.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
+import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.mutableStateOf
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 class LobbyViewModel(
     private val lobbyRepository: LobbyRepository
@@ -53,6 +53,7 @@ class LobbyViewModel(
                 )
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error starting lobby flow", e)
+                throw e
             }
         }
     }
@@ -69,6 +70,7 @@ class LobbyViewModel(
                 lobbyRepository.toggleReady(newReady)
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error toggling ready", e)
+                throw e
             }
         }
     }
@@ -83,6 +85,7 @@ class LobbyViewModel(
                 lobbyRepository.setInApp(inApp)
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error setting in-app status", e)
+                throw e
             }
         }
     }
@@ -98,6 +101,7 @@ class LobbyViewModel(
                 lobbyRepository.leaveLobby(isCurrentUserHost)
             } catch (e: Exception) {
                 Log.e("LobbyViewModel", "Error leaving lobby", e)
+                throw e
             }
         }
     }
