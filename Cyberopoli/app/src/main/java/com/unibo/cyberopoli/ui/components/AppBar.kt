@@ -96,15 +96,17 @@ fun TopBar(
             }
         },
         actions = {
-            if (currentRoute != CyberopoliRoute.Settings.toString()) {
-                IconButton(onClick = {
-                    navController.navigate(CyberopoliRoute.Settings)
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = stringResource(R.string.settings),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
+            if (currentRoute != null) {
+                if (currentRoute.substringAfterLast(".") != CyberopoliRoute.Settings.toString()) {
+                    IconButton(onClick = {
+                        navController.navigate(CyberopoliRoute.Settings)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = stringResource(R.string.settings),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
                 }
             }
         },
