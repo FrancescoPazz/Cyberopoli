@@ -53,8 +53,8 @@ class GameViewModel(
     // Mine variables
     val player: StateFlow<GamePlayer?> = gameRepository.currentPlayer
     val players: StateFlow<List<GamePlayer>> = gameRepository.currentPlayers
-    val events: StateFlow<List<GameEvent>> = gameRepository.currentGameEvents
-    val assets: StateFlow<List<GameAsset>> = gameRepository.currentGameAssets
+    private val events: StateFlow<List<GameEvent>> = gameRepository.currentGameEvents
+    private val assets: StateFlow<List<GameAsset>> = gameRepository.currentGameAssets
 
     private val _subscriptions = MutableStateFlow<List<GameTypeCell>>(emptyList())
 
@@ -164,14 +164,14 @@ class GameViewModel(
         }
 
         viewModelScope.launch {
-            gameRepository.currentGameEvents.filterNotNull().distinctUntilChanged()
+            events.filterNotNull().distinctUntilChanged()
                 .collect { events ->
                     Log.d("GameViewModel", "GameEvents: $events")
                 }
         }
 
         viewModelScope.launch {
-            gameRepository.currentGameAssets.filterNotNull().distinctUntilChanged()
+            assets.filterNotNull().distinctUntilChanged()
                 .collect { assets ->
                     Log.d("GameViewModel", "GameAssets: $assets")
                 }

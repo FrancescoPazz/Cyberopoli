@@ -243,15 +243,15 @@
     <string name="instruction_lobby_title">🏁 Game Lobby</string>
     <string name="instruction_lobby_description">After logging in, you’ll enter the lobby where you can see other players.\n\nWhen everyone is ready, the match begins with a top-down view of the map divided into tiles.</string>
     <string name="instruction_play_title">🎲 How to Play</string>
-    <string name="instruction_play_description">Turns rotate among players.\n\nOn your turn:\n1. Roll the virtual dice.\n2. Your token moves automatically on the board.\n3. Depending on the tile you land on, something happens.</string>
+    <string name="instruction_play_description">Turns rotate among players.\n\nOn your turn:\n1. Roll the virtual dice.\n2. Move your pawn on the board.\n3. Depending on the tile you land on, something happens.</string>
     <string name="instruction_tile_title">🧩 Tile Types</string>
     <string name="instruction_tile_description">Social Network:\n- You can register to the network (like buying property).\n- Multiple players can register on the same network.\n- When you land again on a network you’re registered to:\n  • You can post content (like placing a house).\n  • Only one person at a time can have active content.\n  • Content lasts one turn, then is removed automatically.\n\nChance Events:\n- Negative events that make you lose points.\n  E.g.: hacked account, negative comments, shadow ban…\n\nProbability (Quiz):\n- You face a quiz or scenario related to the digital world.\n- Based on your answer:\n  • You gain points\n  • You lose points</string>
     <string name="instruction_goal_title">🏆 Game Objective</string>
-    <string name="instruction_goal_description">Accumulate the highest score by the end of the match (predetermined number of turns).\n\nYou earn points by:\n- Registering to social networks.\n- Posting content.\n- Answering Probability quizzes correctly.\n\nYou lose points through:\n- Chance events.\n- Wrong quiz answers.</string>
+    <string name="instruction_goal_description">Accumulate the highest score by the end of the match (predetermined number of turns).\n\nYou earn points by:\n- When others player land on a cell where you posted a content.\n- Answering Probability quizzes correctly.\n\nYou lose points through:\n- Chance events.\n- Wrong quiz answers.</string>
     <string name="instruction_end_title">📊 End of Match &amp; Leaderboard</string>
-    <string name="instruction_end_description">At the end of the turns:\n- The final leaderboard is displayed.\n- Registered users see their score in the global leaderboard.</string>
+    <string name="instruction_end_description">At the end of the turns:\n- Registered users can see the game history and their score of that match.\n- Registered users see their score in the global leaderboard.</string>
     <string name="instruction_account_title">🔐 Registered Account Benefits</string>
-    <string name="instruction_account_description">Access to:\n- Global leaderboard\n- Match history\n- Ability to create your own lobbies</string>
+    <string name="instruction_account_description">Access to:\n- Global leaderboard\n- Match history\n- Have a broader view of digital wellbeing data</string>
     <string name="instruction_tips_title">📱 Tips</string>
     <string name="instruction_tips_description">Plan your registrations: active networks = strategic points.\n\nWatch other players: you can’t post where there’s already active content!\n\nAnswer quizzes carefully: every answer makes a difference!</string>
     <string name="game_instructions">Game Instructions</string>

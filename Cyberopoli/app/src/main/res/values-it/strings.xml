@@ -243,15 +243,15 @@
     <string name="instruction_lobby_title">🏁 Lobby di gioco</string>
     <string name="instruction_lobby_description">Dopo l’accesso, entrerai nella lobby, dove potrai vedere gli altri partecipanti.\n\nQuando tutti sono pronti, la partita inizia con la visuale dall’alto della mappa, divisa in caselle.</string>
     <string name="instruction_play_title">🎲 Come si gioca</string>
-    <string name="instruction_play_description">I turni sono a rotazione.\n\nNel tuo turno:\n1. Lancia i dadi virtuali.\n2. La tua pedina si muoverà automaticamente sul tabellone.\n3. In base alla casella in cui atterri, succede qualcosa.</string>
+    <string name="instruction_play_description">I turni sono a rotazione.\n\nNel tuo turno:\n1. Lancia i dadi virtuali.\n2. Muovi la tua pedina sul tabellone.\n3. In base alla casella in cui atterri, succederà qualcosa.</string>
     <string name="instruction_tile_title">🧩 Tipi di caselle</string>
     <string name="instruction_tile_description">Social Network:\n- Puoi registrarti al social (come acquistare una proprietà).\n- Più giocatori possono registrarsi allo stesso social.\n- Quando torni su un social dove sei registrato:\n  • Puoi pubblicare un contenuto (come piazzare una casa).\n  • Solo una persona per volta può avere un contenuto attivo.\n  • I contenuti durano un turno, poi vengono rimossi automaticamente.\n\nImprevisti:\n- Eventi negativi che ti fanno perdere punti.\n  Es.: account hackerato, commenti negativi, shadow ban…\n\nProbabilità (Quiz):\n- Ti viene posto un quiz o scenario legato al mondo digitale.\n- In base alla risposta:\n  • Guadagni punti\n  • Perdi punti</string>
     <string name="instruction_goal_title">🏆 Obiettivo del gioco</string>
-    <string name="instruction_goal_description">Accumulare il punteggio più alto entro il termine della partita (numero di turni prestabilito).\n\nPunti si ottengono:\n- Registrandosi a social network.\n- Pubblicando contenuti.\n- Rispondendo bene ai quiz di Probabilità.\n\nPunti si perdono con:\n- Imprevisti.\n- Errori nei quiz.</string>
+    <string name="instruction_goal_description">Accumulare il punteggio più alto entro il termine della partita (numero di turni prestabilito).\n\nI punti si ottengono:\n- Quando altri giocatori atterrano su di una casella dove hai pubblicato un contenuto.\n- Rispondendo bene ai quiz di Probabilità.\n\nI punti si perdono con:\n- Imprevisti.\n- Errori nei quiz.</string>
     <string name="instruction_end_title">📊 Fine partita e Classifica</string>
-    <string name="instruction_end_description">Alla fine dei turni:\n- Viene mostrata la classifica finale.\n- Gli utenti registrati vedranno il punteggio nella classifica globale.</string>
+    <string name="instruction_end_description">Alla fine dei turni:\n- Gli utenti registrati potranno vedere la partita nello storico con il relativo punteggio.\n- Gli utenti registrati vedranno il punteggio nella classifica globale.</string>
     <string name="instruction_account_title">🔐 Vantaggi dell’account registrato</string>
-    <string name="instruction_account_description">Accesso a:\n- Classifica generale\n- Cronologia partite\n- Possibilità di creare lobby proprie</string>
+    <string name="instruction_account_description">Accesso a:\n- Classifica generale\n- Cronologia partite\n- Avere una visione personalizzata sui dati del Digital Wellbeing</string>
     <string name="instruction_tips_title">📱 Suggerimenti</string>
     <string name="instruction_tips_description">Pianifica le tue registrazioni: social attivi = punti strategici.\n\nOcchio agli altri giocatori: non puoi postare dove c\'è già un contenuto attivo!\n\nRispondi con attenzione ai quiz: ogni risposta fa la differenza!</string>
     <string name="game_instructions">Istruzioni di gioco</string>
