@@ -255,4 +255,7 @@
     <string name="instruction_tips_title">📱 Suggerimenti</string>
     <string name="instruction_tips_description">Pianifica le tue registrazioni: social attivi = punti strategici.\n\nOcchio agli altri giocatori: non puoi postare dove c\'è già un contenuto attivo!\n\nRispondi con attenzione ai quiz: ogni risposta fa la differenza!</string>
     <string name="game_instructions">Istruzioni di gioco</string>
+    <string name="google_sign_in">Accedi con Google</string>
+    <string name="open_settings">Apri Impostazioni</string>
+    <string name="usage_access_stats">Per mostrare le app più usate e avere un\'esperienza di gioco personalizzata, concedi “Accesso utilizzo”</string>
 </resources>

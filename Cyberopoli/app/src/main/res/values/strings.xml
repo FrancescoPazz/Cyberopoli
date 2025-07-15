@@ -255,4 +255,7 @@
     <string name="instruction_tips_title">📱 Tips</string>
     <string name="instruction_tips_description">Plan your registrations: active networks = strategic points.\n\nWatch other players: you can’t post where there’s already active content!\n\nAnswer quizzes carefully: every answer makes a difference!</string>
     <string name="game_instructions">Game Instructions</string>
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="usage_access_stats"> To show the most used apps and have a personalized gaming experience, grant "Usage Access"</string>
 </resources>
