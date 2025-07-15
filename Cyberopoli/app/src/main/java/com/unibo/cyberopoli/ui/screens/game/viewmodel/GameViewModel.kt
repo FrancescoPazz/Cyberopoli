@@ -228,7 +228,7 @@ class GameViewModel(
         _isActionInProgress.value = true
 
         viewModelScope.launch {
-            _diceRoll.value = 6//(1..6).random()
+            _diceRoll.value = (1..6).random()
             _dialog.value = GameDialogData.Alert(
                 titleRes = R.string.roll_dice,
                 messageRes = R.string.roll_dice_desc,
@@ -471,7 +471,7 @@ class GameViewModel(
 
             checkAndRemoveExpiredAssets()
 
-            if (player.value?.round == 2) {
+            if (player.value?.round == 5) {
                 gameRepository.gameOver()
                 return@launch
             }

@@ -32,14 +32,14 @@ fun RankingScreen(
     rankingParams: RankingParams,
 ) {
     val currentUser = rankingParams.user.value
-    val rankingData = rankingParams.rankingData.value
+    val rankingData = rankingParams.rankingData
 
     Scaffold(
         topBar = { TopBar(navController) },
         bottomBar = { BottomBar(navController) },
         containerColor = MaterialTheme.colorScheme.surface,
         content = { paddingValues ->
-            if (rankingData == null) {
+            if (rankingData.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

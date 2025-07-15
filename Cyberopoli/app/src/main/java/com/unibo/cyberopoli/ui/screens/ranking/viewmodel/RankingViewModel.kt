@@ -1,20 +1,22 @@
 package com.unibo.cyberopoli.ui.screens.ranking.viewmodel
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.unibo.cyberopoli.data.repositories.ranking.RankingRepository
-import kotlinx.coroutines.launch
 
 class RankingViewModel(
     private val rankingRepository: RankingRepository,
 ) : ViewModel() {
-    val rankingUsers: LiveData<List<User>?> = rankingRepository.rankingUsersLiveData
+    private val _rankingUsers = mutableStateListOf<User>()
+    val rankingUsers: SnapshotStateList<User> = _rankingUsers
 
     init {
         viewModelScope.launch {
-            rankingRepository.loadRanking()
+            rankingRepository.loadRanking()?.let { _rankingUsers.addAll(it) }
         }
     }
 }

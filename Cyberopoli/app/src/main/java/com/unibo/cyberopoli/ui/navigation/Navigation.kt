@@ -184,7 +184,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     RankingScreen(
                         navController,
                         RankingParams(
-                            rankingData = rankingVm.rankingUsers.observeAsState(),
+                            rankingData = rankingVm.rankingUsers,
                             user = profileViewModel.user,
                         ),
                     )
