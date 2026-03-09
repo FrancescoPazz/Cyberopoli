@@ -43,6 +43,17 @@ import com.unibo.cyberopoli.ui.screens.auth.view.composables.Text3D
 import com.unibo.cyberopoli.ui.screens.scan.view.composables.QRCodeScanner
 import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
 import com.unibo.cyberopoli.util.PermissionHandler
+import kotlin.random.Random
+
+private const val RANDOM_LOBBY_CODE_LENGTH = 6
+private val RANDOM_LOBBY_CODE_CHARS = ('A'..'Z') + ('0'..'9')
+
+private fun generateRandomLobbyCode(length: Int = RANDOM_LOBBY_CODE_LENGTH): String =
+    buildString(length) {
+        repeat(length) {
+            append(RANDOM_LOBBY_CODE_CHARS.random(Random))
+        }
+    }
 
 @Composable
 fun ScanScreen(
@@ -54,15 +65,23 @@ fun ScanScreen(
     val activity = LocalActivity.current as ComponentActivity
     val permissionHandler = remember { PermissionHandler(activity) }
     var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
+    val enterLobby: (String) -> Unit = { rawCode ->
+        val lobbyCode = rawCode.trim()
+        if (lobbyCode.isBlank()) {
+            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+        } else {
+            scanParams.setScannedValue(lobbyCode)
+            navController.navigate(CyberopoliRoute.Lobby)
+        }
+    }
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
         hasCameraPermission = granted
         if (!granted) {
             Toast.makeText(
                 activity,
                 activity.getString(R.string.camera_permission_denied),
-                Toast.LENGTH_SHORT
-            ) // Usa string resource
-                .show()
+                Toast.LENGTH_SHORT,
+            ).show()
         }
     }
 
@@ -103,16 +122,7 @@ fun ScanScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 if (hasCameraPermission) {
-                    QRCodeScanner(onQRCodeScanned = { value ->
-                        try {
-                            scanParams.setScannedValue(value)
-                            navController.navigate(CyberopoliRoute.Lobby)
-                        } catch (e: Exception) {
-                            Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT)
-                                .show()
-                            return@QRCodeScanner
-                        }
-                    })
+                    QRCodeScanner(onQRCodeScanned = enterLobby)
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,11 +167,22 @@ fun ScanScreen(
             Button(
                 enabled = manualCode.value.length >= 4,
                 onClick = {
-                    scanParams.setScannedValue(manualCode.value)
-                    navController.navigate(CyberopoliRoute.Lobby)
+                    enterLobby(manualCode.value)
                 },
             ) {
                 Text(stringResource(R.string.enter))
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    val randomCode = generateRandomLobbyCode()
+                    manualCode.value = randomCode
+                    enterLobby(randomCode)
+                },
+            ) {
+                Text(stringResource(R.string.enter_random_code))
             }
 
             Spacer(Modifier.height(8.dp))

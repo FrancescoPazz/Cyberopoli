@@ -91,6 +91,7 @@ fun LobbyScreen(
                 LobbyContent(
                     user = lobbyParams.user.value!!,
                     members = lobbyParams.members,
+                    displayCode = lobbyParams.displayCode,
                     isHost = lobbyParams.isHost,
                     allReady = lobbyParams.allReady,
                     onToggleReadyClick = lobbyParams.toggleReady,

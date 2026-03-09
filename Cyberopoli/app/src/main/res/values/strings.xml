@@ -46,6 +46,8 @@
     <string name="request_camera">Request Camera Permission</string>
     <string name="camera_permission_denied">Camera permission denied</string>
     <string name="enter_code">Enter Code</string>
+    <string name="enter_random_code">Enter with random code</string>
+    <string name="lobby_code_value">Lobby code: %1$s</string>
     <string name="notifications">Notifications</string>
     <string name="enable_notifications">Enable Notifications</string>
     <string name="dark">Dark</string>

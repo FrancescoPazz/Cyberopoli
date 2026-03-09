@@ -83,6 +83,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
     val gameViewModel = koinViewModel<GameViewModel>()
 
     val authState = authViewModel.authState.observeAsState()
+    val scannedValue = scanViewModel.scannedValue.observeAsState()
     val language = settingsViewModel.language.collectAsStateWithLifecycle()
     val themeState by settingsViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -192,13 +193,12 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                 composable<CyberopoliRoute.Lobby> {
                     val isGuest = profileViewModel.user.value?.isGuest!!
                     val members by lobbyViewModel.membersState.collectAsStateWithLifecycle()
+                    val lobbyCode = scannedValue.value ?: throw IllegalStateException("Scanned value is null")
                     LobbyScreen(
                         navController,
                         LobbyParams(
-                            lobbyId = UUID.nameUUIDFromBytes(
-                                scanViewModel.scannedValue.value?.toByteArray()
-                                    ?: throw IllegalStateException("Scanned value is null"),
-                            ).toString(),
+                            lobbyId = UUID.nameUUIDFromBytes(lobbyCode.toByteArray()).toString(),
+                            displayCode = lobbyCode,
                             lobby = lobbyViewModel.lobbyState.collectAsStateWithLifecycle(),
                             lobbyAlreadyStarted = lobbyViewModel.lobbyAlreadyStarted,
                             isGuest = isGuest,
@@ -209,7 +209,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             startLobbyFlow = lobbyViewModel::startLobbyFlow,
                             allReady = lobbyViewModel.allReady.collectAsStateWithLifecycle(false),
                             setInApp = lobbyViewModel::setInApp,
-                            user = profileViewModel.user
+                            user = profileViewModel.user,
                         ),
                     )
                 }

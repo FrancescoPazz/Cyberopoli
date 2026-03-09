@@ -24,6 +24,7 @@ import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 fun LobbyContent(
     user: User,
     members: List<LobbyMember>,
+    displayCode: String,
     isHost: (user: User?) -> Boolean,
     isReady: Boolean,
     allReady: State<Boolean?>,
@@ -43,8 +44,17 @@ fun LobbyContent(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
         )
+
+        if (displayCode.isNotBlank()) {
+            Text(
+                text = stringResource(R.string.lobby_code_value, displayCode),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+        }
 
         LazyColumn(modifier = modifier.weight(1f)) {
             items(uniquedMembers, key = { it.userId }) { member ->
