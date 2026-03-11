@@ -118,6 +118,7 @@
     <string name="skip_turn">Salti il turno</string>
     <string name="skip_turn_desc">Devi saltare questo turno</string>
     <string name="error">Errore</string>
+    <string name="not_enough_internet_points">Ti servono %1$s punti Internet, ma al momento ne hai solo %2$s.</string>
     <string name="no_players_to_block">Nessun giocatore da bloccare</string>
     <string name="points_earned_message">Hai guadagnato %1$s punti Internet</string>
     <string name="points_lost_message">Hai perso %1$s punti Internet</string>

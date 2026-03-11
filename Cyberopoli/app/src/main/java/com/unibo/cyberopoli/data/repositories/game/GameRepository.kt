@@ -253,6 +253,11 @@ class GameRepository(
                     )
                 }
                 _playersStateFlow.value = players
+                _playerStateFlow.value?.userId?.let { currentUserId ->
+                    players.firstOrNull { it.userId == currentUserId }?.let { currentPlayer ->
+                        _playerStateFlow.value = currentPlayer
+                    }
+                }
             }
         }
     }
@@ -300,20 +305,18 @@ class GameRepository(
         )
         MainScope().launch {
             gameAssetsFlow.collect { rawAssets ->
-                if (rawAssets.isNotEmpty()) {
-                    val assets = rawAssets.map { r ->
-                        GameAsset(
-                            lobbyId = r.lobbyId,
-                            lobbyCreatedAt = r.lobbyCreatedAt,
-                            gameId = r.gameId,
-                            cellId = r.cellId,
-                            ownerId = r.ownerId,
-                            placedAtRound = r.placedAtRound,
-                            expiresAtRound = r.expiresAtRound,
-                        )
-                    }
-                    _gameAssetsStateFlow.value = assets
+                val assets = rawAssets.map { r ->
+                    GameAsset(
+                        lobbyId = r.lobbyId,
+                        lobbyCreatedAt = r.lobbyCreatedAt,
+                        gameId = r.gameId,
+                        cellId = r.cellId,
+                        ownerId = r.ownerId,
+                        placedAtRound = r.placedAtRound,
+                        expiresAtRound = r.expiresAtRound,
+                    )
                 }
+                _gameAssetsStateFlow.value = assets
             }
         }
     }
@@ -427,8 +430,25 @@ class GameRepository(
         if (_playerStateFlow.value == null) throw Exception("No player found")
 
         try {
-            val updatedPlayer = _playerStateFlow.value!!.copy(
-                score = _playerStateFlow.value!!.score + value,
+            val targetPlayer = if (_playerStateFlow.value!!.userId == ownerId) {
+                _playerStateFlow.value!!
+            } else {
+                _playersStateFlow.value.firstOrNull { it.userId == ownerId }
+                    ?: supabase.from(GAME_PLAYERS_TABLE).select {
+                        filter {
+                            and {
+                                eq("lobby_id", _gameStateFlow.value!!.lobbyId)
+                                eq("lobby_created_at", _gameStateFlow.value!!.lobbyCreatedAt)
+                                eq("game_id", _gameStateFlow.value!!.id)
+                                eq("user_id", ownerId)
+                            }
+                        }
+                    }.decodeSingleOrNull<GamePlayer>()
+                    ?: throw Exception("Player not found: $ownerId")
+            }
+
+            val updatedPlayer = targetPlayer.copy(
+                score = maxOf(0, targetPlayer.score + value),
             )
             supabase.from(GAME_PLAYERS_TABLE).update(updatedPlayer) {
                 filter {
@@ -436,12 +456,21 @@ class GameRepository(
                         eq("lobby_id", _gameStateFlow.value!!.lobbyId)
                         eq("lobby_created_at", _gameStateFlow.value!!.lobbyCreatedAt)
                         eq("game_id", _gameStateFlow.value!!.id)
-                        eq("user_id", updatedPlayer.userId)
+                        eq("user_id", ownerId)
                     }
                 }
             }
 
-            _playerStateFlow.value = updatedPlayer
+            if (_playerStateFlow.value?.userId == ownerId) {
+                _playerStateFlow.value = updatedPlayer
+            }
+            _playersStateFlow.value = _playersStateFlow.value.map { player ->
+                if (player.userId == ownerId) player.copy(score = updatedPlayer.score) else player
+            }
+
+            if (updatedPlayer.score <= 0) {
+                gameOver()
+            }
         } catch (e: Exception) {
             throw e
         }

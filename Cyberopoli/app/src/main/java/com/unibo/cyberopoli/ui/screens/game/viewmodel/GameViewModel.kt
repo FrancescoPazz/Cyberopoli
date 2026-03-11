@@ -285,6 +285,23 @@ class GameViewModel(
         }
     }
 
+    private suspend fun spendCurrentPlayerPoints(cost: Int): Boolean {
+        if (cost <= 0) return true
+
+        val currentPlayer = player.value ?: return false
+        if (currentPlayer.score < cost) {
+            _dialog.value = GameDialogData.Alert(
+                titleRes = R.string.error,
+                messageRes = R.string.not_enough_internet_points,
+                messageArgs = listOf(cost.toString(), currentPlayer.score.toString()),
+            )
+            return false
+        }
+
+        gameRepository.updatePlayerScore(-cost)
+        return true
+    }
+
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
         val isCellOwned = assets.value.any { it.cellId == gameCell.id }
@@ -370,15 +387,16 @@ class GameViewModel(
                                         _dialog.value = GameDialogData.MakeContentChoice(
                                             titleRes = R.string.make_content,
                                             messageRes = R.string.make_content_desc,
-                                            messageArgs = listOf(gameCell.value.toString(), gameCell.value?.times(2).toString()),
+                                            messageArgs = listOf(
+                                                gameCell.value.toString(),
+                                                gameCell.value?.times(2).toString(),
+                                            ),
                                             optionsRes = listOf(
                                                 R.string.accept,
                                                 R.string.decline,
                                             ),
                                             cost = (gameCell.value?.times(2) ?: 0),
                                         )
-
-                                        endTurn()
                                     },
                                 ),
                             )
@@ -392,14 +410,17 @@ class GameViewModel(
                         } else {
                             val cellOwner = assets.value.firstOrNull { asset ->
                                 asset.cellId == gameCell.id
-                            }?.ownerId!!
+                            }?.ownerId ?: return@launch
                             _dialog.value = GameDialogData.Alert(
                                 titleRes = R.string.pay_content,
                                 messageRes = R.string.pay_content_desc,
                             )
-                            gameCell.value?.let {
-                                updatePlayerScore(-it)
-                                updatePlayerScore(it, cellOwner)
+                            gameCell.value?.let { requestedAmount ->
+                                val payableAmount = minOf(requestedAmount, player.value?.score ?: 0)
+                                if (payableAmount > 0) {
+                                    gameRepository.updatePlayerScore(-payableAmount)
+                                    updatePlayerScore(payableAmount, cellOwner)
+                                }
                             }
                         }
                     }
@@ -549,24 +570,41 @@ class GameViewModel(
         viewModelScope.launch {
             when (val dlg = _dialog.value) {
                 is GameDialogData.MakeContentChoice -> {
+                    if (idx != 0) {
+                        onResultDismiss()
+                        return@launch
+                    }
+
+                    if (!spendCurrentPlayerPoints(dlg.cost)) {
+                        _actionsPermitted.value = listOf(passTurnAction)
+                        return@launch
+                    }
+
+                    if ((player.value?.score ?: 0) <= 0) {
+                        onResultDismiss()
+                        return@launch
+                    }
+
+                    val currentPlayer = player.value ?: return@launch
+                    val currentGame = game.value ?: return@launch
                     cells.value = cells.value.toMutableList().apply {
                         val position =
-                            getAssetPositionFromPerimeterPosition(player.value!!.cellPosition)
+                            getAssetPositionFromPerimeterPosition(currentPlayer.cellPosition)
                         if (position != null) {
                             this[position] = GameCell(
-                                player.value!!.cellPosition.toString(),
+                                currentPlayer.cellPosition.toString(),
                                 GameTypeCell.OCCUPIED,
                                 "Occupied"
                             )
                             gameRepository.addGameAsset(
                                 GameAsset(
-                                    lobbyId = game.value!!.lobbyId,
-                                    lobbyCreatedAt = game.value!!.lobbyCreatedAt,
-                                    gameId = game.value!!.id,
-                                    cellId = player.value!!.cellPosition.toString(),
-                                    ownerId = player.value!!.userId,
-                                    placedAtRound = player.value!!.round,
-                                    expiresAtRound = player.value!!.round + 1,
+                                    lobbyId = currentGame.lobbyId,
+                                    lobbyCreatedAt = currentGame.lobbyCreatedAt,
+                                    gameId = currentGame.id,
+                                    cellId = currentPlayer.cellPosition.toString(),
+                                    ownerId = currentPlayer.userId,
+                                    placedAtRound = currentPlayer.round,
+                                    expiresAtRound = currentPlayer.round + 1,
                                 )
                             )
                         }
@@ -575,14 +613,25 @@ class GameViewModel(
                 }
 
                 is GameDialogData.SubscribeChoice -> {
-                    if (idx == 0) {
-                        updatePlayerScore(-dlg.cost)
-                        _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
-                        _actionsPermitted.value = listOf(
-                            passTurnAction
-                        )
-
+                    if (idx != 0) {
+                        onResultDismiss()
+                        return@launch
                     }
+
+                    if (!spendCurrentPlayerPoints(dlg.cost)) {
+                        _actionsPermitted.value = listOf(passTurnAction)
+                        return@launch
+                    }
+
+                    if ((player.value?.score ?: 0) <= 0) {
+                        onResultDismiss()
+                        return@launch
+                    }
+
+                    _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
+                    _actionsPermitted.value = listOf(
+                        passTurnAction
+                    )
                     onResultDismiss()
                 }
 

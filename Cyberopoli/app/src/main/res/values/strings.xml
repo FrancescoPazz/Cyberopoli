@@ -120,6 +120,7 @@
     <string name="skip_turn">Skip turn</string>
     <string name="skip_turn_desc">You have to skip one turn</string>
     <string name="error">Error</string>
+    <string name="not_enough_internet_points">You need %1$s Internet points, but you only have %2$s right now.</string>
     <string name="no_players_to_block">No players to block</string>
     <string name="points_earned_message">You earned %1$s Internet points</string>
     <string name="points_lost_message">You lost %1$s Internet point</string>
