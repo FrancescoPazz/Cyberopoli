@@ -188,6 +188,9 @@ class GameViewModel(
         _hasVpn.value = false
         _playersBlocked.value = emptySet()
         _previousTurn.value = null
+        _subscriptions.value = emptyList()
+        _actionsPermitted.value = emptyList()
+        cells.value = createBoard()
     }
 
     private fun nextTurn() {
@@ -304,7 +307,7 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
-        val isCellOwned = assets.value.any { it.cellId == gameCell.id }
+        val isCellOwned = assets.value.any { it.cellId.toString() == gameCell.id }
         val amISubscribe = _subscriptions.value.contains(gameTypeCell)
         val amIOwner = assets.value.any { it.ownerId == player.value?.userId }
 
@@ -409,7 +412,7 @@ class GameViewModel(
                             )
                         } else {
                             val cellOwner = assets.value.firstOrNull { asset ->
-                                asset.cellId == gameCell.id
+                                asset.cellId.toString() == gameCell.id
                             }?.ownerId ?: return@launch
                             _dialog.value = GameDialogData.Alert(
                                 titleRes = R.string.pay_content,
@@ -601,7 +604,7 @@ class GameViewModel(
                                     lobbyId = currentGame.lobbyId,
                                     lobbyCreatedAt = currentGame.lobbyCreatedAt,
                                     gameId = currentGame.id,
-                                    cellId = currentPlayer.cellPosition.toString(),
+                                    cellId = currentPlayer.cellPosition,
                                     ownerId = currentPlayer.userId,
                                     placedAtRound = currentPlayer.round,
                                     expiresAtRound = currentPlayer.round + 1,
