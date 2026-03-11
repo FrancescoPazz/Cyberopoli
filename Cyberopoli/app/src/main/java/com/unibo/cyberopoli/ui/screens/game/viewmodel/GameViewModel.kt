@@ -273,6 +273,7 @@ class GameViewModel(
             val animationDelayMs = 200L
             for (newPos in steps) {
                 gameRepository.updatePlayerPosition(newPos)
+                checkAndReleaseAssetAt(newPos)
                 delay(animationDelayMs)
             }
 
@@ -493,7 +494,6 @@ class GameViewModel(
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
 
-            checkAndRemoveExpiredAssets()
 
             if (player.value?.round == 5) {
                 gameRepository.gameOver()
@@ -514,26 +514,26 @@ class GameViewModel(
         }
     }
 
-    private fun checkAndRemoveExpiredAssets() {
-        viewModelScope.launch {
-            val currentRound = player.value?.round ?: return@launch
-            val currentAssets = assets.value
+    private suspend fun checkAndReleaseAssetAt(cellPosition: Int) {
+        val myAsset = assets.value.firstOrNull {
+            it.cellId == cellPosition && it.ownerId == player.value?.userId
+        } ?: return
 
-            val expiredAssets = currentAssets.filter { asset ->
-                asset.expiresAtRound >= currentRound
-            }
-
-            expiredAssets.forEach { expiredAsset ->
-                try {
-                    gameRepository.removeGameAsset(expiredAsset)
-                } catch (e: Exception) {
-                    Log.e("GameViewModel", "Error removing expired asset: ${e.message}")
+        try {
+            gameRepository.removeGameAsset(myAsset)
+            val boardPosition = getAssetPositionFromPerimeterPosition(cellPosition)
+            if (boardPosition != null) {
+                cells.value = cells.value.toMutableList().apply {
+                    this[boardPosition] = GameCell(
+                        cellPosition.toString(),
+                        GameTypeCell.COMMON,
+                        "Common",
+                    )
                 }
             }
-
-            if (expiredAssets.isNotEmpty()) {
-                Log.d("GameViewModel", "Removed ${expiredAssets.size} expired assets")
-            }
+            Log.d("GameViewModel", "Asset released at cell $cellPosition")
+        } catch (e: Exception) {
+            Log.e("GameViewModel", "Error releasing asset at cell $cellPosition: ${e.message}")
         }
     }
 
@@ -612,6 +612,7 @@ class GameViewModel(
                             )
                         }
                     }
+                    _actionsPermitted.value = listOf(passTurnAction)
                     onResultDismiss()
                 }
 
