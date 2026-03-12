@@ -52,9 +52,16 @@ class ProfileViewModel(
     private suspend fun getTopUsedApps() {
         try {
             val appsUsage = usageStatsHelper.getTopUsedApps(5)
+            _topAppsUsage.clear()
             _topAppsUsage.addAll(appsUsage)
         } catch (e: Exception) {
             _topAppsUsage.clear()
+        }
+    }
+
+    fun refreshTopApps() {
+        viewModelScope.launch {
+            getTopUsedApps()
         }
     }
 

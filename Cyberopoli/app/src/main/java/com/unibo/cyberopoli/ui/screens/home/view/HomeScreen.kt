@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavController
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
@@ -34,6 +35,11 @@ fun HomeScreen(
     val topApps = homeParams.topAppsUsage
     val currentUserState = homeParams.user
     val gameHistories = homeParams.gameHistories
+
+    LifecycleResumeEffect(Unit) {
+        homeParams.refreshTopApps()
+        onPauseOrDispose { }
+    }
 
     Scaffold(
         topBar = { TopBar(navController) },

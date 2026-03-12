@@ -46,6 +46,5 @@ fun MostUsedAppsCard(
                     .heightIn(min = 200.dp),
             )
         }
-
     }
 }

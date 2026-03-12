@@ -9,4 +9,5 @@ data class HomeParams(
     val user: State<User?>,
     val topAppsUsage: SnapshotStateList<Pair<String, Double>>,
     val gameHistories: SnapshotStateList<GameHistory>,
+    val refreshTopApps: () -> Unit,
 )
