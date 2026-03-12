@@ -158,11 +158,14 @@ class GameViewModel(
                 .onEach { newStatus ->
                     if (newStatus == LobbyStatus.FINISHED.value) {
                         _gameOver.value = true
-                        val player = player.value ?: return@onEach
-                        player.user.let { userId ->
-                            gameRepository.saveUserProgress()
-                            gameRepository.clearGameData()
-                        }
+                        runCatching { gameRepository.saveUserProgress() }
+                            .onFailure { e ->
+                                Log.e("GameViewModel", "saveUserProgress failed: ${e.message}", e)
+                            }
+                        runCatching { gameRepository.clearGameData() }
+                            .onFailure { e ->
+                                Log.e("GameViewModel", "clearGameData failed: ${e.message}", e)
+                            }
                     }
                 }.launchIn(viewModelScope)
         }

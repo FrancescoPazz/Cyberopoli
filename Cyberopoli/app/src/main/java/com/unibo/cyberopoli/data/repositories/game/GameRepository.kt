@@ -801,28 +801,31 @@ class GameRepository(
     }
 
     override suspend fun saveUserProgress() {
-        if (_playerStateFlow.value == null) throw Exception("No player found")
+        val player = _playerStateFlow.value ?: run {
+            Log.w("GameRepository", "saveUserProgress: no player in state, skipping")
+            return
+        }
 
         try {
-            Log.d(
-                "GameRepository",
-                "Saving user progress for player: ${_playerStateFlow.value!!.userId}",
-            )
-            Log.d(
-                "GameRepository",
-                "Current players: ${supabase.auth.currentSessionOrNull()?.user?.id}",
-            )
-            val user =
-                _playersStateFlow.value.find { it.userId == _playerStateFlow.value!!.userId }?.user
-                    ?: throw Exception("User not found in current players")
-            val winner = _playersStateFlow.value.maxByOrNull { it.score } ?: return
+            Log.d("GameRepository", "Saving user progress for player: ${player.userId}")
 
-            val updatedUser =
-                user.copy(
-                    totalScore = user.totalScore + _playerStateFlow.value!!.score,
-                    totalGames = user.totalGames + 1,
-                    totalWins = if (winner.userId == user.id) user.totalWins + 1 else user.totalWins,
-                )
+            val user = player.user
+                ?: _playersStateFlow.value.find { it.userId == player.userId }?.user
+                ?: supabase.from(USERS_TABLE).select {
+                    filter { eq("id", player.userId) }
+                }.decodeSingleOrNull<User>()
+                ?: run {
+                    Log.e("GameRepository", "saveUserProgress: user not found anywhere, skipping")
+                    return
+                }
+
+            val winner = _playersStateFlow.value.maxByOrNull { it.score }
+
+            val updatedUser = user.copy(
+                totalScore = user.totalScore + player.score,
+                totalGames = user.totalGames + 1,
+                totalWins = if (winner?.userId == user.id) user.totalWins + 1 else user.totalWins,
+            )
             supabase.from(USERS_TABLE).update(updatedUser) {
                 filter { eq("id", user.id) }
             }
