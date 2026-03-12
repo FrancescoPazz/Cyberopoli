@@ -45,6 +45,7 @@ fun GameContent(
         topBar = {
             if (!isArMode.value) {
                 TopBar(navController, onBackPressed = {
+                    gameParams.resetGame()
                     gameParams.leaveLobby(gameParams.user.value!!)
                     navController.navigateUp()
                     navController.navigateUp()

@@ -45,6 +45,7 @@ fun GameScreen(
     GameStarterEffect(gameParams)
 
     BackHandler {
+        gameParams.resetGame()
         gameParams.leaveLobby(user!!)
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
