@@ -34,6 +34,7 @@ import com.unibo.cyberopoli.data.repositories.auth.USERS_TABLE
 import com.unibo.cyberopoli.data.repositories.lobby.LOBBY_TABLE
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
+import kotlinx.serialization.Serializable
 
 import com.unibo.cyberopoli.data.repositories.game.IGameRepository as DomainGameRepository
 
@@ -99,25 +100,28 @@ class GameRepository(
             "INGLESE"
         }
         val systemPrompt = """
-            Genera 5 imprevisti di gioco (in $currentLanguage) basandoti su questi dati utente:
+            LINGUA OBBLIGATORIA: $currentLanguage. Scrivi TUTTO in $currentLanguage. NON usare altre lingue.
+            
+            Genera 5 imprevisti di gioco basandoti su questi dati utente:
             $dataJson
             
             REGOLE IMPORTANTI:
             
-            1. Ogni imprevisto deve essere NEGATIVO: penalizza il giocatore per l'uso eccessivo del telefono o di certe app.
-            2. I punti devono essere SEMPRE VALORI POSITIVI.
-            3. Ogni evento deve riferirsi almeno a uno dei seguenti dati: topApps, totalUsageSec, sessionCount, averageSessionSec, unlockCount.
-            4. Gli eventi devono essere vari, creativi e nello stile delle carte "Imprevisti" del Monopoly in chiave informatica.
-            5. Rispondi SOLO con JSON valido, array di 5 oggetti con questa struttura:
+            1. Scrivi titleRes e contentRes ESCLUSIVAMENTE in $currentLanguage.
+            2. Ogni imprevisto deve essere NEGATIVO: penalizza il giocatore per l'uso eccessivo del telefono o di certe app.
+            3. I punti devono essere SEMPRE VALORI POSITIVI.
+            4. Ogni evento deve riferirsi almeno a uno dei seguenti dati: topApps, totalUsageSec, sessionCount, averageSessionSec, unlockCount.
+            5. Gli eventi devono essere vari, creativi e nello stile delle carte "Imprevisti" del Monopoly in chiave informatica.
+            6. Rispondi SOLO con JSON valido, array di 5 oggetti con questa struttura:
             [
               {
-                "titleRes": "titolo breve dell'evento negativo",
-                "contentRes": "descrizione basata sui dati utente",
+                "titleRes": "titolo breve in $currentLanguage",
+                "contentRes": "descrizione in $currentLanguage basata sui dati utente",
                 "points": numero_intero_positivo
               }
             ]
             
-            NON aggiungere testo extra, spiegazioni o markdown.
+            NON aggiungere testo extra, spiegazioni o markdown. TUTTO il testo deve essere in $currentLanguage.
             """
 
         val raw = try {
@@ -133,7 +137,14 @@ class GameRepository(
 
         val cleaned = raw.trim().removePrefix("```json").removeSuffix("```").trim()
 
-        val payloads: List<GameDialogData.HackerStatement> = try {
+        @Serializable
+        data class LLMHackerPayload(
+            val titleRes: String,
+            val contentRes: String,
+            val points: Int,
+        )
+
+        val payloads: List<LLMHackerPayload> = try {
             jsonParser.decodeFromString(cleaned)
         } catch (e: Exception) {
             Log.e("TEST", "Failed to decode questions JSON: ${e.message}")
@@ -144,8 +155,8 @@ class GameRepository(
 
         return payloads.map {
             GameDialogData.HackerStatement(
-                titleRes = it.titleRes,
-                contentRes = it.contentRes,
+                titleString = it.titleRes,
+                contentString = it.contentRes,
                 points = it.points,
             )
         }

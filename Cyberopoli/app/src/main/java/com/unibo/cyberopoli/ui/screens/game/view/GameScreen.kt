@@ -89,7 +89,11 @@ fun GameScreen(
     dialogData?.let { data ->
         val (title, message, options) = when (data) {
             is GameDialogData.ChanceQuestion -> Triple(stringResource(data.titleRes), stringResource(data.promptRes), data.optionsRes.map { stringResource(it) })
-            is GameDialogData.HackerStatement -> Triple(stringResource(data.titleRes), stringResource(data.contentRes), listOf("OK"))
+            is GameDialogData.HackerStatement -> Triple(
+                data.titleString ?: stringResource(data.titleRes),
+                data.contentString ?: stringResource(data.contentRes),
+                listOf("OK"),
+            )
             is GameDialogData.BlockChoice -> Triple(
                 stringResource(data.titleRes),
                 "",
