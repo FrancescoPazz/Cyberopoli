@@ -71,6 +71,10 @@ class GameRepository(
     }
 
     override suspend fun generateDigitalWellBeingStatements(): List<GameDialogData.HackerStatement> {
+        if (!usageStatsHelper.hasUsageStatsPermission()) {
+            Log.d("GameRepository", "Usage stats permission not granted, skipping LLM call")
+            return emptyList()
+        }
         val topApps =
             usageStatsHelper.getTopUsedApps().joinToString("; ") { "${it.first}:${it.second} h" }
         val totalSec = usageStatsHelper.getWeeklyUsageTime()
@@ -116,11 +120,16 @@ class GameRepository(
             NON aggiungere testo extra, spiegazioni o markdown.
             """
 
-        val raw = llmService.generate(
-            model = "cyberopoli_model",
-            prompt = systemPrompt,
-            stream = false,
-        )
+        val raw = try {
+            llmService.generate(
+                model = "cyberopoli_model",
+                prompt = systemPrompt,
+                stream = false,
+            )
+        } catch (e: Exception) {
+            Log.e("GameRepository", "LLM request failed: ${e.message}")
+            return emptyList()
+        }
 
         val cleaned = raw.trim().removePrefix("```json").removeSuffix("```").trim()
 
