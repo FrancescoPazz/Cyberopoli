@@ -22,7 +22,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 class LLMService(
-    private val baseUrl: String = "http://213.165.71.13:8080",
+    private val baseUrl: String = "http://81.57.105.89:9080",
 ) {
     private val client = HttpClient(OkHttp) {
         install(Logging) {

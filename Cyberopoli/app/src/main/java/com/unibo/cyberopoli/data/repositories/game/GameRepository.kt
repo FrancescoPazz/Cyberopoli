@@ -95,15 +95,26 @@ class GameRepository(
             "INGLESE"
         }
         val systemPrompt = """
-            Genera 5 domande di gioco (in $currentLanguage) basandoti su questi dati utente:
+            Genera 5 imprevisti di gioco (in $currentLanguage) basandoti su questi dati utente:
             $dataJson
-            Cerca di diversificare il più possibile il contenuto delle domande.
-            Devono sembrare gli imprevisti di Monopoli ma in chiave informatica.
-            Ad esempio: 
-            Hai usato per troppo tempo il telefono questa settimana, perdi 5 punti.
             
-            Ovviamente devi fare tu le domande basandoti sui dati che ti ho dato.
-            """.trimIndent()
+            REGOLE IMPORTANTI:
+            
+            1. Ogni imprevisto deve essere NEGATIVO: penalizza il giocatore per l'uso eccessivo del telefono o di certe app.
+            2. I punti devono essere SEMPRE VALORI POSITIVI.
+            3. Ogni evento deve riferirsi almeno a uno dei seguenti dati: topApps, totalUsageSec, sessionCount, averageSessionSec, unlockCount.
+            4. Gli eventi devono essere vari, creativi e nello stile delle carte "Imprevisti" del Monopoly in chiave informatica.
+            5. Rispondi SOLO con JSON valido, array di 5 oggetti con questa struttura:
+            [
+              {
+                "titleRes": "titolo breve dell'evento negativo",
+                "contentRes": "descrizione basata sui dati utente",
+                "points": numero_intero_positivo
+              }
+            ]
+            
+            NON aggiungere testo extra, spiegazioni o markdown.
+            """
 
         val raw = llmService.generate(
             model = "cyberopoli_model",
