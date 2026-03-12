@@ -1,10 +1,10 @@
 package com.unibo.cyberopoli.data.repositories.lobby
 
-import kotlinx.coroutines.flow.StateFlow
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
+import kotlinx.coroutines.flow.StateFlow
 
 interface ILobbyRepository {
     val currentLobby: StateFlow<Lobby?>

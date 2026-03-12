@@ -57,11 +57,11 @@ fun SettingScreen(
     var showRulesDialog by remember { mutableStateOf(false) }
     var currentRulePage by remember { mutableIntStateOf(0) }
 
-
     val rulesPages = CyberopoliInstructions(context)
 
     if (showLogoutDialog) {
-        AlertDialog(onDismissRequest = { showLogoutDialog = false },
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
             title = { Text(stringResource(R.string.logout_confirm)) },
             text = { Text(stringResource(R.string.logout_desc)) },
             confirmButton = {
@@ -76,7 +76,8 @@ fun SettingScreen(
                 TextButton(onClick = { showLogoutDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
-            })
+            },
+        )
     }
 
     if (showRulesDialog) {
@@ -85,25 +86,32 @@ fun SettingScreen(
             currentRulePage = 0
         }, title = { Text(rulesPages[currentRulePage].first) }, text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(
-                    text = rulesPages[currentRulePage].second, textAlign = TextAlign.Start
+                    text = rulesPages[currentRulePage].second,
+                    textAlign = TextAlign.Start,
                 )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     repeat(rulesPages.size) { index ->
                         Box(
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .size(8.dp)
-                                .background(
-                                    color = if (index == currentRulePage) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.outline, shape = CircleShape
-                                )
+                            modifier =
+                                Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .size(8.dp)
+                                    .background(
+                                        color =
+                                            if (index == currentRulePage) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.outline
+                                            },
+                                        shape = CircleShape,
+                                    ),
                         )
                     }
                 }
@@ -118,8 +126,11 @@ fun SettingScreen(
                 }
             }) {
                 Text(
-                    if (currentRulePage < rulesPages.size - 1) stringResource(R.string.next)
-                    else stringResource(R.string.close)
+                    if (currentRulePage < rulesPages.size - 1) {
+                        stringResource(R.string.next)
+                    } else {
+                        stringResource(R.string.close)
+                    },
                 )
             }
         }, dismissButton = {
@@ -132,7 +143,8 @@ fun SettingScreen(
     }
 
     if (showLanguageDialog) {
-        AlertDialog(onDismissRequest = { showLanguageDialog = false },
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
             title = { Text(stringResource(R.string.choose_language_confirm)) },
             text = { Text(stringResource(R.string.choose_language_confirm_desc)) },
             confirmButton = {
@@ -146,9 +158,11 @@ fun SettingScreen(
                     Text("OK")
                 }
             },
-            properties = DialogProperties(
-                dismissOnClickOutside = false, dismissOnBackPress = false
-            )
+            properties =
+                DialogProperties(
+                    dismissOnClickOutside = false,
+                    dismissOnBackPress = false,
+                ),
         )
     }
 
@@ -162,11 +176,12 @@ fun SettingScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             ThemeSection(
@@ -176,18 +191,23 @@ fun SettingScreen(
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
-            LanguageSection(onShowLanguageDialog = { showLanguageDialog = true },
+            LanguageSection(
+                onShowLanguageDialog = { showLanguageDialog = true },
                 selectedLanguage = settingsParams.language.collectAsState().value,
                 onSelect = { code ->
                     settingsParams.changeLanguage(code)
-                })
+                },
+            )
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             Button(
-                onClick = { showRulesDialog = true }, colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ), modifier = Modifier.align(Alignment.CenterHorizontally)
+                onClick = { showRulesDialog = true },
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             ) {
                 Text(stringResource(R.string.game_instructions))
             }

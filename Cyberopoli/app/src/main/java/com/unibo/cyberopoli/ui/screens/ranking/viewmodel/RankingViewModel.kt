@@ -1,12 +1,12 @@
 package com.unibo.cyberopoli.ui.screens.ranking.viewmodel
 
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.unibo.cyberopoli.data.repositories.ranking.RankingRepository
+import kotlinx.coroutines.launch
 
 class RankingViewModel(
     private val rankingRepository: RankingRepository,

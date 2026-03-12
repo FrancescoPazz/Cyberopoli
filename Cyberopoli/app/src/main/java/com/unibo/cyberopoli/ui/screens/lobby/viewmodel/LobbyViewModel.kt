@@ -1,22 +1,22 @@
 package com.unibo.cyberopoli.ui.screens.lobby.viewmodel
 
 import android.util.Log
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.map
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.Flow
 import androidx.compose.runtime.State
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.StateFlow
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.unibo.cyberopoli.data.models.auth.User
 import com.unibo.cyberopoli.data.models.lobby.Lobby
 import com.unibo.cyberopoli.data.models.lobby.LobbyMember
 import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
 import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class LobbyViewModel(
-    private val lobbyRepository: LobbyRepository
+    private val lobbyRepository: LobbyRepository,
 ) : ViewModel() {
     val lobbyState: StateFlow<Lobby?> = lobbyRepository.currentLobby
     val membersState: StateFlow<List<LobbyMember>> = lobbyRepository.currentLobbyMembers
@@ -24,15 +24,19 @@ class LobbyViewModel(
     private val _lobbyAlreadyStarted = mutableStateOf(false)
     val lobbyAlreadyStarted: State<Boolean> = _lobbyAlreadyStarted
 
-    val allReady: Flow<Boolean> = membersState.map { currentMembers ->
-        currentMembers.all { it.isReady }
-    }
+    val allReady: Flow<Boolean> =
+        membersState.map { currentMembers ->
+            currentMembers.all { it.isReady }
+        }
 
     fun isHost(user: User?): Boolean {
         return lobbyState.value?.hostId == user?.id
     }
 
-    fun startLobbyFlow(lobbyId: String, user: User) {
+    fun startLobbyFlow(
+        lobbyId: String,
+        user: User,
+    ) {
         viewModelScope.launch {
             try {
                 val response = lobbyRepository.createOrGetLobby(lobbyId, user)
@@ -75,7 +79,10 @@ class LobbyViewModel(
         }
     }
 
-    fun setInApp(user: User?, inApp: Boolean) {
+    fun setInApp(
+        user: User?,
+        inApp: Boolean,
+    ) {
         viewModelScope.launch {
             if (user == null || lobbyState.value == null) {
                 Log.w("LobbyViewModel", "setInApp: User or Lobby is null")

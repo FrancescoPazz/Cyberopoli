@@ -12,13 +12,14 @@ private const val COLOR_BLUE = 0xFF2962FF
 object PlayerColorUtils {
     private val playerColors = mutableMapOf<String, Color>()
 
-    private val predefinedColors = listOf(
-        Color(COLOR_PURPLE), // purple_pawn
-        Color(COLOR_RED), // red_pawn
-        Color(COLOR_GREEN), // green_pawn
-        Color(COLOR_YELLOW), // yellow_pawn
-        Color(COLOR_BLUE), // blue_pawn
-    )
+    private val predefinedColors =
+        listOf(
+            Color(COLOR_PURPLE), // purple_pawn
+            Color(COLOR_RED), // red_pawn
+            Color(COLOR_GREEN), // green_pawn
+            Color(COLOR_YELLOW), // yellow_pawn
+            Color(COLOR_BLUE), // blue_pawn
+        )
 
     fun getPawnModelForPlayer(player: GamePlayer): String {
         val color = getPlayerColor(player)
@@ -40,6 +41,4 @@ object PlayerColorUtils {
             shuffledColors[colorIndex]
         }
     }
-
-
 }

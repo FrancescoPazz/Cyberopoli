@@ -50,11 +50,12 @@ fun HomeScreen(
             LoadingScreen()
         } else {
             Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize(),
+                modifier =
+                    Modifier
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 Spacer(modifier = Modifier.height(4.dp))

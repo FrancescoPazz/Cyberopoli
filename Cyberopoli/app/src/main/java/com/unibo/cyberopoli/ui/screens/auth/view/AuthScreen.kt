@@ -46,11 +46,12 @@ fun AuthScreen(
     navController: NavController,
     authParams: AuthParams,
 ) {
-    val tabs = listOf(
-        stringResource(R.string.login),
-        stringResource(R.string.signup),
-        stringResource(R.string.guest),
-    )
+    val tabs =
+        listOf(
+            stringResource(R.string.login),
+            stringResource(R.string.signup),
+            stringResource(R.string.guest),
+        )
     val context = LocalContext.current
     val authState = authParams.authState
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -60,20 +61,24 @@ fun AuthScreen(
         when (val state = authState.value) {
             is AuthState.Error -> {
                 val dialogId = state.message.split(" ")[0]
-                val dialogMessage = context.getString(
-                    context.resources.getIdentifier(
-                        dialogId, "string", context.packageName
-                    )
-                )
-                if (dialogMessage.isNotEmpty()) {
-                    Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
-                }
+
+                val dialogMessage =
+                    runCatching {
+                        val resId =
+                            context.resources.getIdentifier(
+                                dialogId,
+                                "string",
+                                context.packageName,
+                            )
+                        if (resId != 0) context.getString(resId) else null
+                    }.getOrNull()
+
+                val messageToShow = dialogMessage?.takeIf { it.isNotBlank() } ?: state.message
+                Toast.makeText(context, messageToShow, Toast.LENGTH_LONG).show()
 
                 when (state.context) {
-                    AuthErrorContext.SIGNUP -> selectedTabIndex = 1
                     AuthErrorContext.LOGIN -> selectedTabIndex = 0
+                    AuthErrorContext.SIGNUP -> selectedTabIndex = 1
                     AuthErrorContext.ANONYMOUS_LOGIN -> selectedTabIndex = 2
                     else -> {}
                 }
@@ -97,11 +102,12 @@ fun AuthScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AuthHeader()
@@ -130,18 +136,20 @@ fun AuthScreen(
                 }
             }
             when (selectedTabIndex) {
-                0 -> LoginCard(
-                    authParams.authState,
-                    authParams.login,
-                    authParams.loginGoogleUser,
-                    authParams.sendPasswordReset,
-                    authParams.sendOtp,
-                )
+                0 ->
+                    LoginCard(
+                        authParams.authState,
+                        authParams.login,
+                        authParams.loginGoogleUser,
+                        authParams.sendPasswordReset,
+                        authParams.sendOtp,
+                    )
 
-                1 -> SignUpCard(
-                    authParams.authState,
-                    authParams.signUp,
-                )
+                1 ->
+                    SignUpCard(
+                        authParams.authState,
+                        authParams.signUp,
+                    )
 
                 2 -> GuestCard(navController, authParams.loginAnonymously)
             }

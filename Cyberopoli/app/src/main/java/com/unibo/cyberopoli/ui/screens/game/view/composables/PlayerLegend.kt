@@ -22,48 +22,54 @@ import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.util.PlayerColorUtils
 
 @Composable
-fun PlayerLegend(players: List<GamePlayer>,
-                 modifier: Modifier = Modifier) {
+fun PlayerLegend(
+    players: List<GamePlayer>,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .background(
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                shape = MaterialTheme.shapes.medium
-            )
-            .padding(8.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                    shape = MaterialTheme.shapes.medium,
+                )
+                .padding(8.dp),
     ) {
         Text(
             text = stringResource(R.string.players_in_game),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp),
         )
 
         players.forEach { player ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 2.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .background(PlayerColorUtils.getPlayerColor(player), CircleShape)
+                    modifier =
+                        Modifier
+                            .size(16.dp)
+                            .background(PlayerColorUtils.getPlayerColor(player), CircleShape),
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
                     text = player.user?.username ?: stringResource(R.string.unknown_player),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = "${player.score} pts", style = MaterialTheme.typography.bodyMedium
+                    text = "${player.score} pts",
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

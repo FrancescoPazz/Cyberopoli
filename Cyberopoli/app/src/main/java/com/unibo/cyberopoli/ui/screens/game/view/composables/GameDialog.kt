@@ -25,9 +25,12 @@ fun GameDialog(
     onDismiss: () -> Unit,
 ) {
     Dialog(
-        onDismissRequest = onDismiss, properties = DialogProperties(
-            dismissOnClickOutside = false, dismissOnBackPress = false
-        )
+        onDismissRequest = onDismiss,
+        properties =
+            DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = false,
+            ),
     ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -51,9 +54,10 @@ fun GameDialog(
                     options.forEachIndexed { idx, label ->
                         Button(
                             onClick = { onOptionSelected(idx) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
                         ) {
                             Text(label)
                         }

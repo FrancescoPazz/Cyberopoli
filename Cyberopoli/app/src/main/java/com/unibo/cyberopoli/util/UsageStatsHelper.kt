@@ -21,28 +21,28 @@ data class SessionStats(
 
 fun Context.openUsageAccessSettings() {
     startActivity(
-        Intent(ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        Intent(ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
     )
 }
 
 class UsageStatsHelper(private val context: Context) {
-
     fun hasUsageStatsPermission(): Boolean {
         val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName,
-            )
-        }
+        val mode =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appOps.unsafeCheckOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    Process.myUid(),
+                    context.packageName,
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                appOps.checkOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    Process.myUid(),
+                    context.packageName,
+                )
+            }
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
@@ -52,44 +52,50 @@ class UsageStatsHelper(private val context: Context) {
             val oneWeekAgo = now - 7L * 24 * 60 * 60 * 1000
             val usageStats =
                 (context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager).queryUsageStats(
-                        UsageStatsManager.INTERVAL_WEEKLY, oneWeekAgo, now
-                    )
+                    UsageStatsManager.INTERVAL_WEEKLY,
+                    oneWeekAgo,
+                    now,
+                )
             val summedByPackage: List<Pair<String, Long>> =
                 usageStats.groupBy { it.packageName }.map { (pkg, statsList) ->
-                        val total = statsList.sumOf { it.totalTimeInForeground }
-                        pkg to total
-                    }
-            val topList = summedByPackage.sortedByDescending { it.second }.take(limit)
-            val result = topList.map { (pkg, totalMillis) ->
-                val appName = try {
-                    val ai = context.packageManager.getApplicationInfo(pkg, 0)
-                    context.packageManager.getApplicationLabel(ai).toString()
-                } catch (e: PackageManager.NameNotFoundException) {
-                    pkg
+                    val total = statsList.sumOf { it.totalTimeInForeground }
+                    pkg to total
                 }
-                val hours = totalMillis / 3_600_000.0
-                appName to hours
-            }
+            val topList = summedByPackage.sortedByDescending { it.second }.take(limit)
+            val result =
+                topList.map { (pkg, totalMillis) ->
+                    val appName =
+                        try {
+                            val ai = context.packageManager.getApplicationInfo(pkg, 0)
+                            context.packageManager.getApplicationLabel(ai).toString()
+                        } catch (e: PackageManager.NameNotFoundException) {
+                            pkg
+                        }
+                    val hours = totalMillis / 3_600_000.0
+                    appName to hours
+                }
             result
         }
 
-    suspend fun getWeeklyUsageTime(): Double = withContext(Dispatchers.IO) {
-        val cal = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, -7)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
+    suspend fun getWeeklyUsageTime(): Double =
+        withContext(Dispatchers.IO) {
+            val cal =
+                Calendar.getInstance().apply {
+                    add(Calendar.DAY_OF_YEAR, -7)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+            val stats =
+                (context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager).queryUsageStats(
+                    UsageStatsManager.INTERVAL_WEEKLY,
+                    cal.timeInMillis,
+                    System.currentTimeMillis(),
+                )
+            val totalMillis = stats.sumOf { it.totalTimeInForeground }
+            totalMillis / 3_600_000.0
         }
-        val stats =
-            (context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager).queryUsageStats(
-                UsageStatsManager.INTERVAL_WEEKLY,
-                cal.timeInMillis,
-                System.currentTimeMillis(),
-            )
-        val totalMillis = stats.sumOf { it.totalTimeInForeground }
-        totalMillis / 3_600_000.0
-    }
 
     suspend fun getSessionStats(pastMillis: Long = 24 * 60 * 60 * 1000): SessionStats =
         withContext(Dispatchers.IO) {

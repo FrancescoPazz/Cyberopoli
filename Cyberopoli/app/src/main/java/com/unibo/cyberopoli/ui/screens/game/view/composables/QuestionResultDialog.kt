@@ -23,12 +23,16 @@ import com.unibo.cyberopoli.data.models.game.GameDialogData
 
 @Composable
 fun QuestionResultDialog(
-    data: GameDialogData.QuestionResult, onDismiss: () -> Unit
+    data: GameDialogData.QuestionResult,
+    onDismiss: () -> Unit,
 ) {
     Dialog(
-        onDismissRequest = onDismiss, properties = DialogProperties(
-            dismissOnClickOutside = false, dismissOnBackPress = false
-        )
+        onDismissRequest = onDismiss,
+        properties =
+            DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = false,
+            ),
     ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -54,26 +58,30 @@ fun QuestionResultDialog(
                 data.optionsRes.forEachIndexed { idx, label ->
                     val isCorrect = idx == data.correctIndex
                     val isSelected = idx == data.selectedIndex
-                    val backgroundColor = when {
-                        isCorrect -> Color.Green.copy(alpha = 0.2f)
-                        isSelected -> Color.Red.copy(alpha = 0.2f)
-                        else -> Color.Transparent
-                    }
-                    val borderColor = when {
-                        isCorrect -> Color.Green
-                        isSelected -> Color.Red
-                        else -> Color.Transparent
-                    }
+                    val backgroundColor =
+                        when {
+                            isCorrect -> Color.Green.copy(alpha = 0.2f)
+                            isSelected -> Color.Red.copy(alpha = 0.2f)
+                            else -> Color.Transparent
+                        }
+                    val borderColor =
+                        when {
+                            isCorrect -> Color.Green
+                            isSelected -> Color.Red
+                            else -> Color.Transparent
+                        }
 
                     Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .background(backgroundColor, RoundedCornerShape(8.dp))
-                            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .background(backgroundColor, RoundedCornerShape(8.dp))
+                                .border(1.dp, borderColor, RoundedCornerShape(8.dp)),
                     ) {
                         Text(
-                            text = stringResource(label), modifier = Modifier.padding(12.dp)
+                            text = stringResource(label),
+                            modifier = Modifier.padding(12.dp),
                         )
                     }
                 }

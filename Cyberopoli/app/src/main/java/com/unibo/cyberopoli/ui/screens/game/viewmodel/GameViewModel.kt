@@ -1,44 +1,44 @@
 package com.unibo.cyberopoli.ui.screens.game.viewmodel
 
-import kotlin.math.abs
 import android.util.Log
-import com.unibo.cyberopoli.R
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.map
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.catch
 import androidx.compose.runtime.State
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.game.Game
-import kotlinx.coroutines.flow.distinctUntilChanged
-import com.unibo.cyberopoli.data.models.lobby.Lobby
-import com.unibo.cyberopoli.data.models.game.GameCell
-import com.unibo.cyberopoli.data.models.game.GameEvent
-import com.unibo.cyberopoli.data.models.game.GameAsset
-import com.unibo.cyberopoli.data.models.game.GamePlayer
 import com.unibo.cyberopoli.data.models.game.GameAction
-import com.unibo.cyberopoli.data.models.game.createBoard
-import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
-import com.unibo.cyberopoli.data.models.game.GameTypeCell
+import com.unibo.cyberopoli.data.models.game.GameAsset
+import com.unibo.cyberopoli.data.models.game.GameCell
 import com.unibo.cyberopoli.data.models.game.GameDialogData
-import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.GameEvent
+import com.unibo.cyberopoli.data.models.game.GamePlayer
+import com.unibo.cyberopoli.data.models.game.GameTypeCell
 import com.unibo.cyberopoli.data.models.game.PERIMETER_CELLS
-import com.unibo.cyberopoli.data.repositories.game.GameRepository
-import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import com.unibo.cyberopoli.data.models.game.PERIMETER_PATH
+import com.unibo.cyberopoli.data.models.game.createBoard
+import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
 import com.unibo.cyberopoli.data.models.game.questions.chanceQuestions
 import com.unibo.cyberopoli.data.models.game.questions.hackerStatements
-import com.unibo.cyberopoli.data.models.game.getAssetPositionFromPerimeterPosition
+import com.unibo.cyberopoli.data.models.lobby.Lobby
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.data.repositories.game.GameRepository
+import com.unibo.cyberopoli.data.repositories.lobby.LobbyRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class GameViewModel(
     lobbyRepository: LobbyRepository,
@@ -81,23 +81,26 @@ class GameViewModel(
     private val _playersBlocked = MutableStateFlow<Set<GamePlayer>>(emptySet())
     private val _previousTurn = MutableStateFlow<String?>(null)
 
-    private val rollDiceAction = GameAction(
-        id = "roll_dice",
-        iconRes = R.drawable.ic_dice,
-        action = { rollDice() },
-    )
+    private val rollDiceAction =
+        GameAction(
+            id = "roll_dice",
+            iconRes = R.drawable.ic_dice,
+            action = { rollDice() },
+        )
 
-    private val waitTurnAction = GameAction(
-        id = "wait_your_turn",
-        iconRes = R.drawable.ic_stop_hand,
-        action = { },
-    )
+    private val waitTurnAction =
+        GameAction(
+            id = "wait_your_turn",
+            iconRes = R.drawable.ic_stop_hand,
+            action = { },
+        )
 
-    private val passTurnAction = GameAction(
-        id = "turn_pass",
-        iconRes = R.drawable.ic_skip,
-        action = { endTurn() },
-    )
+    private val passTurnAction =
+        GameAction(
+            id = "turn_pass",
+            iconRes = R.drawable.ic_skip,
+            action = { endTurn() },
+        )
 
     private val _actionsPermitted = MutableStateFlow<List<GameAction>>(emptyList())
     val actionsPermitted: StateFlow<List<GameAction>> = _actionsPermitted.asStateFlow()
@@ -125,10 +128,11 @@ class GameViewModel(
                             if (_skipNext.value) {
                                 _skipNext.value = false
                                 _actionsPermitted.value = listOf(waitTurnAction)
-                                _dialog.value = GameDialogData.Alert(
-                                    titleRes = R.string.broken_router,
-                                    messageRes = R.string.broken_router_desc,
-                                )
+                                _dialog.value =
+                                    GameDialogData.Alert(
+                                        titleRes = R.string.broken_router,
+                                        messageRes = R.string.broken_router_desc,
+                                    )
                                 nextTurn()
                             } else {
                                 _actionsPermitted.value = listOf(rollDiceAction)
@@ -143,7 +147,7 @@ class GameViewModel(
                     Log.e(
                         "GameViewModel",
                         "Error observing combined turn/player changes: ${e.message}",
-                        e
+                        e,
                     )
                     _actionsPermitted.value = emptyList()
                 }.launchIn(viewModelScope)
@@ -232,20 +236,22 @@ class GameViewModel(
 
         viewModelScope.launch {
             _diceRoll.value = (1..6).random()
-            _dialog.value = GameDialogData.Alert(
-                titleRes = R.string.roll_dice,
-                messageRes = R.string.roll_dice_desc,
-                messageArgs = listOf(_diceRoll.value.toString()),
-            )
-            _actionsPermitted.value = listOf(
-                GameAction(
-                    id = "move_on",
-                    iconRes = R.drawable.ic_move_on,
-                    action = {
-                        movePlayer()
-                    },
-                ),
-            )
+            _dialog.value =
+                GameDialogData.Alert(
+                    titleRes = R.string.roll_dice,
+                    messageRes = R.string.roll_dice_desc,
+                    messageArgs = listOf(_diceRoll.value.toString()),
+                )
+            _actionsPermitted.value =
+                listOf(
+                    GameAction(
+                        id = "move_on",
+                        iconRes = R.drawable.ic_move_on,
+                        action = {
+                            movePlayer()
+                        },
+                    ),
+                )
         }
         _isActionInProgress.value = false
     }
@@ -266,9 +272,10 @@ class GameViewModel(
             val oldPathIndex = path.indexOf(oldCellPosition)
             if (oldPathIndex == -1) return@launch
 
-            val steps = (1..diceRolled).map { step ->
-                path[(oldPathIndex + step) % path.size]
-            }
+            val steps =
+                (1..diceRolled).map { step ->
+                    path[(oldPathIndex + step) % path.size]
+                }
 
             val animationDelayMs = 200L
             for (newPos in steps) {
@@ -294,11 +301,12 @@ class GameViewModel(
 
         val currentPlayer = player.value ?: return false
         if (currentPlayer.score < cost) {
-            _dialog.value = GameDialogData.Alert(
-                titleRes = R.string.error,
-                messageRes = R.string.not_enough_internet_points,
-                messageArgs = listOf(cost.toString(), currentPlayer.score.toString()),
-            )
+            _dialog.value =
+                GameDialogData.Alert(
+                    titleRes = R.string.error,
+                    messageRes = R.string.not_enough_internet_points,
+                    messageArgs = listOf(cost.toString(), currentPlayer.score.toString()),
+                )
             return false
         }
 
@@ -313,15 +321,16 @@ class GameViewModel(
         val amIOwner = assets.value.any { it.ownerId == player.value?.userId }
 
         viewModelScope.launch {
-            _actionsPermitted.value = listOf(
-                GameAction(
-                    id = "turn_pass",
-                    iconRes = R.drawable.ic_skip,
-                    action = {
-                        endTurn()
-                    },
-                ),
-            )
+            _actionsPermitted.value =
+                listOf(
+                    GameAction(
+                        id = "turn_pass",
+                        iconRes = R.drawable.ic_skip,
+                        action = {
+                            endTurn()
+                        },
+                    ),
+                )
 
             when (gameTypeCell) {
                 GameTypeCell.START -> {
@@ -364,61 +373,71 @@ class GameViewModel(
                 else -> {
                     if (!isCellOwned) {
                         if (!amISubscribe) {
-                            _actionsPermitted.value += listOf(
-                                GameAction(
-                                    id = "subscribe",
-                                    iconRes = R.drawable.ic_subscribe,
-                                    action = {
-                                        _dialog.value = GameDialogData.SubscribeChoice(
-                                            titleRes = R.string.subscribe,
-                                            messageRes = R.string.subscribe_desc,
-                                            messageArgs = listOf(gameCell.value.toString()),
-                                            optionsRes = listOf(
-                                                R.string.accept,
-                                                R.string.decline,
-                                            ),
-                                            cost = gameCell.value ?: 0,
-                                        )
-                                    },
-                                ),
-                            )
+                            _actionsPermitted.value +=
+                                listOf(
+                                    GameAction(
+                                        id = "subscribe",
+                                        iconRes = R.drawable.ic_subscribe,
+                                        action = {
+                                            _dialog.value =
+                                                GameDialogData.SubscribeChoice(
+                                                    titleRes = R.string.subscribe,
+                                                    messageRes = R.string.subscribe_desc,
+                                                    messageArgs = listOf(gameCell.value.toString()),
+                                                    optionsRes =
+                                                        listOf(
+                                                            R.string.accept,
+                                                            R.string.decline,
+                                                        ),
+                                                    cost = gameCell.value ?: 0,
+                                                )
+                                        },
+                                    ),
+                                )
                         } else {
-                            _actionsPermitted.value += listOf(
-                                GameAction(
-                                    id = "make_content",
-                                    iconRes = R.drawable.ic_make_content,
-                                    action = {
-                                        _dialog.value = GameDialogData.MakeContentChoice(
-                                            titleRes = R.string.make_content,
-                                            messageRes = R.string.make_content_desc,
-                                            messageArgs = listOf(
-                                                gameCell.value.toString(),
-                                                gameCell.value?.times(2).toString(),
-                                            ),
-                                            optionsRes = listOf(
-                                                R.string.accept,
-                                                R.string.decline,
-                                            ),
-                                            cost = (gameCell.value?.times(2) ?: 0),
-                                        )
-                                    },
-                                ),
-                            )
+                            _actionsPermitted.value +=
+                                listOf(
+                                    GameAction(
+                                        id = "make_content",
+                                        iconRes = R.drawable.ic_make_content,
+                                        action = {
+                                            _dialog.value =
+                                                GameDialogData.MakeContentChoice(
+                                                    titleRes = R.string.make_content,
+                                                    messageRes = R.string.make_content_desc,
+                                                    messageArgs =
+                                                        listOf(
+                                                            gameCell.value.toString(),
+                                                            gameCell.value?.times(2).toString(),
+                                                        ),
+                                                    optionsRes =
+                                                        listOf(
+                                                            R.string.accept,
+                                                            R.string.decline,
+                                                        ),
+                                                    cost = (gameCell.value?.times(2) ?: 0),
+                                                )
+                                        },
+                                    ),
+                                )
                         }
                     } else if (!amIOwner) {
                         if (_hasVpn.value) {
-                            _dialog.value = GameDialogData.Alert(
-                                titleRes = R.string.get_vpn,
-                                messageRes = R.string.vpn_avoid_pay,
-                            )
+                            _dialog.value =
+                                GameDialogData.Alert(
+                                    titleRes = R.string.get_vpn,
+                                    messageRes = R.string.vpn_avoid_pay,
+                                )
                         } else {
-                            val cellOwner = assets.value.firstOrNull { asset ->
-                                asset.cellId.toString() == gameCell.id
-                            }?.ownerId ?: return@launch
-                            _dialog.value = GameDialogData.Alert(
-                                titleRes = R.string.pay_content,
-                                messageRes = R.string.pay_content_desc,
-                            )
+                            val cellOwner =
+                                assets.value.firstOrNull { asset ->
+                                    asset.cellId.toString() == gameCell.id
+                                }?.ownerId ?: return@launch
+                            _dialog.value =
+                                GameDialogData.Alert(
+                                    titleRes = R.string.pay_content,
+                                    messageRes = R.string.pay_content_desc,
+                                )
                             gameCell.value?.let { requestedAmount ->
                                 val payableAmount = minOf(requestedAmount, player.value?.score ?: 0)
                                 if (payableAmount > 0) {
@@ -461,25 +480,28 @@ class GameViewModel(
 
             GameTypeCell.BLOCK -> {
                 val others = players.value.filter { it.userId != player.value?.userId }
-                _dialog.value = others.let {
-                    GameDialogData.BlockChoice(
-                        titleRes = R.string.block_player_choice, players = it,
-                    )
-                }
+                _dialog.value =
+                    others.let {
+                        GameDialogData.BlockChoice(
+                            titleRes = R.string.block_player_choice, players = it,
+                        )
+                    }
             }
 
             GameTypeCell.VPN -> {
-                _dialog.value = GameDialogData.Alert(
-                    titleRes = R.string.get_vpn,
-                    messageRes = R.string.get_vpn_desc,
-                )
+                _dialog.value =
+                    GameDialogData.Alert(
+                        titleRes = R.string.get_vpn,
+                        messageRes = R.string.get_vpn_desc,
+                    )
             }
 
             GameTypeCell.BROKEN_ROUTER -> {
-                _dialog.value = GameDialogData.Alert(
-                    titleRes = R.string.broken_router,
-                    messageRes = R.string.broken_router_desc,
-                )
+                _dialog.value =
+                    GameDialogData.Alert(
+                        titleRes = R.string.broken_router,
+                        messageRes = R.string.broken_router_desc,
+                    )
                 _skipNext.value = true
             }
 
@@ -493,7 +515,6 @@ class GameViewModel(
     private fun increasePlayerRound() {
         viewModelScope.launch {
             gameRepository.increasePlayerRound()
-
 
             if (player.value?.round == 5) {
                 gameRepository.gameOver()
@@ -515,21 +536,24 @@ class GameViewModel(
     }
 
     private suspend fun checkAndReleaseAssetAt(cellPosition: Int) {
-        val myAsset = assets.value.firstOrNull {
-            it.cellId == cellPosition && it.ownerId == player.value?.userId
-        } ?: return
+        val myAsset =
+            assets.value.firstOrNull {
+                it.cellId == cellPosition && it.ownerId == player.value?.userId
+            } ?: return
 
         try {
             gameRepository.removeGameAsset(myAsset)
             val boardPosition = getAssetPositionFromPerimeterPosition(cellPosition)
             if (boardPosition != null) {
-                cells.value = cells.value.toMutableList().apply {
-                    this[boardPosition] = GameCell(
-                        cellPosition.toString(),
-                        GameTypeCell.COMMON,
-                        "Common",
-                    )
-                }
+                cells.value =
+                    cells.value.toMutableList().apply {
+                        this[boardPosition] =
+                            GameCell(
+                                cellPosition.toString(),
+                                GameTypeCell.COMMON,
+                                "Common",
+                            )
+                    }
             }
             Log.d("GameViewModel", "Asset released at cell $cellPosition")
         } catch (e: Exception) {
@@ -590,28 +614,30 @@ class GameViewModel(
 
                     val currentPlayer = player.value ?: return@launch
                     val currentGame = game.value ?: return@launch
-                    cells.value = cells.value.toMutableList().apply {
-                        val position =
-                            getAssetPositionFromPerimeterPosition(currentPlayer.cellPosition)
-                        if (position != null) {
-                            this[position] = GameCell(
-                                currentPlayer.cellPosition.toString(),
-                                GameTypeCell.OCCUPIED,
-                                "Occupied"
-                            )
-                            gameRepository.addGameAsset(
-                                GameAsset(
-                                    lobbyId = currentGame.lobbyId,
-                                    lobbyCreatedAt = currentGame.lobbyCreatedAt,
-                                    gameId = currentGame.id,
-                                    cellId = currentPlayer.cellPosition,
-                                    ownerId = currentPlayer.userId,
-                                    placedAtRound = currentPlayer.round,
-                                    expiresAtRound = currentPlayer.round + 1,
+                    cells.value =
+                        cells.value.toMutableList().apply {
+                            val position =
+                                getAssetPositionFromPerimeterPosition(currentPlayer.cellPosition)
+                            if (position != null) {
+                                this[position] =
+                                    GameCell(
+                                        currentPlayer.cellPosition.toString(),
+                                        GameTypeCell.OCCUPIED,
+                                        "Occupied",
+                                    )
+                                gameRepository.addGameAsset(
+                                    GameAsset(
+                                        lobbyId = currentGame.lobbyId,
+                                        lobbyCreatedAt = currentGame.lobbyCreatedAt,
+                                        gameId = currentGame.id,
+                                        cellId = currentPlayer.cellPosition,
+                                        ownerId = currentPlayer.userId,
+                                        placedAtRound = currentPlayer.round,
+                                        expiresAtRound = currentPlayer.round + 1,
+                                    ),
                                 )
-                            )
+                            }
                         }
-                    }
                     _actionsPermitted.value = listOf(passTurnAction)
                     onResultDismiss()
                 }
@@ -633,9 +659,10 @@ class GameViewModel(
                     }
 
                     _subscriptions.value += player.value?.let { PERIMETER_CELLS[it.cellPosition]?.type }!!
-                    _actionsPermitted.value = listOf(
-                        passTurnAction
-                    )
+                    _actionsPermitted.value =
+                        listOf(
+                            passTurnAction,
+                        )
                     onResultDismiss()
                 }
 
@@ -665,20 +692,22 @@ class GameViewModel(
                     updatePlayerScore(delta)
                     val resultTitle =
                         if (correct) R.string.correct_answer else R.string.wrong_answer
-                    val resultMessage = if (correct) {
-                        R.string.points_earned_message
-                    } else {
-                        R.string.points_lost_message
-                    }
+                    val resultMessage =
+                        if (correct) {
+                            R.string.points_earned_message
+                        } else {
+                            R.string.points_lost_message
+                        }
 
-                    _dialog.value = GameDialogData.QuestionResult(
-                        titleRes = resultTitle,
-                        messageRes = resultMessage,
-                        messageArgs = listOf(abs(delta).toString()),
-                        optionsRes = dlg.optionsRes,
-                        correctIndex = dlg.correctIndex,
-                        selectedIndex = idx
-                    )
+                    _dialog.value =
+                        GameDialogData.QuestionResult(
+                            titleRes = resultTitle,
+                            messageRes = resultMessage,
+                            messageArgs = listOf(abs(delta).toString()),
+                            optionsRes = dlg.optionsRes,
+                            correctIndex = dlg.correctIndex,
+                            selectedIndex = idx,
+                        )
                 }
 
                 is GameDialogData.Alert -> {

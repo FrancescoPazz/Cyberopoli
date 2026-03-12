@@ -40,10 +40,11 @@ fun MyRankingPositionCard(
 
     CyberopoliGradientCard(
         modifier = modifier.padding(horizontal = 16.dp),
-        gradientColors = listOf(
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
-            MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-        ),
+        gradientColors =
+            listOf(
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
+                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
+            ),
         shape = RoundedCornerShape(12.dp),
         contentPadding = 12.dp,
     ) {
@@ -61,22 +62,24 @@ fun MyRankingPositionCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            val resId = remember(user.avatarUrl) {
-                context.resources.getIdentifier(
-                    user.avatarUrl,
-                    "drawable",
-                    context.packageName,
-                )
-            }
+            val resId =
+                remember(user.avatarUrl) {
+                    context.resources.getIdentifier(
+                        user.avatarUrl,
+                        "drawable",
+                        context.packageName,
+                    )
+                }
             Image(
                 painter = painterResource(resId),
                 contentDescription = stringResource(R.string.avatar),
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface, CircleShape)
-                    .padding(3.dp)
-                    .clip(CircleShape),
+                modifier =
+                    Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface, CircleShape)
+                        .padding(3.dp)
+                        .clip(CircleShape),
                 contentScale = ContentScale.Crop,
             )
 

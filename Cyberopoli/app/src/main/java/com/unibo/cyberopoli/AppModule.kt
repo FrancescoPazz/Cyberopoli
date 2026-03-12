@@ -22,23 +22,24 @@ import org.koin.dsl.module
 
 val Context.dataStore by preferencesDataStore("settings")
 
-val appModule = module {
-    viewModel { AuthViewModel(get(), get()) }
-    viewModel { ScanViewModel() }
-    viewModel { SettingsViewModel(get()) }
-    viewModel { ProfileViewModel(get(), get(), get()) }
-    viewModel { RankingViewModel(get()) }
-    viewModel { LobbyViewModel(get()) }
-    viewModel { GameViewModel(get(), get()) }
+val appModule =
+    module {
+        viewModel { AuthViewModel(get(), get()) }
+        viewModel { ScanViewModel() }
+        viewModel { SettingsViewModel(get()) }
+        viewModel { ProfileViewModel(get(), get(), get()) }
+        viewModel { RankingViewModel(get()) }
+        viewModel { LobbyViewModel(get()) }
+        viewModel { GameViewModel(get(), get()) }
 
-    single { UsageStatsHelper(get()) }
-    single { LLMService() }
+        single { UsageStatsHelper(get()) }
+        single { LLMService() }
 
-    single { AuthRepository(get()) }
-    single { SettingsRepository(get()) }
-    single { UserRepository(get()) }
-    single { RankingRepository(get()) }
-    single { LobbyRepository(get()) }
-    single { GameRepository(get(), get(), get()) }
-    single { get<Context>().dataStore }
-}
+        single { AuthRepository(get()) }
+        single { SettingsRepository(get()) }
+        single { UserRepository(get()) }
+        single { RankingRepository(get()) }
+        single { LobbyRepository(get()) }
+        single { GameRepository(get(), get(), get()) }
+        single { get<Context>().dataStore }
+    }

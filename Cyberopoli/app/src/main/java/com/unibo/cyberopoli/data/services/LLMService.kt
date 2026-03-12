@@ -24,24 +24,26 @@ import kotlinx.serialization.json.jsonPrimitive
 class LLMService(
     private val baseUrl: String = "http://81.57.105.89:9080",
 ) {
-    private val client = HttpClient(OkHttp) {
-        install(Logging) {
-            logger = object : io.ktor.client.plugins.logging.Logger {
-                override fun log(message: String) {
-                    Log.d("TEST Ktor-Logging", message)
-                }
+    private val client =
+        HttpClient(OkHttp) {
+            install(Logging) {
+                logger =
+                    object : io.ktor.client.plugins.logging.Logger {
+                        override fun log(message: String) {
+                            Log.d("TEST Ktor-Logging", message)
+                        }
+                    }
+                level = io.ktor.client.plugins.logging.LogLevel.ALL
             }
-            level = io.ktor.client.plugins.logging.LogLevel.ALL
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 120_000
+                connectTimeoutMillis = 20_000
+                socketTimeoutMillis = 120_000
+            }
         }
-        install(ContentNegotiation) {
-            json(Json { ignoreUnknownKeys = true })
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = 120_000
-            connectTimeoutMillis = 20_000
-            socketTimeoutMillis = 120_000
-        }
-    }
 
     @Serializable
     private data class LLMGenerateRequest(
@@ -56,10 +58,11 @@ class LLMService(
         stream: Boolean = false,
     ): String {
         val url = "$baseUrl/api/generate"
-        val response = client.post(url) {
-            contentType(ContentType.Application.Json)
-            setBody(LLMGenerateRequest(model, prompt, stream))
-        }
+        val response =
+            client.post(url) {
+                contentType(ContentType.Application.Json)
+                setBody(LLMGenerateRequest(model, prompt, stream))
+            }
 
         if (!response.status.isSuccess()) {
             val err = response.bodyAsText()
@@ -86,11 +89,12 @@ class LLMService(
         val start = raw.indexOf('[').takeIf { it >= 0 } ?: 0
         val end = raw.lastIndexOf(']').takeIf { it >= 0 } ?: (raw.length - 1)
 
-        val jsonArray = if (start < end) {
-            raw.substring(start, end + 1)
-        } else {
-            raw
-        }
+        val jsonArray =
+            if (start < end) {
+                raw.substring(start, end + 1)
+            } else {
+                raw
+            }
 
         return jsonArray.trim()
     }

@@ -2,29 +2,29 @@ package com.unibo.cyberopoli.ui.screens.lobby.view
 
 import android.os.Build
 import android.widget.Toast
-import com.unibo.cyberopoli.R
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.Scaffold
-import androidx.navigation.NavHostController
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import com.unibo.cyberopoli.ui.components.TopBar
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.layout.padding
-import com.unibo.cyberopoli.ui.components.BottomBar
 import androidx.compose.foundation.layout.fillMaxSize
-import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.AppLifecycleTracker
-import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 import com.unibo.cyberopoli.ui.components.AppLifecycleTrackerScreenContext
+import com.unibo.cyberopoli.ui.components.BottomBar
+import com.unibo.cyberopoli.ui.components.TopBar
+import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
+import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
 import com.unibo.cyberopoli.ui.screens.lobby.view.composables.LobbyContent
 import com.unibo.cyberopoli.ui.screens.lobby.view.composables.LobbyStarterEffects
+import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -69,10 +69,11 @@ fun LobbyScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
             if (lobbyParams.lobbyAlreadyStarted.value) {
@@ -106,8 +107,9 @@ fun LobbyScreen(
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxSize(),
-                    isReady = lobbyParams.members.find { it.userId == lobbyParams.user.value?.id }?.isReady
-                        ?: false,
+                    isReady =
+                        lobbyParams.members.find { it.userId == lobbyParams.user.value?.id }?.isReady
+                            ?: false,
                 )
             }
         }

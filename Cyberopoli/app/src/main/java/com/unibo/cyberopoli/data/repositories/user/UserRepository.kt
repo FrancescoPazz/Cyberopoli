@@ -16,8 +16,9 @@ class UserRepository(
     private val supabase: SupabaseClient,
 ) : DomainUserRepository {
     override suspend fun getUser(): User {
-        val userId = supabase.auth.currentUserOrNull()?.id
-            ?: throw IllegalStateException("User not logged in")
+        val userId =
+            supabase.auth.currentUserOrNull()?.id
+                ?: throw IllegalStateException("User not logged in")
         return try {
             supabase.from("users").select {
                 filter {
@@ -31,9 +32,10 @@ class UserRepository(
     }
 
     override suspend fun changeAvatar() {
-        val userId = supabase.auth.currentUserOrNull()?.id ?: run {
-            return
-        }
+        val userId =
+            supabase.auth.currentUserOrNull()?.id ?: run {
+                return
+            }
 
         val currentAvatar = getUser().avatarUrl ?: AvatarUtils.DEFAULT_AVATAR
         val newAvatar = AvatarUtils.getNextAvatar(currentAvatar)

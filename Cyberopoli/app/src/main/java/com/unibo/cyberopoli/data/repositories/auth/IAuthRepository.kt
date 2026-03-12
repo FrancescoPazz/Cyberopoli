@@ -1,10 +1,10 @@
 package com.unibo.cyberopoli.data.repositories.auth
 
 import android.content.Context
-import kotlinx.coroutines.flow.Flow
-import com.unibo.cyberopoli.data.models.auth.User
-import com.unibo.cyberopoli.data.models.auth.AuthState
 import com.unibo.cyberopoli.data.models.auth.AuthResponse
+import com.unibo.cyberopoli.data.models.auth.AuthState
+import com.unibo.cyberopoli.data.models.auth.User
+import kotlinx.coroutines.flow.Flow
 
 interface IAuthRepository {
     fun authState(): Flow<AuthState>
@@ -30,7 +30,10 @@ interface IAuthRepository {
 
     fun resetPassword(email: String): Flow<AuthResponse>
 
-    fun sendOtp(email: String, otp: String): Flow<AuthResponse>
+    fun sendOtp(
+        email: String,
+        otp: String,
+    ): Flow<AuthResponse>
 
     fun changeForgottenPassword(newPassword: String): Flow<AuthResponse>
 

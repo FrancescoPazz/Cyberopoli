@@ -25,13 +25,14 @@ import com.unibo.cyberopoli.data.models.game.GameAction
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun GameBottomBar(actions: List<GameAction>,
-                  isActionInProgress: State<Boolean>
+fun GameBottomBar(
+    actions: List<GameAction>,
+    isActionInProgress: State<Boolean>,
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(
-        isActionInProgress.value
+        isActionInProgress.value,
     ) {
         Log.d("sadsadawa", "botobar isActionInProgress: ${isActionInProgress.value}")
     }
@@ -51,24 +52,25 @@ fun GameBottomBar(actions: List<GameAction>,
                         }
                         Spacer(Modifier.width(4.dp))
 
-                        val resId = remember(action.id) {
-                            context.resources.getIdentifier(
-                                action.id,
-                                "string",
-                                context.packageName,
-                            )
-                        }
+                        val resId =
+                            remember(action.id) {
+                                context.resources.getIdentifier(
+                                    action.id,
+                                    "string",
+                                    context.packageName,
+                                )
+                            }
                         Text(
                             stringResource(resId),
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 },
                 selected = false,
                 onClick = {
-                    if (isActionInProgress.value == false) {
+                    if (!isActionInProgress.value) {
                         action.action()
                     }
                 },

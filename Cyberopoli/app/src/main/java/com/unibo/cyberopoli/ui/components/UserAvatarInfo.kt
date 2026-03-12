@@ -47,12 +47,13 @@ fun UserAvatarInfo(
         Image(
             painter = painterResource(avatarRes),
             contentDescription = stringResource(R.string.avatar, user.username),
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface, CircleShape)
-                .padding(4.dp)
-                .clip(CircleShape),
+            modifier =
+                Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape)
+                    .padding(4.dp)
+                    .clip(CircleShape),
             contentScale = ContentScale.Crop,
         )
 
@@ -60,10 +61,15 @@ fun UserAvatarInfo(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (showWelcomeMessage) stringResource(
-                    R.string.welcome_back_user,
-                    user.username
-                ) else user.username,
+                text =
+                    if (showWelcomeMessage) {
+                        stringResource(
+                            R.string.welcome_back_user,
+                            user.username,
+                        )
+                    } else {
+                        user.username
+                    },
                 style = textStyleHeadline,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,

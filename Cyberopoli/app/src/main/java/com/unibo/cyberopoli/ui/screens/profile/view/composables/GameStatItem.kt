@@ -59,10 +59,11 @@ private fun GameStatItemContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(iconBackgroundColor),
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(iconBackgroundColor),
             contentAlignment = Alignment.Center,
         ) {
             Icon(

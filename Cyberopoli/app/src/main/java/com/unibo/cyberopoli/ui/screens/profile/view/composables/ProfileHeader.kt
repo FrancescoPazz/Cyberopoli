@@ -26,18 +26,20 @@ fun ProfileHeader(
     onEditProfileClick: () -> Unit,
 ) {
     CyberopoliGradientCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
         elevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        gradientColors = listOf(
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-            MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
-        ),
+        gradientColors =
+            listOf(
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+            ),
         contentPadding = 16.dp,
     ) {
         Column(

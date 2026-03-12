@@ -1,50 +1,50 @@
 package com.unibo.cyberopoli.ui.navigation
 
-import java.util.UUID
-import java.util.Locale
 import android.os.Build
-import org.koin.compose.KoinContext
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.getValue
-import kotlinx.serialization.Serializable
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
-import androidx.compose.runtime.LaunchedEffect
-import org.koin.androidx.compose.koinViewModel
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.ui.platform.LocalContext
-import com.unibo.cyberopoli.data.models.theme.Theme
-import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
 import androidx.compose.foundation.isSystemInDarkTheme
-import com.unibo.cyberopoli.data.models.auth.AuthState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import com.unibo.cyberopoli.ui.screens.scan.view.ScanScreen
-import com.unibo.cyberopoli.ui.screens.auth.view.AuthScreen
-import com.unibo.cyberopoli.ui.screens.game.view.GameScreen
-import com.unibo.cyberopoli.ui.screens.home.view.HomeScreen
-import com.unibo.cyberopoli.ui.screens.lobby.view.LobbyScreen
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.unibo.cyberopoli.data.models.auth.AuthState
+import com.unibo.cyberopoli.data.models.theme.Theme
+import com.unibo.cyberopoli.ui.screens.auth.view.AuthScreen
 import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthParams
-import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
-import com.unibo.cyberopoli.ui.screens.home.viewmodel.HomeParams
-import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
-import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
-import com.unibo.cyberopoli.ui.screens.profile.view.ProfileScreen
-import com.unibo.cyberopoli.ui.screens.ranking.view.RankingScreen
-import com.unibo.cyberopoli.ui.screens.settings.view.SettingScreen
-import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 import com.unibo.cyberopoli.ui.screens.auth.viewmodel.AuthViewModel
+import com.unibo.cyberopoli.ui.screens.game.view.GameScreen
+import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameParams
 import com.unibo.cyberopoli.ui.screens.game.viewmodel.GameViewModel
-import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanViewModel
+import com.unibo.cyberopoli.ui.screens.home.view.HomeScreen
+import com.unibo.cyberopoli.ui.screens.home.viewmodel.HomeParams
+import com.unibo.cyberopoli.ui.screens.loading.view.LoadingScreen
+import com.unibo.cyberopoli.ui.screens.lobby.view.LobbyScreen
+import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyParams
 import com.unibo.cyberopoli.ui.screens.lobby.viewmodel.LobbyViewModel
+import com.unibo.cyberopoli.ui.screens.profile.view.ProfileScreen
 import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileParams
-import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
-import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
-import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingViewModel
 import com.unibo.cyberopoli.ui.screens.profile.viewmodel.ProfileViewModel
+import com.unibo.cyberopoli.ui.screens.ranking.view.RankingScreen
+import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingParams
+import com.unibo.cyberopoli.ui.screens.ranking.viewmodel.RankingViewModel
+import com.unibo.cyberopoli.ui.screens.scan.view.ScanScreen
+import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
+import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanViewModel
+import com.unibo.cyberopoli.ui.screens.settings.view.SettingScreen
+import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsParams
 import com.unibo.cyberopoli.ui.screens.settings.viewmodel.SettingsViewModel
+import com.unibo.cyberopoli.ui.theme.CyberopoliTheme
+import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinContext
+import java.util.Locale
+import java.util.UUID
 
 sealed interface CyberopoliRoute {
     @Serializable
@@ -98,26 +98,28 @@ fun CyberopoliNavGraph(navController: NavHostController) {
         }
 
         CyberopoliTheme(
-            darkTheme = when (themeState.theme) {
-                Theme.Light -> false
-                Theme.Dark -> true
-                Theme.System -> isSystemInDarkTheme()
-            },
+            darkTheme =
+                when (themeState.theme) {
+                    Theme.Light -> false
+                    Theme.Dark -> true
+                    Theme.System -> isSystemInDarkTheme()
+                },
         ) {
             if (authState.value == null || authState.value == AuthState.Loading) {
                 LoadingScreen()
                 return@CyberopoliTheme
             }
 
-            val startRoute = when (authState.value) {
-                is AuthState.Authenticated -> {
-                    LaunchedEffect(Unit) {
-                        profileViewModel.getUser()
+            val startRoute =
+                when (authState.value) {
+                    is AuthState.Authenticated -> {
+                        LaunchedEffect(Unit) {
+                            profileViewModel.getUser()
+                        }
+                        CyberopoliRoute.Home
                     }
-                    CyberopoliRoute.Home
+                    else -> CyberopoliRoute.Auth
                 }
-                else -> CyberopoliRoute.Auth
-            }
 
             NavHost(
                 navController = navController,
@@ -228,34 +230,35 @@ fun CyberopoliNavGraph(navController: NavHostController) {
 
                     GameScreen(
                         navController = navController,
-                        gameParams = GameParams(
-                            game = game,
-                            lobby = lobby,
-                            members = members,
-                            player = player,
-                            players = players,
-                            diceRoll = diceRoll,
-                            dialogData = dialogData,
-                            gameAction = gameAction,
-                            cells = gameViewModel.cells,
-                            endTurn = gameViewModel::endTurn,
-                            gameOver = gameViewModel.gameOver,
-                            rollDice = gameViewModel::rollDice,
-                            setInApp = lobbyViewModel::setInApp,
-                            resetGame = gameViewModel::resetGame,
-                            startGame = gameViewModel::startGame,
-                            movePlayer = gameViewModel::movePlayer,
-                            leaveLobby = lobbyViewModel::leaveLobby,
-                            currentTurnIndex = derivedStateOf { turnIndex },
-                            onResultDismiss = gameViewModel::onResultDismiss,
-                            refreshUserData = profileViewModel::refreshUserData,
-                            updatePlayerScore = gameViewModel::updatePlayerScore,
-                            onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
-                            startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
-                            isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
-                            isActionInProgress = gameViewModel.isActionInProgress.collectAsStateWithLifecycle(),
-                            user = profileViewModel.user
-                        ),
+                        gameParams =
+                            GameParams(
+                                game = game,
+                                lobby = lobby,
+                                members = members,
+                                player = player,
+                                players = players,
+                                diceRoll = diceRoll,
+                                dialogData = dialogData,
+                                gameAction = gameAction,
+                                cells = gameViewModel.cells,
+                                endTurn = gameViewModel::endTurn,
+                                gameOver = gameViewModel.gameOver,
+                                rollDice = gameViewModel::rollDice,
+                                setInApp = lobbyViewModel::setInApp,
+                                resetGame = gameViewModel::resetGame,
+                                startGame = gameViewModel::startGame,
+                                movePlayer = gameViewModel::movePlayer,
+                                leaveLobby = lobbyViewModel::leaveLobby,
+                                currentTurnIndex = derivedStateOf { turnIndex },
+                                onResultDismiss = gameViewModel::onResultDismiss,
+                                refreshUserData = profileViewModel::refreshUserData,
+                                updatePlayerScore = gameViewModel::updatePlayerScore,
+                                onDialogOptionSelected = gameViewModel::onDialogOptionSelected,
+                                startAnimation = gameViewModel.startAnimation.collectAsStateWithLifecycle(),
+                                isLoadingQuestion = gameViewModel.isLoadingQuestion.collectAsStateWithLifecycle(),
+                                isActionInProgress = gameViewModel.isActionInProgress.collectAsStateWithLifecycle(),
+                                user = profileViewModel.user,
+                            ),
                     )
                 }
             }

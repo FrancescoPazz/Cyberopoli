@@ -22,9 +22,10 @@ fun GameCell(
     occupants: List<GamePlayer>,
 ) {
     Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .then(if (isBorder) Modifier.border(2.dp, Color.Gray) else Modifier),
+        modifier =
+            Modifier
+                .aspectRatio(1f)
+                .then(if (isBorder) Modifier.border(2.dp, Color.Gray) else Modifier),
         contentAlignment = Alignment.Center,
     ) {
         gameCell.type.resource?.let { resId ->
@@ -36,9 +37,10 @@ fun GameCell(
             )
         } ?: run {
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Transparent),
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .background(Color.Transparent),
             )
         }
         CellOccupants(occupants)

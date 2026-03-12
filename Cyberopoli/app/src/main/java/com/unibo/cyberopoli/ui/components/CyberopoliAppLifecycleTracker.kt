@@ -14,7 +14,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.unibo.cyberopoli.data.models.auth.User
 
 enum class AppLifecycleTrackerScreenContext {
-    GAME, LOBBY,
+    GAME,
+    LOBBY,
 }
 
 private const val TIME_OUT_SECONDS = 60
@@ -30,47 +31,48 @@ fun AppLifecycleTracker(
     var hasBeenInBackground by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
-        setInApp(user,true)
+        setInApp(user, true)
 
         val lifecycle = ProcessLifecycleOwner.get().lifecycle
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_STOP -> {
-                    backgroundTimestamp = System.currentTimeMillis()
-                    hasBeenInBackground = true
-                    if (context == AppLifecycleTrackerScreenContext.GAME) {
-                        Log.d("AppLifecycle IN-GAME", "App moved to BACKGROUND (ON_STOP)")
-                    } else if (context == AppLifecycleTrackerScreenContext.LOBBY) {
-                        Log.d("AppLifecycle IN-LOBBY", "App moved to BACKGROUND (ON_STOP)")
-                    }
-                    setInApp(user,false)
-                }
-
-                Lifecycle.Event.ON_START -> {
-                    if (hasBeenInBackground) {
-                        val elapsed = (System.currentTimeMillis() - backgroundTimestamp) / 1000
-                        if (elapsed > TIME_OUT_SECONDS) {
-                            Log.d("AppLifecycle", "App has been in background for $elapsed seconds")
-                            onTimedOut()
-                        }
+        val observer =
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_STOP -> {
+                        backgroundTimestamp = System.currentTimeMillis()
+                        hasBeenInBackground = true
                         if (context == AppLifecycleTrackerScreenContext.GAME) {
-                            Log.d(
-                                "AppLifecycle IN-GAME",
-                                "App moved to FOREGROUND (ON_START), spent $elapsed s in bg",
-                            )
+                            Log.d("AppLifecycle IN-GAME", "App moved to BACKGROUND (ON_STOP)")
                         } else if (context == AppLifecycleTrackerScreenContext.LOBBY) {
-                            Log.d(
-                                "AppLifecycle IN-LOBBY",
-                                "App moved to FOREGROUND (ON_START), spent $elapsed s in bg",
-                            )
+                            Log.d("AppLifecycle IN-LOBBY", "App moved to BACKGROUND (ON_STOP)")
                         }
-                        setInApp(user,true)
+                        setInApp(user, false)
                     }
-                }
 
-                else -> {}
+                    Lifecycle.Event.ON_START -> {
+                        if (hasBeenInBackground) {
+                            val elapsed = (System.currentTimeMillis() - backgroundTimestamp) / 1000
+                            if (elapsed > TIME_OUT_SECONDS) {
+                                Log.d("AppLifecycle", "App has been in background for $elapsed seconds")
+                                onTimedOut()
+                            }
+                            if (context == AppLifecycleTrackerScreenContext.GAME) {
+                                Log.d(
+                                    "AppLifecycle IN-GAME",
+                                    "App moved to FOREGROUND (ON_START), spent $elapsed s in bg",
+                                )
+                            } else if (context == AppLifecycleTrackerScreenContext.LOBBY) {
+                                Log.d(
+                                    "AppLifecycle IN-LOBBY",
+                                    "App moved to FOREGROUND (ON_START), spent $elapsed s in bg",
+                                )
+                            }
+                            setInApp(user, true)
+                        }
+                    }
+
+                    else -> {}
+                }
             }
-        }
         lifecycle.addObserver(observer)
         onDispose { lifecycle.removeObserver(observer) }
     }

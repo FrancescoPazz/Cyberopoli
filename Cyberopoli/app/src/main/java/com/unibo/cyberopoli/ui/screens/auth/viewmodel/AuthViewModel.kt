@@ -35,7 +35,8 @@ class AuthViewModel(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             authRepository.signIn(
-                email.trim(), password
+                email.trim(),
+                password,
             ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
@@ -60,7 +61,11 @@ class AuthViewModel(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             authRepository.signUp(
-                name?.trim(), surname?.trim(), username.trim(), email.trim(), password
+                name?.trim(),
+                surname?.trim(),
+                username.trim(),
+                email.trim(),
+                password,
             ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
@@ -97,7 +102,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             authRepository.signInAnonymously(
-                name.trim()
+                name.trim(),
             ).collect { resp ->
                 when (resp) {
                     is AuthResponse.Success -> {
@@ -115,9 +120,10 @@ class AuthViewModel(
 
     fun sendPasswordReset(email: String) {
         viewModelScope.launch {
-            val resp = authRepository.resetPassword(
-                email.trim()
-            ).single()
+            val resp =
+                authRepository.resetPassword(
+                    email.trim(),
+                ).single()
             if (resp is AuthResponse.Success) {
                 _authState.value = AuthState.Unauthenticated
             } else if (resp is AuthResponse.Failure) {
@@ -127,20 +133,28 @@ class AuthViewModel(
     }
 
     private val emailForgotPassword = MutableLiveData("")
-    fun sendOTPCode(email: String, otp: String, newPassword: String) {
+
+    fun sendOTPCode(
+        email: String,
+        otp: String,
+        newPassword: String,
+    ) {
         viewModelScope.launch {
-            val ok = authRepository.sendOtp(
-                email.trim(), otp.trim()
-            ).single()
+            val ok =
+                authRepository.sendOtp(
+                    email.trim(),
+                    otp.trim(),
+                ).single()
             if (ok is AuthResponse.Success) {
                 emailForgotPassword.value = email
                 _authState.value = AuthState.Authenticated
                 changeForgottenPassword(newPassword)
             } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error(
-                    "Impossible to send OTP code",
-                    AuthErrorContext.OTP_VERIFICATION
-                )
+                _authState.value =
+                    AuthState.Error(
+                        "Impossible to send OTP code",
+                        AuthErrorContext.OTP_VERIFICATION,
+                    )
             }
         }
     }
@@ -151,10 +165,11 @@ class AuthViewModel(
             if (ok is AuthResponse.Success) {
                 _authState.value = AuthState.Authenticated
             } else if (ok is AuthResponse.Failure) {
-                _authState.value = AuthState.Error(
-                    "Impossible to change password",
-                    AuthErrorContext.PASSWORD_RESET
-                )
+                _authState.value =
+                    AuthState.Error(
+                        "Impossible to change password",
+                        AuthErrorContext.PASSWORD_RESET,
+                    )
             }
         }
     }

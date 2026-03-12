@@ -60,6 +60,6 @@ sealed class GameDialogData {
         val messageArgs: List<String>? = null,
         val optionsRes: List<Int>,
         val correctIndex: Int,
-        val selectedIndex: Int
+        val selectedIndex: Int,
     ) : GameDialogData()
 }

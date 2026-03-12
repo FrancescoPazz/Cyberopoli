@@ -1,17 +1,17 @@
 package com.unibo.cyberopoli.ui.screens.profile.viewmodel
 
 import android.util.Log
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.compose.runtime.mutableStateOf
 import com.unibo.cyberopoli.data.models.auth.User
-import androidx.compose.runtime.mutableStateListOf
 import com.unibo.cyberopoli.data.models.game.GameHistory
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.unibo.cyberopoli.data.repositories.game.GameRepository
 import com.unibo.cyberopoli.data.repositories.user.UserRepository
 import com.unibo.cyberopoli.util.UsageStatsHelper
+import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val userRepository: UserRepository,

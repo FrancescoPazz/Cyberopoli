@@ -1,6 +1,5 @@
 package com.unibo.cyberopoli.ui.screens.game.view.composables
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,7 +54,7 @@ fun GameContent(
         bottomBar = {
             GameBottomBar(
                 actions = gameParams.gameAction.value!!,
-                isActionInProgress = gameParams.isActionInProgress
+                isActionInProgress = gameParams.isActionInProgress,
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
@@ -63,31 +62,33 @@ fun GameContent(
 
         if (isArMode.value) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(padding),
             ) {
-
                 ARBox(
-                    players = players
+                    players = players,
                 )
 
                 IconButton(
                     onClick = { isArMode.value = false },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.TopStart)
+                    modifier =
+                        Modifier
+                            .padding(16.dp)
+                            .align(Alignment.TopStart),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Close AR Mode",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth(),
                 ) {
                     player?.let {
                         ScoreAndManageRow(
@@ -99,10 +100,11 @@ fun GameContent(
             }
         } else {
             Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                modifier =
+                    Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
             ) {
                 players?.let {
                     GameMap(
@@ -127,5 +129,4 @@ fun GameContent(
             }
         }
     }
-
 }

@@ -15,28 +15,30 @@ import com.unibo.cyberopoli.R
 
 @Composable
 fun LanguageSection(
-    onShowLanguageDialog: () -> Unit, selectedLanguage: String, onSelect: (String) -> Unit
+    onShowLanguageDialog: () -> Unit,
+    selectedLanguage: String,
+    onSelect: (String) -> Unit,
 ) {
     Text(
         text = stringResource(R.string.choose_language),
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
     )
     Row {
         listOf(
             "it" to stringResource(R.string.italian),
-            "en" to stringResource(R.string.english)
+            "en" to stringResource(R.string.english),
         ).forEach { (code, label) ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(end = 16.dp)
-                ) {
-                    RadioButton(selected = (selectedLanguage == code), onClick = {
-                        onSelect(code)
-                        onShowLanguageDialog()
-                    })
-                    Text(text = label)
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = 16.dp),
+            ) {
+                RadioButton(selected = (selectedLanguage == code), onClick = {
+                    onSelect(code)
+                    onShowLanguageDialog()
+                })
+                Text(text = label)
             }
+        }
     }
 }

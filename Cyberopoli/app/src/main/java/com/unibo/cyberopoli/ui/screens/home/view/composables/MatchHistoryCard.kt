@@ -46,19 +46,21 @@ fun MatchHistoryCard(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         } else {
-            val sortedGameHistory = gameHistory.sortedByDescending { match ->
-                try {
-                    LocalDateTime.parse(match.lobbyCreatedAt)
-                } catch (e: Exception) {
-                    LocalDateTime.MIN
+            val sortedGameHistory =
+                gameHistory.sortedByDescending { match ->
+                    try {
+                        LocalDateTime.parse(match.lobbyCreatedAt)
+                    } catch (e: Exception) {
+                        LocalDateTime.MIN
+                    }
                 }
-            }
 
-            val displayedGames = if (showAll || sortedGameHistory.size <= 3) {
-                sortedGameHistory
-            } else {
-                sortedGameHistory.take(3)
-            }
+            val displayedGames =
+                if (showAll || sortedGameHistory.size <= 3) {
+                    sortedGameHistory
+                } else {
+                    sortedGameHistory.take(3)
+                }
 
             displayedGames.forEach { match ->
                 MatchHistoryItem(match)
@@ -69,10 +71,11 @@ fun MatchHistoryCard(
                 Button(
                     onClick = { showAll = true },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
                 ) {
                     Text(text = stringResource(R.string.load_all))
                 }

@@ -33,7 +33,7 @@ fun GameScreen(
     AppLifecycleTracker(
         context = AppLifecycleTrackerScreenContext.GAME,
         setInApp = gameParams.setInApp,
-        user = user ?: player?.user!!
+        user = user ?: player?.user!!,
     ) {
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
@@ -59,9 +59,14 @@ fun GameScreen(
             val hasWon = player?.winner ?: false
             val dialogTitle =
                 if (hasWon) stringResource(R.string.you_win) else stringResource(R.string.you_lose)
-            val dialogMessage = if (hasWon) stringResource(R.string.congratulations_you_won)
-            else stringResource(R.string.better_luck_next_time)
-            GameDialog(title = dialogTitle,
+            val dialogMessage =
+                if (hasWon) {
+                    stringResource(R.string.congratulations_you_won)
+                } else {
+                    stringResource(R.string.better_luck_next_time)
+                }
+            GameDialog(
+                title = dialogTitle,
                 message = dialogMessage,
                 options = listOf("OK"),
                 onOptionSelected = {
@@ -71,7 +76,8 @@ fun GameScreen(
                     }
                     gameParams.resetGame()
                 },
-                onDismiss = { })
+                onDismiss = { },
+            )
         } else {
             LoadingScreen()
         }
@@ -87,51 +93,87 @@ fun GameScreen(
     }
 
     dialogData?.let { data ->
-        val (title, message, options) = when (data) {
-            is GameDialogData.ChanceQuestion -> Triple(stringResource(data.titleRes), stringResource(data.promptRes), data.optionsRes.map { stringResource(it) })
-            is GameDialogData.HackerStatement -> Triple(
-                data.titleString ?: stringResource(data.titleRes),
-                data.contentString ?: stringResource(data.contentRes),
-                listOf("OK"),
-            )
-            is GameDialogData.BlockChoice -> Triple(
-                stringResource(data.titleRes),
-                "",
-                data.players.map { it.user?.username ?: it.userId },
-            )
+        val (title, message, options) =
+            when (data) {
+                is GameDialogData.ChanceQuestion ->
+                    Triple(
+                        stringResource(data.titleRes),
+                        stringResource(data.promptRes),
+                        data.optionsRes.map { stringResource(it) },
+                    )
 
-            is GameDialogData.SubscribeChoice -> Triple(
-                stringResource(data.titleRes),
-                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
-                    ?: stringResource(data.messageRes),
-                data.optionsRes.map { stringResource(it) },
-            )
+                is GameDialogData.HackerStatement ->
+                    Triple(
+                        data.titleString ?: stringResource(data.titleRes),
+                        data.contentString ?: stringResource(data.contentRes),
+                        listOf("OK"),
+                    )
 
-            is GameDialogData.MakeContentChoice -> Triple(
-                stringResource(data.titleRes),
-                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
-                    ?: stringResource(data.messageRes),
-                data.optionsRes.map { stringResource(it) },
-            )
+                is GameDialogData.BlockChoice ->
+                    Triple(
+                        stringResource(data.titleRes),
+                        "",
+                        data.players.map { it.user?.username ?: it.userId },
+                    )
 
-            is GameDialogData.QuestionResult -> Triple(
-                stringResource(data.titleRes),
-                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
-                    ?: stringResource(data.messageRes),
-                data.optionsRes.map { stringResource(it) },
-            )
+                is GameDialogData.SubscribeChoice ->
+                    Triple(
+                        stringResource(data.titleRes),
+                        data.messageArgs?.let { args ->
+                            stringResource(
+                                data.messageRes,
+                                *args.toTypedArray(),
+                            )
+                        }
+                            ?: stringResource(data.messageRes),
+                        data.optionsRes.map { stringResource(it) },
+                    )
 
-            is GameDialogData.Alert -> Triple(
-                stringResource(data.titleRes),
-                data.messageArgs?.let { args -> stringResource(data.messageRes, *args.toTypedArray()) }
-                    ?: stringResource(data.messageRes),
-                data.optionsRes?.map { stringResource(it) } ?: listOf("OK"),
-            )
-        }
+                is GameDialogData.MakeContentChoice ->
+                    Triple(
+                        stringResource(data.titleRes),
+                        data.messageArgs?.let { args ->
+                            stringResource(
+                                data.messageRes,
+                                *args.toTypedArray(),
+                            )
+                        }
+                            ?: stringResource(data.messageRes),
+                        data.optionsRes.map { stringResource(it) },
+                    )
+
+                is GameDialogData.QuestionResult ->
+                    Triple(
+                        stringResource(data.titleRes),
+                        data.messageArgs?.let { args ->
+                            stringResource(
+                                data.messageRes,
+                                *args.toTypedArray(),
+                            )
+                        }
+                            ?: stringResource(data.messageRes),
+                        data.optionsRes.map { stringResource(it) },
+                    )
+
+                is GameDialogData.Alert ->
+                    Triple(
+                        stringResource(data.titleRes),
+                        data.messageArgs?.let { args ->
+                            stringResource(
+                                data.messageRes,
+                                *args.toTypedArray(),
+                            )
+                        }
+                            ?: stringResource(data.messageRes),
+                        data.optionsRes?.map { stringResource(it) } ?: listOf("OK"),
+                    )
+            }
 
         if (dialogData is GameDialogData.QuestionResult) {
-            QuestionResultDialog(data = dialogData as GameDialogData.QuestionResult,
-                onDismiss = { gameParams.onResultDismiss() })
+            QuestionResultDialog(
+                data = dialogData as GameDialogData.QuestionResult,
+                onDismiss = { gameParams.onResultDismiss() },
+            )
         } else {
             GameDialog(
                 title = title,

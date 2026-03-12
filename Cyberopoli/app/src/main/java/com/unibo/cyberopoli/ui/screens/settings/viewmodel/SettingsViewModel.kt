@@ -15,24 +15,28 @@ import java.util.Locale
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    val state = settingsRepository.theme.map { ThemeState(it) }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = ThemeState(Theme.System),
-    )
-
-    fun changeTheme(newTheme: Theme) = viewModelScope.launch {
-        settingsRepository.setTheme(newTheme)
-    }
-
-    val language = settingsRepository.language.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            Locale.getDefault().language
+    val state =
+        settingsRepository.theme.map { ThemeState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = ThemeState(Theme.System),
         )
 
-    fun changeLanguage(langCode: String) = viewModelScope.launch {
-        Log.d("SettingsViewModel", "Changing language to: $langCode")
-        settingsRepository.setLanguage(langCode)
-    }
+    fun changeTheme(newTheme: Theme) =
+        viewModelScope.launch {
+            settingsRepository.setTheme(newTheme)
+        }
+
+    val language =
+        settingsRepository.language.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            Locale.getDefault().language,
+        )
+
+    fun changeLanguage(langCode: String) =
+        viewModelScope.launch {
+            Log.d("SettingsViewModel", "Changing language to: $langCode")
+            settingsRepository.setLanguage(langCode)
+        }
 }

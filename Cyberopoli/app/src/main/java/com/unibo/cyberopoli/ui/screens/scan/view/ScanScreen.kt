@@ -74,16 +74,17 @@ fun ScanScreen(
             navController.navigate(CyberopoliRoute.Lobby)
         }
     }
-    val launcher = rememberLauncherForActivityResult(RequestPermission()) { granted ->
-        hasCameraPermission = granted
-        if (!granted) {
-            Toast.makeText(
-                activity,
-                activity.getString(R.string.camera_permission_denied),
-                Toast.LENGTH_SHORT,
-            ).show()
+    val launcher =
+        rememberLauncherForActivityResult(RequestPermission()) { granted ->
+            hasCameraPermission = granted
+            if (!granted) {
+                Toast.makeText(
+                    activity,
+                    activity.getString(R.string.camera_permission_denied),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
         }
-    }
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) launcher.launch(Manifest.permission.CAMERA)
@@ -99,26 +100,29 @@ fun ScanScreen(
     ) { paddingValues ->
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Text3D(text = stringResource(R.string.scan))
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
                 if (hasCameraPermission) {

@@ -20,30 +20,33 @@ object ARHelper {
         model: String,
     ): AnchorNode {
         val anchorNode = AnchorNode(engine = engine, anchor = anchor)
-        val modelNode = ModelNode(
-            modelInstance = modelInstance.apply {
-                if (isEmpty()) {
-                    this += modelLoader.createInstancedModel(model, 10)
-                }
-            }.removeAt(
-                modelInstance.apply {
-                    if (isEmpty()) {
-                        this += modelLoader.createInstancedModel(model, 10)
-                    }
-                }.lastIndex,
-            ),
-            scaleToUnits = 0.2f,
-        ).apply {
-            isEditable = true
-        }
-        val boundingBox = CubeNode(
-            engine = engine,
-            size = modelNode.extents,
-            center = modelNode.center,
-            materialInstance = materialLoader.createColorInstance(Color.White),
-        ).apply {
-            isVisible = false
-        }
+        val modelNode =
+            ModelNode(
+                modelInstance =
+                    modelInstance.apply {
+                        if (isEmpty()) {
+                            this += modelLoader.createInstancedModel(model, 10)
+                        }
+                    }.removeAt(
+                        modelInstance.apply {
+                            if (isEmpty()) {
+                                this += modelLoader.createInstancedModel(model, 10)
+                            }
+                        }.lastIndex,
+                    ),
+                scaleToUnits = 0.2f,
+            ).apply {
+                isEditable = true
+            }
+        val boundingBox =
+            CubeNode(
+                engine = engine,
+                size = modelNode.extents,
+                center = modelNode.center,
+                materialInstance = materialLoader.createColorInstance(Color.White),
+            ).apply {
+                isVisible = false
+            }
         modelNode.addChildNode(boundingBox)
         anchorNode.addChildNode(modelNode)
         listOf(modelNode, anchorNode).forEach {

@@ -55,9 +55,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun ARBox(
-    players: List<GamePlayer>?
-) {
+fun ARBox(players: List<GamePlayer>?) {
     val engine = rememberEngine()
     val view = rememberView(engine)
     val childNodes = rememberNodes()
@@ -78,14 +76,15 @@ fun ARBox(
 
     val sessionConfig: (session: Any, config: Config) -> Unit = { session, config ->
         config.apply {
-            depthMode = if ((session as com.google.ar.core.Session).isDepthModeSupported(
+            depthMode =
+                if ((session as com.google.ar.core.Session).isDepthModeSupported(
+                        Config.DepthMode.AUTOMATIC,
+                    )
+                ) {
                     Config.DepthMode.AUTOMATIC
-                )
-            ) {
-                Config.DepthMode.AUTOMATIC
-            } else {
-                Config.DepthMode.DISABLED
-            }
+                } else {
+                    Config.DepthMode.DISABLED
+                }
             lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
         }
     }
@@ -105,7 +104,7 @@ fun ARBox(
             boardNodeState = boardNodeState,
             pieceNodes = pieceNodes,
             density = density,
-            configuration = configuration
+            configuration = configuration,
         )
 
         boardNodeState.value?.let {
@@ -121,7 +120,7 @@ fun ARBox(
                     density = density,
                     configuration = configuration,
                     cellPosition = player.cellPosition,
-                    player = player
+                    player = player,
                 )
             }
         }
@@ -146,7 +145,7 @@ fun ARBox(
             onTrackingFailureChanged = { trackingFailure = it },
             onSessionUpdated = { _, frame -> currentFrame = frame },
             sessionConfiguration = sessionConfig,
-            onGestureListener = gestureListener
+            onGestureListener = gestureListener,
         )
 
         Reticle(modifier = Modifier.align(Alignment.Center))
@@ -154,9 +153,10 @@ fun ARBox(
         players?.let {
             PlayerLegend(
                 players = it,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp),
             )
         }
 
@@ -172,7 +172,7 @@ fun ARBox(
                     boardNodeState = boardNodeState,
                     pieceNodes = pieceNodes,
                     density = density,
-                    configuration = configuration
+                    configuration = configuration,
                 )
 
                 MainScope().launch {
@@ -188,18 +188,19 @@ fun ARBox(
                             density = density,
                             configuration = configuration,
                             cellPosition = player.cellPosition,
-                            player = player
+                            player = player,
                         )
                     }
-
                 }
             },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(start = 24.dp, bottom = 140.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(start = 24.dp, bottom = 140.dp),
         ) {
             Text(
-                text = stringResource(R.string.place_board), modifier = Modifier.padding(8.dp)
+                text = stringResource(R.string.place_board),
+                modifier = Modifier.padding(8.dp),
             )
         }
     }
@@ -215,30 +216,32 @@ private fun placeBoardAtCenter(
     boardNodeState: MutableState<Node?>,
     pieceNodes: MutableList<Node>,
     density: Density,
-    configuration: Configuration
+    configuration: Configuration,
 ) {
     if (frame == null) return
 
     clearAll(childNodes, modelInstances, boardNodeState, pieceNodes)
 
-    val centerOffset = with(density) {
-        Offset(
-            x = configuration.screenWidthDp.dp.toPx() / 2f,
-            y = configuration.screenHeightDp.dp.toPx() / 2f
-        )
-    }
+    val centerOffset =
+        with(density) {
+            Offset(
+                x = configuration.screenWidthDp.dp.toPx() / 2f,
+                y = configuration.screenHeightDp.dp.toPx() / 2f,
+            )
+        }
 
     frame.hitTest(centerOffset.x, centerOffset.y)
         .firstOrNull { it.isValid(depthPoint = false, point = false) }?.createAnchorOrNull()
         ?.let { anchor ->
-            val boardNode = ARHelper.createAnchorNode(
-                engine = engine,
-                modelLoader = modelLoader,
-                materialLoader = materialLoader,
-                modelInstance = modelInstances,
-                anchor = anchor,
-                model = "models/board.glb"
-            )
+            val boardNode =
+                ARHelper.createAnchorNode(
+                    engine = engine,
+                    modelLoader = modelLoader,
+                    materialLoader = materialLoader,
+                    modelInstance = modelInstances,
+                    anchor = anchor,
+                    model = "models/board.glb",
+                )
             childNodes += boardNode
             boardNodeState.value = boardNode
         }
@@ -255,19 +258,20 @@ private suspend fun placePieceOnBoard(
     density: Density,
     configuration: Configuration,
     cellPosition: Int,
-    player: GamePlayer
+    player: GamePlayer,
 ) {
     if (frame == null) return
     if (boardNode == null) {
         return
     }
 
-    val centerOffset = with(density) {
-        Offset(
-            x = configuration.screenWidthDp.dp.toPx() / 2f,
-            y = configuration.screenHeightDp.dp.toPx() / 2f
-        )
-    }
+    val centerOffset =
+        with(density) {
+            Offset(
+                x = configuration.screenWidthDp.dp.toPx() / 2f,
+                y = configuration.screenHeightDp.dp.toPx() / 2f,
+            )
+        }
 
     frame.hitTest(centerOffset.x, centerOffset.y)
         .firstOrNull { it.isValid(depthPoint = false, point = false) }
@@ -281,22 +285,23 @@ private suspend fun placePieceOnBoard(
 
             val pos = getOffsetForPerimeterIndex(cellPosition)
 
-
             val localX = worldX - boardWorldPos.x + pos.first
             val localY = worldY - boardWorldPos.y
             val localZ = worldZ - boardWorldPos.z + pos.second
 
-            val pieceContainer = Node(engine = engine).apply {
-                position = Float3(localX, localY, localZ)
-                scale = Float3(0.02f, 0.02f, 0.02f)
-            }
+            val pieceContainer =
+                Node(engine = engine).apply {
+                    position = Float3(localX, localY, localZ)
+                    scale = Float3(0.02f, 0.02f, 0.02f)
+                }
 
             val pawnModelPath = PlayerColorUtils.getPawnModelForPlayer(player)
             modelLoader.loadModelInstance(pawnModelPath)?.let { loadedPawn ->
                 modelInstances.add(loadedPawn)
-                val modelNode = io.github.sceneview.node.ModelNode(
-                    modelInstance = loadedPawn
-                )
+                val modelNode =
+                    io.github.sceneview.node.ModelNode(
+                        modelInstance = loadedPawn,
+                    )
                 pieceContainer.addChildNode(modelNode)
 
                 boardNode.addChildNode(pieceContainer)
@@ -316,11 +321,12 @@ private suspend fun renderBoardAndPieces(
     pieceNodes: MutableList<Node>,
     density: Density,
     configuration: Configuration,
-    players: List<GamePlayer>
+    players: List<GamePlayer>,
 ) {
     if (frame == null) return
     clearPieces(
-        pieceNodes = pieceNodes, modelInstances = modelInstances
+        pieceNodes = pieceNodes,
+        modelInstances = modelInstances,
     )
     players.forEach { player ->
         placePieceOnBoard(
@@ -334,13 +340,14 @@ private suspend fun renderBoardAndPieces(
             density,
             configuration,
             player.cellPosition,
-            player
+            player,
         )
     }
 }
 
 private fun clearPieces(
-    pieceNodes: MutableList<Node>, modelInstances: MutableList<ModelInstance>
+    pieceNodes: MutableList<Node>,
+    modelInstances: MutableList<ModelInstance>,
 ) {
     pieceNodes.forEach { node ->
         node.parent?.removeChildNode(node)
@@ -349,12 +356,11 @@ private fun clearPieces(
     modelInstances.clear()
 }
 
-
 private fun clearAll(
     childNodes: MutableList<Node>,
     modelInstances: MutableList<ModelInstance>,
     boardNodeState: MutableState<Node?>,
-    pieceNodes: MutableList<Node>
+    pieceNodes: MutableList<Node>,
 ) {
     childNodes.forEach { it.parent?.removeChildNode(it) }
     childNodes.clear()
@@ -362,4 +368,3 @@ private fun clearAll(
     modelInstances.clear()
     boardNodeState.value = null
 }
-

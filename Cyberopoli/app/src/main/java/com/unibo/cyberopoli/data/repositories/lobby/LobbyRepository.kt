@@ -1,27 +1,27 @@
 package com.unibo.cyberopoli.data.repositories.lobby
 
 import android.util.Log
-import kotlinx.coroutines.launch
+import com.unibo.cyberopoli.data.models.auth.User
+import com.unibo.cyberopoli.data.models.lobby.Lobby
+import com.unibo.cyberopoli.data.models.lobby.LobbyMember
+import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
+import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
+import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
+import com.unibo.cyberopoli.data.repositories.game.GAME_PLAYERS_TABLE
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.annotations.SupabaseExperimental
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.filter.FilterOperation
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
+import io.github.jan.supabase.realtime.selectAsFlow
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
-import io.github.jan.supabase.auth.auth
-import kotlinx.coroutines.flow.StateFlow
-import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.SupabaseClient
 import kotlinx.coroutines.flow.MutableStateFlow
-import com.unibo.cyberopoli.data.models.auth.User
-import io.github.jan.supabase.realtime.selectAsFlow
-import com.unibo.cyberopoli.data.models.lobby.Lobby
-import io.github.jan.supabase.postgrest.query.Columns
-import com.unibo.cyberopoli.data.models.lobby.LobbyStatus
-import com.unibo.cyberopoli.data.models.lobby.LobbyMember
-import com.unibo.cyberopoli.data.models.lobby.LobbyResponse
-import com.unibo.cyberopoli.data.models.lobby.LobbyMemberRaw
-import io.github.jan.supabase.annotations.SupabaseExperimental
-import io.github.jan.supabase.realtime.selectSingleValueAsFlow
-import io.github.jan.supabase.postgrest.query.filter.FilterOperator
-import io.github.jan.supabase.postgrest.query.filter.FilterOperation
-import com.unibo.cyberopoli.data.repositories.game.GAME_PLAYERS_TABLE
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import com.unibo.cyberopoli.data.repositories.lobby.ILobbyRepository as DomainLobbyRepository
 
 const val LOBBY_TABLE = "lobbies"
@@ -45,33 +45,36 @@ class LobbyRepository(
     ): LobbyResponse {
         val lobby = Lobby(id = lobbyId, hostId = host.id, status = LobbyStatus.WAITING.value)
         try {
-            val lobbyAlreadyStarted = supabase.from(LOBBY_TABLE).select {
-                filter {
-                    and {
-                        eq("id", lobbyId)
-                        eq("status", LobbyStatus.IN_PROGRESS.value)
+            val lobbyAlreadyStarted =
+                supabase.from(LOBBY_TABLE).select {
+                    filter {
+                        and {
+                            eq("id", lobbyId)
+                            eq("status", LobbyStatus.IN_PROGRESS.value)
+                        }
                     }
-                }
-            }.decodeSingleOrNull<Lobby>()
+                }.decodeSingleOrNull<Lobby>()
 
             if (lobbyAlreadyStarted != null) {
                 Log.w("LobbyRepository", "createOrGetLobby: Lobby already started")
                 return LobbyResponse.AlreadyStarted
             }
 
-            var currentLobby = supabase.from(LOBBY_TABLE).select {
-                filter {
-                    and {
-                        eq("id", lobbyId)
-                        eq("status", LobbyStatus.WAITING.value)
+            var currentLobby =
+                supabase.from(LOBBY_TABLE).select {
+                    filter {
+                        and {
+                            eq("id", lobbyId)
+                            eq("status", LobbyStatus.WAITING.value)
+                        }
                     }
-                }
-            }.decodeSingleOrNull<Lobby>()
+                }.decodeSingleOrNull<Lobby>()
 
             if (currentLobby == null) {
-                currentLobby = supabase.from(LOBBY_TABLE).insert(lobby) {
-                    select()
-                }.decodeSingle<Lobby>()
+                currentLobby =
+                    supabase.from(LOBBY_TABLE).insert(lobby) {
+                        select()
+                    }.decodeSingle<Lobby>()
             }
             _lobbyStateFlow.value = currentLobby
 
@@ -107,9 +110,12 @@ class LobbyRepository(
         val lobbyMembersFlow: Flow<List<LobbyMember>> =
             supabase.from(LOBBY_MEMBERS_TABLE).selectAsFlow(
                 primaryKey = LobbyMember::userId,
-                filter = FilterOperation(
-                    "lobby_id", FilterOperator.EQ, _lobbyStateFlow.value!!.id
-                ),
+                filter =
+                    FilterOperation(
+                        "lobby_id",
+                        FilterOperator.EQ,
+                        _lobbyStateFlow.value!!.id,
+                    ),
             )
         MainScope().launch {
             var lastValid: List<LobbyMember> = emptyList()
@@ -123,25 +129,27 @@ class LobbyRepository(
                 val allIds = lastValid.map { it.userId }.distinct()
                 val missingIds = allIds.filterNot { userCache.containsKey(it) }
                 if (missingIds.isNotEmpty()) {
-                    val fetchedUsers: List<User> = supabase.from("users").select {
-                        filter { isIn("id", missingIds) }
-                    }.decodeList<User>()
+                    val fetchedUsers: List<User> =
+                        supabase.from("users").select {
+                            filter { isIn("id", missingIds) }
+                        }.decodeList<User>()
 
                     fetchedUsers.forEach { user ->
                         userCache[user.id] = user
                     }
                 }
 
-                val members = lastValid.map { raw ->
-                    LobbyMember(
-                        lobbyId = raw.lobbyId,
-                        lobbyCreatedAt = raw.lobbyCreatedAt,
-                        userId = raw.userId,
-                        isReady = raw.isReady,
-                        joinedAt = raw.joinedAt,
-                        user = userCache[raw.userId]!!,
-                    )
-                }
+                val members =
+                    lastValid.map { raw ->
+                        LobbyMember(
+                            lobbyId = raw.lobbyId,
+                            lobbyCreatedAt = raw.lobbyCreatedAt,
+                            userId = raw.userId,
+                            isReady = raw.isReady,
+                            joinedAt = raw.joinedAt,
+                            user = userCache[raw.userId]!!,
+                        )
+                    }
                 _membersStateFlow.value = members
             }
         }
@@ -160,8 +168,9 @@ class LobbyRepository(
 
         val userId = session.user?.id
         val lobbyId = _lobbyStateFlow.value?.id ?: return
-        val lobbyCreatedAt = _lobbyStateFlow.value?.createdAt
-            ?: throw IllegalStateException("Lobby created_at not found")
+        val lobbyCreatedAt =
+            _lobbyStateFlow.value?.createdAt
+                ?: throw IllegalStateException("Lobby created_at not found")
 
         try {
             supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("in_app" to inApp)) {
@@ -180,27 +189,30 @@ class LobbyRepository(
         try {
             val lobbyId =
                 _lobbyStateFlow.value?.id ?: throw IllegalStateException("Lobby not found")
-            val currentLobbyCreatedAt = _lobbyStateFlow.value?.createdAt
-                ?: throw IllegalStateException("Lobby created_at not found")
+            val currentLobbyCreatedAt =
+                _lobbyStateFlow.value?.createdAt
+                    ?: throw IllegalStateException("Lobby created_at not found")
 
-            val raw: List<LobbyMemberRaw> = supabase.from(LOBBY_MEMBERS_TABLE).select(
-                Columns.raw("*, users(*)"),
-            ) {
-                filter {
-                    eq("lobby_id", lobbyId)
-                    eq("lobby_created_at", currentLobbyCreatedAt)
+            val raw: List<LobbyMemberRaw> =
+                supabase.from(LOBBY_MEMBERS_TABLE).select(
+                    Columns.raw("*, users(*)"),
+                ) {
+                    filter {
+                        eq("lobby_id", lobbyId)
+                        eq("lobby_created_at", currentLobbyCreatedAt)
+                    }
+                }.decodeList<LobbyMemberRaw>()
+            val members =
+                raw.map { d ->
+                    LobbyMember(
+                        lobbyId = d.lobbyId,
+                        lobbyCreatedAt = d.lobbyCreatedAt,
+                        userId = d.userId,
+                        isReady = d.isReady,
+                        joinedAt = d.joinedAt,
+                        user = d.user,
+                    )
                 }
-            }.decodeList<LobbyMemberRaw>()
-            val members = raw.map { d ->
-                LobbyMember(
-                    lobbyId = d.lobbyId,
-                    lobbyCreatedAt = d.lobbyCreatedAt,
-                    userId = d.userId,
-                    isReady = d.isReady,
-                    joinedAt = d.joinedAt,
-                    user = d.user,
-                )
-            }
             _membersStateFlow.value = members.distinctBy { it.userId }
             return members
         } catch (e: Exception) {
@@ -212,8 +224,9 @@ class LobbyRepository(
         val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
         val lobbyId =
             _lobbyStateFlow.value?.id ?: throw IllegalStateException("Lobby not found")
-        val currentLobbyCreatedAt = _lobbyStateFlow.value?.createdAt
-            ?: throw IllegalStateException("Lobby created_at not found")
+        val currentLobbyCreatedAt =
+            _lobbyStateFlow.value?.createdAt
+                ?: throw IllegalStateException("Lobby created_at not found")
         return try {
             supabase.from(LOBBY_MEMBERS_TABLE).update(mapOf("ready" to isReady)) {
                 filter {
@@ -235,8 +248,9 @@ class LobbyRepository(
             val userId = supabase.auth.currentSessionOrNull()?.user?.id.toString()
             val lobbyId =
                 _lobbyStateFlow.value?.id ?: throw IllegalStateException("Lobby not found")
-            val createdAt = _lobbyStateFlow.value?.createdAt
-                ?: throw IllegalStateException("Lobby created_at not found")
+            val createdAt =
+                _lobbyStateFlow.value?.createdAt
+                    ?: throw IllegalStateException("Lobby created_at not found")
 
             if (isHost) {
                 val currentMembers = fetchMembers()

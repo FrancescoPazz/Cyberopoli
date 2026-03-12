@@ -53,9 +53,10 @@ fun MostUsedAppsChart(
                 Spacer(modifier = Modifier.height(4.dp))
                 LinearProgressIndicator(
                     progress = { (hours / maxHours).toFloat().coerceIn(0f, 1f) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(8.dp),
                 )
             }
         }
