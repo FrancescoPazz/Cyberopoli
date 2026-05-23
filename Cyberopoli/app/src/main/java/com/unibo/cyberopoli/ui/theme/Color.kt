@@ -10,7 +10,7 @@ val CyberDark_OnPrimaryContainer = Color(0xFFB0FFB0)
 
 val CyberDark_Secondary = Color(0xFF00FFFF)
 val CyberDark_OnSecondary = Color(0xFF0A0A0A)
-val CyberDark_SecondaryContainer = Color(0xFF008080)
+val CyberDark_SecondaryContainer = Color(0xFF005B5B)
 val CyberDark_OnSecondaryContainer = Color(0xFFB0FFFF)
 
 val CyberDark_Tertiary = Color(0xFFFF00FF)
