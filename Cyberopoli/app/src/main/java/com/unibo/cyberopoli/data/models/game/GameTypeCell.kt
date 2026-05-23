@@ -20,7 +20,8 @@ enum class GameTypeCell(val resource: Int? = null) {
 
     CHANCE(R.drawable.ic_chance),
     HACKER(R.drawable.ic_hacker),
-    BLOCK(R.drawable.ic_stop),
+    BLOCK_CONTENT(R.drawable.ic_stop),
+    BLOCK_PLAYER(R.drawable.ic_block_player),
     BROKEN_ROUTER(
         R.drawable.ic_broken_router,
     ),
