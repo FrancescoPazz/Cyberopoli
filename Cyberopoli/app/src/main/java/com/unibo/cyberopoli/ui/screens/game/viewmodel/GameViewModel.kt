@@ -174,6 +174,13 @@ class GameViewModel(
             events.filterNotNull().distinctUntilChanged()
                 .collect { events ->
                     Log.d("GameViewModel", "GameEvents: $events")
+                    val latestEvent = events.lastOrNull() ?: return@collect
+                    if (latestEvent.eventType == GameTypeCell.BLOCK_PLAYER &&
+                        latestEvent.recipientUserId == player.value?.userId &&
+                        latestEvent.senderUserId != player.value?.userId
+                    ) {
+                        _skipNext.value = true
+                    }
                 }
         }
 
@@ -355,6 +362,10 @@ class GameViewModel(
                     showDialogPerType(GameTypeCell.BLOCK_CONTENT)
                 }
 
+                GameTypeCell.BLOCK_PLAYER -> {
+                    showDialogPerType(GameTypeCell.BLOCK_PLAYER)
+                }
+
                 GameTypeCell.VPN -> {
                     _hasVpn.value = true
                     gameRepository.addGameEvent(
@@ -506,6 +517,17 @@ class GameViewModel(
                     }
             }
 
+            GameTypeCell.BLOCK_PLAYER -> {
+                val others = players.value.filter { it.userId != player.value?.userId }
+                _dialog.value =
+                    others.let {
+                        GameDialogData.BlockChoice(
+                            titleRes = R.string.block_player_choice,
+                            players = it,
+                        )
+                    }
+            }
+
             GameTypeCell.VPN -> {
                 _dialog.value =
                     GameDialogData.Alert(
@@ -596,6 +618,12 @@ class GameViewModel(
 
     private fun confirmBlock(target: GamePlayer) {
         viewModelScope.launch {
+            val eventType = if (_dialog.value is GameDialogData.BlockChoice && (_dialog.value as GameDialogData.BlockChoice).helpMessageRes != null) {
+                GameTypeCell.BLOCK_CONTENT
+            } else {
+                GameTypeCell.BLOCK_PLAYER
+            }
+
             gameRepository.addGameEvent(
                 GameEvent(
                     lobbyId = game.value!!.lobbyId,
@@ -603,10 +631,12 @@ class GameViewModel(
                     gameId = game.value!!.id,
                     senderUserId = player.value!!.userId,
                     recipientUserId = target.userId,
-                    eventType = GameTypeCell.BLOCK_CONTENT,
+                    eventType = eventType,
                 ),
             )
-            _playersBlocked.value += target
+            if (eventType == GameTypeCell.BLOCK_CONTENT) {
+                _playersBlocked.value += target
+            }
             endTurn()
         }
     }
