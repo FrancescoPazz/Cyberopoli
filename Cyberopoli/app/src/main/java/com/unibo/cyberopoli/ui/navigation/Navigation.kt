@@ -176,6 +176,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                             gameHistories = profileViewModel.gameHistories,
                             topAppsUsage = profileViewModel.topAppsUsage,
                             refreshTopApps = profileViewModel::refreshTopApps,
+                            hasUsageStatsPermission = profileViewModel::hasUsageStatsPermission,
                         ),
                     )
                 }

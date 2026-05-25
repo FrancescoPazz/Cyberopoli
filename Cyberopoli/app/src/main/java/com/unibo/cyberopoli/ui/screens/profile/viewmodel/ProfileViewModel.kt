@@ -106,4 +106,8 @@ class ProfileViewModel(
             userRepository.getUser()
         }
     }
+
+    fun hasUsageStatsPermission(): Boolean {
+        return usageStatsHelper.hasUsageStatsPermission()
+    }
 }

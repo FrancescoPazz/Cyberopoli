@@ -10,4 +10,5 @@ data class HomeParams(
     val topAppsUsage: SnapshotStateList<Pair<String, Double>>,
     val gameHistories: SnapshotStateList<GameHistory>,
     val refreshTopApps: () -> Unit,
+    val hasUsageStatsPermission: () -> Boolean,
 )

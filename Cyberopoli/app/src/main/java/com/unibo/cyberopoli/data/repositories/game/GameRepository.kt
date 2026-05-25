@@ -368,6 +368,12 @@ class GameRepository(
         }
     }
 
+    private fun calculateInitialScore(weeklyUsageHours: Double): Int {
+        val baseScore = 60
+        val reduction = (weeklyUsageHours / 2.0).toInt()
+        return (baseScore - reduction).coerceIn(40, 60)
+    }
+
     override suspend fun joinGame(): GamePlayer? {
         if (_gameStateFlow.value == null) return null
         val session = supabase.auth.currentSessionOrNull() ?: return null
@@ -403,13 +409,16 @@ class GameRepository(
                 return player
             }
 
+            val weeklyUsage = usageStatsHelper.getWeeklyUsageTime()
+            val initialScore = calculateInitialScore(weeklyUsage)
+
             val toInsert =
                 GamePlayer(
                     lobbyId = _gameStateFlow.value!!.lobbyId,
                     lobbyCreatedAt = _gameStateFlow.value!!.lobbyCreatedAt,
                     gameId = _gameStateFlow.value!!.id,
                     userId = userId!!,
-                    score = 50,
+                    score = initialScore,
                     cellPosition = 8,
                     round = 1,
                     winner = false,

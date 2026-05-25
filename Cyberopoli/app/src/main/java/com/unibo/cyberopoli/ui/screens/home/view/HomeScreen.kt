@@ -1,5 +1,6 @@
 package com.unibo.cyberopoli.ui.screens.home.view
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavController
+import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.ui.components.BottomBar
 import com.unibo.cyberopoli.ui.components.TopBar
 import com.unibo.cyberopoli.ui.navigation.CyberopoliRoute
@@ -62,7 +64,18 @@ fun HomeScreen(
 
                 PlayerWelcomeCard(user = currentUserState.value!!)
 
-                PlayActionsCard(onNewGameClick = { navController.navigate(CyberopoliRoute.Scan) })
+                PlayActionsCard(onNewGameClick = {
+                    if (homeParams.hasUsageStatsPermission()) {
+                        navController.navigate(CyberopoliRoute.Scan)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.usage_access_stats),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        context.openUsageAccessSettings()
+                    }
+                })
 
                 MostUsedAppsCard(
                     appsUsage = topApps,
