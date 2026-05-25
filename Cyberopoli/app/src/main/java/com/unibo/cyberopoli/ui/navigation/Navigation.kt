@@ -118,7 +118,14 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                         }
                         CyberopoliRoute.Home
                     }
-                    else -> CyberopoliRoute.Auth
+                    else -> {
+                        if (authState.value is AuthState.AnonymousAuthenticated) {
+                            LaunchedEffect(Unit) {
+                                profileViewModel.getUser()
+                            }
+                        }
+                        CyberopoliRoute.Auth
+                    }
                 }
 
             NavHost(
@@ -194,7 +201,7 @@ fun CyberopoliNavGraph(navController: NavHostController) {
                     )
                 }
                 composable<CyberopoliRoute.Lobby> {
-                    val isGuest = profileViewModel.user.value?.isGuest!!
+                    val isGuest = profileViewModel.user.value?.isGuest ?: true
                     val members by lobbyViewModel.membersState.collectAsStateWithLifecycle()
                     val lobbyCode = scannedValue.value ?: throw IllegalStateException("Scanned value is null")
                     LobbyScreen(

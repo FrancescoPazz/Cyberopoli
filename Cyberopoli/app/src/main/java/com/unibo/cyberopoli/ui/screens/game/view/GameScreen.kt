@@ -93,6 +93,9 @@ fun GameScreen(
     }
 
     dialogData?.let { data ->
+        var helpTitle: String? = null
+        var helpMessage: String? = null
+
         val (title, message, options) =
             when (data) {
                 is GameDialogData.ChanceQuestion ->
@@ -109,12 +112,15 @@ fun GameScreen(
                         listOf("OK"),
                     )
 
-                is GameDialogData.BlockChoice ->
+                is GameDialogData.BlockChoice -> {
+                    helpTitle = data.helpTitleRes?.let { stringResource(it) }
+                    helpMessage = data.helpMessageRes?.let { stringResource(it) }
                     Triple(
                         stringResource(data.titleRes),
                         "",
                         data.players.map { it.user?.username ?: it.userId },
                     )
+                }
 
                 is GameDialogData.SubscribeChoice ->
                     Triple(
@@ -179,6 +185,8 @@ fun GameScreen(
                 title = title,
                 message = message,
                 options = options,
+                helpTitle = helpTitle,
+                helpMessage = helpMessage,
                 onOptionSelected = { index ->
                     gameParams.onDialogOptionSelected(index)
                 },

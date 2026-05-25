@@ -18,8 +18,8 @@ fun LobbyStarterEffects(
 ) {
     var hasJoined by remember { mutableStateOf(false) }
 
-    LaunchedEffect(params.lobbyId) {
-        if (!hasJoined && params.lobbyId.isNotBlank()) {
+    LaunchedEffect(params.lobbyId, params.user.value) {
+        if (!hasJoined && params.lobbyId.isNotBlank() && params.user.value != null) {
             params.startLobbyFlow(params.lobbyId, params.user.value!!)
             hasJoined = true
         }

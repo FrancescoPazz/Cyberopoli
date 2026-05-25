@@ -25,6 +25,8 @@ sealed class GameDialogData {
     data class BlockChoice(
         val titleRes: Int,
         val players: List<GamePlayer>,
+        val helpTitleRes: Int? = null,
+        val helpMessageRes: Int? = null,
     ) : GameDialogData()
 
     @Serializable

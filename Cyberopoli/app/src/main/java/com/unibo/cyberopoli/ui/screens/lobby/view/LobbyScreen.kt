@@ -33,17 +33,23 @@ fun LobbyScreen(
     lobbyParams: LobbyParams,
 ) {
     val context = LocalContext.current
+    val user = lobbyParams.user.value
+
+    if (user == null) {
+        LoadingScreen()
+        return
+    }
 
     AppLifecycleTracker(
         AppLifecycleTrackerScreenContext.LOBBY,
-        lobbyParams.user.value!!,
+        user,
         lobbyParams.setInApp,
     ) {
         navController.navigate(CyberopoliRoute.Home) {
             launchSingleTop = true
             restoreState = true
         }
-        lobbyParams.leaveLobby(lobbyParams.user.value!!)
+        lobbyParams.leaveLobby(user)
     }
 
     LobbyStarterEffects(
@@ -52,14 +58,14 @@ fun LobbyScreen(
     )
 
     BackHandler {
-        lobbyParams.leaveLobby(lobbyParams.user.value!!)
+        lobbyParams.leaveLobby(user)
         navController.popBackStack()
     }
 
     Scaffold(
         topBar = {
             TopBar(navController) {
-                lobbyParams.leaveLobby(lobbyParams.user.value!!)
+                lobbyParams.leaveLobby(user)
                 navController.popBackStack()
             }
         },
@@ -90,7 +96,7 @@ fun LobbyScreen(
                 LoadingScreen()
             } else {
                 LobbyContent(
-                    user = lobbyParams.user.value!!,
+                    user = user,
                     members = lobbyParams.members,
                     displayCode = lobbyParams.displayCode,
                     isHost = lobbyParams.isHost,
@@ -103,12 +109,12 @@ fun LobbyScreen(
                         }
                     },
                     onExitClick = {
-                        lobbyParams.leaveLobby(lobbyParams.user.value!!)
+                        lobbyParams.leaveLobby(user)
                         navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxSize(),
                     isReady =
-                        lobbyParams.members.find { it.userId == lobbyParams.user.value?.id }?.isReady
+                        lobbyParams.members.find { it.userId == user.id }?.isReady
                             ?: false,
                 )
             }

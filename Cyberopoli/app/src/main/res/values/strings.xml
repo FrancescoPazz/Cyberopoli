@@ -106,6 +106,8 @@
     <string name="get_vpn">VPN activated</string>
     <string name="get_vpn_desc">Having the VPN avoids paying to view content </string>
     <string name="vpn_avoid_pay">With the VPN you blocked the payment of the content</string>
+    <string name="content_blocked_title">Content Blocked</string>
+    <string name="content_blocked_desc">You blocked this player\'s content! You don\'t have to pay the fee this time.</string>
     <string name="correct_answer">Correct answer!</string>
     <string name="wrong_answer">Wrong answer!</string>
     <string name="points_earned">You earned </string>
@@ -122,6 +124,8 @@
     <string name="error">Error</string>
     <string name="not_enough_internet_points">You need %1$s Internet points, but you only have %2$s right now.</string>
     <string name="no_players_to_block">No players to block</string>
+    <string name="block_content_tooltip_title">Block Content</string>
+    <string name="block_content_tooltip_description">If you land on a cell where the blocked player has published content, you don\'t have to pay the fee. This effect lasts for one round or until you land on a cell owned by the specific player.</string>
     <string name="points_earned_message">You earned %1$s Internet points</string>
     <string name="points_lost_message">You lost %1$s Internet point</string>
     <string name="ar_mode">AR Mode</string>

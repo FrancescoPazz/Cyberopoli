@@ -351,8 +351,8 @@ class GameViewModel(
                     showDialogPerType(GameTypeCell.HACKER)
                 }
 
-                GameTypeCell.BLOCK -> {
-                    showDialogPerType(GameTypeCell.BLOCK)
+                GameTypeCell.BLOCK_CONTENT -> {
+                    showDialogPerType(GameTypeCell.BLOCK_CONTENT)
                 }
 
                 GameTypeCell.VPN -> {
@@ -432,10 +432,22 @@ class GameViewModel(
                                     messageRes = R.string.vpn_avoid_pay,
                                 )
                         } else {
-                            val cellOwner =
+                            val cellOwnerId =
                                 assets.value.firstOrNull { asset ->
                                     asset.cellId.toString() == gameCell.id
                                 }?.ownerId ?: return@launch
+
+                            val isOwnerBlocked = _playersBlocked.value.any { it.userId == cellOwnerId }
+
+                            if (isOwnerBlocked) {
+                                _dialog.value =
+                                    GameDialogData.Alert(
+                                        titleRes = R.string.content_blocked_title,
+                                        messageRes = R.string.content_blocked_desc,
+                                    )
+                                return@launch
+                            }
+
                             _dialog.value =
                                 GameDialogData.Alert(
                                     titleRes = R.string.pay_content,
@@ -445,7 +457,7 @@ class GameViewModel(
                                 val payableAmount = minOf(requestedAmount, player.value?.score ?: 0)
                                 if (payableAmount > 0) {
                                     gameRepository.updatePlayerScore(-payableAmount)
-                                    updatePlayerScore(payableAmount, cellOwner)
+                                    updatePlayerScore(payableAmount, cellOwnerId)
                                 }
                             }
                         }
@@ -481,12 +493,15 @@ class GameViewModel(
                 _dialog.value = question
             }
 
-            GameTypeCell.BLOCK -> {
+            GameTypeCell.BLOCK_CONTENT -> {
                 val others = players.value.filter { it.userId != player.value?.userId }
                 _dialog.value =
                     others.let {
                         GameDialogData.BlockChoice(
-                            titleRes = R.string.block_player_choice, players = it,
+                            titleRes = R.string.block_player_choice,
+                            players = it,
+                            helpTitleRes = R.string.block_content_tooltip_title,
+                            helpMessageRes = R.string.block_content_tooltip_description
                         )
                     }
             }
@@ -588,7 +603,7 @@ class GameViewModel(
                     gameId = game.value!!.id,
                     senderUserId = player.value!!.userId,
                     recipientUserId = target.userId,
-                    eventType = GameTypeCell.BLOCK,
+                    eventType = GameTypeCell.BLOCK_CONTENT,
                 ),
             )
             _playersBlocked.value += target
