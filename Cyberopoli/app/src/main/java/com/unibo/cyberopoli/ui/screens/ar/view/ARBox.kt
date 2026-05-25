@@ -240,7 +240,7 @@ private fun placeBoardAtCenter(
                     materialLoader = materialLoader,
                     modelInstance = modelInstances,
                     anchor = anchor,
-                    model = "models/board.glb",
+                    model = "models/board2.glb",
                 )
             childNodes += boardNode
             boardNodeState.value = boardNode
