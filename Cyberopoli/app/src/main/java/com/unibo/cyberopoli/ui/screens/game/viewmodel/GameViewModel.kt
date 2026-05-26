@@ -409,6 +409,8 @@ class GameViewModel(
                                     ),
                                 )
                         } else {
+                            val regCost = gameCell.value ?: 0
+                            val contentCost = (10..15).random()
                             _actionsPermitted.value +=
                                 listOf(
                                     GameAction(
@@ -421,15 +423,15 @@ class GameViewModel(
                                                     messageRes = R.string.make_content_desc,
                                                     messageArgs =
                                                         listOf(
-                                                            gameCell.value.toString(),
-                                                            gameCell.value?.times(2).toString(),
+                                                            regCost.toString(),
+                                                            contentCost.toString(),
                                                         ),
                                                     optionsRes =
                                                         listOf(
                                                             R.string.accept,
                                                             R.string.decline,
                                                         ),
-                                                    cost = (gameCell.value?.times(2) ?: 0),
+                                                    cost = contentCost,
                                                 )
                                         },
                                     ),

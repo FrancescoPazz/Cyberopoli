@@ -42,23 +42,23 @@ val PERIMETER_CELLS: Map<Int, GameCell> =
     listOf(
         // First line
         8 to GameCell("8", GameTypeCell.START, "Start", 50),
-        9 to GameCell("9", GameTypeCell.TIKTOK, "TikTok", 12),
+        9 to GameCell("9", GameTypeCell.TIKTOK, "TikTok", (5..15).random()),
         10 to GameCell("26", GameTypeCell.CHANCE, "Chance"),
         11 to GameCell("10", GameTypeCell.VPN, "VPN"),
         12 to GameCell("12", GameTypeCell.HACKER, "Hacker"),
         // Left board
         15 to GameCell("15", GameTypeCell.BLOCK_PLAYER, "Block Player"),
         22 to GameCell("22", GameTypeCell.CHANCE, "Chance"),
-        29 to GameCell("29", GameTypeCell.YOUTUBE, "YouTube", 10),
+        29 to GameCell("29", GameTypeCell.YOUTUBE, "YouTube", (5..15).random()),
         // Right board
-        19 to GameCell("19", GameTypeCell.FACEBOOK, "Facebook", 17),
+        19 to GameCell("19", GameTypeCell.FACEBOOK, "Facebook", (5..15).random()),
         26 to GameCell("26", GameTypeCell.CHANCE, "Chance"),
         33 to GameCell("38", GameTypeCell.BLOCK_CONTENT, "Block"),
         // Last line
         36 to GameCell("36", GameTypeCell.HACKER, "Hacker"),
         37 to GameCell("40", GameTypeCell.BROKEN_ROUTER, "Broken Router"),
         38 to GameCell("26", GameTypeCell.CHANCE, "Chance"),
-        39 to GameCell("39", GameTypeCell.WHATSAPP, "WhatsApp", 17),
+        39 to GameCell("39", GameTypeCell.WHATSAPP, "WhatsApp", (5..15).random()),
         40 to GameCell("36", GameTypeCell.HACKER, "Hacker"),
     ).toMap()
 
