@@ -219,11 +219,11 @@ class GameViewModel(
     }
 
     private fun syncBoardWithActiveAssets() {
-        val activeAssets = getActiveAssets()
+        val currentAssets = assets.value
 
         cells.value =
             createBoard().toMutableList().apply {
-                activeAssets.forEach { asset ->
+                currentAssets.forEach { asset ->
                     getAssetPositionFromPerimeterPosition(asset.cellId)?.let { position ->
                         this[position] =
                             GameCell(
@@ -234,14 +234,6 @@ class GameViewModel(
                     }
                 }
             }
-    }
-
-    private fun getActiveAssets(): List<GameAsset> {
-        val playersById = players.value.associateBy { it.userId }
-        return assets.value.filter { asset ->
-            val ownerRound = playersById[asset.ownerId]?.round
-            ownerRound == null || ownerRound < asset.expiresAtRound
-        }
     }
 
     private fun nextTurn() {
@@ -327,6 +319,7 @@ class GameViewModel(
             val animationDelayMs = 200L
             for (newPos in steps) {
                 gameRepository.updatePlayerPosition(newPos)
+                checkAndReleaseAssetAt(newPos, currentPlayer.userId)
                 delay(animationDelayMs)
             }
 
@@ -362,10 +355,10 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
-        val activeAssets = getActiveAssets()
-        val isCellOwned = activeAssets.any { it.cellId.toString() == gameCell.id }
+        val currentAssets = assets.value
+        val isCellOwned = currentAssets.any { it.cellId.toString() == gameCell.id }
         val amISubscribe = _subscriptions.value.contains(gameTypeCell)
-        val amIOwner = activeAssets.any { it.cellId.toString() == gameCell.id && it.ownerId == player.value?.userId }
+        val amIOwner = currentAssets.any { it.cellId.toString() == gameCell.id && it.ownerId == player.value?.userId }
 
         viewModelScope.launch {
             _actionsPermitted.value =
@@ -464,7 +457,7 @@ class GameViewModel(
                                     ContentPublicationOption(
                                         labelRes = R.string.publish_content_three_turns,
                                         labelArgs = listOf((baseCost + 10).toString()),
-                                        cost = baseCost * 2,
+                                        cost = baseCost + 10,
                                         durationTurns = 3,
                                     ),
                                 )
@@ -632,6 +625,32 @@ class GameViewModel(
         }
     }
 
+    private suspend fun checkAndReleaseAssetAt(
+        cellPosition: Int,
+        ownerId: String,
+    ) {
+        val asset =
+            assets.value.firstOrNull {
+                it.cellId == cellPosition && it.ownerId == ownerId
+            } ?: return
+
+        try {
+            if (asset.expiresAtRound > 1) {
+                gameRepository.updateGameAsset(asset.copy(expiresAtRound = asset.expiresAtRound - 1))
+                Log.d(
+                    "GameViewModel",
+                    "Asset decremented at cell $cellPosition by owner $ownerId, remaining=${asset.expiresAtRound - 1}",
+                )
+            } else {
+                gameRepository.removeGameAsset(asset)
+                Log.d("GameViewModel", "Asset released at cell $cellPosition by owner $ownerId")
+            }
+            syncBoardWithActiveAssets()
+        } catch (e: Exception) {
+            Log.e("GameViewModel", "Error releasing asset at cell $cellPosition: ${e.message}")
+        }
+    }
+
     private fun updatePlayerScore(
         points: Int,
         ownerId: String,
@@ -707,7 +726,7 @@ class GameViewModel(
                                         cellId = currentPlayer.cellPosition,
                                         ownerId = currentPlayer.userId,
                                         placedAtRound = currentPlayer.round,
-                                        expiresAtRound = currentPlayer.round + selectedPublicationOption.durationTurns,
+                                        expiresAtRound = selectedPublicationOption.durationTurns,
                                     ),
                                 )
                                 syncBoardWithActiveAssets()

@@ -728,7 +728,42 @@ class GameRepository(
                 supabase.from(GAME_ASSETS_TABLE).insert(gameAsset) {
                     select()
                 }.decodeSingle()
+            _gameAssetsStateFlow.value = _gameAssetsStateFlow.value + inserted
             return inserted
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun updateGameAsset(gameAsset: GameAsset): GameAsset {
+        try {
+            val updated: GameAsset =
+                supabase.from(GAME_ASSETS_TABLE).update(gameAsset) {
+                    filter {
+                        and {
+                            eq("lobby_id", gameAsset.lobbyId)
+                            eq("lobby_created_at", gameAsset.lobbyCreatedAt)
+                            eq("game_id", gameAsset.gameId)
+                            eq("cell_id", gameAsset.cellId)
+                            eq("owner_id", gameAsset.ownerId)
+                        }
+                    }
+                    select()
+                }.decodeSingle()
+            _gameAssetsStateFlow.value =
+                _gameAssetsStateFlow.value.map { asset ->
+                    if (asset.lobbyId == updated.lobbyId &&
+                        asset.lobbyCreatedAt == updated.lobbyCreatedAt &&
+                        asset.gameId == updated.gameId &&
+                        asset.cellId == updated.cellId &&
+                        asset.ownerId == updated.ownerId
+                    ) {
+                        updated
+                    } else {
+                        asset
+                    }
+                }
+            return updated
         } catch (e: Exception) {
             throw e
         }
@@ -746,6 +781,14 @@ class GameRepository(
                     }
                 }
             }
+            _gameAssetsStateFlow.value =
+                _gameAssetsStateFlow.value.filterNot { asset ->
+                    asset.lobbyId == gameAsset.lobbyId &&
+                        asset.lobbyCreatedAt == gameAsset.lobbyCreatedAt &&
+                        asset.gameId == gameAsset.gameId &&
+                        asset.cellId == gameAsset.cellId &&
+                        asset.ownerId == gameAsset.ownerId
+                }
         } catch (e: Exception) {
             throw e
         }

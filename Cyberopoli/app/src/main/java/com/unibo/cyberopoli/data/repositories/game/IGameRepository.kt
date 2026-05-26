@@ -49,6 +49,8 @@ interface IGameRepository {
 
     suspend fun addGameAsset(gameAsset: GameAsset): GameAsset
 
+    suspend fun updateGameAsset(gameAsset: GameAsset): GameAsset
+
     suspend fun removeGameAsset(gameAsset: GameAsset)
 
     suspend fun getGameAssets(): List<GameAsset>
