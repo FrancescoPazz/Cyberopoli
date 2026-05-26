@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
 import com.unibo.cyberopoli.R
 import com.unibo.cyberopoli.data.models.auth.AuthState
@@ -43,6 +44,8 @@ import com.unibo.cyberopoli.ui.screens.auth.view.composables.Text3D
 import com.unibo.cyberopoli.ui.screens.scan.view.composables.QRCodeScanner
 import com.unibo.cyberopoli.ui.screens.scan.viewmodel.ScanParams
 import com.unibo.cyberopoli.util.PermissionHandler
+import com.unibo.cyberopoli.util.UsageStatsHelper
+import com.unibo.cyberopoli.util.openUsageAccessSettings
 import kotlin.random.Random
 
 private const val RANDOM_LOBBY_CODE_LENGTH = 6
@@ -62,13 +65,26 @@ fun ScanScreen(
 ) {
     val manualCode = remember { mutableStateOf("") }
     val invalidCode = stringResource(R.string.invalid_code)
+    val usageAccessHint = stringResource(R.string.usage_access_stats)
     val activity = LocalActivity.current as ComponentActivity
+    val context = navController.context
     val permissionHandler = remember { PermissionHandler(activity) }
+    val usageStatsHelper = remember(context) { UsageStatsHelper(context) }
     var hasCameraPermission by remember { mutableStateOf(permissionHandler.hasCameraPermission()) }
+    var hasUsageStatsPermission by remember { mutableStateOf(usageStatsHelper.hasUsageStatsPermission()) }
+
+    LifecycleResumeEffect(Unit) {
+        hasUsageStatsPermission = usageStatsHelper.hasUsageStatsPermission()
+        onPauseOrDispose { }
+    }
+
     val enterLobby: (String) -> Unit = { rawCode ->
         val lobbyCode = rawCode.trim()
         if (lobbyCode.isBlank()) {
             Toast.makeText(navController.context, invalidCode, Toast.LENGTH_SHORT).show()
+        } else if (!hasUsageStatsPermission) {
+            Toast.makeText(navController.context, usageAccessHint, Toast.LENGTH_LONG).show()
+            context.openUsageAccessSettings()
         } else {
             scanParams.setScannedValue(lobbyCode)
             navController.navigate(CyberopoliRoute.Lobby)
@@ -169,7 +185,7 @@ fun ScanScreen(
             Spacer(Modifier.height(16.dp))
 
             Button(
-                enabled = manualCode.value.length >= 4,
+                enabled = manualCode.value.length >= 4 && hasUsageStatsPermission,
                 onClick = {
                     enterLobby(manualCode.value)
                 },
