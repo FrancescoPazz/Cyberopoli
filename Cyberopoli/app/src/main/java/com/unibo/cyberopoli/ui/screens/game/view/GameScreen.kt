@@ -145,7 +145,14 @@ fun GameScreen(
                             )
                         }
                             ?: stringResource(data.messageRes),
-                        data.optionsRes.map { stringResource(it) },
+                        data.optionsRes.mapIndexed { index, resId ->
+                            val args = data.optionsArgs?.getOrNull(index)
+                            if (args != null) {
+                                stringResource(resId, *args.toTypedArray())
+                            } else {
+                                stringResource(resId)
+                            }
+                        },
                     )
 
                 is GameDialogData.QuestionResult ->

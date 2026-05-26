@@ -44,6 +44,8 @@ class GameViewModel(
     lobbyRepository: LobbyRepository,
     private val gameRepository: GameRepository,
 ) : ViewModel() {
+    private var contentPublicationOptions: List<ContentPublicationOption> = emptyList()
+
     val lobby: StateFlow<Lobby?> = lobbyRepository.currentLobby
     val game: StateFlow<Game?> = gameRepository.currentGame
     val cells = mutableStateOf(createBoard())
@@ -188,6 +190,15 @@ class GameViewModel(
             assets.filterNotNull().distinctUntilChanged()
                 .collect { assets ->
                     Log.d("GameViewModel", "GameAssets: $assets")
+                    syncBoardWithActiveAssets()
+                }
+        }
+
+        viewModelScope.launch {
+            players.filterNotNull().distinctUntilChanged()
+                .collect { currentPlayers ->
+                    Log.d("GameViewModel", "GamePlayers: $currentPlayers")
+                    syncBoardWithActiveAssets()
                 }
         }
     }
@@ -205,6 +216,32 @@ class GameViewModel(
         _subscriptions.value = emptyList()
         _actionsPermitted.value = emptyList()
         cells.value = createBoard()
+    }
+
+    private fun syncBoardWithActiveAssets() {
+        val activeAssets = getActiveAssets()
+
+        cells.value =
+            createBoard().toMutableList().apply {
+                activeAssets.forEach { asset ->
+                    getAssetPositionFromPerimeterPosition(asset.cellId)?.let { position ->
+                        this[position] =
+                            GameCell(
+                                asset.cellId.toString(),
+                                GameTypeCell.OCCUPIED,
+                                "Occupied",
+                            )
+                    }
+                }
+            }
+    }
+
+    private fun getActiveAssets(): List<GameAsset> {
+        val playersById = players.value.associateBy { it.userId }
+        return assets.value.filter { asset ->
+            val ownerRound = playersById[asset.ownerId]?.round
+            ownerRound == null || ownerRound < asset.expiresAtRound
+        }
     }
 
     private fun nextTurn() {
@@ -290,7 +327,6 @@ class GameViewModel(
             val animationDelayMs = 200L
             for (newPos in steps) {
                 gameRepository.updatePlayerPosition(newPos)
-                checkAndReleaseAssetAt(newPos)
                 delay(animationDelayMs)
             }
 
@@ -326,9 +362,10 @@ class GameViewModel(
 
     private fun handleLanding(gameCell: GameCell) {
         val gameTypeCell = gameCell.type
-        val isCellOwned = assets.value.any { it.cellId.toString() == gameCell.id }
+        val activeAssets = getActiveAssets()
+        val isCellOwned = activeAssets.any { it.cellId.toString() == gameCell.id }
         val amISubscribe = _subscriptions.value.contains(gameTypeCell)
-        val amIOwner = assets.value.any { it.ownerId == player.value?.userId }
+        val amIOwner = activeAssets.any { it.cellId.toString() == gameCell.id && it.ownerId == player.value?.userId }
 
         viewModelScope.launch {
             _actionsPermitted.value =
@@ -409,8 +446,28 @@ class GameViewModel(
                                     ),
                                 )
                         } else {
-                            val regCost = gameCell.value ?: 0
-                            val contentCost = (10..15).random()
+                            val baseCost = (10..15).random()
+                            contentPublicationOptions =
+                                listOf(
+                                    ContentPublicationOption(
+                                        labelRes = R.string.publish_content_one_turn,
+                                        labelArgs = listOf(baseCost.toString()),
+                                        cost = baseCost,
+                                        durationTurns = 1,
+                                    ),
+                                    ContentPublicationOption(
+                                        labelRes = R.string.publish_content_two_turns,
+                                        labelArgs = listOf((baseCost + 5).toString()),
+                                        cost = baseCost + 5,
+                                        durationTurns = 2,
+                                    ),
+                                    ContentPublicationOption(
+                                        labelRes = R.string.publish_content_three_turns,
+                                        labelArgs = listOf((baseCost + 10).toString()),
+                                        cost = baseCost * 2,
+                                        durationTurns = 3,
+                                    ),
+                                )
                             _actionsPermitted.value +=
                                 listOf(
                                     GameAction(
@@ -421,17 +478,9 @@ class GameViewModel(
                                                 GameDialogData.MakeContentChoice(
                                                     titleRes = R.string.make_content,
                                                     messageRes = R.string.make_content_desc,
-                                                    messageArgs =
-                                                        listOf(
-                                                            regCost.toString(),
-                                                            contentCost.toString(),
-                                                        ),
-                                                    optionsRes =
-                                                        listOf(
-                                                            R.string.accept,
-                                                            R.string.decline,
-                                                        ),
-                                                    cost = contentCost,
+                                                    optionsRes = contentPublicationOptions.map { it.labelRes },
+                                                    optionsArgs = contentPublicationOptions.map { it.labelArgs },
+                                                    cost = baseCost,
                                                 )
                                         },
                                     ),
@@ -577,32 +626,6 @@ class GameViewModel(
         }
     }
 
-    private suspend fun checkAndReleaseAssetAt(cellPosition: Int) {
-        val myAsset =
-            assets.value.firstOrNull {
-                it.cellId == cellPosition && it.ownerId == player.value?.userId
-            } ?: return
-
-        try {
-            gameRepository.removeGameAsset(myAsset)
-            val boardPosition = getAssetPositionFromPerimeterPosition(cellPosition)
-            if (boardPosition != null) {
-                cells.value =
-                    cells.value.toMutableList().apply {
-                        this[boardPosition] =
-                            GameCell(
-                                cellPosition.toString(),
-                                GameTypeCell.COMMON,
-                                "Common",
-                            )
-                    }
-            }
-            Log.d("GameViewModel", "Asset released at cell $cellPosition")
-        } catch (e: Exception) {
-            Log.e("GameViewModel", "Error releasing asset at cell $cellPosition: ${e.message}")
-        }
-    }
-
     fun updatePlayerScore(points: Int) {
         viewModelScope.launch {
             gameRepository.updatePlayerScore(points)
@@ -647,12 +670,13 @@ class GameViewModel(
         viewModelScope.launch {
             when (val dlg = _dialog.value) {
                 is GameDialogData.MakeContentChoice -> {
-                    if (idx != 0) {
+                    val selectedPublicationOption = contentPublicationOptions.getOrNull(idx)
+                    if (selectedPublicationOption == null) {
                         onResultDismiss()
                         return@launch
                     }
 
-                    if (!spendCurrentPlayerPoints(dlg.cost)) {
+                    if (!spendCurrentPlayerPoints(selectedPublicationOption.cost)) {
                         _actionsPermitted.value = listOf(passTurnAction)
                         return@launch
                     }
@@ -683,9 +707,10 @@ class GameViewModel(
                                         cellId = currentPlayer.cellPosition,
                                         ownerId = currentPlayer.userId,
                                         placedAtRound = currentPlayer.round,
-                                        expiresAtRound = currentPlayer.round + 1,
+                                        expiresAtRound = currentPlayer.round + selectedPublicationOption.durationTurns,
                                     ),
                                 )
+                                syncBoardWithActiveAssets()
                             }
                         }
                     _actionsPermitted.value = listOf(passTurnAction)

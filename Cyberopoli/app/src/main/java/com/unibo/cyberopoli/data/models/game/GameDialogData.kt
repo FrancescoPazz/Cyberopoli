@@ -44,6 +44,7 @@ sealed class GameDialogData {
         val messageRes: Int,
         val messageArgs: List<String>? = null,
         val optionsRes: List<Int>,
+        val optionsArgs: List<List<String>>? = null,
         val cost: Int,
     ) : GameDialogData()
 
