@@ -129,6 +129,8 @@
     <string name="no_players_to_block">No players to block</string>
     <string name="block_content_tooltip_title">Block Content</string>
     <string name="block_content_tooltip_description">If you land on a cell where the blocked player has published content, you don\'t have to pay the fee. This effect lasts for one round or until you land on a cell owned by the specific player.</string>
+    <string name="block_player_tooltip_title">Block Player</string>
+    <string name="block_player_tooltip_description">Choose a player to stop for one turn.</string>
     <string name="points_earned_message">You earned %1$s Internet points</string>
     <string name="points_lost_message">You lost %1$s Internet point</string>
     <string name="ar_mode">AR Mode</string>

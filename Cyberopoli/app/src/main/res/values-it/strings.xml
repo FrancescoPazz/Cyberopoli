@@ -127,6 +127,8 @@
     <string name="no_players_to_block">Nessun giocatore da bloccare</string>
     <string name="block_content_tooltip_title">Blocca Contenuto</string>
     <string name="block_content_tooltip_description">Se atterri su una casella dove il giocatore bloccato ha pubblicato un contenuto, non dovrai pagare la tariffa richiesta. L\'effetto dura per un turno o finché non atterri su una casella posseduta da lui posseduta.</string>
+    <string name="block_player_tooltip_title">Blocca Giocatore</string>
+    <string name="block_player_tooltip_description">Scegli un giocatore da fermare per un turno.</string>
     <string name="points_earned_message">Hai guadagnato %1$s punti Internet</string>
     <string name="points_lost_message">Hai perso %1$s punti Internet</string>
     <string name="ar_mode">Modalità AR</string>

@@ -568,6 +568,8 @@ class GameViewModel(
                         GameDialogData.BlockChoice(
                             titleRes = R.string.block_player_choice,
                             players = it,
+                            helpTitleRes = R.string.block_player_tooltip_title,
+                            helpMessageRes = R.string.block_player_tooltip_description,
                         )
                     }
             }
