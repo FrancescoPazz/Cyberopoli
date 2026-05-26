@@ -100,7 +100,7 @@
     <string name="subscribe">Iscriviti al social</string>
     <string name="subscribe_desc">Se ti iscrivi al social, le volte successive che lo visiterai potrai pubblicare contenuti che ti aiuteranno a guadagnare punti. Costa %1$s punti Internet.</string>
     <string name="make_content">Piazza un contenuto nel sociale</string>
-    <string name="make_content_desc">Se posti un contenuto nel social riceverai %1$s punti Internet se un giocatore ci finisce sopra. Un contenuto ha durata di un turno. Il suo costo è di %2$s punti Internet.</string>
+    <string name="make_content_desc">Se posti un contenuto nel social riceverai %1$s punti Internet se un giocatore ci finisce sopra. Un contenuto rimane visibile fino a quando non ci si ricapiti sopra o si superi la casella. Il suo costo è di %2$s punti Internet.</string>
     <string name="get_vpn">VPN attivata</string>
     <string name="get_vpn_desc">Avendo la VPN eviti di pagare la visualizzazione di un contenuto</string>
     <string name="vpn_avoid_pay">Con la VPN hai bloccato il pagamento del contenuto</string>
